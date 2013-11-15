@@ -1,5 +1,5 @@
 <?php
-/** Hakka (Hak-kâ-fa)
+/** Hakka (客家語/Hak-kâ-ngî)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -1495,7 +1495,7 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'othercontribs' => 'Chhai $1-ke kûng-chok kî-chhú song.',
 'others' => 'khì-thâ',
 'siteusers' => '{{SITENAME}} Yung-fu-chá $1',
-'creditspage' => 'Hong-mien chṳ-chhia',
+'creditspage' => '頁面編寫人名單',
 'nocredits' => 'Ke-chông mò-yû chṳ-chhia miàng-tân sêu-sit.',
 
 # Spam protection
@@ -1511,7 +1511,7 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'markaspatrolledtext' => 'Phêu-ki chhṳ́ vùn-chông sṳ̀n-vì yí-kîn kiám-chhà',
 'markedaspatrolled' => 'Phêu-ki yí-kîn kiám-chhà',
 'markedaspatrolledtext' => 'Ngì sî-yeu chṳ́-thin mêu-ke pán-pún chhòi-nèn phêu-ki sṳ̀n-vì yí-kîn kiám-chhà.',
-'rcpatroldisabled' => 'Chui-sîn kiên-kói kiám-chhà pûn kôan-pit',
+'rcpatroldisabled' => '最新更改檢查分人關閉',
 'rcpatroldisabledtext' => 'Chui-sîn kiên-kói kiám-chhà ke kûng-nèn muk-chhièn yí-kîn kôan-pit.',
 'markedaspatrollederror' => 'Put-nèn phêu-ki sṳ̀n-vì yí-kîn kiám-chhà',
 'markedaspatrollederrortext' => 'Ngì sî-yeu chṳ́-thin mêu-ke pán-pún chhòi-nèn phêu-ki sṳ̀n-vì yí-kîn kiám-chhà.',
@@ -1521,21 +1521,21 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'patrol-log-page' => 'Sùn-chhà ki-liu̍k',
 
 # Image deletion
-'deletedrevision' => 'Yí-kîn chhù-thet khiu-ke pán-pún $1.',
+'deletedrevision' => '已刪除舊版本$1',
 
 # Browsing diffs
-'previousdiff' => 'Sông yit-ke phiên-sip',
-'nextdiff' => 'Hâ-yit pán-pún →',
+'previousdiff' => '←上隻版本',
+'nextdiff' => '下隻版本→',
 
 # Media information
 'mediawarning' => "'''Kín-ko''': Ke-tóng-on khó-nèn pâu-hàm ok-yi am-ho, chṳp-hàng kì khó-nèn tui ngì-ke ne-thúng tai-lòi ngùi-hiám.",
 'imagemaxsize' => 'Chhai thù-chhiong mèu-siá chông tui thù-chhiong thai-séu han-chṳ he:',
 'thumbsize' => 'Lio̍k-thù thai-séu:',
 'file-info' => 'tóng-on thai-séu: $1, MIME lui-hìn: $2',
-'file-info-size' => '$1 × $2 chhiong-su, tóng-on thai-séu:$3 ，MIME lui-hìn:$4',
-'file-nohires' => 'Mò kien-kô kié-chhiong-thu khó-yî thì-kiûng.',
-'svg-long-desc' => 'SVG tóng-on, péu-mien thai-séu: $1 × $2 siong-su, tóng-on thai-séu: $3',
-'show-big-image' => 'Vàn-cháng ke kié-chhiong-thu',
+'file-info-size' => '$1 × $2像素，文件大小：$3，MIME類型：$4',
+'file-nohires' => '無做得提供嘅還較高分辨率。',
+'svg-long-desc' => 'SVG文件，尺寸：$1×$2像素，文件大細：$3',
+'show-big-image' => '完全分辨率',
 
 # Special:NewFiles
 'newimages' => 'Sîn-kien thù-chhiong ke va̍k-lòng',
@@ -1615,16 +1615,16 @@ Kó-yèn ngì *mò-yû* thì-chhut liá-ke chhiáng-khiù,  chhiáng put-yeu ti�
 'confirmrecreate' => "Chhai ngì phiên-chho liá-ke thiàu-muk heu, yung-fu [[User:$1|$1]]（[[User talk:$1|tui-fa]]） yî ha-lie̍t ngièn-yîn chhù-thet liá-ke vùn-chông:
 : ''$2''
 Chhiáng chhai chhùng-sîn kien-chho vùn-chông chhièn sâm-sṳ̂.",
-'recreate' => 'Chhùng-kien',
+'recreate' => '重建',
 
 # action=purge
-'confirm_purge_button' => 'Khok-thin',
+'confirm_purge_button' => '做得',
 'confirm-purge-top' => 'Chhîn-chhù pún-chông chhòng-chhùn？',
 
 # Multipage image navigation
 'imgmultipageprev' => '← sông yit-chông',
 'imgmultipagenext' => 'hâ yit-chông →',
-'imgmultigo' => 'Khok-thin!',
+'imgmultigo' => '確定!',
 
 # Table pager
 'ascending_abbrev' => 'Suk-siá chen',
@@ -1639,7 +1639,7 @@ Chhiáng chhai chhùng-sîn kien-chho vùn-chông chhièn sâm-sṳ̂.",
 
 # Auto-summaries
 'autosumm-blank' => 'Chhù-chhîn só-yû ke hong-mien nui-yùng',
-'autosumm-replace' => "Chang-chhai chiông hong-mien thi-von sṳ̀n-vì '$1'",
+'autosumm-replace' => '用“$1”替換內容',
 'autoredircomment' => 'Chang-chhai chhûng-thin hiong to [[$1]]',
 'autosumm-new' => 'Sîn hong-mien: $1',
 

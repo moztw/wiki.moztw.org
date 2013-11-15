@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Espreon
  * @author Gott wisst
  * @author JJohnson
  * @author Omnipaedista
@@ -1160,21 +1161,21 @@ Bidde cēos ōðerne naman.',
 'exif-compression-1' => 'Unȝeþrycced',
 
 'exif-meteringmode-0' => 'Uncūþ',
-'exif-meteringmode-1' => 'Ȝeþēaƿisc',
+'exif-meteringmode-1' => 'Geþēawisc',
 'exif-meteringmode-6' => 'Sām',
 'exif-meteringmode-255' => 'Ōðer',
 
 'exif-lightsource-0' => 'Uncūþ',
-'exif-lightsource-1' => 'Dæȝeslēoht',
+'exif-lightsource-1' => 'Dægeslēoht',
 
 # Flash modes
 'exif-flash-mode-3' => 'selffremmende mōd',
 
-'exif-focalplaneresolutionunit-2' => 'ynċas',
+'exif-focalplaneresolutionunit-2' => 'yncas',
 
 'exif-exposuremode-1' => 'Handlic blice',
 
-'exif-whitebalance-0' => 'Selffremmende hƿītefnetta',
+'exif-whitebalance-0' => 'Selffremmende hwītefnett',
 
 'exif-scenecapturetype-1' => 'Landsceap',
 
@@ -1186,8 +1187,8 @@ Bidde cēos ōðerne naman.',
 'exif-sharpness-1' => 'Sōfte',
 'exif-sharpness-2' => 'Heard',
 
-'exif-subjectdistancerange-2' => 'Nēah hāƿung',
-'exif-subjectdistancerange-3' => 'Feorr hāƿung',
+'exif-subjectdistancerange-2' => 'Nēah hāwung',
+'exif-subjectdistancerange-3' => 'Feorr hāwung',
 
 # Pseudotags used for GPSLatitudeRef and GPSDestLatitudeRef
 'exif-gpslatitude-n' => 'Norþ brǣdu',
@@ -1195,13 +1196,13 @@ Bidde cēos ōðerne naman.',
 
 # Pseudotags used for GPSLongitudeRef and GPSDestLongitudeRef
 'exif-gpslongitude-e' => 'Ēast lengu',
-'exif-gpslongitude-w' => 'Ƿest lengu',
+'exif-gpslongitude-w' => 'West lengu',
 
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
 'exif-gpsdirection-t' => 'Sōþ rihtung',
 
 # External editor support
-'edit-externally-help' => '(Þā [//www.mediawiki.org/wiki/Manual:External_editors ȝearƿunga tyhtas] sēon for mā cȳþþe)',
+'edit-externally-help' => '(Sēon þā [//www.mediawiki.org/wiki/Manual:External_editors gearwunge gewissunga] ymb mā cȳþþe)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'eall',
@@ -1225,7 +1226,7 @@ $5
 Þēos āsēðungrūn forealdaþ æt $4.',
 
 # Scary transclusion
-'scarytranscludefailed' => '[Bisenfeccung getrucod for $1; sarig]',
+'scarytranscludefailed' => '[Bysene feccung trucode for $1]',
 'scarytranscludetoolong' => '[URL is tō lang]',
 
 # Multipage image navigation
@@ -1242,49 +1243,49 @@ $5
 'autosumm-new' => "Sīdan mid '$1' ȝescapen",
 
 # Watchlist editor
-'watchlistedit-noitems' => 'Þīnu ƿæccȝetalu ne hæfþ nǣniȝ naman.',
-'watchlistedit-normal-title' => 'Ƿæccȝetale ādihtan',
-'watchlistedit-normal-legend' => 'Naman forniman ƿiþ ƿæccȝetale',
-'watchlistedit-normal-submit' => 'Naman forniman',
+'watchlistedit-noitems' => 'Þīn behealdungtæl næfþ nǣnga ymelan.',
+'watchlistedit-normal-title' => 'Adihtan behealdungtæl',
+'watchlistedit-normal-legend' => 'Forniman naman fram behealdungtæle',
+'watchlistedit-normal-submit' => 'Forniman naman',
 'watchlistedit-raw-titles' => 'Naman:',
-'watchlistedit-raw-done' => 'Þīnu ƿæccȝetalu nīƿode.',
+'watchlistedit-raw-done' => 'Þīn behealdungtæl wæs ednīwod.',
 
 # Watchlist editing tools
-'watchlisttools-view' => 'Ƿeorþliċe hƿearfas sēon',
-'watchlisttools-edit' => 'Ƿæccȝetale sēon and ādihtan',
-'watchlisttools-raw' => 'Grēne ƿæccȝetale ādihtan',
+'watchlisttools-view' => 'Sēon andwendunga',
+'watchlisttools-edit' => 'Sēon and adihtan behealdungtæl',
+'watchlisttools-raw' => 'Adihtan hrēaw behealdungtæl',
 
 # Special:Version
 'version' => 'Fadung',
-'version-specialpages' => 'Syndriȝa sīdan',
+'version-specialpages' => 'Syndrige trametas',
 'version-other' => 'Ōðer',
 'version-hooks' => 'Anglas',
 'version-hook-name' => 'Angelnama',
-'version-version' => '(Fadung $1)',
+'version-version' => '($1. fadung)',
 
 # Special:FilePath
-'filepath' => 'Fīlpæþ',
-'filepath-page' => 'Fīl:',
+'filepath' => 'Ymelan pæþ',
+'filepath-page' => 'Ymele:',
 'filepath-submit' => 'Gān',
 
 # Special:FileDuplicateSearch
-'fileduplicatesearch-filename' => 'Fīlnama:',
-'fileduplicatesearch-submit' => 'Sēċan',
+'fileduplicatesearch-filename' => 'Ymelan nama:',
+'fileduplicatesearch-submit' => 'Sēcan',
 
 # Special:SpecialPages
-'specialpages' => 'Syndriȝa sīdan',
-'specialpages-group-other' => 'Ōðra syndriȝa sīdan',
+'specialpages' => 'Syndrige trametas',
+'specialpages-group-other' => 'Ōðre syndrige trametas',
 'specialpages-group-users' => 'Brūcendas and riht',
 
 # Special:BlankPage
-'blankpage' => 'Blæċu sīde',
+'blankpage' => 'Tramet is æmettig',
 
 # Special:Tags
-'tags-edit' => 'ādihtan',
+'tags-edit' => 'adihtan',
 
 # HTML forms
 'htmlform-submit' => 'Forþsendan',
-'htmlform-reset' => 'Hƿearfas undōn',
+'htmlform-reset' => 'Undōn andwendunga',
 'htmlform-selectorother-other' => 'Ōðer',
 
 );

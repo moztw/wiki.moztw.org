@@ -1,5 +1,5 @@
 <?php
-/** Neapolitan (Nnapulitano)
+/** Neapolitan (Napulitano)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -92,16 +92,16 @@ $messages = array(
 'may_long' => 'màjo',
 'june' => 'giùgno',
 'july' => 'luglio',
-'august' => 'aústo',
+'august' => 'aùsto',
 'september' => 'settembre',
-'october' => 'ottobbre',
+'october' => 'ottovre',
 'november' => 'nuvembre',
 'december' => 'dicèmbre',
 'january-gen' => 'jennaro',
 'february-gen' => 'frevaro',
 'march-gen' => 'màrzo',
 'april-gen' => 'abbrile',
-'may-gen' => 'maggio',
+'may-gen' => 'majo',
 'june-gen' => 'giùgno',
 'july-gen' => 'luglio',
 'august-gen' => 'aùsto',
@@ -184,6 +184,7 @@ $messages = array(
 'helppage' => 'Help:Ajùto',
 'mainpage' => 'Paggena prencepale',
 'mainpage-description' => 'Paggena prencepale',
+'policy-url' => 'Project:Policy',
 'portal' => "Porta d''a cummunetà",
 'portal-url' => "Project:Porta d''a cummunetà",
 
@@ -324,7 +325,7 @@ Putite cuntinuà a ausà {{SITENAME}} comme n'utente senza nomme, o si nò putit
 
 # Random page
 'randompage' => 'Na paggena qualsiase',
-'randompage-nopages' => 'Nessuna pagina nel namespace selezionato.',
+'randompage-nopages' => "Nun gè song paggene {{PLURAL:$2|dint'ô seguente namespace|dint'ê seguenti namespace}}: $1.",
 
 'disambiguations' => "Paggene 'e disambigua",
 
@@ -334,6 +335,7 @@ Putite cuntinuà a ausà {{SITENAME}} comme n'utente senza nomme, o si nò putit
 'nbytes' => '$1 {{PLURAL:$1|byte|byte}}',
 'ncategories' => '$1 {{PLURAL:$1|categoria|categorie}}',
 'nlinks' => '$1 {{PLURAL:$1|cullegamiento|cullegamiente}}',
+'nmembers' => '$1 {{PLURAL:$1|elemento|elemente}}',
 'popularpages' => "Paggene cchiù 'speziunate",
 'wantedpages' => 'Paggene cchiù addemannate',
 'shortpages' => 'Paggene curte',
@@ -355,6 +357,10 @@ Also see [[Special:WantedCategories|wanted categories]].",
 
 # Special:LinkSearch
 'linksearch-ok' => 'Truova',
+'linksearch-line' => "$1 presente dint'â paggena $2",
+
+# Email user
+'emailuser' => 'Email chisto utente',
 
 # Watchlist
 'watch' => 'Secuta',
@@ -380,6 +386,7 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'revertpage' => "Cangiaje 'e cagnamiénte 'e [[Special:Contributions/$2|$2]] ([[User talk:$2|discussione]]), cu â verzione 'e pprimma 'e  [[User:$1|$1]]",
 
 # Protect
+'protectedarticle' => 'ha prutetto "[[$1]]"',
 'prot_1movedto2' => 'ha spustato [[$1]] a [[$2]]',
 'protect-expiry-options' => '2 ore:2 hours,1 juorno:1 day,3 juorne:3 days,1 semmana:1 week,2 semmane:2 weeks,1 mise:1 month,3 mese:3 months,6 mese:6 months,1 anno:1 year,infinito:infinite',
 
@@ -480,5 +487,8 @@ Also see [[Special:WantedCategories|wanted categories]].",
 
 # Special:SpecialPages
 'specialpages' => 'Paggene speciale',
+
+# Special:Tags
+'tag-filter' => 'Filtra ppe [[Special:Tags|etichetta]]:',
 
 );

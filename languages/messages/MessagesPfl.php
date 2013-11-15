@@ -8,6 +8,7 @@
  * @file
  *
  * @author Als-Holder
+ * @author Imbericle
  * @author M-sch
  * @author Manuae
  * @author SPS
@@ -759,11 +760,15 @@ Annere Medadaade sinn noamalawais verschdegld.
 * gpslongitude
 * gpsaltitude',
 
+# EXIF tags
+'exif-iimcategory' => 'Sachgrubb',
+'exif-iimsupplementalcategory' => 'Ergenzndi Sachgrubbe',
+
 'exif-gaincontrol-0' => 'Kään',
 
 # External editor support
-'edit-externally' => 'Die Datei bearwaide mit ener externe Aawendung',
-'edit-externally-help' => '(Guck uff [//www.mediawiki.org/wiki/Manual:External_editors Installationsaawisige] fer meh Informatione)',
+'edit-externally' => 'Die Dadai midm õnnare Weagzaisch beawaide',
+'edit-externally-help' => '(Gugg uff [//www.mediawiki.org/wiki/Manual:External_editors Inschdallazionsõwaisunge] fa mea Auskinfd)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'alle',
@@ -786,5 +791,19 @@ Annere Medadaade sinn noamalawais verschdegld.
 
 # Search suggestions
 'searchsuggest-search' => 'Suche',
+
+# API errors
+'api-error-unknownerror' => 'Uubekonde Irrdumm: "$1".',
+
+# Durations
+'duration-seconds' => '$1 {{PLURAL:$1|Sekund|Sekunde}}',
+'duration-minutes' => '$1 {{PLURAL:$1|Minud|Minude}}',
+'duration-hours' => '$1 {{PLURAL:$1|Schdund|Schdunde}}',
+'duration-days' => '$1 {{PLURAL:$1|Daach|Daache}}',
+'duration-weeks' => '$1 {{PLURAL:$1|Woch|Woche}}',
+'duration-years' => '$1 {{PLURAL:$1|Joa|Joare}}',
+'duration-decades' => '$1 {{PLURAL:$1|Jaazehnd|Jaazehnde}}',
+'duration-centuries' => '$1 {{PLURAL:$1|Jaahunnad|Jaahunnade}}',
+'duration-millennia' => '$1 {{PLURAL:$1|Jaadausnd|Jaadausnde}}',
 
 );

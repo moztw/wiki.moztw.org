@@ -1,5 +1,5 @@
 <?php
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -11,9 +11,12 @@
  * @author Aidabishkek
  * @author Amire80
  * @author Chorobek
+ * @author Connexx
  * @author Growingup
+ * @author Kgbek
  * @author Muratjumashev
  * @author Ztimur
+ * @author Викиней
  */
 
 $namespaceNames = array(
@@ -103,13 +106,13 @@ $messages = array(
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Категория|Категориялар}}',
-'category_header' => '"$1" категориядагы барактар',
+'category_header' => '"$1" категориясындагы барактар',
 'subcategories' => 'Ички категориялар',
 'category-media-header' => '"$1" категориясындагы медиафайлдар',
-'category-empty' => "''Бул категорияда азыр эч бир барак же файл жок.''",
-'hidden-categories' => '{{PLURAL:$1|Жашырылган категория|Жашырылган категориялар}}',
-'hidden-category-category' => 'Жашырылган категориялар',
-'category-subcat-count' => '{{PLURAL:$2|Бул категория төмөнкү көмөк категорияны камтыйт.|Бул категорияда жалпы $2, {{PLURAL:$1|көмөк категория|$1 көмөк категория}} бар.}}',
+'category-empty' => "''Бул категорияда азырынча эч бир барак же файл жок.''",
+'hidden-categories' => '{{PLURAL:$1|Жашыруун категория|Жашыруун категориялар}}',
+'hidden-category-category' => 'Жашыруун категориялар',
+'category-subcat-count' => '{{PLURAL:$2|Бул категория төмөнкү ички категорияны гана камтыйт.|Бул категорияда {{PLURAL:$1|ички категория|$1 ички категориялар}} бар, $2 ичинен.}}',
 'category-subcat-count-limited' => 'Бул категорияда {{PLURAL:$1|$1|$1|$1}} ички категория бар.',
 'category-article-count' => '{{PLURAL:$2|Бул категория төмөнкү баракты камтыйт.|Бул категорияда жалпы $2, төмөнкү {{PLURAL:$1|барак|$1 барак}} бар.}}',
 'category-article-count-limited' => 'Бул категорияда $1 барак бар.',
@@ -484,7 +487,7 @@ IP дарегиңиз бул барактын оңдоо тарыхына жаз
 'searchmenu-new' => "'''Бул Уикиде \"[[:\$1]]\" барагын түз!'''",
 'searchhelp-url' => 'Help:Мазмун',
 'searchprofile-articles' => 'Негизги барактар',
-'searchprofile-project' => 'Жардам жана долбоор барактары',
+'searchprofile-project' => 'Жардам жана Долбоор барактары',
 'searchprofile-images' => 'Мултимедиа',
 'searchprofile-everything' => 'Баары',
 'searchprofile-advanced' => 'Кеңейтилген',

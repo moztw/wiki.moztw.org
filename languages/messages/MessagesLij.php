@@ -498,8 +498,12 @@ Dagghe a mente a che no ti pêu ûsâ o comando \"manda na littia elettronega a 
 O têu blòcco ID o l'è \$5. Pe piaxei metti 'sto ID in tûtte e domande che ti fæ.",
 'whitelistedittext' => 'Pe cangia sta pagina devvi $1.',
 'loginreqtitle' => "Besêugna registrâse primma de modificâ 'sta paggina.",
+'loginreqlink' => 'intra',
+'loginreqpagetext' => "Pe amiâ di atre paggine gh'è da $1",
 'accmailtitle' => 'Pòula segretta spedïa',
-'accmailtext' => 'A pòula segretta pe-o utente "$1" a l\'è stæta spedïa a o indirisso $2.',
+'accmailtext' => "Una password abrettio pe [[User talk:$1|$1]] a l'è stæta mandâ a $2.
+
+Sta password a poeu ese cangiâ inta paggina pe ''[[Special:ChangePassword|cangiâ a password]]'' subbito doppo l'acesso.",
 'newarticle' => '(Nêuvo)',
 'newarticletext' => "Sto colegaménto o corisponde a 'na pàgina che ancon a no l'existe.
 
@@ -565,8 +569,8 @@ A razon dæta a l'è ''$2''",
 Leggenda: (corr) = differense co-a verscion corrente, (prec) = differense co-a verscion preçedente, '''m''' = modiffica minô",
 'history-fieldset-title' => 'Véddi a stöia',
 'history-show-deleted' => 'Sôlo scancelæ',
-'histfirst' => 'Prìmmo',
-'histlast' => 'Ùrtimo',
+'histfirst' => 'primma',
+'histlast' => 'urtima',
 'historyempty' => '(vêua)',
 
 # Revision feed
@@ -575,6 +579,7 @@ Leggenda: (corr) = differense co-a verscion corrente, (prec) = differense co-a v
 
 # Revision deletion
 'rev-delundel' => 'fanni védde/ascondi',
+'revdelete-radio-set' => 'Sci',
 'revdel-restore' => 'càngia a vixibilitæ',
 'revdel-restore-deleted' => 'Revixioìn scancelæ',
 'revdel-restore-visible' => 'revixioìn che se peuan védde',
@@ -1100,6 +1105,7 @@ Inte 'sti câxi, se o se vêu fâ coscì, o se deive stramûâ ò azzonze manual
 'allmessagescurrent' => 'Testo corrente',
 'allmessagestext' => "Sta chie a l'è unn-a lista de messaggi do scistema in ta MediaWiki.",
 'allmessagesnotsupportedDB' => "'''{{ns:special}}:Allmessages''' o non ti te peu vedde, perchè '''\$wgUseDatabaseMessages''' o non l'è attivo.",
+'allmessages-language' => 'Lengua:',
 
 # Thumbnails
 'thumbnail-more' => 'Ciù grande',
@@ -1220,6 +1226,7 @@ L'ingansi sucescivi, in scia mæxima riga, van conscideræ comme eceçioìn (pag
 'exif-artist' => 'Autô',
 'exif-copyright' => "Diritti d'autô de",
 'exif-filesource' => 'Reixe do papê',
+'exif-languagecode' => 'Lengua',
 
 # External editor support
 'edit-externally' => "Càngia st'archivio con 'na applicaçión esterna",
@@ -1246,10 +1253,10 @@ L'ingansi sucescivi, in scia mæxima riga, van conscideræ comme eceçioìn (pag
 'table_pager_empty' => 'Nisciun resultato',
 
 # Auto-summaries
-'autosumm-blank' => 'Scassa tutti i contenùi da a pagina',
+'autosumm-blank' => 'Pagina svuâ',
 'autosumm-replace' => "Sostituçion da pagina con '$1'",
 'autoredircomment' => 'Reindirissoö a [[$1]]',
-'autosumm-new' => 'Neuva pagina: $1',
+'autosumm-new' => 'Paggina creâ con "$1"',
 
 # Live preview
 'livepreview-loading' => 'Camallando…',

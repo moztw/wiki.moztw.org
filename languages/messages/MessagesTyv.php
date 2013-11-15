@@ -9,6 +9,7 @@
  *
  * @author Agilight
  * @author Andrijko Z.
+ * @author Kaganer
  * @author Krice from Tyvanet.com
  * @author Sborsody
  * @author friends at tyvawiki.org
@@ -186,7 +187,7 @@ $messages = array(
 'vector-action-undelete' => 'Эгидер',
 'vector-action-unprotect' => 'Камгалалды өскертири',
 'vector-view-create' => 'Чаяары',
-'vector-view-edit' => 'Эдери',
+'vector-view-edit' => 'Эдер',
 'vector-view-history' => 'Төөгүнү көөрү',
 'vector-view-view' => 'Номчууру',
 'vector-view-viewsource' => 'Дөзү бижиин көөрү',
@@ -208,7 +209,7 @@ $messages = array(
 'permalink' => 'Турум холбаа',
 'print' => 'Саазынга үндүрер',
 'view' => 'Көөрү',
-'edit' => 'Эдери',
+'edit' => 'Эдер',
 'create' => 'Чогаадыры',
 'editthispage' => 'Бо арынны өскертири',
 'create-this-page' => 'Бо арынны чогаадыры',
@@ -309,7 +310,7 @@ $messages = array(
 'nstab-mediawiki' => 'Чагаа',
 'nstab-template' => 'Майык',
 'nstab-help' => 'Дуза',
-'nstab-category' => 'Бөлүк',
+'nstab-category' => 'Аңгылал',
 
 # Main script and global functions
 'nosuchaction' => 'Ындыг кылыг чок',
@@ -459,11 +460,11 @@ Please check if you want to create/edit this page.',
 'previewnote' => "'''Бо чүгле шенеп көөрү-дүр.'''
  Бижик ам-даа шыгжатынмаан!",
 'editing' => '«$1» деп арынны эдери',
-'editingsection' => '«$1» деп арынның салбырын эдери',
+'editingsection' => 'Эдилге: «$1» (үлеш)',
 'editingcomment' => '«$1» деп арынны өскертип турар (чаа салбыр)',
 'yourtext' => 'Силерниң сөзүглелиңер',
 'yourdiff' => 'Ылгалдар',
-'templatesused' => 'Бо арында {{PLURAL:$1|Майык|Майыктар}} ажыглаттырган:',
+'templatesused' => 'Бо арында ажыглаан {{PLURAL:$1|Майык|Майыктар}}:',
 'template-protected' => '(камгалаан)',
 'template-semiprotected' => '(четпес камгалаан)',
 'hiddencategories' => 'Бо арын $1 {{PLURAL:$1|чажыт категорияга}} хамааржыр:',
@@ -496,8 +497,8 @@ Please check if you want to create/edit this page.',
 'page_last' => 'сөөлгү',
 'history-fieldset-title' => 'Каралаары төөгүзү',
 'history-show-deleted' => 'Чүгле казыттынган',
-'histfirst' => 'Эң эрте',
-'histlast' => 'Эң дээм чаагы',
+'histfirst' => 'Эң эрги',
+'histlast' => 'Эң чаа',
 'historysize' => '({{PLURAL:$1|$1 байт}})',
 'historyempty' => '(куруг)',
 
@@ -561,7 +562,7 @@ Please check if you want to create/edit this page.',
 'searchprofile-everything-tooltip' => 'Шупту арыннардан дилээри (сумележиишкиннерден база)',
 'searchprofile-advanced-tooltip' => 'Айыткан аттар делгемнеринден дилээри',
 'search-result-size' => '$1 ({{PLURAL:$2|$2 сөс}})',
-'search-result-category-size' => '{{PLURAL:$1|1 кежигүн|$1 кежигүн}} ({{PLURAL:$2|1 aдаккы бөлүк|$2 aдаккы бөлүк}}, {{PLURAL:$3|1 файл|$3 файл}})',
+'search-result-category-size' => '{{PLURAL:$1|1 кежигүүн|$1 кежигүүн}} ({{PLURAL:$2|1 аңгылам|$2 аңгылам}}, {{PLURAL:$3|1 файл|$3 файл}})',
 'search-redirect' => '($1-н шиглелге)',
 'search-section' => '(«$1» деп салбыр)',
 'search-suggest' => 'Силер «$1» деп бодадыңар чадавас',
@@ -678,7 +679,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'бо арынны номчууру',
-'action-edit' => 'бо арынны эдери',
+'action-edit' => 'бо арынның эдилгези',
 'action-createpage' => 'арыннарны чогаадыры',
 'action-createtalk' => 'чугаалажырга арыннарны чогаадыры',
 'action-createaccount' => 'бо бүрүткел бижиктерин бүдүрери',
@@ -823,7 +824,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 
 # Miscellaneous special pages
 'nbytes' => '$1 {{PLURAL:$1|байт}}',
-'ncategories' => '$1 {{PLURAL:$1|бөлүк}}',
+'ncategories' => '$1 {{PLURAL:$1|аңгылал}}',
 'nlinks' => '$1 {{PLURAL:$1|холбаа}}',
 'nmembers' => '$1 {{PLURAL:$1|кежигүн}}',
 'nrevisions' => '$1 {{PLURAL:$1|үндүрери}}',
@@ -831,9 +832,9 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 'specialpage-empty' => 'Бо илеткелдиң түңнели чок.',
 'lonelypages' => 'Чааскаан арыннар',
 'uncategorizedpages' => 'Бөлүк эвес арыннар',
-'uncategorizedcategories' => 'Бөлүк эвес бөлүктер',
-'uncategorizedimages' => 'Бөлүк эвес файлдар',
-'uncategorizedtemplates' => 'Бөлүк эвес майыктар',
+'uncategorizedcategories' => 'Аңгылалдатынмаан аңгылалдар',
+'uncategorizedimages' => 'Аңгылалдаваан файлдар',
+'uncategorizedtemplates' => 'Аңгылалдаваан майыктар',
 'unusedcategories' => 'Ажыглаваан бөлүктер',
 'unusedimages' => 'Ажыглаваан файлдар',
 'popularpages' => 'Чоннуң арыннар',
@@ -880,7 +881,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 'allpagessubmit' => 'Күүcедири',
 
 # Special:Categories
-'categories' => 'Бөлүктер',
+'categories' => 'Аңгылалдар',
 
 # Special:DeletedContributions
 'sp-deletedcontributions-contribs' => 'салыышкыннар',
@@ -902,7 +903,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 'newuserlogpage' => 'Чаа ажыглакчы кырында журнал',
 
 # Special:ListGroupRights
-'listgrouprights-group' => 'Бөлүк кижилер',
+'listgrouprights-group' => 'Бөлүк',
 'listgrouprights-members' => '(кежигүннүң даңзызы)',
 
 # E-mail user
@@ -987,7 +988,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 'contributions-title' => '«$1» деп ажыглакчының салыышкыннары',
 'mycontris' => 'Салыышкыннар',
 'contribsub2' => '$1 ($2)',
-'uctop' => '(баш)',
+'uctop' => '(амгы)',
 'month' => 'Айдан:',
 'year' => 'Чылдан:',
 
@@ -1135,7 +1136,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 'tooltip-ca-nstab-image' => 'Файлдың арынын көөрү',
 'tooltip-ca-nstab-template' => 'Майыкты көөрү',
 'tooltip-ca-nstab-help' => 'Дуза арынын көөрү',
-'tooltip-ca-nstab-category' => 'Бөлүктүң арынын көөрү',
+'tooltip-ca-nstab-category' => 'Аңгылалдың арынын көөрү',
 'tooltip-minoredit' => 'Бо өскертилгени "биче" деп демдеглээр',
 'tooltip-save' => 'Силерниң өскерлиишкиннериңерни шыгжаары',
 'tooltip-preview' => 'Шыгжаар мурнунда силерниң өскерлиишкиннерин чижеглеп көрем!',
@@ -1271,7 +1272,7 @@ It must not be more than $1 {{PLURAL:$1|character|characters}} long.',
 'table_pager_empty' => 'Түңнеллер чок',
 
 # Auto-summaries
-'autosumm-new' => 'Чаа арынны чогаадаан: «$1»',
+'autosumm-new' => 'Чаа арын чаяатынган: «$1»',
 
 # Watchlist editor
 'watchlistedit-normal-title' => 'Хайгаарал даңзыны өскертири',
