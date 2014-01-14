@@ -5,6 +5,7 @@
  * @file
  * @ingroup Extensions
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -36,6 +37,11 @@ $specialPageAliases['be-tarask'] = array(
 /** Banjar (Bahasa Banjar) */
 $specialPageAliases['bjn'] = array(
 	'Nuke' => array( 'Nuklir' ),
+);
+
+/** Chechen (нохчийн) */
+$specialPageAliases['ce'] = array(
+	'Nuke' => array( 'Дуккха_дӀаяккхар' ),
 );
 
 /** German (Deutsch) */
@@ -71,6 +77,11 @@ $specialPageAliases['fa'] = array(
 /** Finnish (suomi) */
 $specialPageAliases['fi'] = array(
 	'Nuke' => array( 'Massapoisto' ),
+);
+
+/** Galician (galego) */
+$specialPageAliases['gl'] = array(
+	'Nuke' => array( 'Eliminar_en_masa' ),
 );
 
 /** Swiss German (Alemannisch) */
@@ -173,12 +184,12 @@ $specialPageAliases['ms'] = array(
 	'Nuke' => array( 'Hapus_pukal' ),
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎) */
+/** Norwegian Bokmål (norsk bokmål) */
 $specialPageAliases['nb'] = array(
 	'Nuke' => array( 'Massesletting' ),
 );
 
-/** Nedersaksisch (Nedersaksisch) */
+/** Low Saxon (Netherlands) (Nedersaksies) */
 $specialPageAliases['nds-nl'] = array(
 	'Nuke' => array( 'Massaal_vortdoon' ),
 );
@@ -188,7 +199,7 @@ $specialPageAliases['nl'] = array(
 	'Nuke' => array( 'MassaalVerwijderen' ),
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎) */
+/** Norwegian Nynorsk (norsk nynorsk) */
 $specialPageAliases['nn'] = array(
 	'Nuke' => array( 'Massesletting' ),
 );
@@ -216,6 +227,11 @@ $specialPageAliases['ru'] = array(
 /** Sanskrit (संस्कृतम्) */
 $specialPageAliases['sa'] = array(
 	'Nuke' => array( 'न्यूक' ),
+);
+
+/** Sicilian (sicilianu) */
+$specialPageAliases['scn'] = array(
+	'Nuke' => array( 'CancellazioneMassiva' ),
 );
 
 /** Slovak (slovenčina) */

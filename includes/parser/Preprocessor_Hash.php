@@ -89,7 +89,7 @@ class Preprocessor_Hash implements Preprocessor {
 	 * Preprocess some wikitext and return the document tree.
 	 * This is the ghost of Parser::replace_variables().
 	 *
-	 * @param $text String: the text to parse
+	 * @param string $text the text to parse
 	 * @param $flags Integer: bitwise combination of:
 	 *          Parser::PTD_FOR_INCLUSION    Handle "<noinclude>" and "<includeonly>" as if the text is being
 	 *                                     included. Default is to assume a direct page view.
@@ -105,6 +105,7 @@ class Preprocessor_Hash implements Preprocessor {
 	 * cache may be implemented at a later date which takes further advantage of these strict
 	 * dependency requirements.
 	 *
+	 * @throws MWException
 	 * @return PPNode_Hash_Tree
 	 */
 	function preprocessToObj( $text, $flags = 0 ) {
@@ -115,9 +116,9 @@ class Preprocessor_Hash implements Preprocessor {
 
 		$cacheable = $wgPreprocessorCacheThreshold !== false && strlen( $text ) > $wgPreprocessorCacheThreshold;
 		if ( $cacheable ) {
-			wfProfileIn( __METHOD__.'-cacheable' );
+			wfProfileIn( __METHOD__ . '-cacheable' );
 
-			$cacheKey = wfMemcKey( 'preprocess-hash', md5($text), $flags );
+			$cacheKey = wfMemcKey( 'preprocess-hash', md5( $text ), $flags );
 			$cacheValue = $wgMemc->get( $cacheKey );
 			if ( $cacheValue ) {
 				$version = substr( $cacheValue, 0, 8 );
@@ -126,12 +127,12 @@ class Preprocessor_Hash implements Preprocessor {
 					// From the cache
 					wfDebugLog( "Preprocessor",
 						"Loaded preprocessor hash from memcached (key $cacheKey)" );
-					wfProfileOut( __METHOD__.'-cacheable' );
+					wfProfileOut( __METHOD__ . '-cacheable' );
 					wfProfileOut( __METHOD__ );
 					return $hash;
 				}
 			}
-			wfProfileIn( __METHOD__.'-cache-miss' );
+			wfProfileIn( __METHOD__ . '-cache-miss' );
 		}
 
 		$rules = array(
@@ -286,9 +287,11 @@ class Preprocessor_Hash implements Preprocessor {
 				}
 				// Handle comments
 				if ( isset( $matches[2] ) && $matches[2] == '!--' ) {
-					// To avoid leaving blank lines, when a comment is both preceded
-					// and followed by a newline (ignoring spaces), trim leading and
-					// trailing spaces and one of the newlines.
+
+					// To avoid leaving blank lines, when a sequence of
+					// space-separated comments is both preceded and followed by
+					// a newline (ignoring spaces), then
+					// trim leading and trailing spaces and the trailing newline.
 
 					// Find the end
 					$endPos = strpos( $text, '-->', $i + 4 );
@@ -299,10 +302,25 @@ class Preprocessor_Hash implements Preprocessor {
 						$i = $lengthText;
 					} else {
 						// Search backwards for leading whitespace
-						$wsStart = $i ? ( $i - strspn( $revText, ' ', $lengthText - $i ) ) : 0;
+						$wsStart = $i ? ( $i - strspn( $revText, " \t", $lengthText - $i ) ) : 0;
+
 						// Search forwards for trailing whitespace
 						// $wsEnd will be the position of the last space (or the '>' if there's none)
-						$wsEnd = $endPos + 2 + strspn( $text, ' ', $endPos + 3 );
+						$wsEnd = $endPos + 2 + strspn( $text, " \t", $endPos + 3 );
+
+						// Keep looking forward as long as we're finding more
+						// comments.
+						$comments = array( array( $wsStart, $wsEnd ) );
+						while ( substr( $text, $wsEnd + 1, 4 ) == '<!--' ) {
+							$c = strpos( $text, '-->', $wsEnd + 4 );
+							if ( $c === false ) {
+								break;
+							}
+							$c = $c + 2 + strspn( $text, " \t", $c + 3 );
+							$comments[] = array( $wsEnd + 1, $c );
+							$wsEnd = $c;
+						}
+
 						// Eat the line if possible
 						// TODO: This could theoretically be done if $wsStart == 0, i.e. for comments at
 						// the overall start. That's not how Sanitizer::removeHTMLcomments() did it, but
@@ -310,17 +328,27 @@ class Preprocessor_Hash implements Preprocessor {
 						if ( $wsStart > 0 && substr( $text, $wsStart - 1, 1 ) == "\n"
 							&& substr( $text, $wsEnd + 1, 1 ) == "\n" )
 						{
-							$startPos = $wsStart;
-							$endPos = $wsEnd + 1;
 							// Remove leading whitespace from the end of the accumulator
 							// Sanity check first though
 							$wsLength = $i - $wsStart;
 							if ( $wsLength > 0
 								&& $accum->lastNode instanceof PPNode_Hash_Text
-								&& substr( $accum->lastNode->value, -$wsLength ) === str_repeat( ' ', $wsLength ) )
+								&& strspn( $accum->lastNode->value, " \t", -$wsLength ) === $wsLength )
 							{
 								$accum->lastNode->value = substr( $accum->lastNode->value, 0, -$wsLength );
 							}
+
+							// Dump all but the last comment to the accumulator
+							foreach ( $comments as $j => $com ) {
+								$startPos = $com[0];
+								$endPos = $com[1] + 1;
+								if ( $j == ( count( $comments ) - 1 ) ) {
+									break;
+								}
+								$inner = substr( $text, $startPos, $endPos - $startPos );
+								$accum->addNodeWithText( 'comment', $inner );
+							}
+
 							// Do a line-start run next time to look for headings after the comment
 							$fakeLineStart = true;
 						} else {
@@ -331,7 +359,7 @@ class Preprocessor_Hash implements Preprocessor {
 
 						if ( $stack->top ) {
 							$part = $stack->top->getCurrentPart();
-							if ( ! (isset( $part->commentEnd ) && $part->commentEnd == $wsStart - 1 )) {
+							if ( !( isset( $part->commentEnd ) && $part->commentEnd == $wsStart - 1 ) ) {
 								$part->visualEnd = $wsStart;
 							}
 							// Else comments abutting, no change in visual end
@@ -366,7 +394,7 @@ class Preprocessor_Hash implements Preprocessor {
 				}
 
 				$tagStartPos = $i;
-				if ( $text[$tagEndPos-1] == '/' ) {
+				if ( $text[$tagEndPos - 1] == '/' ) {
 					// Short end tag
 					$attrEnd = $tagEndPos - 1;
 					$inner = null;
@@ -390,7 +418,7 @@ class Preprocessor_Hash implements Preprocessor {
 				}
 				// <includeonly> and <noinclude> just become <ignore> tags
 				if ( in_array( $lowerName, $ignoredElements ) ) {
-					$accum->addNodeWithText(  'ignore', substr( $text, $tagStartPos, $i - $tagStartPos ) );
+					$accum->addNodeWithText( 'ignore', substr( $text, $tagStartPos, $i - $tagStartPos ) );
 					continue;
 				}
 
@@ -461,7 +489,7 @@ class Preprocessor_Hash implements Preprocessor {
 				if ( $equalsLength > 0 ) {
 					if ( $searchStart - $equalsLength == $piece->startPos ) {
 						// This is just a single string of equals signs on its own line
-						// Replicate the doHeadings behaviour /={count}(.+)={count}/
+						// Replicate the doHeadings behavior /={count}(.+)={count}/
 						// First find out how many equals signs there really are (don't stop at 6)
 						$count = $equalsLength;
 						if ( $count < 3 ) {
@@ -514,7 +542,7 @@ class Preprocessor_Hash implements Preprocessor {
 						'open' => $curChar,
 						'close' => $rule['end'],
 						'count' => $count,
-						'lineStart' => ($i > 0 && $text[$i-1] == "\n"),
+						'lineStart' => ( $i > 0 && $text[$i - 1] == "\n" ),
 					);
 
 					$stack->push( $piece );
@@ -548,7 +576,7 @@ class Preprocessor_Hash implements Preprocessor {
 					}
 				}
 
-				if ($matchingCount <= 0) {
+				if ( $matchingCount <= 0 ) {
 					# No matching element found in callback array
 					# Output a literal closing brace and continue
 					$accum->addLiteral( str_repeat( $curChar, $count ) );
@@ -590,10 +618,20 @@ class Preprocessor_Hash implements Preprocessor {
 								$lastNode = $node;
 							}
 							if ( !$node ) {
-								throw new MWException( __METHOD__. ': eqpos not found' );
+								if ( $cacheable ) {
+									wfProfileOut( __METHOD__ . '-cache-miss' );
+									wfProfileOut( __METHOD__ . '-cacheable' );
+								}
+								wfProfileOut( __METHOD__ );
+								throw new MWException( __METHOD__ . ': eqpos not found' );
 							}
 							if ( $node->name !== 'equals' ) {
-								throw new MWException( __METHOD__ .': eqpos is not equals' );
+								if ( $cacheable ) {
+									wfProfileOut( __METHOD__ . '-cache-miss' );
+									wfProfileOut( __METHOD__ . '-cacheable' );
+								}
+								wfProfileOut( __METHOD__ );
+								throw new MWException( __METHOD__ . ': eqpos is not equals' );
 							}
 							$equalsNode = $node;
 
@@ -638,23 +676,17 @@ class Preprocessor_Hash implements Preprocessor {
 				$accum =& $stack->getAccum();
 
 				# Re-add the old stack element if it still has unmatched opening characters remaining
-				if ($matchingCount < $piece->count) {
+				if ( $matchingCount < $piece->count ) {
 					$piece->parts = array( new PPDPart_Hash );
 					$piece->count -= $matchingCount;
 					# do we still qualify for any callback with remaining count?
-					$names = $rules[$piece->open]['names'];
-					$skippedBraces = 0;
-					$enclosingAccum =& $accum;
-					while ( $piece->count ) {
-						if ( array_key_exists( $piece->count, $names ) ) {
-							$stack->push( $piece );
-							$accum =& $stack->getAccum();
-							break;
-						}
-						--$piece->count;
-						$skippedBraces ++;
+					$min = $rules[$piece->open]['min'];
+					if ( $piece->count >= $min ) {
+						$stack->push( $piece );
+						$accum =& $stack->getAccum();
+					} else {
+						$accum->addLiteral( str_repeat( $piece->open, $piece->count ) );
 					}
-					$enclosingAccum->addLiteral( str_repeat( $piece->open, $skippedBraces ) );
 				}
 
 				extract( $stack->getFlags() );
@@ -695,11 +727,11 @@ class Preprocessor_Hash implements Preprocessor {
 		$rootNode->lastChild = $stack->rootAccum->lastNode;
 
 		// Cache
-		if ($cacheable) {
+		if ( $cacheable ) {
 			$cacheValue = sprintf( "%08d", self::CACHE_VERSION ) . serialize( $rootNode );
 			$wgMemc->set( $cacheKey, $cacheValue, 86400 );
-			wfProfileOut( __METHOD__.'-cache-miss' );
-			wfProfileOut( __METHOD__.'-cacheable' );
+			wfProfileOut( __METHOD__ . '-cache-miss' );
+			wfProfileOut( __METHOD__ . '-cacheable' );
 			wfDebugLog( "Preprocessor", "Saved preprocessor Hash to memcached (key $cacheKey)" );
 		}
 
@@ -866,7 +898,6 @@ class PPFrame_Hash implements PPFrame {
 	 */
 	var $depth;
 
-
 	/**
 	 * Construct a new preprocessor frame.
 	 * @param $preprocessor Preprocessor: the parent preprocessor
@@ -884,9 +915,11 @@ class PPFrame_Hash implements PPFrame {
 	 * Create a new child frame
 	 * $args is optionally a multi-root PPNode or array containing the template arguments
 	 *
-	 * @param $args PPNode_Hash_Array|array
+	 * @param array|bool|\PPNode_Hash_Array $args PPNode_Hash_Array|array
 	 * @param $title Title|bool
 	 *
+	 * @param int $indexOffset
+	 * @throws MWException
 	 * @return PPTemplateFrame_Hash
 	 */
 	function newChild( $args = false, $title = false, $indexOffset = 0 ) {
@@ -956,7 +989,7 @@ class PPFrame_Hash implements PPFrame {
 
 		while ( count( $iteratorStack ) > 1 ) {
 			$level = count( $outStack ) - 1;
-			$iteratorNode =& $iteratorStack[ $level ];
+			$iteratorNode =& $iteratorStack[$level];
 			$out =& $outStack[$level];
 			$index =& $indexStack[$level];
 
@@ -1035,7 +1068,7 @@ class PPFrame_Hash implements PPFrame {
 					}
 					# Add a strip marker in PST mode so that pstPass2() can run some old-fashioned regexes on the result
 					# Not in RECOVER_COMMENTS mode (extractSections) though
-					elseif ( $this->parser->ot['wiki'] && ! ( $flags & PPFrame::RECOVER_COMMENTS ) ) {
+					elseif ( $this->parser->ot['wiki'] && !( $flags & PPFrame::RECOVER_COMMENTS ) ) {
 						$out .= $this->parser->insertStripItem( $contextNode->firstChild->value );
 					}
 					# Recover the literal comment in RECOVER_COMMENTS and pre+no-remove
@@ -1082,7 +1115,7 @@ class PPFrame_Hash implements PPFrame {
 					$newIterator = $contextNode->getChildren();
 				}
 			} else {
-				throw new MWException( __METHOD__.': Invalid parameter type' );
+				throw new MWException( __METHOD__ . ': Invalid parameter type' );
 			}
 
 			if ( $newIterator !== false ) {
@@ -1371,9 +1404,9 @@ class PPTemplateFrame_Hash extends PPFrame_Hash {
 	function getArguments() {
 		$arguments = array();
 		foreach ( array_merge(
-				array_keys($this->numberedArgs),
-				array_keys($this->namedArgs)) as $key ) {
-			$arguments[$key] = $this->getArgument($key);
+				array_keys( $this->numberedArgs ),
+				array_keys( $this->namedArgs ) ) as $key ) {
+			$arguments[$key] = $this->getArgument( $key );
 		}
 		return $arguments;
 	}
@@ -1383,8 +1416,8 @@ class PPTemplateFrame_Hash extends PPFrame_Hash {
 	 */
 	function getNumberedArguments() {
 		$arguments = array();
-		foreach ( array_keys($this->numberedArgs) as $key ) {
-			$arguments[$key] = $this->getArgument($key);
+		foreach ( array_keys( $this->numberedArgs ) as $key ) {
+			$arguments[$key] = $this->getArgument( $key );
 		}
 		return $arguments;
 	}
@@ -1394,8 +1427,8 @@ class PPTemplateFrame_Hash extends PPFrame_Hash {
 	 */
 	function getNamedArguments() {
 		$arguments = array();
-		foreach ( array_keys($this->namedArgs) as $key ) {
-			$arguments[$key] = $this->getArgument($key);
+		foreach ( array_keys( $this->namedArgs ) as $key ) {
+			$arguments[$key] = $this->getArgument( $key );
 		}
 		return $arguments;
 	}
@@ -1609,6 +1642,7 @@ class PPNode_Hash_Tree implements PPNode {
 	 *  - index         String index
 	 *  - value         PPNode value
 	 *
+	 * @throws MWException
 	 * @return array
 	 */
 	function splitArg() {
@@ -1642,6 +1676,7 @@ class PPNode_Hash_Tree implements PPNode {
 	 * Split an "<ext>" node into an associative array containing name, attr, inner and close
 	 * All values in the resulting array are PPNodes. Inner and close are optional.
 	 *
+	 * @throws MWException
 	 * @return array
 	 */
 	function splitExt() {
@@ -1669,6 +1704,7 @@ class PPNode_Hash_Tree implements PPNode {
 	/**
 	 * Split an "<h>" node
 	 *
+	 * @throws MWException
 	 * @return array
 	 */
 	function splitHeading() {
@@ -1695,6 +1731,7 @@ class PPNode_Hash_Tree implements PPNode {
 	/**
 	 * Split a "<template>" or "<tplarg>" node
 	 *
+	 * @throws MWException
 	 * @return array
 	 */
 	function splitTemplate() {

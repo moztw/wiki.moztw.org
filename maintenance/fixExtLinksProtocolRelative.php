@@ -23,7 +23,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that fixes any entriy for protocol-relative URLs
@@ -66,11 +66,13 @@ class FixExtLinksProtocolRelative extends LoggedUpdateMaintenance {
 			$db->insert( 'externallinks',
 				array(
 					array(
+						'el_id' => $db->nextSequenceValue( 'externallinks_el_id_seq' ),
 						'el_from' => $row->el_from,
 						'el_to' => $row->el_to,
 						'el_index' => "http:{$row->el_index}",
 					),
 					array(
+						'el_id' => $db->nextSequenceValue( 'externallinks_el_id_seq' ),
 						'el_from' => $row->el_from,
 						'el_to' => $row->el_to,
 						'el_index' => "https:{$row->el_index}",
@@ -85,4 +87,4 @@ class FixExtLinksProtocolRelative extends LoggedUpdateMaintenance {
 }
 
 $maintClass = "FixExtLinksProtocolRelative";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -66,7 +66,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Bonagatša email atrese go temošo tša poso',
 'tog-shownumberswatching' => 'Laetša palo bašomiši bao ba tlhapetšego',
 'tog-fancysig' => 'Tsaeno ya gose fihliwe',
-'tog-externaleditor' => 'Šomiša sengwadi sa kantle (bašumiši bao banalego botsibi fela.  [//www.mediawiki.org/wiki/Manual:External_editors More information.])',
 'tog-forceeditsummary' => 'Ntaetše ge kesa tsenye mongwalo go kakaretšo ya dithetogo',
 'tog-watchlisthideown' => 'Fihla diphetogo tšeo di direlego ke nna go lenano la ditlhapetšo.',
 'tog-watchlisthideminor' => 'Fihla diphetogo tše nyenyane tšeo di direlego ke nna go lenano la ditlhapetšo',
@@ -226,7 +225,7 @@ $messages = array(
 'jumptosearch' => 'fetleka',
 'pool-errorunknown' => 'Phošo yago setsebege',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Mabapi le {{SITENAME}}',
 'aboutpage' => 'Project:Mabapi',
 'copyright' => 'Mateng a hwetšagala tlase ga $1.',
@@ -236,7 +235,6 @@ $messages = array(
 'disclaimers' => 'Hlapa-matsogo',
 'disclaimerpage' => 'Project:Hlapa-Matsogo',
 'edithelp' => 'Thušo ya go fetola',
-'edithelppage' => 'Help:Fetola',
 'helppage' => 'Help:Mateng',
 'mainpage' => 'Letlakala la Pele',
 'mainpage-description' => 'Letlakala la Pele',
@@ -319,9 +317,6 @@ Bega se go  [[Special:ListUsers/sysop|administrator]], o fana ka URL.',
 'namespaceprotected' => "Ga ona tokelo ya go fetola matlakala  go  '''$1''' .",
 
 # Login and logout pages
-'welcomecreation' => "Oa amogelwa, $1! ==
-
-Tšhupaleloko (''account'') ya gago e tlhodilwe. O seke wa lebala go fetola [[Special:Preferences|{{SITENAME}} dikgetho/thato tša gago]].",
 'yourname' => 'Leina la mošomiši:',
 'yourpassword' => 'Ditlhaka-tša-siphiri:',
 'yourpasswordagain' => 'Tlanya ditlhaka-tša-siphiri gape:',
@@ -388,7 +383,7 @@ Ga wa dumelwa go tlhoma tše dingwe.',
 'oldpassword' => 'Ditlhaka-tša-siphiri tša kgale:',
 'newpassword' => 'Ditlhaka-tša-siphiri tše mpsha:',
 'retypenew' => 'Tlanya ditlhaka tše mphsa tša siphiri gape:',
-'resetpass_success' => 'Ditlhaka tša siphiri di fetotšwe ka katlego! Bjale o kgona go tsena...',
+'changepassword-success' => 'Ditlhaka tša siphiri di fetotšwe ka katlego! Bjale o kgona go tsena...',
 
 # Edit page toolbar
 'bold_sample' => "Mongwalo wa '''Bold'''",
@@ -566,7 +561,6 @@ fetola tshenolo',
 'viewprevnext' => 'Lebelela ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-exists' => "'''Go ena le letlaka la leina la \"[[:\$1]]\" go wiki ye.'''",
 'searchmenu-new' => "'''Hlola letlakala \"[[:\$1]]\" go wiki ye!'''",
-'searchhelp-url' => 'Help:Mateng',
 'searchprofile-articles' => 'Matlakala a diteng',
 'searchprofile-project' => 'Thušo le matlaka a diprojeke',
 'searchprofile-images' => 'Diphatlalatši tša "multi"',
@@ -650,6 +644,9 @@ Ga re fane ka e-poso ya gago go bašumiši ba bangwe ge ba polela le wena ka yon
 'right-edit' => 'Fetola matlakala',
 'right-move' => 'Huduša matlakala',
 
+# Special:Log/newusers
+'newuserlogpage' => '"Log" yago hlola mošumiši',
+
 # User rights log
 'rightslog' => "''log'' ya ditumello tša mošomiši",
 
@@ -692,7 +689,6 @@ Ga re fane ka e-poso ya gago go bašumiši ba bangwe ge ba polela le wena ka yon
 'recentchangeslinked-feed' => 'Diphetogo tša go tswalana',
 'recentchangeslinked-toolbox' => 'Diphetogo tša go tswalana',
 'recentchangeslinked-title' => 'Diphetogo tša go tswalana le "$1"',
-'recentchangeslinked-noresult' => 'Gago na diphetogo go matlakala a hlomaganya ka sebaka/sekga seo o se kgethilego.',
 'recentchangeslinked-summary' => "Letlakala le le laetša diphetogo tša bjale matlakaleng a go hlomaganya.
 Matlakala ago ba [[Special:Watchlist|lenanong la gago la matlakala ditlhapetšo]]  a '''ngwadilwe ka bogolo'''.",
 'recentchangeslinked-page' => 'Leina la letlakala:',
@@ -780,9 +776,6 @@ Matlakala ago ba [[Special:Watchlist|lenanong la gago la matlakala ditlhapetšo]
 'statistics' => 'Dipalopalo',
 'statistics-header-users' => 'Dipalopalo tša mošomiši',
 
-'disambiguations' => "Matlakala a ''Disambiguation''",
-'disambiguationspage' => 'Template:"disambig"',
-
 'doubleredirects' => "Di''redirect'' goya go ''redirect''",
 
 'brokenredirects' => "''redirect'' tša go robega",
@@ -866,13 +859,10 @@ Matlakala ago ba [[Special:Watchlist|lenanong la gago la matlakala ditlhapetšo]
 # Special:ListUsers
 'listusers-submit' => 'Bontšha',
 
-# Special:Log/newusers
-'newuserlogpage' => '"Log" yago hlola mošumiši',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(Lenano la ditho)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Romela mošomiši yo molaetša',
 'emailpage' => 'Romela email go mošomiši',
 'noemailtitle' => 'Gago email atrese',
@@ -906,13 +896,11 @@ Ga eba o nyaka go hloša letlaka le go lenano la ditlhapetšo tša gago, šomiš
 'unwatching' => 'Tlhapetšo eya tlošwa ...',
 
 'enotif_reset' => 'Swaya matlakala kamoka awe oa etetšego',
-'enotif_newpagetext' => 'Le, ke letlakala le lempsha.',
 'enotif_impersonal_salutation' => '{{SITENAME}} mošumiši',
-'changed' => 'fetotšwe',
-'created' => 'tlhodilwe',
-'enotif_subject' => '{{SITENAME}} letkalala $PAGETITLE le $CHANGEDORCREATED ke $PAGEEDITOR',
 'enotif_lastvisited' => 'Lebelela  $1 go bona diphetogo ka moka gotloga ge go tsena la mafelelo.',
 'enotif_lastdiff' => 'Bona $1 go nyakorela phetogo ye.',
+'created' => 'tlhodilwe',
+'changed' => 'fetotšwe',
 
 # Delete
 'deletepage' => 'Phumula letlakala',
@@ -1040,7 +1028,6 @@ Seemo sa go lota ga letlakala '''$1''':",
 'unblocklogentry' => 'Gago thibelo $1',
 'block-log-flags-nocreate' => 'Go hloma tšhupaleloko gago dumelege',
 'block-log-flags-noemail' => 'e-mail e thibilwe',
-'proxyblocksuccess' => 'Phetilwe.',
 
 # Move page
 'move-page-legend' => 'Huduša letlakala',
@@ -1214,7 +1201,7 @@ letlakala la seswantšho ge tafola ya metadata e bulwa. Tše dingwe tša di ''fi
 * gpslongitude
 * gpsaltitude",
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Bophara',
 'exif-imagelength' => 'Botelele',
 'exif-artist' => 'Mongwadi',

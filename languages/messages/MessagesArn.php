@@ -110,7 +110,6 @@ $messages = array(
 'qbbrowse' => 'Kintun',
 'qbedit' => 'Pepikape',
 'qbpageoptions' => 'Tüfachi wülngiñ',
-'qbpageinfo' => 'Trokiñdungu',
 'qbmyoptions' => 'tañi nütramkawe',
 'qbspecialpages' => 'Kangelu',
 'faq' => 'Rumelfemkelu ramtun',
@@ -184,7 +183,7 @@ $messages = array(
 'jumptosearch' => 'kintun',
 'pool-errorunknown' => 'Kimnoelchi welulkan',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} ñi dungu',
 'aboutpage' => 'Project:Dungu',
 'copyrightpage' => '{{ns:project}}:Norkülelu ñi ngenngelu ñi deumakelu',
@@ -193,7 +192,6 @@ $messages = array(
 'disclaimers' => 'Tukuldungun ñi pin ley',
 'disclaimerpage' => 'Project:Katrütuwün ñi llowdüngun',
 'edithelp' => 'Kellü wirin',
-'edithelppage' => 'Help:Chum wiringekey pakina',
 'helppage' => 'Help:Trokiñdungu',
 'mainpage' => 'Ñidol Wülngiñ',
 'mainpage-description' => 'Ñidol Wülngiñ',
@@ -408,7 +406,6 @@ Rulpakünuy feychi kangelkülelu dungu.",
 'viewprevnext' => 'Pen ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-exists' => "'''Müley kiñe wülngiñ «[[:$1]]» pingelu feychi wiki mew'''",
 'searchmenu-new' => "'''¡Llitun pakina «[[:$1]]» tüfachi wiki mew!'''",
-'searchhelp-url' => 'Help:Trokiñdungu',
 'searchprofile-articles' => 'Trokiñdungu wülngiñ',
 'searchprofile-project' => 'Kellu wülngiñ ka Deumandungu wülngiñ',
 'searchprofile-images' => 'Fill dungu (adentun, dungun, fidew)',
@@ -475,8 +472,8 @@ Rulpakünuy feychi kangelkülelu dungu.",
 'right-browsearchive' => 'kintun pakina ñamümüngelu',
 'right-undelete' => 'Wüñoñamümün kiñe pakina',
 
-# User rights log
-'rightsnone' => 'chemnorume',
+# Special:Log/newusers
+'newuserlogpage' => 'We kellufe ñi wirintukun',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'chillkatun tüfachi pakina',
@@ -523,7 +520,6 @@ Rulpakünuy feychi kangelkülelu dungu.",
 'recentchangeslinked' => 'Koneltuyelelu kalekünulu wirin',
 'recentchangeslinked-toolbox' => 'Koneltuyelelu kalekünulu wirin',
 'recentchangeslinked-title' => 'Koneltuyelelu kalekünun tuwküleyelu "$1"',
-'recentchangeslinked-noresult' => 'Nülkükawlelu wülngiñ kalekünulay.',
 'recentchangeslinked-summary' => "Tüfachi wif niey pu wülngiñ kalekünulu ka nülkükawlelu kiñe feypingechi wülngiñ (kam nülkükawlelu feypingechi trokiñ).
 [[Special:Watchlist|Tami llaytun wif]] ñi pu wülngiñ '''kurükünuley'''.",
 'recentchangeslinked-page' => 'Wülngiñ ñi üy:',
@@ -586,8 +582,6 @@ Fey ñi chumngen mülelu ($2 fey ñi chumngen wülngiñ) pengeli tüfa mew.',
 'statistics' => 'Chuntelen',
 'statistics-pages' => 'Pakina',
 
-'disambiguationspage' => 'Template:Kiñeduamngelu dungu',
-
 'brokenredirects-edit' => 'pepikan',
 'brokenredirects-delete' => 'ñamümün',
 
@@ -634,13 +628,10 @@ Fey ñi chumngen mülelu ($2 fey ñi chumngen wülngiñ) pengeli tüfa mew.',
 # Special:ListUsers
 'listusers-submit' => 'Pengelün',
 
-# Special:Log/newusers
-'newuserlogpage' => 'We kellufe ñi wirintukun',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(koneltulu kellufe ñi wif)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Amulün werküwe tüfachi kellufe',
 'emailsubject' => 'Dungu',
 'emailmessage' => 'Dungu',
@@ -664,7 +655,6 @@ Fey ñi chumngen mülelu ($2 fey ñi chumngen wülngiñ) pengeli tüfa mew.',
 'watching' => 'Llaytumekey...',
 'unwatching' => 'Llaytumekewelay...',
 
-'enotif_newpagetext' => 'Tüfachi ta we pakina',
 'enotif_impersonal_salutation' => '{{SITENAME}} kellufe',
 'created' => 'Llituy',
 
@@ -762,7 +752,6 @@ Fey ñi chumngen mülelu ($2 fey ñi chumngen wülngiñ) pengeli tüfa mew.',
 'blocklogentry' => 'Katrüntukufi [[$1]] $2 antü/ora mew, $3',
 'block-log-flags-nocreate' => 'Pepi dewmangelay konün',
 'block-log-flags-hiddenname' => 'Üy kellufe ellkan',
-'proxyblocksuccess' => 'Dewmangey.',
 
 # Move page
 'move-page' => 'Nengümün $1',
@@ -893,7 +882,7 @@ Ka dungu ellkangeay wünedullin reke.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-artist' => 'Che llitun mew',
 'exif-exposuretime-format' => '$1 sek ($2)',
 
@@ -976,5 +965,8 @@ Ka dungu ellkangeay wünedullin reke.
 
 # HTML forms
 'htmlform-selectorother-other' => 'Kakelu',
+
+# New logging system
+'rightsnone' => 'chemnorume',
 
 );

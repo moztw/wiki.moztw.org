@@ -32,26 +32,12 @@
  */
 class ApiUnblock extends ApiBase {
 
-	public function __construct( $main, $action ) {
-		parent::__construct( $main, $action );
-	}
-
 	/**
 	 * Unblocks the specified user or provides the reason the unblock failed.
 	 */
 	public function execute() {
 		$user = $this->getUser();
 		$params = $this->extractRequestParams();
-
-		if ( $params['gettoken'] ) {
-			// If we're in JSON callback mode, no tokens can be obtained
-			if ( !is_null( $this->getMain()->getRequest()->getVal( 'callback' ) ) ) {
-				$this->dieUsage( 'Cannot get token when using a callback', 'aborted' );
-			}
-			$res['unblocktoken'] = $user->getEditToken();
-			$this->getResult()->addValue( null, $this->getModuleName(), $res );
-			return;
-		}
 
 		if ( is_null( $params['id'] ) && is_null( $params['user'] ) ) {
 			$this->dieUsageMsg( 'unblock-notarget' );
@@ -104,10 +90,6 @@ class ApiUnblock extends ApiBase {
 			),
 			'user' => null,
 			'token' => null,
-			'gettoken' => array(
-				ApiBase::PARAM_DFLT => false,
-				ApiBase::PARAM_DEPRECATED => true,
-			),
 			'reason' => '',
 		);
 	}
@@ -118,7 +100,6 @@ class ApiUnblock extends ApiBase {
 			'id' => "ID of the block you want to unblock (obtained through list=blocks). Cannot be used together with {$p}user",
 			'user' => "Username, IP address or IP range you want to unblock. Cannot be used together with {$p}id",
 			'token' => "An unblock token previously obtained through prop=info",
-			'gettoken' => 'If set, an unblock token will be returned, and no other action will be taken',
 			'reason' => 'Reason for unblock',
 		);
 	}
@@ -126,10 +107,6 @@ class ApiUnblock extends ApiBase {
 	public function getResultProperties() {
 		return array(
 			'' => array(
-				'unblocktoken' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
 				'id' => array(
 					ApiBase::PROP_TYPE => 'integer',
 					ApiBase::PROP_NULLABLE => true
@@ -181,9 +158,5 @@ class ApiUnblock extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Block';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

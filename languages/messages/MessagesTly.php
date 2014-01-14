@@ -71,7 +71,6 @@ $magicWords = array(
 	'notoc'                     => array( '0', '__БЕМЫНДӘРИҸОТ__', '__NOTOC__' ),
 	'forcetoc'                  => array( '0', '__МӘҸБУРИЈӘ_МЫНДӘРИҸОТ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__МЫНДӘРИҸОТ__', '__TOC__' ),
-	'noheader'                  => array( '0', '__БЕСӘРЛОВҺӘ__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'ЕСӘТНӘ_МАНГ', 'ЕСӘТНӘ_МАНГ_2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'ЕСӘТНӘ_МАНГ_1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'ЕСӘТНӘ_МАНГИ_НОМ', 'CURRENTMONTHNAME' ),
@@ -253,7 +252,7 @@ $messages = array(
 'newwindow' => '(нујә пенҹәдә окардеј)',
 'cancel' => 'Ләғв кардеј',
 'moredotdotdot' => 'Веј...',
-'mypage' => 'Чымы сәһифә',
+'mypage' => 'Сәһифә',
 'mytalk' => 'Мызокирон',
 'anontalk' => 'Бо ын IP-унвони мызокирә',
 'navigation' => 'Navigasiyə',
@@ -264,7 +263,6 @@ $messages = array(
 'qbbrowse' => 'Дијә кардеј',
 'qbedit' => 'Сәрост кардеј',
 'qbpageoptions' => 'Ым сәһифә',
-'qbpageinfo' => 'Мәзмун.',
 'qbmyoptions' => 'Чымы сәһифон',
 'qbspecialpages' => 'Хысусијә сәһифон',
 'faq' => 'РАП',
@@ -342,7 +340,7 @@ $messages = array(
 'pool-timeout' => 'Че блоки чәш кардә вахт сәбе.',
 'pool-errorunknown' => 'Номәлумә сәһв',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Təsvir {{SITENAME}}',
 'aboutpage' => 'Project: Тәсвир',
 'copyrightpage' => '{{ns:project}}:Мыәллифә һуғуғ',
@@ -351,7 +349,6 @@ $messages = array(
 'disclaimers' => 'Çe məsuliyyətiku imtino.',
 'disclaimerpage' => 'Project:Дејни бә гиј ныгәтеј',
 'edithelp' => 'Арајиш бо редактә кардеј',
-'edithelppage' => 'Help:Арајиш бо сәрост кардеј',
 'helppage' => 'Help:Мындәриҹот',
 'mainpage' => 'Əsosə səhifə',
 'mainpage-description' => 'Әсосә сәһифә',
@@ -396,7 +393,7 @@ $messages = array(
 'nstab-project' => 'Нахшә бәрәдә',
 'nstab-image' => 'Фајл',
 'nstab-template' => 'Ғәлиб',
-'nstab-category' => 'Категоријә',
+'nstab-category' => 'Тиспир',
 
 # General errors
 'error' => 'Сәһв',
@@ -566,6 +563,10 @@ $messages = array(
 'revdel-restore-deleted' => 'Рәдд кардә быә рәвојәтон',
 'revdel-restore-visible' => 'Чијә рәвојәтон',
 'pagehist' => 'Сәһифә тарых',
+'revdelete-reasonotherlist' => 'Ҹо сәбәб',
+
+# History merging
+'mergehistory-reason' => 'Сәбәб:',
 
 # Merge log
 'revertmerge' => 'Бахш кардеј',
@@ -586,6 +587,7 @@ $messages = array(
 'nextn-title' => 'Думотоно шә $1 {{PLURAL:$1|нывыштәј|нывыштәјон}}',
 'shown-title' => 'Нишо дој $1 {{PLURAL:$1|нывыштәј|нывыштәјон}} сәһифәдә',
 'viewprevnext' => 'Дијә кардеј ($1 {{int:pipe-separator}} $2) ($3)',
+'searchmenu-legend' => 'Бо нәве кукон',
 'searchmenu-exists' => "'''Бы вики-нәхшәдә һесте сәһифә «[[:$1]]»'''",
 'searchmenu-new' => "'''Сәһифә офәјеј «[[:$1]]» бә ым вики-нахшәдә!'''",
 'searchprofile-articles' => 'Әсосә сәһифон',
@@ -603,6 +605,7 @@ $messages = array(
 'search-redirect' => '(Унвони дәгиш кардеј  $1)',
 'search-section' => '(семонә $1)',
 'search-suggest' => 'Еһтимол шымә нәзәрәдә ым гәтејдәбијон: $1',
+'search-interwiki-more' => '(һәнијән)',
 'searchrelated' => 'ангыл кардә быә',
 'searchall' => 'Һәммәј',
 'showingresultsheader' => "{{PLURAL:$5|Нәтиҹә'''$1''' из '''$3'''|Нәтиҹон '''$1 — $2''' че '''$3'''}} бо '''$4'''",
@@ -630,8 +633,8 @@ $messages = array(
 'prefs-files' => 'Фајлон',
 'prefs-custom-css' => 'Хысуси CSS',
 'youremail' => 'E-номә:',
-'username' => 'Иштирокәкә ном:',
-'uid' => 'Иштирокәкә ID:',
+'username' => '{{GENDER:$1|Иштирокәкә ном}}:',
+'uid' => '{{GENDER:$1|Иштирокәкә}} ID:',
 'yourrealname' => 'Шымә әсыл ном:',
 'yourlanguage' => 'Зывон:',
 'email' => 'E-номә',
@@ -643,6 +646,9 @@ $messages = array(
 
 # Groups
 'group-user' => 'Иштирокәкон',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Иштирокәкон ғеидијоти журнал',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'Ым сәһифә сәрост кардеј',
@@ -683,7 +689,6 @@ $messages = array(
 'recentchangeslinked' => 'Ангыл кардә быә дәгишон',
 'recentchangeslinked-toolbox' => 'Ангыл кардә быә дәгишон',
 'recentchangeslinked-title' => 'Ангыл кардә быә дәгишон бо "$1"',
-'recentchangeslinked-noresult' => 'Нишо доә быә мыддәтәдә, ангыл кардә быә сәһифонәдә дәгишон бәнин.',
 'recentchangeslinked-summary' => "Бә ым сәһифонәдә охонә дәгишон сијоһије, бә кон сәһифон сәбон вардә ын сәһифә (јаанки дахыл кардә быән бә нишо доә быә категоријә).
 [[Special:Watchlist|Шымә ноғо доә сијоһиәдә]] быә сәһифон, де '''ғалинә''' шрифти нишо доә быән.",
 'recentchangeslinked-page' => 'Сәһифә ном:',
@@ -737,8 +742,6 @@ $messages = array(
 # Statistics
 'statistics' => 'Статистика',
 
-'disambiguationspage' => 'Template:дәгиг кардеј',
-
 # Miscellaneous special pages
 'nbytes' => '$1 {{PLURAL:$1|бајт|бајтон}}',
 'nmembers' => '$1 {{PLURAL:$1|узв|узвон}}',
@@ -769,17 +772,14 @@ $messages = array(
 # Special:LinkSearch
 'linksearch-line' => '$2-ку сәбон вардә бә $1',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Иштирокәкон ғеидијоти журнал',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(иштирокәкон сијоһи)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Номә бә иштирокәкә',
 
 # Watchlist
-'watchlist' => 'Чымы ноғо доә сијоһи',
+'watchlist' => 'Ноғо доә сијоһи',
 'mywatchlist' => 'Чәшәвәно кардә сијоһи',
 'watchlistfor2' => 'Бо $1 $2',
 'watch' => 'Думотоно егыниеј',
@@ -815,7 +815,7 @@ $messages = array(
 'blanknamespace' => '(Әсос)',
 
 # Contributions
-'contributions' => 'Иштирокәкә гәнҹ',
+'contributions' => '{{GENDER:$1|Иштирокәкә}} гәнҹ',
 'contributions-title' => 'Иштирокәкә гәнҹ $1',
 'mycontris' => 'Гәнҹ',
 'contribsub2' => 'Гәнҹ $1 ($2)',
@@ -988,7 +988,7 @@ $messages = array(
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Һовужи',
 'exif-imagelength' => 'Былынди',
 'exif-source' => 'Сәвон',
@@ -1024,10 +1024,6 @@ $messages = array(
 'version' => 'Рәвојәт',
 'version-specialpages' => 'Хысусијә сәһифон',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath-page' => 'Фајл:',
-'filepath-submit' => 'Давард',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Нәве',

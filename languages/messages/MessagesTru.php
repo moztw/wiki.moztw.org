@@ -158,7 +158,7 @@ $messages = array(
 'jumptosearch' => 'Kruxyo',
 'pool-errorunknown' => 'Fawdo nuxroyo',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '3al {{SITENAME}}',
 'aboutpage' => 'Project: 3al',
 'copyrightpage' => '{{ns:project}}:Ḥaqat duKaṭowo',
@@ -167,7 +167,6 @@ $messages = array(
 'disclaimers' => 'Disclaimers',
 'disclaimerpage' => 'Project: Disclaimer gawonoyo',
 'edithelp' => 'Editing help',
-'edithelppage' => 'Help:Mşaḥlaf',
 'helppage' => 'Help: Ḥbişoṭo',
 'mainpage' => 'Faṭo rişoyto',
 'mainpage-description' => 'Faṭo rişoyto',
@@ -400,7 +399,6 @@ Legend: '''({{int:cur}})''' = difference with latest revision, '''({{int:last}})
 'searchmenu-legend' => '3ayar duKruxyo',
 'searchmenu-exists' => "'''Kito Faṭo herke Işma \"[[:\$1]]\"yo'''",
 'searchmenu-new' => 'Kṭaw iFaṭaṭe "[[:$1]]" buWiki.',
-'searchhelp-url' => 'Help: Ḥbişoṭo',
 'searchprofile-articles' => 'Faṭoṭe daḤbişoṭo',
 'searchprofile-project' => 'Faṭoṭe du3udrono u daProjat',
 'searchprofile-images' => 'Multimediya',
@@ -457,12 +455,15 @@ Legend: '''({{int:cur}})''' = difference with latest revision, '''({{int:last}})
 'prefs-help-email-others' => 'Kibux mijğolat 3am Hadome ğer biFaṭo duMamlo u luglozam dumat Işmux.',
 'prefs-signature' => 'Imḍa',
 
-# User preference: e-mail validation using jQuery
+# User preference: email validation using jQuery
 'email-address-validity-valid' => 'uEmail-Adresayḍux m³adlo yo.',
 
 # Groups
 'group-user' => 'Hadome',
 'group-all' => '(kulle)',
+
+# Special:Log/newusers
+'newuserlogpage' => 'User creation log',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'Mşaḥlaf iFaṭaṭe',
@@ -501,7 +502,6 @@ Legend: '''({{int:cur}})''' = difference with latest revision, '''({{int:last}})
 'recentchangeslinked' => 'Şuḥlofe bFaṭoṭe masre',
 'recentchangeslinked-toolbox' => 'Şuḥlofe bFaṭoṭe masre',
 'recentchangeslinked-title' => 'Şuḥlofe bFaṭoṭe dkıtne masre b$1',
-'recentchangeslinked-noresult' => 'No changes on linked pages during the given period.',
 'recentchangeslinked-summary' => "This is a list of changes made recently to pages linked from a specified page (or to members of a specified category).
 Pages on [[Special:Watchlist|your watchlist]] are '''bold'''.",
 'recentchangeslinked-page' => 'Işmo diFaṭo',
@@ -539,8 +539,6 @@ The description on its [$2 file description page] there is shown below.',
 
 # Statistics
 'statistics' => 'Mardonwoṭo',
-
-'disambiguationspage' => 'Template:disambig',
 
 'brokenredirects-edit' => 'mşaḥlaf',
 'brokenredirects-delete' => 'slag',
@@ -585,16 +583,13 @@ The description on its [$2 file description page] there is shown below.',
 # Special:ListUsers
 'listusers-submit' => 'Maḥway',
 
-# Special:Log/newusers
-'newuserlogpage' => 'User creation log',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Gudo',
 'listgrouprights-rights' => 'Ḥaqat',
 'listgrouprights-helppage' => 'Help: Ḥaqat diGudo',
 'listgrouprights-members' => '(Lista daHadome)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Kṭaw Email luHadomano.',
 'emailusername' => 'Işme duHadomo:',
 'emailfrom' => 'Men:',
@@ -802,7 +797,7 @@ Others will be hidden by default.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-writer' => 'Kaṭowo',
 'exif-languagecode' => 'Leşono',
 'exif-cameraownername' => 'uMoro diQamera',
@@ -823,9 +818,6 @@ Others will be hidden by default.
 
 # Core parser functions
 'duplicate-defaultsort' => '\'\'\'Warning:\'\'\' Default sort key "$2" overrides earlier default sort key "$1".',
-
-# Special:FilePath
-'filepath-submit' => 'Zux',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Krax',

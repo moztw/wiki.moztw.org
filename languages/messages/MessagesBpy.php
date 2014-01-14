@@ -13,19 +13,6 @@
 
 $fallback = 'bn';
 
-$digitTransformTable = array(
-	'0' => '০',
-	'1' => '১',
-	'2' => '২',
-	'3' => '৩',
-	'4' => '৪',
-	'5' => '৫',
-	'6' => '৬',
-	'7' => '৭',
-	'8' => '৮',
-	'9' => '৯'
-);
-
 $namespaceNames = array(
 	NS_MEDIA            => 'মিডিয়া',
 	NS_SPECIAL          => 'বিশেষ',
@@ -43,6 +30,19 @@ $namespaceNames = array(
 	NS_HELP_TALK        => 'পাংলাকর_য়্যারী',
 	NS_CATEGORY         => 'থাক',
 	NS_CATEGORY_TALK    => 'থাকর_য়্যারী',
+);
+
+$digitTransformTable = array(
+	'0' => '০',
+	'1' => '১',
+	'2' => '২',
+	'3' => '৩',
+	'4' => '৪',
+	'5' => '৫',
+	'6' => '৬',
+	'7' => '৭',
+	'8' => '৮',
+	'9' => '৯'
 );
 
 $messages = array(
@@ -76,9 +76,6 @@ $messages = array(
 'tog-shownumberswatching' => 'চাকুরার সংখ্যাহান দেহাদে',
 'tog-oldsig' => 'আগেত্তর আসে স্বাক্ষররহান:',
 'tog-fancysig' => 'স্বাক্ষরহানরে উইকিটেক্সট বুলিয়া নিংকর (নিজেত্ত লিঙ্ক নেইকরিয়া)',
-'tog-externaleditor' => 'অকরাতই বারেদের সম্পাদক ব্যবহার কর (হুদ্দা দক্ষ ব্যবহারকারীরকা, কম্পিউটারর মা বিশেষ সেটিংস দরকার। [//www.mediawiki.org/wiki/Manual:External_editors বিস্তারিত পৌ।])',
-'tog-externaldiff' => 'অকরাতই বারেদের সম্পাদক ব্যবহার কর (হুদ্দা দক্ষ ব্যবহারকারীরকা, কম্পিউটারর মা বিশেষ সেটিংস দরকার। [//www.mediawiki.org/wiki/Manual:External_editors বিস্তারিত পৌ।])',
-'tog-showjumplinks' => '"চঙদে" বুলতারা মিলাপর য়্যাথাঙদে',
 'tog-uselivepreview' => 'লগে লগে মিল্লেঙ আহান দেহাদে (জাভাস্ক্রিপ্ট) (লইনাসে)',
 'tog-forceeditsummary' => 'খালি পতা সারমর্ম হমিলে মরে হারপুৱাদে',
 'tog-watchlisthideown' => 'মি পতাসু অতা গুর মর তালাবিত্ত',
@@ -91,6 +88,7 @@ $messages = array(
 'tog-diffonly' => 'ফারাকর তলে পাতাহানর বিষয়বস্তু নাদেখাদি',
 'tog-showhiddencats' => 'আরুমে আসে থাকহানি ফংকর',
 'tog-norollbackdiff' => 'রোলব্যাকর পিসে ফারাক না দেখাদি',
+'tog-useeditwarning' => 'পতানির সময় ইতু নাকরিয়া বেলিয়া গেলেগা মরে সিঙকরেদিস',
 
 'underline-always' => 'হারি সময়',
 'underline-never' => 'সুপৌনা',
@@ -190,7 +188,6 @@ $messages = array(
 'qbbrowse' => 'বুলিয়া চা',
 'qbedit' => 'পতানি',
 'qbpageoptions' => 'পাতা এহানর সারুক',
-'qbpageinfo' => 'পাতা এহানর পৌ',
 'qbmyoptions' => 'মর পছন',
 'qbspecialpages' => 'বিশেষ পাতাহানি',
 'faq' => 'আঙলাক',
@@ -277,7 +274,7 @@ $1',
 'pool-queuefull' => 'পুলর লাইনহান বুঝেসে',
 'pool-errorunknown' => 'হারনাপাসি লালহান',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}র বারে',
 'aboutpage' => 'Project:বারে',
 'copyright' => '$1-র মাতুঙে এহানর মেথেলহানি পানা একরের।',
@@ -287,7 +284,6 @@ $1',
 'disclaimers' => 'দাবি বেলানি',
 'disclaimerpage' => 'Project:ইজ্জু দাবি বেলানি',
 'edithelp' => 'পতানি পাংলাক',
-'edithelppage' => 'Help:কিসাদে_পাতা_আহান_পতানি',
 'helppage' => 'Help:পাংলাক',
 'mainpage' => 'পয়লা পাতা',
 'mainpage-description' => 'পয়লা পাতা',
@@ -360,17 +356,6 @@ $1',
 # General errors
 'error' => 'লালুইসে',
 'databaseerror' => 'ডাটাবেসর লাল',
-'dberrortext' => 'ডাটাবেজ কোয়েরি সিন্ট্যাক্সর মা লালুইসে।
-সফটওয়্যারে কোন বাগর কা এহান ইতে পারে।
-লমিলগা ডাটাবেজ কোয়েরিহান এসারে আসিল:
-<blockquote><tt>$1</tt></blockquote>
-"<tt>$2</tt>" ফাংশনর ভিতরেত্ত।
-ডাটাবেজ লাল হান দিল: "<tt>$3: $4</tt>"।',
-'dberrortextcl' => 'ডাটাবেজ কোয়েরি সিন্ট্যাক্সর মা লালুইসে।
-লমিলগা ডাটাবেজ কোয়েরিহান এসারে আসিল:
-"$1"
-"$2" ফাংশনর ভিতরেত্ত।
-ডাটাবেজ লাল হান দিল: "$3: $4"।',
 'laggedslavemode' => "'''সিঙুইস:''' পাতা এহানাত হাদি এহানার পতানি নেই।",
 'readonly' => 'ডাটাবেস গাথি লাগিসে',
 'enterlockreason' => 'তালা দেনার কারণহান মাত, লগে কুম্পাগা মুকিতেই অহান মাত',
@@ -417,7 +402,6 @@ $1',
 'viewsourcetext' => 'পাতা এহানর উত্স চা বারো কপি করে পারর:',
 'protectedinterface' => 'পাতা এহানর মেথেল উইকি সফটওয়্যারর ইন্টারফেসর পৌহান দের, অহানে এহানরে ইতু করিয়া থনা অসে এবিউসেত্ত ঙাক্করানির কাজে।',
 'editinginterface' => "'''সিঙুইস:''' তি এমন পাতা আহান পতার যেহান সফটওয়্যারর কা ইন্টারফেস টেক্সট দের হানে। পাতা এহার পতানিহান আতাকুরার ইন্টারফেস সিল পরতইগা, যেহান আর আ আতাকুরাইদেখতাই। অনুবাদর কা [//translatewiki.net/wiki/Main_Page?setlang=bpy translatewiki.net] ব্যবহার করানির বারে খালকর। এহান মিডিয়াউইকির স্থানীয়করণ প্রকল্পহান।",
-'sqlhidden' => '(এস কিউ এল কোয়েরি গুরিয়া আসে)',
 'cascadeprotected' => 'পাতা এহান পতানি থা নেই, কিদিয়া বুল্লে {{PLURAL:$1|হান পাতা|হান পাতার}}  মা তিলুইসে, যে পাতা/পাতাহানিরতা cascading অপশন অহান লয়া সুরক্ষিত অসে।
 $2',
 'namespaceprotected' => "'''$1''' নাঙর থাকে কোন পাতা পতানিরকা তরতা য়্যাথাং নেই।",
@@ -434,15 +418,12 @@ $2',
 # Login and logout pages
 'logouttext' => "'''তি খানি আগে তর একাউন্টহাত্ত নিকুরিসত।'''
 
-এ পরিস্থিতিত তি বেনাঙল {{SITENAME}} ব্যবহার করানি পারর, নাইলে আরাক নাঙল [[Special:UserLogin|বারো হমানি]] পারর।
+এ পরিস্থিতিত তি বেনাঙল {{SITENAME}} ব্যবহার করানি পারর, নাইলে আরাক নাঙল <span class='plainlinks'>[$1 বারো হমানি]</span> পারর।
 খিয়াল থ, কোন কোন পাতা তি আগর অংতাত আসত বুলিয়া দেখা দিতে পারে। অসারে ইলে তি ব্রাওজারর ক্যাশ সেঙকরে বেলা (clear browser cache)।",
-'welcomecreation' => '==সম্ভাষা, $1! ==
-তর একাউন্টহান হঙিল। তর [[Special:Preferences|{{SITENAME}} পছনহান]] সিলানি না পাহুরিস।',
 'yourname' => 'আতাকুরার নাংহান (Username)',
 'yourpassword' => 'খন্তাচাবিগ (password)',
 'yourpasswordagain' => 'খন্তাচাবিগ (password) আরাকমু ইকর',
 'remembermypassword' => 'আহার গজে সেশনর কা খন্তাচাবি মনে থ(সর্বোচ্চ $1 {{PLURAL:$1|দিনর|দিনর}} কা)',
-'securelogin-stick-https' => 'লগইন করানির পিছে এইচটিটিপিএস-র লগে সংযোগ থ',
 'yourdomainname' => 'তর ডোমেইনগ',
 'externaldberror' => 'ডাটেবেজর মা বেসেপ আহান ইসে নাইলে তরতা বারেদের একাউন্ট বদালানির য়্যাথাং নেই।',
 'login' => 'হমানি',
@@ -538,7 +519,7 @@ $2',
 'newpassword' => 'নুৱা খন্তাচাবি:',
 'retypenew' => 'নুৱা খন্তাচাবি বারো টাইপ কর:',
 'resetpass_submit' => 'খন্তাচাবি লেপকর বারো লগ-ইন কর',
-'resetpass_success' => 'তর খন্তা চাবি হবাই বালাই পতিল। তি এপাগা ভিতরে হমারগা...',
+'changepassword-success' => 'তর খন্তা চাবি হবাই বালাই পতিল। তি এপাগা ভিতরে হমারগা...',
 'resetpass_forbidden' => 'খন্তাচাবিগ সিলকরানি নুৱারলাঙ',
 'resetpass-no-info' => 'পাতা এহানাত হমিতে গেলেগা তি যেসারেউ লগইন করানি লাগতই।',
 'resetpass-submit-loggedin' => 'খন্তাচাবি সিলকর',
@@ -696,7 +677,6 @@ $2',
 'template-protected' => '(লুকরিসি)',
 'template-semiprotected' => '(আধা-কাচা লুকরিসি)',
 'hiddencategories' => 'এ পাতা এহান যে {{PLURAL:$1|১ নাফঙিসে বিষয়থাকর|$1 নাফঙিসে বিষয়থাকহানির}} সদস্য:',
-'nocreatetitle' => 'পাতা হঙকরানি নিয়ন্ত্রণ করানি অসে',
 'nocreatetext' => '{{SITENAME}}-এরে নুৱা পাতা এহানর পতানিহানাত থিতপা আসে।
 তি আলথকে গিয়া আসে হের পাতা সিলকরানি পারর, নাইলে [[Special:UserLogin|অ্যাকাউন্টহানাত হমানি বারো অ্যাকাউন্ট খুলে পারর]]।',
 'nocreate-loggedin' => 'তরতা নুৱা পাতা হঙকরানির য়্যাথাং নেই।',
@@ -715,6 +695,8 @@ $2',
 'edit-conflict' => 'পতানিত বেসেপ ইসে',
 'edit-already-exists' => 'নুৱা পাতাহান হঙকরানি নাইল।
 পাতাএহান আগেত্তর আসে।',
+'editwarning-warning' => 'পাতা এহান বেলিয়া গেলেগা তি সিলকরিসত অতা মাঙুইতে পারে।
+তি লগইন করিসতগ ইলে, এরে সিঙকরানির পৌ এহান তর "পতানি" থাকেত্ত আরুম করানি পারর।',
 
 # Parser/template warnings
 'post-expand-template-inclusion-warning' => "'''সিঙুইস:''' টেমপ্লেটের ইনক্লুড অংতাহান ডাঙর অসে। টেমপ্লেট কতহান তিলকরানি নুওয়ারতে পারে।",
@@ -844,7 +826,6 @@ $2',
 'searchmenu-legend' => 'বিসারানির অপশনহানি',
 'searchmenu-exists' => "'''উইকি এহাত \"[[:\$1]]\" নাঙে পাতা আহান আসে'''",
 'searchmenu-new' => "'''\"[[:\$1]]\" নাঙর পাতাহান এরে উইকিত হঙকর!'''",
-'searchhelp-url' => 'Help:পাংলাক',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|এরে prefix এতাল আসে পাতাহানি]]',
 'searchprofile-articles' => 'কন্টেন্টর পাতাহানি',
 'searchprofile-project' => 'পাঙলাক বারো প্রকল্পর পাতা',
@@ -883,14 +864,6 @@ $2',
 'powersearch-toggleall' => 'হাব্বি',
 'powersearch-togglenone' => 'কিত্তাউ নেই',
 'search-external' => 'বারেদে বিসারা',
-
-# Quickbar
-'qbsettings' => 'কুইকবার',
-'qbsettings-none' => 'কিত্তাউ নেই',
-'qbsettings-fixedleft' => 'লেপ্পা বিঙ',
-'qbsettings-fixedright' => 'লেপ্পা বাত',
-'qbsettings-floatingleft' => 'বাহের বিঙ',
-'qbsettings-floatingright' => 'বাহের বাত',
 
 # Preferences page
 'preferences' => 'পছনহানি',
@@ -967,9 +940,11 @@ $2',
 
 'grouppage-sysop' => '{{ns:project}}:প্রশাসকগি',
 
+# Special:Log/newusers
+'newuserlogpage' => 'আতাকুরা হঙসে লগহানি',
+
 # User rights log
 'rightslog' => 'আতাকুরার অধিকারর লগ',
-'rightsnone' => '(নেই)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'পাতা এহান পাকর',
@@ -1020,7 +995,6 @@ $2',
 'recentchangeslinked-feed' => 'সাকেই আসে পতা',
 'recentchangeslinked-toolbox' => 'সাকেই আসে পতা',
 'recentchangeslinked-title' => 'পতানিহান "$1"র লগে সর্ম্পক আসে',
-'recentchangeslinked-noresult' => 'দেনা অসে খেন্তামর ভিতরে পতাসিতা নেই।',
 'recentchangeslinked-summary' => "লেপকরা পাতা আহান (অথবা লেপকরা বিষয়শ্রেণী)ত্ত তিলসে এরে পাতা এহানর হাদি এহান পতাসি অহানর লাতঙ দেনা অইল। তর [[Special:Watchlist|তর চালাতঙ]]এ থসি পাতাহানি '''গাঢ়''' করিয়া দেহাদেনা অসে।",
 'recentchangeslinked-page' => 'পাতার নাঙ:',
 'recentchangeslinked-to' => 'দিয়াসি পাতাহানর বদালা মিলাপ আসে পাতাহানির পতানিহানি দেহাদে',
@@ -1140,9 +1114,6 @@ $2',
 'statistics-articles' => 'পাতার কন্টেনহানি',
 'statistics-pages' => 'পাতাহানি',
 
-'disambiguations' => 'সন্দই চুমকরের পাতাহানি',
-'disambiguationspage' => 'Template:সন্দই চুম',
-
 'doubleredirects' => 'আলথকে যানা দ্বিমাউ মাতের',
 
 'brokenredirects' => 'বারো-নির্দেশ কামনাকরের',
@@ -1235,9 +1206,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Special:ActiveUsers
 'activeusers-noresult' => 'আতাকুরা নাপেইলাং।',
 
-# Special:Log/newusers
-'newuserlogpage' => 'আতাকুরা হঙসে লগহানি',
-
 # Special:ListGroupRights
 'listgrouprights-key' => '* <span class="listgrouprights-granted">য়্যাথাং পাসে অধিকার</span>
 * <span class="listgrouprights-revoked">থেপকরানি অসে অধিকার</span>',
@@ -1245,7 +1213,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listgrouprights-rights' => 'অধিকারহানি',
 'listgrouprights-members' => '(সদস্যর পারেঙহানি)',
 
-# E-mail user
+# Email user
 'emailuser' => 'আতাকুরাগরে ইমেইল কর',
 'emailpage' => 'আতাকরেকুরাগরে ই-মেইল কর',
 'defemailsubject' => '{{SITENAME}} ই-মেইল',
@@ -1626,7 +1594,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'monthsall' => 'হাব্বি',
 'limitall' => 'হাব্বি',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'ই-মেইল ঠিকানাহান লেপকর',
 'confirmemail_send' => 'লেপকরেকুরা কোডগ দিয়াপেঠাদে',
 'confirmemail_sent' => 'লেপকরেকুরা ই-মেইলহান দিয়াপেঠা দিলাং।',
@@ -1681,11 +1649,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'version-software-product' => 'পণ্য',
 'version-software-version' => 'সংস্করণ',
 
-# Special:FilePath
-'filepath' => 'ফাইলর পথহান:',
-'filepath-page' => 'ফাইল:',
-'filepath-submit' => 'পথ',
-
 # Special:SpecialPages
 'specialpages' => 'বিশেষ পাতাহানি',
 'specialpages-group-login' => 'একাউন্টহাত হমানি/মিহানি',
@@ -1733,7 +1696,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # New logging system
 'revdelete-restricted' => 'ডান্ডিকরেকুরাগরাঙ সীমাবদ্ধতাহানি ফলা',
 'revdelete-unrestricted' => 'ডান্ডিকরেকুরাগরাঙ সীমাবদ্ধতাহানি নেইকর',
-'newuserlog-byemail' => 'ই-মেইলর মা পেঠাদিয়াসি পাসৱার্ডগ',
+'rightsnone' => '(নেই)',
 
 # Search suggestions
 'searchsuggest-search' => 'বিসারা',

@@ -88,7 +88,13 @@
 }
 
 .config-input-check {
-	margin-left: 10em;
+	margin-left: 3.7em;
+	margin-right: 2em;
+	margin-bottom: 0.25em;
+}
+
+.config-input-check input {
+	margin-left: -1em;
 }
 
 .error {
@@ -102,7 +108,6 @@
 .config-settings-block {
 	list-style-type: none;
 	list-style-image: none;
-	float: left;
 	margin: 0;
 	padding: 0;
 }

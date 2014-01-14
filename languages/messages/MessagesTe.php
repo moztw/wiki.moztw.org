@@ -12,6 +12,7 @@
  * @author Jprmvnvijay5
  * @author Kaganer
  * @author Kiranmayee
+ * @author Malkum
  * @author Meno25
  * @author Mpradeep
  * @author Praveen Illa
@@ -173,9 +174,6 @@ $messages = array(
 'tog-shownumberswatching' => 'వీక్షకుల సంఖ్యను చూపించు',
 'tog-oldsig' => 'ప్రస్తుత సంతకం:',
 'tog-fancysig' => 'సంతకాన్ని వికీపాఠ్యంగా తీసుకో (ఆటోమెటిక్‌ లింకు లేకుండా)',
-'tog-externaleditor' => 'మామూలుగా బయటి ఎడిటరును వాడు (నిపుణులకు మాత్రమే. మీ కంప్యూటర్లో ప్రత్యేక అమరికలు అవసరమవుతాయి. [//www.mediawiki.org/wiki/Manual:External_editors మరింత సమాచారం.])',
-'tog-externaldiff' => 'మార్పులను చూడటానికి బయటి సాఫ్టువేరును వాడు (నిపుణులకు మాత్రమే, మీ కంప్యూటర్లో ప్రత్యేక అమరికలు అవసరమవుతాయి. [//www.mediawiki.org/wiki/Manual:External_editors మరింత సమాచారం.])',
-'tog-showjumplinks' => '"ఇక్కడికి గెంతు" లింకులను చూపించు',
 'tog-uselivepreview' => 'రాస్తున్నదానిని ఎప్పటికప్పుడు సరిచూడండి (జావాస్క్రిప్టు) (పరీక్షాదశలో ఉంది)',
 'tog-forceeditsummary' => 'దిద్దుబాటు సారాంశం ఖాళీగా ఉంటే ఆ విషయాన్ని నాకు సూచించు',
 'tog-watchlisthideown' => 'నా మార్పులను వీక్షణా జాబితాలో చూపించొద్దు',
@@ -188,6 +186,7 @@ $messages = array(
 'tog-diffonly' => 'తేడాలను చూపిస్తున్నపుడు, కింద చూపించే పేజీలోని సమాచారాన్ని చూపించొద్దు',
 'tog-showhiddencats' => 'దాచిన వర్గాలను చూపించు',
 'tog-norollbackdiff' => 'రద్దు చేసాక తేడాలు చూపించవద్దు',
+'tog-useeditwarning' => 'ఏదైనా పేజీని నేను వదిలివెళ్తున్నప్పుడు దానిలో భద్రపరచని మార్పులు ఉంటే నన్ను హెచ్చరించు',
 
 'underline-always' => 'ఎల్లప్పుడూ',
 'underline-never' => 'ఎప్పటికీ వద్దు',
@@ -251,6 +250,18 @@ $messages = array(
 'oct' => 'అక్టో',
 'nov' => 'నవం',
 'dec' => 'డిసెం',
+'january-date' => 'జనవరి $1',
+'february-date' => 'ఫిబ్రవరి $1',
+'march-date' => 'మార్చి $1',
+'april-date' => 'ఏప్రిల్ $1',
+'may-date' => 'మే $1',
+'june-date' => 'జూన్ $1',
+'july-date' => 'జూలై $1',
+'august-date' => 'ఆగస్టు $1',
+'september-date' => 'సెప్టెంబర్ $1',
+'october-date' => 'అక్టోబర్ $1',
+'november-date' => 'నవంబర్ $1',
+'december-date' => 'డిసెంబర్ $1',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|వర్గం|వర్గాలు}}',
@@ -276,6 +287,7 @@ $messages = array(
 'newwindow' => '(కొత్త కిటికీలో వస్తుంది)',
 'cancel' => 'రద్దు',
 'moredotdotdot' => 'ఇంకా...',
+'morenotlisted' => 'ఈ జాబితా సంపూర్ణం కాదు.',
 'mypage' => 'పుట',
 'mytalk' => 'చర్చ',
 'anontalk' => 'ఈ ఐ.పి.కి సంబంధించిన చర్చ',
@@ -287,7 +299,6 @@ $messages = array(
 'qbbrowse' => 'విహరించు',
 'qbedit' => 'సవరించు',
 'qbpageoptions' => 'ఈ పేజీ',
-'qbpageinfo' => 'సందర్భం',
 'qbmyoptions' => 'నా పేజీలు',
 'qbspecialpages' => 'ప్రత్యేక పేజీలు',
 'faq' => 'తరచూ అడిగే ప్రశ్నలు',
@@ -342,7 +353,7 @@ $messages = array(
 'talkpage' => 'ఈ పేజీని చర్చించండి',
 'talkpagelinktext' => 'చర్చ',
 'specialpage' => 'ప్రత్యేక పేజీ',
-'personaltools' => 'తన పనిముట్లు',
+'personaltools' => 'వ్యక్తిగత పనిముట్లు',
 'postcomment' => 'కొత్త విభాగం',
 'articlepage' => 'విషయపు పేజీని చూడండి',
 'talk' => 'చర్చ',
@@ -374,7 +385,7 @@ $1',
 'pool-queuefull' => 'సమూహపు వరుస నిండుగా ఉంది',
 'pool-errorunknown' => 'గుర్తుతెలియని పొరపాటు',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} గురించి',
 'aboutpage' => 'Project:గురించి',
 'copyright' => 'విషయ సంగ్రహం $1  కి లోబడి లభ్యం.',
@@ -384,7 +395,6 @@ $1',
 'disclaimers' => 'అస్వీకారములు',
 'disclaimerpage' => 'Project:సాధారణ నిష్పూచీ',
 'edithelp' => 'దిద్దుబాటు సహాయం',
-'edithelppage' => 'Help:దిద్దుబాట్లు ఎలా చెయ్యాలి',
 'helppage' => 'Help:సూచిక',
 'mainpage' => 'మొదటి పేజీ',
 'mainpage-description' => 'తలపుట',
@@ -405,7 +415,7 @@ $1',
 'retrievedfrom' => '"$1" నుండి వెలికితీశారు',
 'youhavenewmessages' => 'మీకు $1 ఉన్నాయి ($2).',
 'newmessageslink' => 'కొత్త సందేశాలు',
-'newmessagesdifflink' => 'క్రితం సంచికతో గల తేడాలు',
+'newmessagesdifflink' => 'చివరి మార్పు',
 'youhavenewmessagesfromusers' => 'మీకు {{PLURAL:$3|మరో వాడుకరి|$3 వాడుకరుల}} నుండి $1 ($2).',
 'youhavenewmessagesmanyusers' => 'మీకు చాలా వాడుకరుల నుండి $1 ($2).',
 'newmessageslinkplural' => '{{PLURAL:$1|ఒక కొత్త సందేశం వచ్చింది|కొత్త సందేశాలు ఉన్నాయి}}',
@@ -461,17 +471,6 @@ $1',
 # General errors
 'error' => 'లోపం',
 'databaseerror' => 'డేటాబేసు లోపం',
-'dberrortext' => 'డేటాబేసుకు పంపిన క్వీరీలో ఒక తప్పు దొర్లింది.
-ఇది సాఫ్టువేరులోనే ఉన్న లోపం గావచ్చు.
-చివరి సారిగా డేటాబేసుకు పంపిన క్వీరీ ఇది:
-<blockquote><tt>$1</tt></blockquote>
-దీనిని "<tt>$2</tt>" అనే ఫంక్షను నుండి వచ్చింది.
-డేటాబేసు ఇచ్చిన లోప-సమాచారం "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'డేటాబేసుకు పంపిన క్వీరీలో ఒక తప్పు దొర్లింది.
-చివరి సారిగా డేటాబేసుకు పంపిన క్వీరీ ఇది:
-"$1"
-దీనిని "$2" అనే ఫంక్షను నుండి వచ్చింది.
-డేటాబేసు ఇచ్చిన లోప-సమాచారం "$3: $4".',
 'laggedslavemode' => 'హెచ్చరిక: పేజీలో ఇటీవల జరిగిన మార్పులు ఉండకపోవచ్చు.',
 'readonly' => 'డేటాబేసు లాక్‌చెయ్యబడింది',
 'enterlockreason' => 'డేటాబేసుకు వేయబోతున్న లాకుకు కారణం తెలుపండి, దానితోపాటే ఎంతసమయం తరువాత ఆ లాకు తీసేస్తారో కూడా తెలుపండి',
@@ -524,7 +523,6 @@ $1',
 'editinginterface' => "'''హెచ్చరిక''': సాఫ్టువేరుకు ఇంటరుఫేసు టెక్స్టును అందించే పేజీని మీరు సరిదిద్దుతున్నారు.
 ఈ పేజీలో చేసే మార్పుల వల్ల ఇతర వాడుకరులకు ఇంటరుఫేసు కనబడే విధానంలో తేడావస్తుంది.
 అనువాదాల కొరకైతే, [//translatewiki.net/wiki/Main_Page?setlang=te ట్రాన్స్‌లేట్ వికీ.నెట్], మీడియావికీ స్థానికీకరణ ప్రాజెక్టు, ని వాడండి.",
-'sqlhidden' => '(SQL క్విరీని చూపించటం లేదు)',
 'cascadeprotected' => 'కింది {{PLURAL:$1|పేజీని|పేజీలను}} కాస్కేడింగు ఆప్షనుతో చేసి సంరక్షించారు. ప్రస్తుత పేజీ, ఈ పేజీల్లో ఇంక్లూడు అయి ఉంది కాబట్టి, దిద్దుబాటు చేసే వీలు లేకుండా ఇది కూడా రక్షణలో ఉంది.
 $2',
 'namespaceprotected' => "'''$1''' నేంస్పేసులో మార్పులు చేయటానికి మీకు అనుమతి లేదు.",
@@ -542,17 +540,27 @@ $2',
 # Login and logout pages
 'logouttext' => "'''ఇప్పుడు మీరు నిష్క్రమించారు.'''
 
-మీరు {{SITENAME}}ని అజ్ఞాతంగా వాడుతూండొచ్చు, లేదా ఇదే వాడుకరిగా కానీ లేదా వేరే వాడుకరిగా కానీ [[Special:UserLogin|మళ్ళీ ప్రవేశించవచ్చు]].
+మీరు {{SITENAME}}ని అజ్ఞాతంగా వాడుతూండొచ్చు, లేదా ఇదే వాడుకరిగా కానీ లేదా వేరే వాడుకరిగా కానీ <span class='plainlinks'>[$1 మళ్ళీ ప్రవేశించవచ్చు]</span>.
 అయితే, మీ విహారిణిలోని కోశాన్ని శుభ్రపరిచే వరకు కొన్ని పేజీలు మీరింకా ప్రవేశించి ఉన్నట్లుగానే చూపించవచ్చని గమనించండి.",
-'welcomecreation' => '== స్వాగతం, $1! ==
-
-మీ ఖాతాని సృష్టించాం.
-మీ [[Special:Preferences|{{SITENAME}} అభిరుచులను]] మార్చుకోవడం మరువకండి.',
+'welcomeuser' => 'స్వాగతం, $1!',
+'welcomecreation-msg' => 'మీ ఖాతాని సృష్టించాం.
+మీ [[Special:Preferences|{{SITENAME}} అభిరుచులను]] మార్చుకోవడం మరువకండి.
+తెలుగు వికీపీడియాలో తెలుగులోనే రాయాలి. వికీలో రచనలు చేసే ముందు, కింది సూచనలను గమనించండి.
+తెలుగు {{SITENAME}}లో తెలుగులోనే రాయాలి. వికీలో రచనలు చేసే ముందు, కింది సూచనలను గమనించండి.
+*వికీని త్వరగా అర్థం చేసుకునేందుకు [[వికీపీడియా:5 నిమిషాల్లో వికీ|5 నిమిషాల్లో వికీ]] పేజీని చూడండి.
+*తెలుగులో రాసేందుకు ఇంగ్లీషు అక్షరాల ఉచ్ఛారణతో తెలుగు టైపు చేసే [[వికీపీడియా:టైపింగు సహాయం| టైపింగ్  సహాయం]] వాడవచ్చు. మరిన్ని ఉపకరణాల కొరకు [[కీ బోర్డు]] మరియు   తెరపై తెలుగు సరిగా లేకపోతే[[వికీపీడియా:Setting up your browser for Indic scripts|ఈ పేజీ]]  చూడండి.',
 'yourname' => 'వాడుకరి పేరు:',
+'userlogin-yourname' => 'వాడుకరి పేరు',
+'userlogin-yourname-ph' => 'మీ వాడుకరి పేరును ఇవ్వండి',
 'yourpassword' => 'సంకేతపదం:',
+'userlogin-yourpassword' => 'సంకేతపదం',
+'userlogin-yourpassword-ph' => 'మీ సంకేతపదాన్ని ఇవ్వండి',
+'createacct-yourpassword-ph' => 'సంకేతపదాన్ని ఇవ్వండి',
 'yourpasswordagain' => 'సంకేతపదాన్ని మళ్ళీ ఇవ్వండి:',
+'createacct-yourpasswordagain' => 'సంకేతపదాన్ని నిర్ధారించండి',
+'createacct-yourpasswordagain-ph' => 'సంకేతపదాన్ని మళ్ళీ ఇవ్వండి',
 'remembermypassword' => 'ఈ కంప్యూటరులో నా ప్రవేశాన్ని గుర్తుంచుకో (గరిష్ఠంగా $1 {{PLURAL:$1|రోజు|రోజుల}}కి)',
-'securelogin-stick-https' => 'ప్రవేశం తర్వాత కూడా HTTPSకి అనుసంధానమై ఉండు',
+'userlogin-remembermypassword' => 'నన్ను ప్రవేశింపజేసి ఉంచు',
 'yourdomainname' => 'మీ డోమైను',
 'password-change-forbidden' => 'ఈ వికీలో మీరు సంకేతపదాలను మార్చలేరు.',
 'externaldberror' => 'డేటాబేసు అధీకరణలో పొరపాటు జరిగింది లేదా మీ బయటి ఖాతాని తాజాకరించడానికి మీకు అనుమతి లేదు.',
@@ -564,18 +572,37 @@ $2',
 'logout' => 'నిష్క్రమించు',
 'userlogout' => 'నిష్క్రమించు',
 'notloggedin' => 'లోనికి ప్రవేశించి లేరు',
-'nologin' => "ఖాతా లేదా? '''$1'''.",
+'userlogin-noaccount' => 'మీకు ఖాతా లేదా?',
+'userlogin-joinproject' => '{{SITENAME}}లో చేరండి',
+'nologin' => 'ఖాతా లేదా? $1.',
 'nologinlink' => 'ఖాతాని సృష్టించుకోండి',
 'createaccount' => 'ఖాతాని సృష్టించు',
-'gotaccount' => "ఇప్పటికే మీకు ఖాతా ఉందా? '''$1'''.",
+'gotaccount' => 'ఇప్పటికే మీకు ఖాతా ఉందా? $1.',
 'gotaccountlink' => 'ప్రవేశించండి',
 'userlogin-resetlink' => 'మీ ప్రవేశ వివరాలను మరచిపోయారా?',
-'createaccountmail' => 'ఈ-మెయిలు ద్వారా',
+'userlogin-resetpassword-link' => 'మీ దాటుమాటను మార్చుకోండి',
+'helplogin-url' => 'Help:ప్రవేశించడం',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|ప్రవేశించడానికి సహాయం]]',
+'createacct-join' => 'మీ సమాచారాన్ని క్రింద ఇవ్వండి.',
+'createacct-emailrequired' => 'ఈమెయిలు చిరునామా',
+'createacct-emailoptional' => 'ఈమెయిలు చిరునామా (ఐచ్చికం)',
+'createacct-email-ph' => 'మీ ఈమెయిలు చిరునామాను ఇవ్వండి',
+'createaccountmail' => 'తాత్కాలిక యాదృచ్చిక సంకేతపదాన్ని వాడి దాన్ని ఈ క్రింద ఇచ్చిన ఈమెయిలు చిరునామాకు పంపించు',
+'createacct-realname' => 'అసలు పేరు (ఐచ్చికం)',
 'createaccountreason' => 'కారణం:',
+'createacct-reason' => 'కారణం',
+'createacct-reason-ph' => 'మీరు మరో ఖాతాను ఎందుకు సృష్టించుకుంటున్నారు',
+'createacct-captcha' => 'భద్రతా తనిఖీ',
+'createacct-imgcaptcha-ph' => 'పైన కనబడే మాటలను ఇక్కడ ఇవ్వండి',
+'createacct-submit' => 'మీ ఖాతాను సృష్టించుకోండి',
+'createacct-benefit-heading' => '{{SITENAME}}ను తయారుచేసేది మీలాంటి ప్రజలే.',
+'createacct-benefit-body1' => '{{PLURAL:$1|మార్పు|మార్పులు}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|పేజీ|పేజీలు}}',
 'badretype' => 'మీరు ఇచ్చిన రెండు సంకేతపదాలు ఒకదానితో మరొకటి సరిపోలడం లేదు.',
 'userexists' => 'ఇచ్చిన వాడుకరిపేరు ఇప్పటికే వాడుకలో ఉంది.
 వేరే పేరును ఎంచుకోండి.',
 'loginerror' => 'ప్రవేశంలో పొరపాటు',
+'createacct-error' => 'పద్దు తెరవడములో తప్పు',
 'createaccounterror' => 'ఖాతాని సృష్టించలేకపోయాం: $1',
 'nocookiesnew' => 'ఖాతాని సృష్టించాం, కానీ మీరు ఇంకా లోనికి ప్రవేశించలేదు.
 వాడుకరుల ప్రవేశానికి {{SITENAME}} కూకీలను వాడుతుంది.
@@ -639,7 +666,7 @@ $2',
 'loginlanguagelabel' => 'భాష: $1',
 'suspicious-userlogout' => 'సరిగా పనిచేయని విహారిణి లేదా కాషింగ్ ప్రాక్సీ వల్ల పంపబడడం చేత, నిష్క్రమించాలనే మీ అభ్యర్థనని నిరాకరించారు.',
 
-# E-mail sending
+# Email sending
 'php-mail-error-unknown' => 'PHP యొక్క mail() ఫంక్షన్‍లో ఏదో తెలియని లోపం దొర్లింది',
 'user-mail-no-addy' => 'ఈ-మెయిలు చిరునామాని ఇవ్వకుండానే ఈ-మెయిలు పంపడానికి ప్రయత్నించారు.',
 
@@ -652,7 +679,7 @@ $2',
 'newpassword' => 'కొత్త సంకేతపదం:',
 'retypenew' => 'సంకేతపదం, మళ్ళీ',
 'resetpass_submit' => 'సంకేతపదాన్ని మార్చి లోనికి ప్రవేశించండి',
-'resetpass_success' => 'మీ సంకేతపదాన్ని జయప్రదంగా మార్చాం! ఇక మిమ్మల్ని లోనికి ప్రవేశింపచేస్తున్నాం...',
+'changepassword-success' => 'మీ సంకేతపదాన్ని జయప్రదంగా మార్చాం! ఇక మిమ్మల్ని లోనికి ప్రవేశింపచేస్తున్నాం...',
 'resetpass_forbidden' => 'సంకేతపదాలను మార్చటం కుదరదు',
 'resetpass-no-info' => 'ఈ పేజీని నేరుగా చూడటానికి మీరు లోనికి ప్రవేశించివుండాలి.',
 'resetpass-submit-loggedin' => 'సంకేతపదాన్ని మార్చు',
@@ -663,10 +690,8 @@ $2',
 
 # Special:PasswordReset
 'passwordreset' => 'సంకేతపదాన్ని మార్చుకోండి',
-'passwordreset-text' => 'మీ ఖాతా వివరాలను గుర్తు చేసే ఈమెయిలు కోసం ఈ ఫారాన్ని పూర్తి చెయ్యండి.',
 'passwordreset-legend' => 'సంకేతపదాన్ని మార్చుకోండి',
 'passwordreset-disabled' => 'ఈ వికీలో సంకేతపదాల మార్పును అచేతనం చేసాం.',
-'passwordreset-pretext' => '{{PLURAL:$1||డేటా శకలాల్లోంచి ఒకదాన్ని ఇవ్వండి}}',
 'passwordreset-username' => 'వాడుకరి పేరు:',
 'passwordreset-domain' => 'డొమైన్:',
 'passwordreset-email' => 'ఈ-మెయిలు చిరునామా:',
@@ -698,6 +723,7 @@ $2
 'changeemail-oldemail' => 'ప్రస్తుత ఈ-మెయిలు చిరునామా:',
 'changeemail-newemail' => 'కొత్త ఈ-మెయిలు చిరునామా:',
 'changeemail-none' => '(ఏమీలేదు)',
+'changeemail-password' => 'మీ {{SITENAME}} సంకేతపదం:',
 'changeemail-submit' => 'ఈ-మెయిల్ మార్చు',
 'changeemail-cancel' => 'రద్దుచేయి',
 
@@ -716,7 +742,7 @@ $2
 'nowiki_tip' => 'వికీ ఫార్మాటును పట్టించుకోవద్దు',
 'image_tip' => 'పొదిగిన ఫైలు',
 'media_tip' => 'దస్త్రపు లంకె',
-'sig_tip' => 'టైంస్టాంపుతో సహా మీ సంతకం',
+'sig_tip' => 'సమయంతో సహా మీ సంతకం',
 'hr_tip' => 'అడ్డగీత (అరుదుగా వాడండి)',
 
 # Edit pages
@@ -859,7 +885,6 @@ $2
 'template-protected' => '(సంరక్షితం)',
 'template-semiprotected' => '(సెమీ-రక్షణలో ఉంది)',
 'hiddencategories' => 'ఈ పేజీ {{PLURAL:$1|ఒక దాచిన వర్గంలో|$1 దాచిన వర్గాల్లో}} ఉంది:',
-'nocreatetitle' => 'పేజీని సృష్టించడాన్ని నియంత్రించాం.',
 'nocreatetext' => '{{SITENAME}}లో కొత్త పేజీలు సృష్టించడాన్ని నియంత్రించారు.
 మీరు వెనక్కి వెళ్ళి వేరే పేజీలు మార్చవచ్చు, లేదా [[Special:UserLogin|లోనికి ప్రవేశించండి లేదా ఖాతా సృష్టించుకోండి]].',
 'nocreate-loggedin' => 'కొత్త పేజీలను సృష్టించేందుకు మీకు అనుమతి లేదు.',
@@ -881,9 +906,19 @@ $2
 దీన్ని తొలగించినట్టున్నారు.',
 'edit-conflict' => 'మార్పు సంఘర్షణ.',
 'edit-no-change' => 'పాఠ్యంలో ఏమీ మార్పులు లేవు గనక, మీ మార్పుని పట్టించుకోవట్లేదు.',
+'postedit-confirmation' => 'మీ మార్పు భద్రమయ్యింది.',
 'edit-already-exists' => 'కొత్త పేజీని సృష్టించలేము.
 అది ఇప్పటికే ఉంది.',
 'defaultmessagetext' => 'అప్రమేయ సందేశపు పాఠ్యం',
+'invalid-content-data' => 'తప్పుడు విషయం',
+'editwarning-warning' => 'ఈ పేజీని వదిలివెళ్ళడం వల్ల మీరు చేసిన మార్పులను కోల్పోయే అవకాశం ఉంది.
+మీరు ప్రవేశించివుంటే, ఈ హెచ్చరికని మీ అభిరుచులలో "మరపులు" అనే విభాగంలో అచేతనం చేసుకోవచ్చు.',
+
+# Content models
+'content-model-wikitext' => 'వికీపాఠ్యం',
+'content-model-text' => 'సాదా పాఠ్యం',
+'content-model-javascript' => 'జావాస్క్రిప్ట్',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'హెచ్చరిక: ఈ పేజీలో ఖరీదైన పార్సరు పిలుపులు చాలా ఉన్నాయి.
@@ -1032,7 +1067,8 @@ $1",
 'revdelete-only-restricted' => '$2, $1 తేదీ గల అంశాన్ని దాచడంలో పొరపాటు: ఇతర దృశ్యత వికల్పాల్లోంచి ఒకదాన్ని ఎంచుకోకుండా అంశాలని నిర్వాహకులకు కనబడకుండా అణచివెయ్యలేరు.',
 'revdelete-reason-dropdown' => '*సాధారణ తొలగింపు కారణాలు
 ** కాపీహక్కుల ఉల్లంఘన
-** అసంబద్ధ వ్యక్తిగత సమాచారం
+** అసంబద్ధ వ్యాఖ్య లేదా వ్యక్తిగత సమాచారం
+** అసంబద్ధ వాడుకరి పేరు
 ** నిందాపూర్వక సమాచారం',
 'revdelete-otherreason' => 'ఇతర/అదనపు కారణం:',
 'revdelete-reasonotherlist' => 'ఇతర కారణం',
@@ -1105,7 +1141,6 @@ $1",
 'searchmenu-legend' => 'అన్వేషణ ఎంపికలు',
 'searchmenu-exists' => "'''ఈ వికీలో \"[[:\$1]]\" అనే పేజీ ఉంది'''",
 'searchmenu-new' => "'''ఈ వికీలో \"[[:\$1]]\" అనే పేరుతో పేజీని సృష్టించు!'''",
-'searchhelp-url' => 'Help:సూచిక',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|ఈ ఉపసర్గ ఉన్న పేజీలను చూడండి]]',
 'searchprofile-articles' => 'విషయపు పేజీలు',
 'searchprofile-project' => 'సహాయం మరియు ప్రాజెక్టు పేజీలు',
@@ -1147,15 +1182,6 @@ $1",
 'search-external' => 'బయటి అన్వేషణ',
 'searchdisabled' => '{{SITENAME}} అన్వేషణ తాత్కాలికంగా పని చెయ్యడం లేదు. ఈలోగా మీరు గూగుల్‌ ఉపయోగించి అన్వేషించవచ్చు. ఒక గమనిక: గూగుల్‌ ద్వారా కాలదోషం పట్టిన ఫలితాలు రావడానికి అవకాశం ఉంది.',
 
-# Quickbar
-'qbsettings' => 'క్విక్‌బార్',
-'qbsettings-none' => 'ఏదీకాదు',
-'qbsettings-fixedleft' => 'స్థిర ఎడమ',
-'qbsettings-fixedright' => 'స్థిర కుడి',
-'qbsettings-floatingleft' => 'ఎడమకు ఒదిగి',
-'qbsettings-floatingright' => 'కుడికి ఒదిగి',
-'qbsettings-directionality' => 'స్థిరం, మీ లిపి మరియు భాషల యొక్క దిశ ఆధారంగా',
-
 # Preferences page
 'preferences' => 'అభిరుచులు',
 'mypreferences' => 'అభిరుచులు',
@@ -1188,7 +1214,6 @@ $1",
 'resetprefs' => 'మునుపటి వలె',
 'restoreprefs' => 'సృష్టించబడినప్పటి అభిరుచులు తిరిగి తీసుకురా',
 'prefs-editing' => 'మార్పులు',
-'prefs-edit-boxsize' => 'మార్పుల కిటికీ యొక్క పరిమాణం.',
 'rows' => 'వరుసలు',
 'columns' => 'వరుసలు:',
 'searchresultshead' => 'అన్వేషణ',
@@ -1199,8 +1224,6 @@ $1",
 'recentchangesdays-max' => '($1 {{PLURAL:$1|రోజు|రోజులు}} గరిష్ఠం)',
 'recentchangescount' => 'అప్రమేయంగా చూపించాల్సిన దిద్దుబాట్ల సంఖ్య:',
 'prefs-help-recentchangescount' => 'ఇది ఇటీవలి మార్పులు, పేజీ చరిత్రలు, మరియు చిట్టాలకు వర్తిస్తుంది.',
-'prefs-help-watchlist-token' => 'ఈ క్షేత్రాన్ని ఒక రహస్య కీతో నింపితే, మీ వీక్షణ జాబితాకు ఒక RSS వడ్డన తయారవుతుంది.  ఆ కీ తెలిసిన వారెవరైనా మీ వీక్షణజాబితాను చూడగలుగుతారు. అందుచేత కీని జాగ్రత్తగా ఎంచుకోండి.
-ఇదిగో, అనామతుగా సృష్టించిన ఒక కీ -మీకోసం: $1',
 'savedprefs' => 'మీ అభిరుచులను భద్రపరిచాం.',
 'timezonelegend' => 'కాల మండలం:',
 'localtime' => 'స్థానిక సమయం:',
@@ -1220,7 +1243,7 @@ $1",
 'timezoneregion-indian' => 'హిందూ మహాసముద్రం',
 'timezoneregion-pacific' => 'పసిఫిక్ మహాసముద్రం',
 'allowemail' => 'ఇతర వాడుకరుల నుండి ఈ-మెయిళ్ళను రానివ్వు',
-'prefs-searchoptions' => 'అన్వేషణ ఎంపికలు',
+'prefs-searchoptions' => 'వెతుకులాట',
 'prefs-namespaces' => 'పేరుబరులు',
 'defaultns' => 'లేకపోతే ఈ నేంస్పేసులలో అన్వేషించు:',
 'default' => 'అప్రమేయం',
@@ -1230,13 +1253,12 @@ $1",
 'prefs-common-css-js' => 'అన్ని అలంకారాలకై పంచుకోబడిన CSS/JS:',
 'prefs-reset-intro' => 'ఈ పేజీలో, మీ అభిరుచులను సైటు డిఫాల్టు విలువలకు మార్చుకోవచ్చు. మళ్ళీ వెనక్కి తీసుకుపోలేరు.',
 'prefs-emailconfirm-label' => 'ఈ-మెయిల్ నిర్ధారణ:',
-'prefs-textboxsize' => 'దిద్దుబాటు కిటికీ పరిమాణం',
 'youremail' => 'మీ ఈ-మెయిలు*',
-'username' => 'వాడుకరి పేరు:',
-'uid' => 'వాడుకరి ID:',
-'prefs-memberingroups' => 'సభ్యులుగా ఉన్న {{PLURAL:$1|గుంపు|గుంపులు}}:',
+'username' => '{{GENDER:$1|వాడుకరి పేరు}}:',
+'uid' => '{{GENDER:$1|వాడుకరి}} ID:',
+'prefs-memberingroups' => 'ఈ {{PLURAL:$1|గుంపులో|గుంపులలో}} {{GENDER:$2|సభ్యుడు|సభ్యురాలు}}:',
 'prefs-registration' => 'నమోదైన సమయం:',
-'yourrealname' => 'అసలు పేరు*',
+'yourrealname' => 'అసలు పేరు:',
 'yourlanguage' => 'భాష:',
 'yourvariant' => 'విషయపు భాషా వైవిధ్యం:',
 'prefs-help-variant' => 'ఈ వికీ లోని విషయపు పేజీలను చూపించడానికి మీ అభిమత వైవిధ్యం లేదా ఆర్ధోగ్రఫీ.',
@@ -1271,7 +1293,7 @@ $1",
 'prefs-displaywatchlist' => 'ప్రదర్శన ఎంపికలు',
 'prefs-diffs' => 'తేడాలు',
 
-# User preference: e-mail validation using jQuery
+# User preference: email validation using jQuery
 'email-address-validity-valid' => 'ఈ-మెయిలు చిరునామా సరిగానే ఉన్నట్టుంది',
 'email-address-validity-invalid' => 'దయచేసి సరైన ఈమెయిలు చిరునామాని ఇవ్వండి',
 
@@ -1382,11 +1404,13 @@ $1",
 'right-sendemail' => 'ఇతర వాడుకరులకు ఈ-మెయిలు పంపించగలగడం',
 'right-passwordreset' => 'సంకేతపదాన్ని పునరుద్ధరించిన ఈ-మెయిళ్ళు',
 
+# Special:Log/newusers
+'newuserlogpage' => 'కొత్త వాడుకరుల చిట్టా',
+'newuserlogpagetext' => 'ఇది వాడుకరి నమోదుల చిట్టా.',
+
 # User rights log
 'rightslog' => 'వాడుకరుల హక్కుల మార్పుల చిట్టా',
 'rightslogtext' => 'ఇది వాడుకరుల హక్కులకు జరిగిన మార్పుల చిట్టా.',
-'rightslogentry' => '$1 గారి సభ్యత్వ గుంపును $2 నుండి $3 కి మార్చారు',
-'rightsnone' => '(ఏమీలేవు)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ఈ పేజీని చదవండి',
@@ -1426,6 +1450,7 @@ $1",
 
 # Recent changes
 'nchanges' => '{{PLURAL:$1|ఒక మార్పు|$1 మార్పులు}}',
+'enhancedrc-history' => 'చరితం',
 'recentchanges' => 'ఇటీవలి మార్పులు',
 'recentchanges-legend' => 'ఇటీవలి మార్పుల ఎంపికలు',
 'recentchanges-summary' => 'వికీలో ఇటీవలే జరిగిన మార్పులను ఈ పేజీలో గమనించవచ్చు.',
@@ -1465,7 +1490,6 @@ $1",
 'recentchangeslinked-feed' => 'సంబంధిత మార్పులు',
 'recentchangeslinked-toolbox' => 'పొంతనగల మార్పులు',
 'recentchangeslinked-title' => '$1 కు సంబంధించిన మార్పులు',
-'recentchangeslinked-noresult' => 'మీరిచ్చిన కాలంలో ఇక్కడికి లింకు ఉన్న పేజీలలో ఎటువంటు మార్పులూ జరగలేదు.',
 'recentchangeslinked-summary' => "దీనికి లింకై ఉన్న పేజీల్లో జరిగిన చివరి మార్పులు ఇక్కడ చూడవచ్చు. మీ వీక్షణ జాబితాలో ఉన్న పేజీలు '''బొద్దు'''గా ఉంటాయి.",
 'recentchangeslinked-page' => 'పేజీ పేరు:',
 'recentchangeslinked-to' => 'ఇచ్చిన పేజీకి లింకయివున్న పేజీలలో జరిగిన మార్పులను చూపించు',
@@ -1647,7 +1671,6 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'http-read-error' => 'HTTP చదువుటలో పొరపాటు.',
 'http-timed-out' => 'HTTP అభ్యర్థనకి కాలం చెల్లింది.',
 'http-curl-error' => 'URLని తేవడంలో పొరపాటు: $1',
-'http-host-unreachable' => 'URLని చేరలేకపోయాం.',
 'http-bad-status' => 'HTTP అభ్యర్ధన చేస్తున్నప్పుడు సమస్య ఉంది: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1765,7 +1788,7 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'unusedtemplateswlh' => 'ఇతర లింకులు',
 
 # Random page
-'randompage' => 'యాధృచ్ఛిక పేజీ',
+'randompage' => 'యాదృచ్ఛిక పేజీ',
 'randompage-nopages' => 'ఈ క్రింది {{PLURAL:$2|పెరుబరిలో|పెరుబరులలో}} పేజీలు ఏమి లేవు:$1',
 
 # Random redirect
@@ -1793,9 +1816,7 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'statistics-users-active-desc' => 'గత {{PLURAL:$1|రోజు|$1 రోజుల}}లో ఒక్క చర్యైనా చేసిన వాడుకరులు',
 'statistics-mostpopular' => 'ఎక్కువగా చూసిన పేజీలు',
 
-'disambiguations' => 'అయోమయ నివృత్తి పుటలకు లింకున్న పుటలు',
-'disambiguationspage' => 'Template:అయోమయ నివృత్తి',
-'disambiguations-text' => "కింది పేజీలు '''అయోమయ నివృత్తి''' పేజీకి లింకవుతున్నాయి. కానీ అవి సంబంధిత పేజీకి నేరుగా లింకు అవాలి. <br /> [[MediaWiki:Disambiguationspage]] నుంది లింకు ఉన్న మూసను వాడే పేజీని అయోమయ నివృత్తి పేజీగా భావిస్తారు.",
+'pageswithprop-submit' => 'వెళ్ళు',
 
 'doubleredirects' => 'జంట దారిమార్పులు',
 'doubleredirectstext' => 'ఇతర దారిమార్పు పుటలకి తీసుకెళ్ళే దారిమార్పులని ఈ పుట చూపిస్తుంది.
@@ -1961,10 +1982,6 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'activeusers-hidesysops' => 'నిర్వాహకులను దాచు',
 'activeusers-noresult' => 'వాడుకరులెవరూ లేరు.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'కొత్త వాడుకరుల చిట్టా',
-'newuserlogpagetext' => 'ఇది వాడుకరి నమోదుల చిట్టా.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'వాడుకరి గుంపుల హక్కులు',
 'listgrouprights-summary' => 'కింది జాబితాలో ఈ వికీలో నిర్వచించిన వాడుకరి గుంపులు, వాటికి సంబంధించిన హక్కులు ఉన్నాయి.
@@ -1984,7 +2001,7 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'listgrouprights-addgroup-self-all' => 'అన్ని సమూహాలని స్వంత ఖాతాకి చేర్చుకోలగడటం',
 'listgrouprights-removegroup-self-all' => 'స్వంత ఖాతా నుండి అన్ని సమూహాలనూ తొలగించుకోగలగడం',
 
-# E-mail user
+# Email user
 'mailnologin' => 'పంపించవలసిన చిరునామా లేదు',
 'mailnologintext' => 'ఇతరులకు ఈ-మెయిలు పంపించాలంటే, మీరు [[Special:UserLogin|లాగిన్‌]] అయి ఉండాలి, మరియు మీ [[Special:Preferences|అభిరుచుల]]లో సరైన ఈ-మెయిలు చిరునామా ఇచ్చి ఉండాలి.',
 'emailuser' => 'ఈ వాడుకరికి ఈ-మెయిలుని పంపించండి',
@@ -2020,7 +2037,7 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'usermessage-editor' => 'వ్యవస్థ సందేశకులు',
 
 # Watchlist
-'watchlist' => 'నా వీక్షణ జాబితా',
+'watchlist' => 'వీక్షణ జాబితా',
 'mywatchlist' => 'వీక్షణ జాబితా',
 'watchlistfor2' => '$1 కొరకు $2',
 'nowatchlist' => 'మీ వీక్షణ జాబితా ఖాళీగా ఉంది.',
@@ -2038,10 +2055,9 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 'unwatchthispage' => 'వీక్షణను ఆపు',
 'notanarticle' => 'వ్యాసం పేజీ కాదు',
 'notvisiblerev' => 'ఈ కూర్పును తొలగించాం',
-'watchnochange' => 'మీ వీక్షణ జాబితాలోని ఏ పేజీలోనూ ఈ కాల అవధిలో మార్పులు జరగలేదు.',
 'watchlist-details' => 'మీ వీక్షణ జాబితాలో {{PLURAL:$1|ఒక పేజీ ఉంది|$1 పేజీలు ఉన్నాయి}}, చర్చా పేజీలని వదిలేసి.',
-'wlheader-enotif' => '* ఈ-మెయిలు ప్రకటనలు పంపబడతాయి.',
-'wlheader-showupdated' => "* మీ గత సందర్శన తరువాత మారిన పేజీలు '''బొద్దు'''గా చూపించబడ్డాయి.",
+'wlheader-enotif' => 'ఈ-మెయిలు ప్రకటనలు పంపబడతాయి.',
+'wlheader-showupdated' => "మీ గత సందర్శన తరువాత మారిన పేజీలు '''బొద్దు'''గా చూపించబడ్డాయి.",
 'watchmethod-recent' => 'వీక్షణ జాబితాలోని పేజీల కొరకు ఇటీవలి మార్పులు పరిశీలించబడుతున్నాయి',
 'watchmethod-list' => 'ఇటీవలి మార్పుల కొరకు వీక్షణ జాబితాలోని పేజీలు పరిశీలించబడుతున్నాయి',
 'watchlistcontains' => 'మీ వీక్షణ జాబితాలో {{PLURAL:$1|ఒక పేజీ ఉంది|$1 పేజీలు ఉన్నాయి}}.',
@@ -2056,11 +2072,7 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization చూడండి.',
 
 'enotif_mailer' => '{{SITENAME}} ప్రకటన మెయిలు పంపునది',
 'enotif_reset' => 'అన్ని పేజీలను చూసినట్లుగా గుర్తించు',
-'enotif_newpagetext' => 'ఇది ఒక కొత్త పేజీ.',
 'enotif_impersonal_salutation' => '{{SITENAME}} వాడుకరి',
-'changed' => 'మార్చారు',
-'created' => 'సృష్టించారు',
-'enotif_subject' => '{{SITENAME}}లో $PAGETITLE అనే పేజీని $PAGEEDITOR $CHANGEDORCREATED',
 'enotif_lastvisited' => 'మీ గత సందర్శన తరువాత జరిగిన మార్పుల కొరకు $1 చూడండి.',
 'enotif_lastdiff' => 'ఈ మార్పు చూసేందుకు  $1 కు వెళ్ళండి.',
 'enotif_anon_editor' => 'అజ్ఞాత వాడుకరి $1',
@@ -2090,6 +2102,8 @@ $UNWATCHURL కి వెళ్ళండి.
 
 మీ అభిప్రాయాలు చెప్పేందుకు మరియు మరింత సహాయానికై:
 {{canonicalurl:{{MediaWiki:helppage}}}}',
+'created' => 'సృష్టించారు',
+'changed' => 'మార్చారు',
 
 # Delete
 'deletepage' => 'పేజీని తొలగించు',
@@ -2235,7 +2249,8 @@ $UNWATCHURL కి వెళ్ళండి.
 'undeletedrevisions' => '{{PLURAL:$1|ఒక సంచిక|$1 సంచికల}} పునఃస్థాపన జరిగింది',
 'undeletedrevisions-files' => '{{PLURAL:$1|ఒక కూర్పు|$1 కూర్పులు}} మరియు {{PLURAL:$2|ఒక ఫైలు|$2 ఫైళ్ళ}}ను పునస్థాపించాం',
 'undeletedfiles' => '{{PLURAL:$1|ఒక ఫైలును|$1 ఫైళ్లను}} పునఃస్థాపించాం',
-'cannotundelete' => 'తొలగింపు రద్దు విఫలమైంది; ఆ పేజీ తొలగింపును వేరెవరైనా రద్దు చేసి ఉండవచ్చు.',
+'cannotundelete' => 'తొలగింపు రద్దు విఫలమైంది:
+$1',
 'undeletedpage' => "'''$1 ను పునస్థాపించాం'''
 
 ఇటీవల జరిగిన తొలగింపులు, పునస్థాపనల కొరకు [[Special:Log/delete|తొలగింపు చిట్టా]]ని చూడండి.",
@@ -2261,7 +2276,7 @@ $UNWATCHURL కి వెళ్ళండి.
 'blanknamespace' => '(మొదటి)',
 
 # Contributions
-'contributions' => 'వాడుకరి రచనలు',
+'contributions' => '{{GENDER:$1|వాడుకరి}} రచనలు',
 'contributions-title' => '$1 యొక్క మార్పులు-చేర్పులు',
 'mycontris' => 'మార్పులు చేర్పులు',
 'contribsub2' => '$1 ($2) కొరకు',
@@ -2300,7 +2315,7 @@ $UNWATCHURL కి వెళ్ళండి.
 'isimage' => 'దస్త్రపు లంకె',
 'whatlinkshere-prev' => '{{PLURAL:$1|మునుపటిది|మునుపటి $1}}',
 'whatlinkshere-next' => '{{PLURAL:$1|తరువాతది|తరువాతి $1}}',
-'whatlinkshere-links' => '← లింకులు',
+'whatlinkshere-links' => '← లంకెలు',
 'whatlinkshere-hideredirs' => 'దారిమార్పులను $1',
 'whatlinkshere-hidetrans' => '$1 ట్రాన్స్‌క్లూజన్లు',
 'whatlinkshere-hidelinks' => 'లింకులను $1',
@@ -2418,11 +2433,8 @@ $UNWATCHURL కి వెళ్ళండి.
 'ipb_blocked_as_range' => 'లోపం: ఐపీ $1 ను నేరుగా నిరోధించలేదు, అంచేత నిరోధాన్ని రద్దుపరచలేము.  అయితే, అది $2 శ్రేణిలో భాగంగా నిరోధానికి గురైంది, ఈ శ్రేణిపై ఉన్న నిరోధాన్ని రద్దుపరచవచ్చు.',
 'ip_range_invalid' => 'సరైన ఐపీ శ్రేణి కాదు.',
 'ip_range_toolarge' => '/$1  కంటే పెద్దవైన సామూహిక నిరోధాలు అనుమతించబడవు.',
-'blockme' => 'నన్ను నిరోధించు',
 'proxyblocker' => 'ప్రాక్సీ నిరోధకం',
-'proxyblocker-disabled' => 'ఈ ఫంక్షన్ను అశక్తం చేసాం.',
 'proxyblockreason' => 'మీ ఐపీ అడ్రసు ఒక ఓపెన్ ప్రాక్సీ కాబట్టి దాన్ని నిరోధించాం. మీ ఇంటర్నెట్ సేవాదారుని గానీ, సాంకేతిక సహాయకుని గానీ సంప్రదించి తీవ్రమైన ఈ భద్రతా వైఫల్యాన్ని గురించి తెలపండి.',
-'proxyblocksuccess' => 'పూర్తయింది.',
 'sorbsreason' => '{{SITENAME}} వాడే DNSBLలో మీ ఐపీ అడ్రసు ఒక ఓపెన్ ప్రాక్సీగా నమోదై ఉంది.',
 'sorbs_create_account_reason' => 'మీ ఐపీ అడ్రసు DNSBL లో ఓపెను ప్రాక్సీగా నమోదయి ఉంది. మీరు ఎకౌంటును సృష్టించజాలరు.',
 'cant-block-while-blocked' => 'నిరోధంలో ఉన్న మీరు ఇతర వాడుకరులపై నిరోధం అమలుచేయలేరు.',
@@ -2743,15 +2755,17 @@ $UNWATCHURL కి వెళ్ళండి.
 'pageinfo-views' => 'వీక్షణల సంఖ్య',
 'pageinfo-watchers' => 'పేజీ వీక్షకుల సంఖ్య',
 'pageinfo-edits' => 'మొత్తం మార్పుల సంఖ్య',
+'pageinfo-toolboxlink' => 'పేజీ సమాచారం',
+'pageinfo-contentpage-yes' => 'అవును',
+'pageinfo-protect-cascading-yes' => 'అవును',
+'pageinfo-category-info' => 'వర్గపు సమాచారం',
+'pageinfo-category-pages' => 'పేజీల సంఖ్య',
+'pageinfo-category-subcats' => 'ఉపవర్గాల సంఖ్య',
+'pageinfo-category-files' => 'దస్త్రాల సంఖ్య',
 
 # Skin names
-'skinname-standard' => 'సంప్రదాయ',
-'skinname-nostalgia' => 'నాస్టాల్జియా',
 'skinname-cologneblue' => 'కలోన్ నీలం',
 'skinname-monobook' => 'మోనోబుక్',
-'skinname-myskin' => 'నాఅలంకారం',
-'skinname-chick' => 'చిక్',
-'skinname-simple' => 'సరళ',
 'skinname-modern' => 'ఆధునిక',
 'skinname-vector' => 'వెక్టర్',
 
@@ -2826,7 +2840,24 @@ $1',
 'minutes' => '{{PLURAL:$1|ఒక నిమిషం|$1 నిమిషాల}}',
 'hours' => '{{PLURAL:$1|ఒక గంట|$1 గంటల}}',
 'days' => '{{PLURAL:$1|ఒక రోజు|$1 రోజుల}}',
+'weeks' => '{{PLURAL:$1|$1 వారం|$1 వారాలు}}',
+'months' => '{{PLURAL:$1|ఒక నెల|$1 నెలల}}',
+'years' => '{{PLURAL:$1|ఒక సంవత్సరం|$1 సంవత్సరాల}}',
 'ago' => '$1 క్రితం',
+'just-now' => 'ఇప్పుడే',
+
+# Human-readable timestamps
+'hours-ago' => '$1 {{PLURAL:$1|గంట|గంటల}} క్రితం',
+'minutes-ago' => '$1 {{PLURAL:$1|నిమిషం|నిమిషాల}} క్రితం',
+'seconds-ago' => '$1 {{PLURAL:$1|క్షణం|క్షణాల}} క్రితం',
+'monday-at' => 'సోమవారం నాడు $1కి',
+'tuesday-at' => 'మంగళవారం నాడు $1కి',
+'wednesday-at' => 'బుధవారం నాడు $1కి',
+'thursday-at' => 'గురువారం నాడు $1కి',
+'friday-at' => 'శుక్రవారం నాడు $1కి',
+'saturday-at' => 'శనివారం నాడు $1కి',
+'sunday-at' => 'ఆదివారం నాడు $1కి',
+'yesterday-at' => 'నిన్న $1కి',
 
 # Bad image list
 'bad_image_list' => 'కింద తెలిపిన తీరులో కలపాలి:
@@ -2854,7 +2885,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'వెడల్పు',
 'exif-imagelength' => 'ఎత్తు',
 'exif-bitspersample' => 'ఒక్కో కాంపొనెంటుకు బిట్లు',
@@ -3020,7 +3051,7 @@ $1',
 'exif-originalimageheight' => 'కత్తిరించబడక ముందు బొమ్మ యొక్క ఎత్తు',
 'exif-originalimagewidth' => 'కత్తిరించబడక ముందు బొమ్మ యొక్క వెడల్పు',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'కుదించని',
 
 'exif-copyrighted-true' => 'నకలుహక్కులుకలది',
@@ -3226,7 +3257,7 @@ $1',
 'monthsall' => 'అన్నీ',
 'limitall' => 'అన్నీ',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'ఈ-మెయిలు చిరునామా ధృవీకరించండి',
 'confirmemail_noemail' => '[[Special:Preferences|మీ అభిరుచులలో]] ఈమెయిలు అడ్రసు పెట్టి లేదు.',
 'confirmemail_text' => '{{SITENAME}}లో ఈ-మెయిలు అంశాల్ని వాడుకునే ముందు మీ ఈ-మెయిలు చిరునామాను నిర్ధారించవలసిన అవసరం ఉంది.
@@ -3292,7 +3323,7 @@ $5
 # action=purge
 'confirm_purge_button' => 'సరే',
 'confirm-purge-top' => 'ఈ పేజీ యొక్క పాత కాపీని తొలగించమంటారా?',
-'confirm-purge-bottom' => 'పేజీ తాడనతో కోశం ఖాళీ అయి, ఇట్టీవలి కూర్పును కనబడేలా చేస్తుంది.',
+'confirm-purge-bottom' => 'సత్వరనిల్వ(cache)లోపేజీ నిర్మూలించితే, ఇటీవలి కూర్పు కనబడుతుంది.',
 
 # action=watch/unwatch
 'confirm-watch-button' => 'సరే',
@@ -3356,8 +3387,8 @@ $5
 'watchlistedit-raw-removed' => '{{PLURAL:$1|1 శీర్షికను|$1 శీర్షికలను}} తీసివేశాం:',
 
 # Watchlist editing tools
-'watchlisttools-view' => 'సంబంధిత మార్పులను చూపించు',
-'watchlisttools-edit' => 'వీక్షణ జాబితాను చూపించు, మార్చు',
+'watchlisttools-view' => 'సంబంధిత మార్పులను చూడండి',
+'watchlisttools-edit' => 'వీక్షణ జాబితాను చూడండి లేదా మార్చండి',
 'watchlisttools-raw' => 'ముడి వీక్షణ జాబితాలో మార్పులు చెయ్యి',
 
 # Signatures
@@ -3378,7 +3409,6 @@ $5
 'version-other' => 'ఇతర',
 'version-mediahandlers' => 'మీడియాను ఫైళ్లను నడిపించే పొడిగింపులు',
 'version-hooks' => 'కొక్కాలు',
-'version-extension-functions' => 'పొడిగింపు ఫంక్షనులు',
 'version-parser-extensiontags' => 'పార్సరు పొడిగింపు ట్యాగులు',
 'version-parser-function-hooks' => 'పార్సరుకు కొక్కాలు',
 'version-hook-name' => 'కొక్కెం పేరు',
@@ -3399,13 +3429,13 @@ $5
 'version-entrypoints-header-entrypoint' => 'ప్రవేశ బిందువు',
 'version-entrypoints-header-url' => 'చిరునామా',
 
-# Special:FilePath
-'filepath' => 'పూర్తి చిరునామా',
-'filepath-page' => '{{ns:file}}:',
-'filepath-submit' => 'వెళ్ళు',
-'filepath-summary' => 'ఈ ప్రత్యేక పేజీలో ఫైళ్ల పేర్లు ఇస్తే వాటి పూర్తి చిరునామలు వస్తాయి. బొమ్మలైతే వాటి పూర్తి సైజుతో తెరుచుకుంటాయి, బొమ్మలు కాని ఇతర ఫైళ్లు వాటి అనుబంధ ప్రోగ్రాములతో తెరుచుకుంటాయి.
-
-పేరుకు ముందు "{{ns:file}}:" అని చేర్చవద్దు.',
+# Special:Redirect
+'redirect-submit' => 'వెళ్ళు',
+'redirect-value' => 'విలువ:',
+'redirect-user' => 'వాడుకరి ID',
+'redirect-revision' => 'పేజీ కూర్పు',
+'redirect-file' => 'దస్త్రపు పేరు',
+'redirect-not-exists' => 'విలువ కనబడలేదు',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'ఫైళ్ల మారుప్రతుల కోసం వెతుకు',
@@ -3496,13 +3526,15 @@ $5
 'htmlform-submit' => 'దాఖలుచెయ్యి',
 'htmlform-reset' => 'మార్పులను రద్దుచెయ్యి',
 'htmlform-selectorother-other' => 'ఇతర',
+'htmlform-no' => 'కాదు',
+'htmlform-yes' => 'అవును',
 
 # SQLite database support
 'sqlite-has-fts' => '$1 పూర్తి-పాఠ్య అన్వేషణ తోడ్పాటుతో',
 'sqlite-no-fts' => '$1 పూర్తి-పాఠ్య అన్వేషణ తోడ్పాటు లేకుండా',
 
 # New logging system
-'logentry-delete-delete' => '$1 $3 పుటను తొలగించారు',
+'logentry-delete-delete' => '$1 $3 పేజీని {{GENDER:$2|తొలగించారు}}',
 'revdelete-content-hid' => 'కంటెంట్ దాచబడింది',
 'revdelete-summary-hid' => 'మార్పుల సారాంశాన్ని దాచారు',
 'revdelete-uname-hid' => 'వాడుకరి పేరుని దాచారు',
@@ -3516,7 +3548,7 @@ $5
 'logentry-newusers-create' => '$1 ఒక వాడుకరి ఖాతాను సృష్టించారు',
 'logentry-newusers-create2' => '$1  వాడుకరి ఖాతా $3ను సృష్టించారు',
 'logentry-newusers-autocreate' => '$1 ఖాతాను ఆటోమెటిగ్గా సృష్టించారు',
-'newuserlog-byemail' => 'ఈ-మెయిలులో సంకేతపదం పంపించాం',
+'rightsnone' => '(ఏమీలేవు)',
 
 # Feedback
 'feedback-subject' => 'విషయం:',

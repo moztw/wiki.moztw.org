@@ -25,8 +25,8 @@ class ChangeTags {
 	/**
 	 * Creates HTML for the given tags
 	 *
-	 * @param $tags String: Comma-separated list of tags
-	 * @param $page String: A label for the type of action which is being displayed,
+	 * @param string $tags Comma-separated list of tags
+	 * @param string $page A label for the type of action which is being displayed,
 	 *                     for example: 'history', 'contributions' or 'newpages'
 	 *
 	 * @return Array with two items: (html, classes)
@@ -34,17 +34,18 @@ class ChangeTags {
 	 *            - classes: Array of strings: CSS classes used in the generated html, one class for each tag
 	 *
 	 */
-	static function formatSummaryRow( $tags, $page ) {
+	public static function formatSummaryRow( $tags, $page ) {
 		global $wgLang;
 
-		if( !$tags )
+		if ( !$tags ) {
 			return array( '', array() );
+		}
 
 		$classes = array();
 
 		$tags = explode( ',', $tags );
 		$displayTags = array();
-		foreach( $tags as $tag ) {
+		foreach ( $tags as $tag ) {
 			$displayTags[] = Xml::tags(
 				'span',
 				array( 'class' => 'mw-tag-marker ' .
@@ -53,7 +54,10 @@ class ChangeTags {
 			);
 			$classes[] = Sanitizer::escapeClass( "mw-tag-$tag" );
 		}
-		$markers = wfMessage( 'parentheses' )->rawParams( $wgLang->commaList( $displayTags ) )->text();
+		$markers = wfMessage( 'tag-list-wrapper' )
+			->numParams( count( $displayTags ) )
+			->rawParams( $wgLang->commaList( $displayTags ) )
+			->parse();
 		$markers = Xml::tags( 'span', array( 'class' => 'mw-tag-markers' ), $markers );
 
 		return array( $markers, $classes );
@@ -62,12 +66,12 @@ class ChangeTags {
 	/**
 	 * Get a short description for a tag
 	 *
-	 * @param $tag String: tag
+	 * @param string $tag tag
 	 *
 	 * @return String: Short description of the tag from "mediawiki:tag-$tag" if this message exists,
 	 *                 html-escaped version of $tag otherwise
 	 */
-	static function tagDescription( $tag ) {
+	public static function tagDescription( $tag ) {
 		$msg = wfMessage( "tag-$tag" );
 		return $msg->exists() ? $msg->parse() : htmlspecialchars( $tag );
 	}
@@ -75,38 +79,40 @@ class ChangeTags {
 	/**
 	 * Add tags to a change given its rc_id, rev_id and/or log_id
 	 *
-	 * @param $tags String|Array: Tags to add to the change
+	 * @param string|array $tags Tags to add to the change
 	 * @param $rc_id int: rc_id of the change to add the tags to
 	 * @param $rev_id int: rev_id of the change to add the tags to
 	 * @param $log_id int: log_id of the change to add the tags to
-	 * @param $params String: params to put in the ct_params field of tabel 'change_tag'
+	 * @param string $params params to put in the ct_params field of table 'change_tag'
 	 *
+	 * @throws MWException
 	 * @return bool: false if no changes are made, otherwise true
 	 *
 	 * @exception MWException when $rc_id, $rev_id and $log_id are all null
 	 */
-	static function addTags( $tags, $rc_id = null, $rev_id = null, $log_id = null, $params = null ) {
+	public static function addTags( $tags, $rc_id = null, $rev_id = null, $log_id = null, $params = null ) {
 		if ( !is_array( $tags ) ) {
 			$tags = array( $tags );
 		}
 
 		$tags = array_filter( $tags ); // Make sure we're submitting all tags...
 
-		if( !$rc_id && !$rev_id && !$log_id ) {
-			throw new MWException( "At least one of: RCID, revision ID, and log ID MUST be specified when adding a tag to a change!" );
+		if ( !$rc_id && !$rev_id && !$log_id ) {
+			throw new MWException( 'At least one of: RCID, revision ID, and log ID MUST be ' .
+				'specified when adding a tag to a change!' );
 		}
 
 		$dbr = wfGetDB( DB_SLAVE );
 
 		// Might as well look for rcids and so on.
-		if( !$rc_id ) {
+		if ( !$rc_id ) {
 			$dbr = wfGetDB( DB_MASTER ); // Info might be out of date, somewhat fractionally, on slave.
-			if( $log_id ) {
+			if ( $log_id ) {
 				$rc_id = $dbr->selectField( 'recentchanges', 'rc_id', array( 'rc_logid' => $log_id ), __METHOD__ );
-			} elseif( $rev_id ) {
+			} elseif ( $rev_id ) {
 				$rc_id = $dbr->selectField( 'recentchanges', 'rc_id', array( 'rc_this_oldid' => $rev_id ), __METHOD__ );
 			}
-		} elseif( !$log_id && !$rev_id ) {
+		} elseif ( !$log_id && !$rev_id ) {
 			$dbr = wfGetDB( DB_MASTER ); // Info might be out of date, somewhat fractionally, on slave.
 			$log_id = $dbr->selectField( 'recentchanges', 'rc_logid', array( 'rc_id' => $rc_id ), __METHOD__ );
 			$rev_id = $dbr->selectField( 'recentchanges', 'rc_this_oldid', array( 'rc_id' => $rc_id ), __METHOD__ );
@@ -137,7 +143,7 @@ class ChangeTags {
 
 		// Insert the tags rows.
 		$tagsRows = array();
-		foreach( $tags as $tag ) { // Filter so we don't insert NULLs as zero accidentally.
+		foreach ( $tags as $tag ) { // Filter so we don't insert NULLs as zero accidentally.
 			$tagsRows[] = array_filter(
 				array(
 					'ct_tag' => $tag,
@@ -159,28 +165,27 @@ class ChangeTags {
 	 * Handles selecting tags, and filtering.
 	 * Needs $tables to be set up properly, so we can figure out which join conditions to use.
 	 *
-	 * @param $tables String|Array: Tabel names, see DatabaseBase::select
-	 * @param $fields String|Array: Fields used in query, see DatabaseBase::select
-	 * @param $conds String|Array: conditions used in query, see DatabaseBase::select
+	 * @param string|array $tables Table names, see DatabaseBase::select
+	 * @param string|array $fields Fields used in query, see DatabaseBase::select
+	 * @param string|array $conds conditions used in query, see DatabaseBase::select
 	 * @param $join_conds Array: join conditions, see DatabaseBase::select
-	 * @param $options Array: options, see Database::select
-	 * @param $filter_tag String: tag to select on
+	 * @param array $options options, see Database::select
+	 * @param bool|string $filter_tag Tag to select on
 	 *
-	 * @exception MWException when unable to determine appropriate JOIN condition for tagging
-	 *
+	 * @throws MWException When unable to determine appropriate JOIN condition for tagging
 	 */
-	static function modifyDisplayQuery( &$tables, &$fields,  &$conds,
+	public static function modifyDisplayQuery( &$tables, &$fields, &$conds,
 										&$join_conds, &$options, $filter_tag = false ) {
 		global $wgRequest, $wgUseTagFilter;
 
-		if( $filter_tag === false ) {
+		if ( $filter_tag === false ) {
 			$filter_tag = $wgRequest->getVal( 'tagfilter' );
 		}
 
 		// Figure out which conditions can be done.
 		if ( in_array( 'recentchanges', $tables ) ) {
 			$join_cond = 'rc_id';
-		} elseif( in_array( 'logging', $tables ) ) {
+		} elseif ( in_array( 'logging', $tables ) ) {
 			$join_cond = 'log_id';
 		} elseif ( in_array( 'revision', $tables ) ) {
 			$join_cond = 'rev_id';
@@ -193,14 +198,12 @@ class ChangeTags {
 		$join_conds['tag_summary'] = array( 'LEFT JOIN', "ts_$join_cond=$join_cond" );
 		$fields[] = 'ts_tags';
 
-		if( $wgUseTagFilter && $filter_tag ) {
+		if ( $wgUseTagFilter && $filter_tag ) {
 			// Somebody wants to filter on a tag.
 			// Add an INNER JOIN on change_tag
 
 			// FORCE INDEX -- change_tags will almost ALWAYS be the correct query plan.
-			global $wgOldChangeTagsIndex;
-			$index = $wgOldChangeTagsIndex ? 'ct_tag' : 'change_tag_tag_id';
-			$options['USE INDEX'] = array( 'change_tag' => $index );
+			$options['USE INDEX'] = array( 'change_tag' => 'change_tag_tag_id' );
 			unset( $options['FORCE INDEX'] );
 			$tables[] = 'change_tag';
 			$join_conds['change_tag'] = array( 'INNER JOIN', "ct_$join_cond=$join_cond" );
@@ -211,7 +214,7 @@ class ChangeTags {
 	/**
 	 * Build a text box to select a change tag
 	 *
-	 * @param $selected String: tag to select by default
+	 * @param string $selected tag to select by default
 	 * @param $fullForm Boolean:
 	 *        - if false, then it returns an array of (label, form).
 	 *        - if true, it returns an entire form around the selector.
@@ -221,11 +224,12 @@ class ChangeTags {
 	 *        - if $fullForm is false: Array with
 	 *        - if $fullForm is true: String, html fragment
 	 */
-	public static function buildTagFilterSelector( $selected='', $fullForm = false, Title $title = null ) {
+	public static function buildTagFilterSelector( $selected = '', $fullForm = false, Title $title = null ) {
 		global $wgUseTagFilter;
 
-		if ( !$wgUseTagFilter || !count( self::listDefinedTags() ) )
+		if ( !$wgUseTagFilter || !count( self::listDefinedTags() ) ) {
 			return $fullForm ? '' : array();
+		}
 
 		$data = array( Html::rawElement( 'label', array( 'for' => 'tagfilter' ), wfMessage( 'tag-filter' )->parse() ),
 			Xml::input( 'tagfilter', 20, $selected, array( 'class' => 'mw-tagfilter-input' ) ) );
@@ -251,7 +255,7 @@ class ChangeTags {
 	 *
 	 * @return Array of strings: tags
 	 */
-	static function listDefinedTags() {
+	public static function listDefinedTags() {
 		// Caching...
 		global $wgMemc;
 		$key = wfMemcKey( 'valid-tags' );
@@ -276,5 +280,35 @@ class ChangeTags {
 		// Short-term caching.
 		$wgMemc->set( $key, $emptyTags, 300 );
 		return $emptyTags;
+	}
+
+	/**
+	 * Returns a map of any tags used on the wiki to number of edits
+	 * tagged with them, ordered descending by the hitcount.
+	 *
+	 * @return array Array of string => int
+	 */
+	public static function tagUsageStatistics() {
+		$out = array();
+
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->select(
+			'change_tag',
+			array( 'ct_tag', 'hitcount' => 'count(*)' ),
+			array(),
+			__METHOD__,
+			array( 'GROUP BY' => 'ct_tag', 'ORDER BY' => 'hitcount DESC' )
+		);
+
+		foreach ( $res as $row ) {
+			$out[$row->ct_tag] = $row->hitcount;
+		}
+		foreach ( self::listDefinedTags() as $tag ) {
+			if ( !isset( $out[$tag] ) ) {
+				$out[$tag] = 0;
+			}
+		}
+
+		return $out;
 	}
 }

@@ -40,7 +40,7 @@ class CategoryPage extends Article {
 
 	/**
 	 * Constructor from a page id
-	 * @param $id Int article ID to load
+	 * @param int $id article ID to load
 	 * @return CategoryPage|null
 	 */
 	public static function newFromID( $id ) {
@@ -56,7 +56,7 @@ class CategoryPage extends Article {
 		$diffOnly = $request->getBool( 'diffonly',
 			$this->getContext()->getUser()->getOption( 'diffonly' ) );
 
-		if ( isset( $diff ) && $diffOnly ) {
+		if ( $diff !== null && $diffOnly ) {
 			parent::view();
 			return;
 		}
@@ -106,7 +106,13 @@ class CategoryPage extends Article {
 		unset( $reqArray["from"] );
 		unset( $reqArray["to"] );
 
-		$viewer = new $this->mCategoryViewerClass( $this->getContext()->getTitle(), $this->getContext(), $from, $until, $reqArray );
+		$viewer = new $this->mCategoryViewerClass(
+			$this->getContext()->getTitle(),
+			$this->getContext(),
+			$from,
+			$until,
+			$reqArray
+		);
 		$this->getContext()->getOutput()->addHTML( $viewer->getHTML() );
 	}
 }

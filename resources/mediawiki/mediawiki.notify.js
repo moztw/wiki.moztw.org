@@ -1,20 +1,28 @@
 /**
- * Implements mediaWiki.notify function
+ * @class mw.plugin.notify
  */
-( function ( mw ) {
+( function ( mw, $ ) {
 	'use strict';
 
 	/**
-	 * @see mw.notification.notify
+	 * @see mw.notification#notify
+	 * @param message
+	 * @param options
+	 * @return {jQuery.Promise}
 	 */
 	mw.notify = function ( message, options ) {
+		var d = $.Deferred();
 		// Don't bother loading the whole notification system if we never use it.
 		mw.loader.using( 'mediawiki.notification', function () {
-			// Don't bother calling mw.loader.using a second time after we've already loaded mw.notification.
-			mw.notify = mw.notification.notify;
 			// Call notify with the notification the user requested of us.
-			mw.notify( message, options );
-		} );
+			d.resolve( mw.notification.notify( message, options ) );
+		}, d.reject );
+		return d.promise();
 	};
 
-}( mediaWiki ) );
+	/**
+	 * @class mw
+	 * @mixins mw.plugin.notify
+	 */
+
+}( mediaWiki, jQuery ) );

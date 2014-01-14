@@ -2,8 +2,8 @@
  * Add search suggestions to the search form.
  */
 ( function ( mw, $ ) {
-	$( document ).ready( function ( $ ) {
-		var map, searchboxesSelectors,
+	$( function () {
+		var map, resultRenderCache, searchboxesSelectors,
 			// Region where the suggestions box will appear directly below
 			// (using the same width). Can be a container element or the input
 			// itself, depending on what suits best in the environment.
@@ -41,12 +41,95 @@
 			return;
 		}
 
+		// Compute form data for search suggestions functionality.
+		function computeResultRenderCache( context ) {
+			var $form, formAction, baseHref, linkParams;
+
+			// Compute common parameters for links' hrefs
+			$form = context.config.$region.closest( 'form' );
+
+			formAction = $form.attr( 'action' );
+			baseHref = formAction + ( formAction.match(/\?/) ? '&' : '?' );
+
+			linkParams = {};
+			$.each( $form.serializeArray(), function ( idx, obj ) {
+				linkParams[ obj.name ] = obj.value;
+			} );
+
+			return {
+				textParam: context.data.$textbox.attr( 'name' ),
+				linkParams: linkParams,
+				baseHref: baseHref
+			};
+		}
+
+		// The function used to render the suggestions.
+		function renderFunction( text, context ) {
+			if ( !resultRenderCache ) {
+				resultRenderCache = computeResultRenderCache( context );
+			}
+
+			// linkParams object is modified and reused
+			resultRenderCache.linkParams[ resultRenderCache.textParam ] = text;
+
+			// this is the container <div>, jQueryfied
+			this
+				.append(
+					// the <span> is needed for $.autoEllipsis to work
+					$( '<span>' )
+						.css( 'whiteSpace', 'nowrap' )
+						.text( text )
+				)
+				.wrap(
+					$( '<a>' )
+						.attr( 'href', resultRenderCache.baseHref + $.param( resultRenderCache.linkParams ) )
+						.addClass( 'mw-searchSuggest-link' )
+				);
+		}
+
+		function specialRenderFunction( query, context ) {
+			var $el = this;
+
+			if ( !resultRenderCache ) {
+				resultRenderCache = computeResultRenderCache( context );
+			}
+
+			// linkParams object is modified and reused
+			resultRenderCache.linkParams[ resultRenderCache.textParam ] = query;
+
+			if ( $el.children().length === 0 ) {
+				$el
+					.append(
+						$( '<div>' )
+							.addClass( 'special-label' )
+							.text( mw.msg( 'searchsuggest-containing' ) ),
+						$( '<div>' )
+							.addClass( 'special-query' )
+							.text( query )
+							.autoEllipsis()
+					)
+					.show();
+			} else {
+				$el.find( '.special-query' )
+					.text( query )
+					.autoEllipsis();
+			}
+
+			if ( $el.parent().hasClass( 'mw-searchSuggest-link' ) ) {
+				$el.parent().attr( 'href', resultRenderCache.baseHref + $.param( resultRenderCache.linkParams ) + '&fulltext=1' );
+			} else {
+				$el.wrap(
+					$( '<a>' )
+						.attr( 'href', resultRenderCache.baseHref + $.param( resultRenderCache.linkParams ) + '&fulltext=1' )
+						.addClass( 'mw-searchSuggest-link' )
+				);
+			}
+		}
+
 		// General suggestions functionality for all search boxes
 		searchboxesSelectors = [
 			// Primary searchbox on every page in standard skins
 			'#searchInput',
-			// Secondary searchbox in legacy skins (LegacyTemplate::searchForm uses id "searchInput + unique id")
-			'#searchInput2',
 			// Special:Search
 			'#powerSearchText',
 			'#searchText',
@@ -56,39 +139,31 @@
 		$( searchboxesSelectors.join(', ') )
 			.suggestions( {
 				fetch: function ( query ) {
-					var $el, jqXhr;
+					var $el;
 
 					if ( query.length !== 0 ) {
-						$el = $(this);
-						jqXhr = $.ajax( {
-							url: mw.util.wikiScript( 'api' ),
-							data: {
-								format: 'json',
-								action: 'opensearch',
-								search: query,
-								namespace: 0,
-								suggest: ''
-							},
-							dataType: 'json',
-							success: function ( data ) {
-								if ( $.isArray( data ) && data.length ) {
-									$el.suggestions( 'suggestions', data[1] );
-								}
-							}
-						});
-						$el.data( 'request', jqXhr );
+						$el = $( this );
+						$el.data( 'request', ( new mw.Api() ).get( {
+							action: 'opensearch',
+							search: query,
+							namespace: 0,
+							suggest: ''
+						} ).done( function ( data ) {
+							$el.suggestions( 'suggestions', data[1] );
+						} ) );
 					}
 				},
 				cancel: function () {
-					var jqXhr = $(this).data( 'request' );
+					var apiPromise = $( this ).data( 'request' );
 					// If the delay setting has caused the fetch to have not even happened
-					// yet, the jqXHR object will have never been set.
-					if ( jqXhr && $.isFunction( jqXhr.abort ) ) {
-						jqXhr.abort();
-						$(this).removeData( 'request' );
+					// yet, the apiPromise object will have never been set.
+					if ( apiPromise && $.isFunction( apiPromise.abort ) ) {
+						apiPromise.abort();
+						$( this ).removeData( 'request' );
 					}
 				},
 				result: {
+					render: renderFunction,
 					select: function ( $input ) {
 						$input.closest( 'form' ).submit();
 					}
@@ -110,39 +185,16 @@
 			return;
 		}
 
-		// Placeholder text for search box
-		$searchInput
-			.attr( 'placeholder', mw.msg( 'searchsuggest-search' ) )
-			.placeholder();
-
 		// Special suggestions functionality for skin-provided search box
 		$searchInput.suggestions( {
 			result: {
+				render: renderFunction,
 				select: function ( $input ) {
 					$input.closest( 'form' ).submit();
 				}
 			},
 			special: {
-				render: function ( query ) {
-					var $el = this;
-					if ( $el.children().length === 0 ) {
-						$el
-							.append(
-								$( '<div>' )
-									.addClass( 'special-label' )
-									.text( mw.msg( 'searchsuggest-containing' ) ),
-								$( '<div>' )
-									.addClass( 'special-query' )
-									.text( query )
-									.autoEllipsis()
-							)
-							.show();
-					} else {
-						$el.find( '.special-query' )
-							.text( query )
-							.autoEllipsis();
-					}
-				},
+				render: specialRenderFunction,
 				select: function ( $input ) {
 					$input.closest( 'form' ).append(
 						$( '<input type="hidden" name="fulltext" value="1"/>' )

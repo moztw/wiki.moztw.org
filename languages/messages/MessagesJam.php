@@ -43,9 +43,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Shuo di nomba a wachin yuuza',
 'tog-oldsig' => 'Priivyuu a egzisin signicha:',
 'tog-fancysig' => 'Chriit signicha az wikitex (widoutn aatamatik lingk)',
-'tog-externaleditor' => 'Yuuz extoernal edita bai difaalt (fi expoert onli, niid speshal setn pahn yu kompiuta)',
-'tog-externaldiff' => 'Yuuz extoernal dif bai difaalt (fi expoert onli, niid speshal setn pahn yu kompiuta)',
-'tog-showjumplinks' => 'Eniebl "jomp tu" aksesibiliti lingk',
 'tog-uselivepreview' => 'Yuuz laiv priivyuu (rikwaya JavaScript) (experimental)',
 'tog-forceeditsummary' => 'Pramp mi wen entarin blangk edit somari',
 'tog-watchlisthideown' => 'Aid mi editdem frahn di wachlis',
@@ -157,7 +154,6 @@ Lef aaf dif afta pofaamin ruolbak',
 'qbbrowse' => 'Brouz',
 'qbedit' => 'Edit',
 'qbpageoptions' => 'Dis piej',
-'qbpageinfo' => 'Kantex',
 'qbmyoptions' => 'Mi piejdem',
 'qbspecialpages' => 'Peshal piejdem',
 'faq' => 'FAK',
@@ -244,7 +240,7 @@ $1',
 'pool-queuefull' => 'Puul kyuu fulop',
 'pool-errorunknown' => 'Anuon era',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Habowt {{SITENAME}}',
 'aboutpage' => 'Project: អំពី',
 'copyright' => 'Kantent avielobl anda $1.',
@@ -254,7 +250,6 @@ $1',
 'disclaimers' => 'Diskliema',
 'disclaimerpage' => 'Project: Jinaral diskliema',
 'edithelp' => 'Editin elp',
-'edithelppage' => 'Help: Editin',
 'helppage' => 'Help: Kantent',
 'mainpage' => 'Mien piej',
 'mainpage-description' => 'Mien piej',
@@ -325,17 +320,6 @@ A lis a valid peshal piej kiahn fain a [[Special:SpecialPages|{{int:specialpages
 # General errors
 'error' => 'Era',
 'databaseerror' => 'Dietabies era',
-'dberrortext' => 'A dietabies kwieri sintax era okor.
-Dis maita indikiet wahn bog ina di saafwier.
-Di laas atemp dietabies kwieri ena:
-<blockquote><tt>$1</tt></blockquote>
-frahn widin fongshan "<tt>$2</tt>".
-Dietabies ritoern era "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'A dietabies kwieri sintax era okor.
-Di laas attemp dietabies kwieri ena:
-"$1"
-frahn widin fongshan "$2".
-Dietabies ritoern era "$3: $4"',
 'laggedslavemode' => "'''Waanin:''' Piej maita no kantien riisant opdiet.",
 'readonly' => 'Dietabies lak',
 'enterlockreason' => 'Enta a riizn fi di lak, inkluudn a estimet a wen di lak wi riliis',
@@ -388,7 +372,6 @@ Begyu chrai agen ina fyuu minit.',
 'editinginterface' => "'''Waanin:''' Yu de edit page we yuuz fi provaid intafies tex fi di saafwier.
 Chienj tu dis piej wi afek di apierans a di yuuza intafies fi ada yuuzadem.
 Fi chranslieshan, begyu kansida fi yuuz [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], di MediaWiki luokalaizieshan projek.",
-'sqlhidden' => '(SQL kwieri aidwe)',
 'cascadeprotected' => 'Dis piej protek frahn edit, bikaa i\'inkluud ina di falarin {{PLURAL:$1|piej, ush|piejdem, ush}} protek wid di "kiaskiedn" apshan ton aan:
 $2',
 'namespaceprotected' => "Yu no gat no pomishan fi edit piej ina di '''$1''' niemspies.",
@@ -404,11 +387,8 @@ Di riizn dehn gi a "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Yu nou lag out.'''
 
-Yu kiahn kantiniu yuuz {{SITENAME}} ananimosli, ar yu kiahn [[Special:UserLogin|lag iin agen]] az di siem ar az difrant yuuza.
+Yu kiahn kantiniu yuuz {{SITENAME}} ananimosli, ar yu kiahn <span class='plainlinks'>[$1 lag iin agen]</span> az di siem ar az difrant yuuza.
 Nuot se som piej maita kantiniu fi displie laik se yu stil log iin, antel yu klier yu brouza kiash.",
-'welcomecreation' => '== Welkom, $1! ==
-Yu akount don kriet.
-No figat fi chienj yu [[Special:Preferences|{{SITENAME}} prefransdem]].',
 'yourname' => 'Yuuzaniem:',
 'yourpassword' => 'Paaswod:',
 'yourpasswordagain' => 'Ritaip paaswod:',
@@ -511,7 +491,7 @@ Fi finish lag iin, yu mos set a nyuu paaswod yaso:',
 'newpassword' => 'Nyuu paaswod:',
 'retypenew' => 'Ritaip nyuu paaswod:',
 'resetpass_submit' => 'Set paaswod ahn lag iin',
-'resetpass_success' => 'Yu paaswod chienj soksesfuli!
+'changepassword-success' => 'Yu paaswod chienj soksesfuli!
 A lag yu iin nou ...',
 'resetpass_forbidden' => 'Paaswod kyaahn chienj',
 'resetpass-no-info' => 'Yu mos lag iin fi akses dis piej dairek.',
@@ -669,7 +649,6 @@ Yu de pramis wi alzwel se a yu rait dis yuself, ar kapi'i frahn a poblik domien 
 'template-protected' => '(protek)',
 'template-semiprotected' => '(semi-protek)',
 'hiddencategories' => 'Dis piej a memb a {{PLURAL:$1|1 idn kiatigari|$1 idn kiatigari}}:',
-'nocreatetitle' => 'Piej krieshan limit',
 'permissionserrors' => 'Permishan herro',
 'permissionserrorstext-withaction' => 'Yu no ab no poermishan fi $2, fi di falarin {{PLURAL:$1|riizn|riizndem}}:',
 'edit-conflict' => 'Hedit kanflik: $1',
@@ -740,6 +719,9 @@ Chrai priifix yu kwieri wid ''all:'' fi saach aal kantent (inkluudn taak piej, t
 'group-sysop' => 'Adminischrieta',
 
 'grouppage-sysop' => '{{ns:project}}:Adminischrieta',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Yuuza krieshan lag',
 
 # User rights log
 'rightslog' => 'Yuuza raits lag',
@@ -831,13 +813,10 @@ Piej pahn [[Special:Watchlist|yu wachlis]] dem '''buol'''.",
 # Special:LinkSearch
 'linksearch' => 'Extoernal lingk',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Yuuza krieshan lag',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(lis a memba)',
 
-# E-mail user
+# Email user
 'emailuser' => 'E-miel dis yuuza',
 
 # Watchlist

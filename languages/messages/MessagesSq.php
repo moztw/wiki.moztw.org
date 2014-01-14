@@ -246,9 +246,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Trego numrin e përdoruesve që vëzhgojnë këtë faqe',
 'tog-oldsig' => 'Nënshkrimi ekzistues:',
 'tog-fancysig' => 'Mbaje nënshkrimin si wikitekst (pa lidhje automatike)',
-'tog-externaleditor' => 'Përdor si rregull program të jashtëm redaktimi (vetëm për ekspertë, kërkon regjistrime speciale të kompjuterit. [//www.mediawiki.org/wiki/Manual:External_editors More information.])',
-'tog-externaldiff' => 'Përdor si rregull program të jashtëm diff (vetëm për ekspertë, kërkon regjistrime speciale të kompjuterit. [//www.mediawiki.org/wiki/Manual:External_editors More information.])',
-'tog-showjumplinks' => 'Lejo lidhje "shko tek"',
 'tog-uselivepreview' => 'Trego bocetin në mënyrë të drejtëpërdrejtë (kërkon JavaScript) (eksperimentale)',
 'tog-forceeditsummary' => 'Më njofto kur e lë përmbledhjen e redaktimit bosh',
 'tog-watchlisthideown' => 'Fshih redaktimet e mia nga lista e faqeve të vëzhguara',
@@ -261,6 +258,7 @@ $messages = array(
 'tog-diffonly' => 'Mos trego përmbajtjen e faqes nën diff-e',
 'tog-showhiddencats' => 'Trego kategoritë e fshehura',
 'tog-norollbackdiff' => 'Ndryshimi pas rikthimit do të fshihet',
+'tog-useeditwarning' => 'Më paralajmëro kur unë lë një redaktim faqeje me ndryshime të paruajtura',
 
 'underline-always' => 'Gjithmonë',
 'underline-never' => 'Asnjëherë',
@@ -324,6 +322,18 @@ $messages = array(
 'oct' => 'Tet',
 'nov' => 'Nën',
 'dec' => 'Dhje',
+'january-date' => '$1 janar',
+'february-date' => '$1 shkurt',
+'march-date' => '$1 mars',
+'april-date' => '$1 prill',
+'may-date' => '$1 maj',
+'june-date' => '$1 qershor',
+'july-date' => '$1 korrik',
+'august-date' => '$1 gusht',
+'september-date' => '$1 shtator',
+'october-date' => '$1 tetor',
+'november-date' => '$1 nëntor',
+'december-date' => '$1 dhjetor',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Kategoria|Kategoritë}}',
@@ -349,8 +359,9 @@ $messages = array(
 'newwindow' => '(hapet në një dritare të re)',
 'cancel' => 'Anulo',
 'moredotdotdot' => 'Më shumë...',
-'mypage' => 'Faqja ime',
-'mytalk' => 'Diskutimet e mia',
+'morenotlisted' => 'Të tjera...',
+'mypage' => 'Faqja',
+'mytalk' => 'Diskutimet',
 'anontalk' => 'Diskutimet për këtë IP',
 'navigation' => 'Shfleto',
 'and' => '&#32;dhe',
@@ -360,7 +371,6 @@ $messages = array(
 'qbbrowse' => 'Shfletoni',
 'qbedit' => 'Redaktoni',
 'qbpageoptions' => 'Kjo faqe',
-'qbpageinfo' => 'Kontekst',
 'qbmyoptions' => 'Faqet e mia',
 'qbspecialpages' => 'Faqet speciale',
 'faq' => 'Pyetje që bëhen shpesh',
@@ -383,6 +393,7 @@ $messages = array(
 'namespaces' => 'Hapsirat e emrit',
 'variants' => 'Variante',
 
+'navigation-heading' => 'Menuja e navigimit',
 'errorpagetitle' => 'Gabim',
 'returnto' => 'Kthehuni tek $1',
 'tagline' => 'Nga {{SITENAME}}',
@@ -404,6 +415,7 @@ $messages = array(
 'create-this-page' => 'Krijoje këtë faqe',
 'delete' => 'Grise',
 'deletethispage' => 'Grise këtë faqe',
+'undeletethispage' => 'Rikthe faqen',
 'undelete_short' => 'Anullo fshirjen {{PLURAL:$1|një redaktim|$1 redaktime}}',
 'viewdeleted_short' => 'Shiko {{PLURAL:$1|një redaktim të fshirë|$1 redaktime të fshira}}',
 'protect' => 'Mbroje',
@@ -447,7 +459,7 @@ $1",
 'pool-queuefull' => 'Radha e proceseve është mbushur',
 'pool-errorunknown' => 'Gabim i panjohur',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Rreth {{SITENAME}}',
 'aboutpage' => 'Project:Rreth',
 'copyright' => 'Përmbajtja është në disponim nëpërmjet licencës $1.',
@@ -457,7 +469,6 @@ $1",
 'disclaimers' => 'Shfajësimet',
 'disclaimerpage' => 'Project:Shfajësimet e përgjithshme',
 'edithelp' => 'Ndihmë për redaktim',
-'edithelppage' => 'Help:Redaktimi',
 'helppage' => 'Help:Përmbajtje',
 'mainpage' => 'Faqja kryesore',
 'mainpage-description' => 'Faqja kryesore',
@@ -489,8 +500,7 @@ $1",
 'viewsourceold' => 'shiko tekstin',
 'editlink' => 'redakto',
 'viewsourcelink' => 'Shiko tekstin',
-'editsectionhint' => 'Redaktoni seksionin:
-Edit section: $1',
+'editsectionhint' => 'Redaktoni seksionin: $1',
 'toc' => 'Përmbajtje',
 'showtoc' => 'trego',
 'hidetoc' => 'fshih',
@@ -535,18 +545,6 @@ Kjo mund të vijë edhe si rezultat i një gabimi në programin e përdorur nga 
 # General errors
 'error' => 'Gabim',
 'databaseerror' => 'Gabim në databazë',
-'dberrortext' => 'Ka ndodhur një gabim me pyetjen e regjistrit.
-Kjo mund të ndodhi n.q.s. pyetja nuk është e vlehshme,
-ose mund të jetë një yçkël e softuerit.
-Pyetja e fundit që i keni bërë regjistrit ishte:
-<blockquote><tt>$1</tt></blockquote>
-nga funksioni "<tt>$2</tt>".
-MySQL kthehu gabimin "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Ka ndodhur një gabim me sintaksën query në databazë. 
-Query e fundit që i keni bërë regjistrit ishte:
-"$1"
-nga funksioni "$2".
-MySQL kthehu gabimin "$3: $4".',
 'laggedslavemode' => "'''Kujdes:''' Kjo faqe nuk mund të ketë përditësime të kohëve të fundit.",
 'readonly' => 'Databaza e kyçur',
 'enterlockreason' => 'Shëno arsyen e kyçjes, gjithashtu shëno se kur mund të hapet.',
@@ -601,7 +599,6 @@ Ju lutemi, provojeni përsëri pas disa minutash.',
 'editinginterface' => "'''Kujdes:''' Po redaktoni një faqe që përdoret për tekstin dritares së programit. 
 Ndryshimet në këtë faqe do të ndikojnë pamjen e dritares për përdoruesit e tjerë.
 Për përkthime, ju lutem konsideroni përdorimin e [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], projektin e lokalizimit MediaWiki.",
-'sqlhidden' => '(Query SQL e fshehur)',
 'cascadeprotected' => 'Kjo faqe është mbrojtur nga redaktimi pasi është përfshirë në {{PLURAL:$1|faqen|faqet}} e mëposhtme që {{PLURAL:$1|është|janë}} mbrojtur sipas metodës "cascading":
 $2',
 'namespaceprotected' => "Nuk ju lejohet redaktimi i faqeve në hapsirën '''$1'''.",
@@ -626,16 +623,25 @@ Administratori i cili e mbylli atë e dha këtë shpjegim: "$3".',
 # Login and logout pages
 'logouttext' => "'''Ju keni dalë jashtë.''' 
 
- Ju mund të vazhdoni të përdorni {{SITENAME}} në mënyrë anonime, ose mund të [[Special:UserLogin|identifikoheni përsëri]] si përdoruesi i mëparshëm ose si një përdorues tjetër. 
+ Ju mund të vazhdoni të përdorni {{SITENAME}} në mënyrë anonime, ose mund të <span class='plainlinks'>[$1 identifikoheni përsëri]</span> si përdoruesi i mëparshëm ose si një përdorues tjetër. 
  Kini parasysh që disa faqe mund të shfaqen sikur të ishit i identifikuar derisa të fshini ''cache''-in e shfletuesit tuaj.",
-'welcomecreation' => '== Mirësevini, $1! == 
- Llogaria juaj është krijuar. 
- Mos harroni të ndryshoni [[Special:Preferences|{{SITENAME}} preferencat]] tuaja.',
+'welcomeuser' => 'Mirë se vini, $1!',
+'welcomecreation-msg' => 'Llogaria juaj u krijua. 
+Mos harroni të ndryshoni [[Special:Preferences|{{SITENAME}} preferencat]] tuaja.',
 'yourname' => 'Fusni nofkën tuaj',
+'userlogin-yourname' => 'Emri i përdoruesit',
+'userlogin-yourname-ph' => 'Shtypni emrin tuaj të përdoruesit',
+'createacct-another-username-ph' => 'Shtypni emrin e përdoruesit',
 'yourpassword' => 'Fusni fjalëkalimin tuaj',
+'userlogin-yourpassword' => 'Fjalëkalimi',
+'userlogin-yourpassword-ph' => 'Shtypni fjalëkalimin tuaj',
+'createacct-yourpassword-ph' => 'Shtypni një fjalëkalim',
 'yourpasswordagain' => 'Fusni fjalëkalimin përsëri',
+'createacct-yourpasswordagain' => 'Konfirmoni fjalëkalimin',
+'createacct-yourpasswordagain-ph' => 'Shtypni fjalëkalimin përsëri',
 'remembermypassword' => 'Mbaj mënd fjalëkalimin tim për tërë vizitat e ardhshme (për një kohë maksimale prej $1 {{PLURAL:$1|dite|ditësh}})',
-'securelogin-stick-https' => 'Qëndro i lidhur me HTTPS pas hyrjes me emrin përkatës',
+'userlogin-remembermypassword' => 'Më mbaj të kyçur',
+'userlogin-signwithsecure' => 'Përdor lidhje të sigurtë',
 'yourdomainname' => 'Faqja juaj',
 'password-change-forbidden' => 'Ju nuk mund të ndryshoni fjalëkalimet në këtë wiki.',
 'externaldberror' => 'Ose kishte një gabim tek regjistri i identifikimit të jashtëm, ose nuk ju lejohet të përtërini llogarinë tuaje të jashtme.',
@@ -647,12 +653,17 @@ Administratori i cili e mbylli atë e dha këtë shpjegim: "$3".',
 'logout' => 'Dalje',
 'userlogout' => 'Dalje',
 'notloggedin' => 'Nuk keni hyrë brenda',
+'userlogin-noaccount' => 'Nuk keni një llogari?',
+'userlogin-joinproject' => 'Bashkohu me ne në {{SITENAME}}',
 'nologin' => "Nuk keni një llogari? '''$1'''.",
 'nologinlink' => 'Hapeni',
 'createaccount' => 'Hap një llogari',
 'gotaccount' => "Keni një llogari? '''$1'''.",
 'gotaccountlink' => 'Hyni',
 'userlogin-resetlink' => 'Keni harruar të dhënat tuaja të identifikimit?',
+'userlogin-resetpassword-link' => 'Rivendos fjalëkalimin',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Më ndihmo të futem në Wikipedia]]',
+'createacct-join' => 'Jepni informacionin tuaj më poshtë',
 'createaccountmail' => 'me email',
 'createaccountreason' => 'Arsyeja:',
 'badretype' => 'Fjalëkalimet nuk janë njësoj.',
@@ -715,7 +726,7 @@ Duhet të hyni brenda dhe të ndërroni fjalëkalimin tani nëse ky person jeni 
 'loginlanguagelabel' => 'Gjuha: $1',
 'suspicious-userlogout' => 'Kërkesa juaj për të shkëputet u mohua sepse duket sikur është dërguar nga një shfletues të thyer ose caching proxy.',
 
-# E-mail sending
+# Email sending
 'php-mail-error-unknown' => 'Gabim i panjohur në funksionin e postës PHP ()',
 'user-mail-no-addy' => 'Provuat të dërgoni një korrespondencë pa adresë elektronike',
 
@@ -728,7 +739,7 @@ Për të hyrë tërësisht duhet të vendosni një fjalëkalim të ri këtu:',
 'newpassword' => 'I riu',
 'retypenew' => 'I riu përsëri',
 'resetpass_submit' => 'Ndrysho fjalëkalimin dhe hyni brenda',
-'resetpass_success' => 'Fjalëkalimi juaj është ndryshuar me sukses! Mund të hyni brenda...',
+'changepassword-success' => 'Fjalëkalimi juaj është ndryshuar me sukses! Mund të hyni brenda...',
 'resetpass_forbidden' => 'Fjalëkalimet nuk mund të ndryshohen',
 'resetpass-no-info' => 'Duhet të jeni i kyçur që të keni qasje direkte në këtë faqe.',
 'resetpass-submit-loggedin' => 'Ndrysho fjalëkalimin',
@@ -738,10 +749,8 @@ Për të hyrë tërësisht duhet të vendosni një fjalëkalim të ri këtu:',
 
 # Special:PasswordReset
 'passwordreset' => 'Ndrysho fjalkalimin',
-'passwordreset-text' => 'Plotësoni këtë formular për të marrë një këshillë e-mail të dhënat e llogarisë suaj.',
 'passwordreset-legend' => 'Ndrysho fjalkalimin',
 'passwordreset-disabled' => 'Rivendosja e fjalëkalimit është deaktivizuar në këtë wiki.',
-'passwordreset-pretext' => '{{PLURAL:$1| | Shkruani një nga pjesët e të dhënave më poshtë}}',
 'passwordreset-username' => 'Nofka:',
 'passwordreset-domain' => 'Domain:',
 'passwordreset-capture' => 'Dëshiron të shikosh e-mail-in që rezulton?',
@@ -873,10 +882,8 @@ Kjo adresë IP mund të përdoret nga disa përdorues.
 Ju mund [[Special:Search/{{PAGENAME}}|ta kërkoni këtë titull]] në faqe tjera,
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} të kërkoni ngjarjet e ngjashme në regjistër],
 ose [{{fullurl:{{FULLPAGENAME}}|action=edit}} të redaktoni këtë faqe]</span>.',
-'noarticletext-nopermission' => 'Momentalisht nuk ka tekst në këtë faqe.
-Ju mundeni [[Special:Search/{{PAGENAME}}|me kërku këtë titull]] në faqe tjera,
-<span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} me kërku në regjistrat tematikisht të afërm],
-apo [{{fullurl:{{FULLPAGENAME}}|action=edit}} me redaktu këtë faqe]</span>.',
+'noarticletext-nopermission' => 'Për momentin faqja e kërkuar është bosh.
+Ju mund të [[Special:Search/{{PAGENAME}}|kërkoni këtë titiull]] në faqet e tjera, ose të <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} këtkoni regjistrat e ngjashëm]</span>, por ju nuk mundeni ta krijoni këtë faqe.',
 'missing-revision' => 'Inspektimi #$1 i faqes me emrin "{{PAGENAME}}" nuk ekziston.
 
 Kjo zakonisht shkaktuar duke ndjekur një lidhje të vjetër tek një faqe që është fshirë. Hollësitë mund të gjenden në [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} regjistrin e fshirjeve].',
@@ -963,7 +970,6 @@ Regjistri më i vonshëm i hyrjeve është poshtë për referncë:",
 'template-semiprotected' => '(gjysëm-mbrojtur)',
 'hiddencategories' => 'Kjo faqe është nën {{PLURAL:$1|një kategori të fshehur|$1 kategori të fshehura}}:',
 'edittools' => '<!-- Teksti këtu do të tregohet poshtë kutive të redaktimit dhe ngarkimit të skedave. -->',
-'nocreatetitle' => 'Krijimi i faqeve të reja është i kufizuar.',
 'nocreatetext' => 'Mundësia për të krijuar faqe të reja është kufizuar. Duhet të [[Special:UserLogin|hyni ose të hapni një llogari]] për të krijuar faqe të reja, ose mund të ktheheni mbrapsh dhe të redaktoni një faqe ekzistuese.',
 'nocreate-loggedin' => 'Nuk ju lejohet të krijoni faqe të reja.',
 'sectioneditnotsupported-title' => 'Redaktimi i pjesës nuk është i mbështetur',
@@ -986,6 +992,11 @@ Duket se është grisur.',
 'edit-already-exists' => 'Faqja nuk mundej të hapet.
 Ajo tanimë ekziston.',
 'defaultmessagetext' => 'Teksti i porosisë së parazgjedhur',
+'editwarning-warning' => 'Lënia e kësaj faqeje mund t\'ju shkaktojë humbjen e çdo ndryshimi që keni bërë.
+Nëse keni hyrë brenda, ju mund ta hiqni këtë paralajmërim në seksionin "Redaktimi" tek preferencat tuaja.',
+
+# Content models
+'content-model-text' => 'tekst i thejshtë',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Kujdes: Kjo faqe ka shumë kërkesa që kërkojnë analizë gramatikore të kushtueshme për sistemin.
@@ -1177,7 +1188,7 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'mergelogpagetext' => 'Më poshtë jepet një listë e bashkimeve së fundmi nga historiku i një faqeje në historikun e një faqeje tjetër.',
 
 # Diffs
-'history-title' => 'Historiku i redaktimeve te "$1"',
+'history-title' => 'Historiku i redaktimeve të "$1"',
 'difference-title' => 'Ndryshimi mes inspektimeve të "$1"',
 'difference-title-multipage' => 'Ndryshimi mes faqeve "$1" dhe "$2"',
 'difference-multipage' => '(Ndryshimi midis faqeve)',
@@ -1208,7 +1219,6 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'searchmenu-legend' => 'Parazgjedhjet e kërkimit',
 'searchmenu-exists' => "'''Në këtë wiki kjo faqe është emëruar \"[[:\$1]]\"'''",
 'searchmenu-new' => "'''Hapë faqen \"[[:\$1]]\" në këtë wiki!'''",
-'searchhelp-url' => 'Help:Ndihmë',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Shfletoi faqet me këtë parashtesë]]',
 'searchprofile-articles' => 'Përmbajtja e faqeve',
 'searchprofile-project' => 'Ndihmë dhe faqet e Projektit',
@@ -1250,15 +1260,6 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'search-external' => 'Kërkim i jashtëm',
 'searchdisabled' => '<p>Kërkimi me tekst të plotë është bllokuar tani për tani ngaqë shërbyesi është shumë i ngarkuar; shpresojmë ta nxjerrim prapë në gjendje normale pas disa punimeve. Deri atëherë mund të përdorni Google-in për kërkime:</p>',
 
-# Quickbar
-'qbsettings' => 'Vendime të shpejta',
-'qbsettings-none' => 'Asnjë',
-'qbsettings-fixedleft' => 'Lidhur majtas',
-'qbsettings-fixedright' => 'Lidhur djathtas',
-'qbsettings-floatingleft' => 'Pezull majtas',
-'qbsettings-floatingright' => 'Pezull djathtas',
-'qbsettings-directionality' => 'Fikse, në varësi të skriptës së drejtuar në gjuhën tuaj',
-
 # Preferences page
 'preferences' => 'Parapëlqimet',
 'mypreferences' => 'Parapëlqimet',
@@ -1291,7 +1292,6 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'resetprefs' => 'Rikthe parapëlqimet',
 'restoreprefs' => 'Rikthe të gjitha të dhënat e mëparshme',
 'prefs-editing' => 'Redaktimi',
-'prefs-edit-boxsize' => 'Madhësia e dritares së redaktimit.',
 'rows' => 'Rreshta:',
 'columns' => 'Kollona:',
 'searchresultshead' => 'Kërkimi',
@@ -1302,9 +1302,6 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'recentchangesdays-max' => '(maksimum $1 {{PLURAL:$1|dit|ditë}})',
 'recentchangescount' => 'Numri i redaktimeve për të treguar:',
 'prefs-help-recentchangescount' => 'Kjo përfshin ndryshimet e freskëta, historikun e faqes dhe regjistrat.',
-'prefs-help-watchlist-token' => 'Plotësimi në këtë fushë me një kyç të fshehtë do të gjenerojë një RSS për të listës mbikqyrëse tuaj. 
- Kushdo që e di të rëndësishme në këtë fushë do të jetë në gjendje për të lexuar lista mbikqyrëse e juaj, kështu që zgjidhni një vlerë të sigurt. 
- Këtu ka një vlerë të rastësishme-generated ju mund të përdorni: $1',
 'savedprefs' => 'Parapëlqimet tuaja janë ruajtur.',
 'timezonelegend' => 'Zona kohore:',
 'localtime' => 'Ora lokale:',
@@ -1335,7 +1332,6 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'prefs-reset-intro' => 'Mundeni me përdorë këtë faqe për me i kthy parapëlqimet tueja në ato të paracaktuemet e faqes.
 Kjo nuk mundet me u zhbâ.',
 'prefs-emailconfirm-label' => 'Konfirmimi i emailit:',
-'prefs-textboxsize' => 'Madhësia e dritares së redakrimit',
 'youremail' => 'Adresa e email-it*',
 'username' => 'Nofka e përdoruesit:',
 'uid' => 'Nr. i identifikimit:',
@@ -1376,7 +1372,7 @@ Kjo informatë është publike.',
 'prefs-displaywatchlist' => 'Shfaq opsionet',
 'prefs-diffs' => 'Ndryshimet',
 
-# User preference: e-mail validation using jQuery
+# User preference: email validation using jQuery
 'email-address-validity-valid' => 'E-mail adresa është e vlefshme.',
 'email-address-validity-invalid' => 'Futni një e-mali adresë të vlefshme.',
 
@@ -1488,12 +1484,13 @@ Kjo informatë është publike.',
 'right-sendemail' => 'Dërgo e-mail tek përdoruesit e tjerë',
 'right-passwordreset' => 'Shiko e-mail-et e rivendosjes së fjalëkalimit',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Regjistri i llogarive',
+'newuserlogpagetext' => 'Ky është një regjistër i llogarive të fundit që janë hapur',
+
 # User rights log
 'rightslog' => 'Regjistri i privilegjeve të përdoruesit',
 'rightslogtext' => 'Ky është një regjistër për ndryshimet e privilegjeve të përdoruesit.',
-'rightslogentry' => 'u ndryshua anëtarësimi i grupit për $1 nga $2 tek $3',
-'rightslogentry-autopromote' => 'automatikisht u rrit në datyrë nga $2 në $3',
-'rightsnone' => '(asgjë)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lexo këtë faqe',
@@ -1573,7 +1570,6 @@ Kjo informatë është publike.',
 'recentchangeslinked-feed' => 'Ndryshime të ndërvarura',
 'recentchangeslinked-toolbox' => 'Ndryshime të ndërvarura',
 'recentchangeslinked-title' => 'Ndryshime që kanë lidhje me "$1"',
-'recentchangeslinked-noresult' => 'Nuk ka pasur ndryshime tek faqet e lidhura gjatë kohës së dhënë.',
 'recentchangeslinked-summary' => "Kjo është një listë e ndryshimeve së fundmi të faqeve të lidhura nga faqja e dhënë (ose bëjnë pjesë tek kategoria e dhënë).
 Faqet [[Special:Watchlist|nën mbikqyrjen tuaj]] duken të '''theksuara'''.",
 'recentchangeslinked-page' => 'Emri i faqes:',
@@ -1795,7 +1791,6 @@ Për siguri optimale, img_auth.php është çaktivizuar.',
 'http-read-error' => 'Gabim në leximin e HTTP.',
 'http-timed-out' => 'Kërkesës HTTP i kaloi koha.',
 'http-curl-error' => 'Gabim gjatë gjetjes së URL-së: $1',
-'http-host-unreachable' => 'Nuk mund të lidheni me adresën URL.',
 'http-bad-status' => 'Ndodhi një problem gjatë kërkesës HTTP: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1943,12 +1938,6 @@ Mos harroni të shihni nyje tjera të stampave para grisjes së tyre.',
 'statistics-users-active' => 'Përdoruesit aktiv',
 'statistics-users-active-desc' => 'Përdoruesit që kanë së paku një veprim në {{PLURAL:$1|ditën|$1 ditët}} e fundit',
 'statistics-mostpopular' => 'Faqet më të shikuara',
-
-'disambiguations' => 'Faqet që lidhen te faqet kthjelluese',
-'disambiguationspage' => 'Template:Kthjellim',
-'disambiguations-text' => "Faqet e mëposhtme lidhen tek një '''faqe kthjelluese'''.
-Ato duhet të kenë lidhje të drejtpërdrejtë tek artikujt e nevojshëm.<br />
-Një faqe trajtohet si faqe kthjelluese nëse përdor stampat e lidhura nga [[MediaWiki:Disambiguationspage]]",
 
 'doubleredirects' => 'Përcjellime dopjo',
 'doubleredirectstext' => "Kjo faqe liston faqet përcjellëse tek faqet e tjera përcjellëse.
@@ -2120,10 +2109,6 @@ Protokolle të mbështetura: <code>$1<code> (mos shtoni ndonjërin nga këta në
 'activeusers-hidesysops' => 'Fshih administratorët',
 'activeusers-noresult' => 'Asnjë përdorues nuk u gjet.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Regjistri i llogarive',
-'newuserlogpagetext' => 'Ky është një regjistër i llogarive të fundit që janë hapur',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Grupime përdoruesish me privilegje',
 'listgrouprights-summary' => 'Më poshtë jepet grupimi i përdoruesve sipas privilegjeve që ju janë dhënë në këtë wiki. Më shumë informacion rreth privilegjeve në veçanti mund të gjendet [[{{MediaWiki:Listgrouprights-helppage}}|këtu]].',
@@ -2142,7 +2127,7 @@ Protokolle të mbështetura: <code>$1<code> (mos shtoni ndonjërin nga këta në
 'listgrouprights-addgroup-self-all' => 'Shtoni të gjitha grupet tek llogaria',
 'listgrouprights-removegroup-self-all' => 'Hiq të gjitha grupet nga llogaria',
 
-# E-mail user
+# Email user
 'mailnologin' => "S'ka adresë dërgimi",
 'mailnologintext' => 'Duhet të keni [[Special:UserLogin|hyrë brenda]] dhe të keni një adresë të saktë në [[Special:Preferences|parapëlqimet]] tuaja për tu dërguar email përdoruesve të tjerë.',
 'emailuser' => 'Email përdoruesit',
@@ -2197,10 +2182,9 @@ Në qoftë se dëshironi të hiqni një faqe nga lista mbikqyrëse më vonë, sh
 'unwatchthispage' => 'Mos e mbikqyr',
 'notanarticle' => 'Nuk është artikull',
 'notvisiblerev' => 'Revizioni është grisur',
-'watchnochange' => 'Asnjë nga artikujt nën mbikqyrje nuk është redaktuar gjatë kohës së dhënë.',
 'watchlist-details' => '{{PLURAL:$1|$1 faqe|$1 faqe}} nën mbikqyrje duke mos numëruar faqet e diskutimit.',
-'wlheader-enotif' => '* Njoftimi me email është lejuar.',
-'wlheader-showupdated' => "* Faqet që kanë ndryshuar nga vizita juaj e fundit do të tregohen të '''trasha'''",
+'wlheader-enotif' => 'Njoftimi me email është lejuar.',
+'wlheader-showupdated' => "Faqet që kanë ndryshuar nga vizita juaj e fundit do të tregohen të '''trasha'''",
 'watchmethod-recent' => 'duke parë ndryshimet e fundit për faqet nën mbikqyrje',
 'watchmethod-list' => 'duke parë faqet nën mbikqyrje për ndryshimet e fundit',
 'watchlistcontains' => 'Lista mbikqyrëse e juaj ka $1 {{PLURAL:$1|faqe|faqe}}.',
@@ -2216,11 +2200,7 @@ Në qoftë se dëshironi të hiqni një faqe nga lista mbikqyrëse më vonë, sh
 
 'enotif_mailer' => 'Postieri Njoftues i {{SITENAME}}',
 'enotif_reset' => 'Shëno të gjitha faqet e vizituara',
-'enotif_newpagetext' => 'Kjo është një faqe e re.',
 'enotif_impersonal_salutation' => 'Përdorues i {{SITENAME}}',
-'changed' => 'ndryshuar',
-'created' => 'u krijua',
-'enotif_subject' => '{{SITENAME}} faqja $PAGETITLE u $CHANGEDORCREATED prej $PAGEEDITOR',
 'enotif_lastvisited' => 'Shikoni $1 për të gjitha ndryshimet që prej vizitës tuaj të fundit.',
 'enotif_lastdiff' => 'Shikoni $1 për ndryshime.',
 'enotif_anon_editor' => 'përdorues anonim $1',
@@ -2276,6 +2256,8 @@ $UNWATCHURL
 
 Për të na dhënë përshtypjet tuaja ose për ndihmë të mëtejshme:
 {{canonicalurl:{{MediaWiki:Helpage}}}}',
+'created' => 'u krijua',
+'changed' => 'ndryshuar',
 
 # Delete
 'deletepage' => 'Grise faqen',
@@ -2456,9 +2438,9 @@ $1',
 'blanknamespace' => '(Artikujt)',
 
 # Contributions
-'contributions' => 'Kontributet',
+'contributions' => 'Kontributet e {{GENDER:$1|përdoruesit|përdorueses}}',
 'contributions-title' => 'Kontributet e përdoruesit për $1',
-'mycontris' => 'Redaktimet e mia',
+'mycontris' => 'Kontributet',
 'contribsub2' => 'Për $1 ($2)',
 'nocontribs' => 'Nuk ka asnjë ndryshim që përputhet me këto kritere.',
 'uctop' => ' (sipër)',
@@ -2499,7 +2481,7 @@ Bllokimi i funditë është më poshtë për referencë:',
 'whatlinkshere-hideredirs' => '$1 përcjellimet',
 'whatlinkshere-hidetrans' => '$1 përfshirjet',
 'whatlinkshere-hidelinks' => '$1 lidhjet',
-'whatlinkshere-hideimages' => '$1 lidhjet e figurave',
+'whatlinkshere-hideimages' => '$1 lidhjet me skedat',
 'whatlinkshere-filters' => 'Filtra',
 
 # Block/unblock
@@ -2598,7 +2580,7 @@ Regjistri i bllokimeve është poshtë për referncë:',
 'blocklogtext' => 'Ky është një regjistër bllokimesh dhe çbllokimesh të përdoruesve. IP-të e bllokuara automatikisht nuk janë të dhëna. Shikoni dhe [[Special:BlockList|listën e IP-ve të bllokuara]] për një listë të bllokimeve të tanishme.',
 'unblocklogentry' => 'çbllokoi "$1"',
 'block-log-flags-anononly' => 'vetëm anonimët',
-'block-log-flags-nocreate' => 'krijimi i kontove është pamundësuar',
+'block-log-flags-nocreate' => 'krijimi i llogarive është pamundësuar',
 'block-log-flags-noautoblock' => 'vetëbllokimi është pamundësuar',
 'block-log-flags-noemail' => 'posta elektronike është e bllokuar',
 'block-log-flags-nousertalk' => 'nuk mund të redaktojë faqen e tij të diskutimit',
@@ -2619,11 +2601,8 @@ Mund të jetë zhbllokuar.',
 Ajo është, megjithatë, e bllokuar si pjesë e rangut $2, që nuk mund të zhbllokohet.',
 'ip_range_invalid' => 'Shtrirje IP gabim.',
 'ip_range_toolarge' => 'Radhitja e bllokimeve më të mëdha se /$1 nuk lejohet.',
-'blockme' => 'Më blloko',
 'proxyblocker' => 'Bllokuesi i ndërmjetëseve',
-'proxyblocker-disabled' => 'Ky funksion është pamundësuar.',
 'proxyblockreason' => 'IP adresa juaj është bllokuar sepse është një ndërmjetëse e hapur. Ju lutem lidhuni me kompaninë e shërbimeve të Internetit që përdorni dhe i informoni për këtë problem sigurije.',
-'proxyblocksuccess' => 'Mbaruar.',
 'sorbsreason' => 'Adresa IP e juaj është radhitur si ndërmjetëse e hapur tek lista DNSBL.',
 'sorbs_create_account_reason' => 'Adresa IP e juaj është radhitur si ndërmjetëse e hapur tek lista DNSBL që përdoret nga {{SITENAME}}. Nuk ju lejohet të hapni një llogari.',
 'cant-block-while-blocked' => 'Ju nuk mund të bllokoni përdorues të tjerë ndërkohë që jeni i bllokuar.',
@@ -2851,7 +2830,6 @@ Ju lutemi provoni përsëri.',
 
 # JavaScriptTest
 'javascripttest' => 'Duke testuar JavaScript',
-'javascripttest-disabled' => 'Ky funksion nuk është mundësuar në këtë wiki.',
 'javascripttest-title' => 'Duke kryer testet $1',
 'javascripttest-pagetext-noframework' => 'Kjo faqe është rezervuar për kryerjen e testimeve JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Kornizë pune e panjohur testuese "$1".',
@@ -2965,8 +2943,6 @@ Ju lutemi provoni përsëri.',
 'pageinfo-authors' => 'Numri i autorëve të veçantë',
 
 # Skin names
-'skinname-standard' => 'Standarte',
-'skinname-nostalgia' => 'Nostalgjike',
 'skinname-cologneblue' => 'Kolonjë Blu',
 
 # Patrolling
@@ -3068,7 +3044,7 @@ Në qoftë se skeda është ndryshuar nga gjendja origjinale, disa hollësira mu
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Gjerësia',
 'exif-imagelength' => 'Gjatësia',
 'exif-bitspersample' => 'Bit për komponent',
@@ -3246,7 +3222,7 @@ Në qoftë se skeda është ndryshuar nga gjendja origjinale, disa hollësira mu
 'exif-originalimageheight' => 'Lartësia e fotografisë para se të shkurtohej',
 'exif-originalimagewidth' => 'Gjerësia e fotografisë para se të shkurtohej',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'E pangjeshur',
 'exif-compression-2' => 'CCITT Grupi 3 1-Dimensional Kodimi i Modifikuar Huffman i linjës së gjatësisë',
 'exif-compression-3' => 'CCITT Grupi 3 faks kodimi',
@@ -3467,7 +3443,7 @@ Në qoftë se skeda është ndryshuar nga gjendja origjinale, disa hollësira mu
 'monthsall' => 'të gjitha',
 'limitall' => 'Të gjitha',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'Vërtetoni adresën tuaj',
 'confirmemail_noemail' => 'Ju nuk keni dhënë email të sakt te [[Special:Preferences|parapëlqimet e juaja]].',
 'confirmemail_text' => 'Për të marrë email duhet të vërtetoni adresen tuaj. Shtypni butonin e mëposhtëm për të dërguar një email vërtetimi tek adresa juaj. Email-i do të përmbajë një lidhje me kod të shifruar. Duke ndjekur lidhjen nëpërmjet shfletuesit tuaj do të vërtetoni adresën.',
@@ -3633,7 +3609,6 @@ Ju gjithashtu mund [[Special:EditWatchlist|të përdorni redaktuesin standart]].
 'version-other' => 'Të tjera',
 'version-mediahandlers' => 'Mbajtesit e Media-s',
 'version-hooks' => 'Goditjet',
-'version-extension-functions' => 'Funksionet shtese',
 'version-parser-extensiontags' => 'Parser etiketat shtese',
 'version-parser-function-hooks' => 'Parser goditjet e funksionit',
 'version-hook-name' => 'Emri i goditjes',
@@ -3651,13 +3626,6 @@ Ju duhet të keni marrë [{{SERVER}}{{SCRIPTPATH}}/COPYING një kopje të GNU Ge
 'version-software-product' => 'Produkti',
 'version-software-version' => 'Versioni',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Vendndodhja e skedave',
-'filepath-page' => 'Skeda:',
-'filepath-submit' => 'Shko',
-'filepath-summary' => 'Kjo faqe speciale jep vendndodhjen e plotë të një skede.
-Figurat tregohen me madhësi të plotë, skedat e tjera hapen me programet përkatëse.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Kërkoni për skeda të dyfishta',
@@ -3782,7 +3750,7 @@ Figurat tregohen me madhësi të plotë, skedat e tjera hapen me programet përk
 'logentry-newusers-create' => '$1 krijoi një llogari',
 'logentry-newusers-create2' => '$1 krijoi një llogari $3',
 'logentry-newusers-autocreate' => 'Llogaria $1 u krijua automatikisht',
-'newuserlog-byemail' => 'fjalëkalimi u dërgua në postën elektronike',
+'rightsnone' => '(asgjë)',
 
 # Feedback
 'feedback-bugornote' => 'Nëse jeni gati për të përshkruar një problem teknik me detaje ju lutemi [$1 raportoni një problem].

@@ -173,9 +173,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Няфтемс мъзяра сувсида конат арафтозь лопать эсь мельгеваномазост',
 'tog-oldsig' => 'Афкуксонь кядьтяшкс',
 'tog-fancysig' => 'Кядьтяшкст улихть викитекстокс (эслек тиеви сюлмафксфтома)',
-'tog-externaleditor' => 'Нолдамс тевс ушеширень петнить мъзярс илякс изь мярьгов (аньцек тевонь содайхненди, сяс мес эрявихть башка кядьёнкст-арафнемат содама машинаса [//www.mediawiki.org/wiki/Manual:External_editors сяда тов.])',
-'tog-externaldiff' => 'Нолдамс тевс ушеширень програм верзиень ваксс путоманкса мъзярс илякс изь мярьгов (аньцек тевонь содайхненди, сяс мес эрявихть башка кядьёнкст-арафнемат содама машинаса[//www.mediawiki.org/wiki/Manual:External_editors сяда тов.])',
-'tog-showjumplinks' => 'Мярьгомс "юпадемс" сатовома сюлмафкстненди',
 'tog-uselivepreview' => 'Максомс эряй васень няфтемась (JavaScript) (Варжамань)',
 'tog-forceeditsummary' => 'Няфтемс мондине мезе сёрмадомс шава петнема вальмас сувамста',
 'tog-watchlisthideown' => 'Кяшемс монь петнематне ванома лопаста',
@@ -287,7 +284,6 @@ $messages = array(
 'qbbrowse' => 'Ванондома',
 'qbedit' => 'Петнема',
 'qbpageoptions' => 'Тя лопась',
-'qbpageinfo' => 'Контекстсь',
 'qbmyoptions' => 'Монь лопане',
 'qbspecialpages' => 'Башка тевонь лопат',
 'faq' => 'Сидеста Кеподеви Кизефксне',
@@ -373,7 +369,7 @@ $1',
 'pool-queuefull' => 'Тяряфнемада вельф лама',
 'pool-errorunknown' => 'Аф содаф эльбятькс',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} колга',
 'aboutpage' => 'Project:Колга',
 'copyright' => 'Сёрматфсь ули кода мумс $1-са.',
@@ -383,7 +379,6 @@ $1',
 'disclaimers' => 'Видешинь корхтаматне',
 'disclaimerpage' => 'Project:Пря видешинь корхнема',
 'edithelp' => 'Петнемань лезкс',
-'edithelppage' => 'Help:Петнема',
 'helppage' => 'Help:Лопань потмоц',
 'mainpage' => 'Пря лопа',
 'mainpage-description' => 'Пря лопа',
@@ -460,17 +455,6 @@ $1',
 # General errors
 'error' => 'Эльбятькс',
 'databaseerror' => 'Датабаза эльбятькс',
-'dberrortext' => 'Содамошинь паргань вешендембачк лиссь синтаксонь эльбятькс.
-Тя, улема, програмгярьксонь си.
-Мекольце содамошинь паргань вешема:
-<blockquote><code>$1</code></blockquote>
-функциеста "<code>$2</code>".
-Содамошинь паргась пачфтесь эльбятькс "<samp>$3: $4</samp>".',
-'dberrortextcl' => 'Датабазонь вешендембачк лиссь синтакс эльбятькс.
-Мекольце датабазонь вешендема ульсь:
-"$1"
-функциеста "$2".
-Датабазась мърдафтозе эльбятьксть "$3: $4"',
 'laggedslavemode' => 'Шарфтк мяльце: Тя лопась, улема, сирелгодсь.',
 'readonly' => 'Датабазась пякстаф',
 'enterlockreason' => 'Сёрматк тязк пякстама туфтал тонь арьсемацень мархта эли няфтть тяса мъзярда ули кода пякстамать валхтомс.',
@@ -522,7 +506,6 @@ $1',
 'protectedinterface' => 'Тя лопать эса интерфейс текстсь тя викить програмгярксти, сон аралаф кальдяв тиемада.
 Вики ётафтоматнень поладоманди полафнемандивок сувак [//translatewiki.net/ translatewiki.net], MediaWiki локализациень проектти.',
 'editinginterface' => "'''Инголи кардама:''' Тон петнесак лопать конань эса ащи интерфейс текст програмкярьксонди. Петнематне полафтсазь сонь ванфоц, кода сон няеви иля тиихненди. Вики ётафтоматнень поладоманди, полафтомандивок сувак [//translatewiki.net/ translatewiki.net] MediaWiki локализациень проектти.",
-'sqlhidden' => '(SQL вешфкс кяшф)',
 'cascadeprotected' => 'Тя лопать аралазь петнемада сяс мес сон сувафни {{PLURAL:$1|сай лопас, кона путфоль|сай лопас, конат путфольхть}} каскад араламас:
 $2',
 'namespaceprotected' => "Тондейть аф мярьгови петнемс лопатне '''$1''' лепнень мархта.",
@@ -547,16 +530,12 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Тон лисеть.'''
 
-Тондейть ули кода ащемс {{SITENAME}}са апак содак эли [[Special:UserLogin|сувак тага весть]] кода сяка эли иля тиись.
+Тондейть ули кода ащемс {{SITENAME}}са апак содак эли <span class='plainlinks'>[$1 сувак тага весть]</span> кода сяка эли иля тиись.
 Кой-кона лопатне илядсть стамкс кодамкс синь ульсть тонь лисемада инголе мъзярс тонь интернет полатксце изь аруяфтов эсь ванфневи файлхнень эзда.",
-'welcomecreation' => '== Сувак, $1! ==
-
-Тонь сёрматфтомаце анок. Тят юкста полафнемс эсь [[Special:Preferences|{{SITENAME}} латцематне]].',
 'yourname' => 'Тиить лемоц:',
 'yourpassword' => 'Сувама валце:',
 'yourpasswordagain' => 'Сёрматк сувама валце омбоцекс:',
 'remembermypassword' => 'Ванфтомс монь сувама лемозе тя содам машинаса (максимум $1 {{PLURAL:$1|шис|шис}})',
-'securelogin-stick-https' => 'Кадовомс сотфокс HTTPS вельде сувамада меле',
 'yourdomainname' => 'Тонь доменце:',
 'password-change-forbidden' => 'Сувама валхне тя викить эса аф полафтовихть',
 'externaldberror' => 'Лиссь эльбятькс ушеширень датабазонь вельде кемокстакшнембачк эли тондейть аф мярьгови полафнемс тонь ушеширень сёрматфтомацень.',
@@ -637,7 +616,7 @@ $2',
 'loginlanguagelabel' => 'Кяль: $1',
 'suspicious-userlogout' => 'Вешфксце лисемс кардафоль сяс мес няеви тянь кучезь колаф интернетс вятиень эли ётка ёкамань сервер вельде.',
 
-# E-mail sending
+# Email sending
 'php-mail-error-unknown' => 'Аф содаф эльбятькс PHP сёрмавятемань функциеса.',
 'user-mail-no-addy' => 'Тяряфтыхть кучемс е-сёрма е-паргафтома',
 
@@ -649,7 +628,7 @@ $2',
 'newpassword' => 'Од сувама вал:',
 'retypenew' => 'Сёрматк од сувама вал омбоцекс:',
 'resetpass_submit' => 'Арафтк сувама валть эди сувак',
-'resetpass_success' => 'Тонь сувама валцень полафнемась ётась лац! Тонь сувафттядязь системс...',
+'changepassword-success' => 'Тонь сувама валцень полафнемась ётась лац! Тонь сувафттядязь системс...',
 'resetpass_forbidden' => 'Сувама валхнень полафтомс аш кода',
 'resetpass-no-info' => 'Тондейть эряви сёрматфтомс тя лопас видеста суваманди.',
 'resetpass-submit-loggedin' => 'Полафтомс сувама валцень',
@@ -660,10 +639,8 @@ $2',
 
 # Special:PasswordReset
 'passwordreset' => 'Полафтомс сувама валцень',
-'passwordreset-text' => 'Эряви пяшкодемс тя формать е-сёрма сёрматфтомацень колга сявоманди.',
 'passwordreset-legend' => 'Полафтомс сувама валцень',
 'passwordreset-disabled' => 'Сувама валсь аф полафтови тя викить эса.',
-'passwordreset-pretext' => '{{PLURAL:$1||Тяштьк содама пялькснень эзда фкя алу}}',
 'passwordreset-username' => 'Тиить лемоц',
 'passwordreset-domain' => 'Домен:',
 'passwordreset-capture' => 'Ваномс мекольце е-сёрма?',
@@ -822,7 +799,6 @@ $2',
 'template-protected' => '(аралаф)',
 'template-semiprotected' => '(пялес-аралаф)',
 'hiddencategories' => 'Тя лопась {{PLURAL:$1|1 кяшф катериень|$1 кяшф категориень}} полаец:',
-'nocreatetitle' => 'Лопань тиемац оторонзаф',
 'nocreatetext' => '{{SITENAME}}-са од лопатнень тиемац оторонзаф.
 Тондейть ули кода мърдамс меки ди петнемс тиф ни лопать, эли [[Special:UserLogin|сувамс эли сёрматфтомс одукс]].',
 'nocreate-loggedin' => 'Тон аф мярьговат тиемс од лопат.',
@@ -843,6 +819,7 @@ $2',
 'edit-no-change' => 'Тонь петнемацень тевс изь нолда, сяс мес тон текстть ашеть полафта.',
 'edit-already-exists' => 'Аш кода од лопа ушедомс.
 Тя лопась ульсь ни.',
+'content-failed-to-parse' => 'Аш кода $2 сёрматфть нолдамс тевс $1 моделень коряс: $3',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Инголе кардама: Тя лопаса пяк лама питни синтаксонь анализаторхнень тяшкста.
@@ -1005,7 +982,6 @@ $3 макссь туфталсь - ''$2''",
 'searchmenu-legend' => 'Вешендема арафнематне',
 'searchmenu-exists' => "'''Тя Викиса ули лопась \"[[:\$1]]\" лем мархта'''",
 'searchmenu-new' => "'''Ушедомс лопась \"[[:\$1]]\" тя Викиса!'''",
-'searchhelp-url' => 'Help:Лопань потмоц',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Мумс лопат тя валынголькссь мархта]]',
 'searchprofile-articles' => 'Потмонь лопат',
 'searchprofile-project' => 'Лезкс эди проектонь лопат',
@@ -1046,14 +1022,6 @@ $3 макссь туфталсь - ''$2''",
 'search-external' => 'Ушеширень вешендема',
 'searchdisabled' => '{{SITENAME}}-са тяни вешендемась аш. Ули кода вешендемс Google эли иля вешендемань интернет програпнень вельде. Шарфтк мяльце тостонь {{SITENAME}}-нь потмонц верзиец, улема, сирелгодсь.',
 
-# Quickbar
-'qbsettings' => 'Навигациень седяфкс',
-'qbsettings-none' => 'Аф няфтемс',
-'qbsettings-fixedleft' => 'Кержи шири киртьф',
-'qbsettings-fixedright' => 'Види шири киртьф',
-'qbsettings-floatingleft' => 'Кержи ширеса уенди',
-'qbsettings-floatingright' => 'Виде ширеса уенди',
-
 # Preferences page
 'preferences' => 'Арафнематне',
 'mypreferences' => 'Монь латцемане',
@@ -1078,7 +1046,6 @@ $3 макссь туфталсь - ''$2''",
 'resetprefs' => 'Валхтомс апак ванфтт полафнематнень',
 'restoreprefs' => 'Мърдафтомс васень латцематне',
 'prefs-editing' => 'Петнема',
-'prefs-edit-boxsize' => 'Петнема вальмоть келец.',
 'rows' => 'Луфт (строкат):',
 'columns' => 'Орват (столбанят):',
 'searchresultshead' => 'Вешендема',
@@ -1229,11 +1196,13 @@ $3 макссь туфталсь - ''$2''",
 'right-userrights-interwiki' => 'Петнемс тиихнень видекснон иля викить лопасонза',
 'right-siteadmin' => 'Пякстамс эди панжемс датабазать',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Тиинь ушедоманзон лувомасна',
+'newuserlogpagetext' => 'Тя тиинь ушедоманзон лувомасна.',
+
 # User rights log
 'rightslog' => 'Тиить видексонза лувомась',
 'rightslogtext' => 'Тиить видексонзон полафнемасна лувомась.',
-'rightslogentry' => '$1-нь полгац полафтсь $2-ста $3-с',
-'rightsnone' => '(аш)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'тя лопать морафтома',
@@ -1309,7 +1278,6 @@ $3 макссь туфталсь - ''$2''",
 'recentchangeslinked-feed' => 'Сюлмаф полафнематне',
 'recentchangeslinked-toolbox' => 'Сюлмаф полафнематне',
 'recentchangeslinked-title' => 'Полафнемат сюлмафт "$1" мархта',
-'recentchangeslinked-noresult' => 'Сюлмаф лопава тя пингста полафнемат ашельхть.',
 'recentchangeslinked-summary' => "Тя башка лопас сувафнезь мекольце полафнемат сюлмаф лопава. Тонь ванома сёрмалувомастонь лопатне тяштезь '''эчкста'''.",
 'recentchangeslinked-page' => 'Лопать лемоц:',
 'recentchangeslinked-to' => 'Няфтемс полафтоматне лопатнень эса сотфт тя лопать мархта',
@@ -1529,10 +1497,6 @@ $3 макссь туфталсь - ''$2''",
 'statistics-users-active-desc' => 'Тиихне конатне тисть мезеге ётай {{PLURAL:$1|шиня|$1 шиста}}',
 'statistics-mostpopular' => 'Сидеста сувсеви лопат',
 
-'disambiguations' => 'Лама смузьса лопат',
-'disambiguationspage' => 'Template:лама смусть',
-'disambiguations-text' => "Ня лопатне сюлмафт '''лама смузень лопа''' мархта. Синьдеест эрявихть сюлмамс иля башка сёрмафкснень мархта.<br />Лопась лувови лама смузеннекс мъзярда сон сюлмаф [[MediaWiki:Disambiguationspage]] кепотькс мархта.",
-
 'doubleredirects' => 'Кафонзаф умборондафтфксне',
 'doubleredirectstext' => 'Тя лопань лувомаса няфтевихть умборондафтфксне сюлмафт иля умборондафтфкснень мархта. Эрь луфксса (строкаса) улихть васенце ди омбоце умборондафтфкснень сюлмафкссна, тяса тага ули омбоце умборондафтфксонь васенце киксонцты сюлмафкссь, тоса ули няфтемась лопань лемонц лангс конань мархта эряволь васенце умборондафтфксть сюлмафтомс.
 <del>Туркс кикс мархта</del> тяшксне латцефольхть.',
@@ -1674,10 +1638,6 @@ $3 макссь туфталсь - ''$2''",
 'listusers-submit' => 'Няфтемс',
 'listusers-noresult' => 'Тиихть исть мув.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Тиинь ушедоманзон лувомасна',
-'newuserlogpagetext' => 'Тя тиинь ушедоманзон лувомасна.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Тиихнень полгаснон видексонза',
 'listgrouprights-summary' => 'Тяса тиихнень полгасна конатне сувсихть тя Викис синь сувама видексснон мархта.
@@ -1691,7 +1651,7 @@ $3 макссь туфталсь - ''$2''",
 'listgrouprights-addgroup-all' => 'Ули кода поладомс сембе полгатне',
 'listgrouprights-removegroup-all' => 'Ули кода сембе полгатне валхтомс',
 
-# E-mail user
+# Email user
 'mailnologin' => 'Аш кучема адрес',
 'mailnologintext' => 'Тондейть эряви [[Special:UserLogin|сувамс]]
 ди эряви кондясти электрононь адресце тонь [[Special:Preferences|арафнемасот]] иля тиихненди электрононь сёрмат кучемаснонды.',
@@ -1736,10 +1696,9 @@ $3 макссь туфталсь - ''$2''",
 'unwatchthispage' => 'Лоткамс мельге ваномать',
 'notanarticle' => 'Аф сёрмапотмонь лопа',
 'notvisiblerev' => 'Верзиесь нардафоль',
-'watchnochange' => 'Мезеге изь полафтов тонь мельгеванома лувомастот тя пингеёткса.',
 'watchlist-details' => '{{PLURAL:$1|$1 лопа|$1 лопат}} мельгеваномацень ала корхнема лопат аф лувомок.',
-'wlheader-enotif' => '* Электрононь сёрма вельде пачфнема нолдаф тевс.',
-'wlheader-showupdated' => "* Лопат конань полафтозь тонь мекольце сувсемадот меле няфтевсть '''эчке тяшкса'''.",
+'wlheader-enotif' => 'Электрононь сёрма вельде пачфнема нолдаф тевс.',
+'wlheader-showupdated' => "Лопат конань полафтозь тонь мекольце сувсемадот меле няфтевсть '''эчке тяшкса'''.",
 'watchmethod-recent' => 'мельге ванома ала лопатнень коряс мекольце петнематнень ванондома',
 'watchmethod-list' => 'мекольце петнематнень коряс мельге ванома ала лопат ванондома',
 'watchlistcontains' => 'Тонь мельгеваномасот $1 {{PLURAL:$1|лопа|лопат}}.',
@@ -1754,11 +1713,7 @@ $3 макссь туфталсь - ''$2''",
 
 'enotif_mailer' => '{{SITENAME}} Пачфнематнень Кучи',
 'enotif_reset' => 'Путомс тяшкс сембе суваф лопатнень лангс',
-'enotif_newpagetext' => 'Тя од лопа.',
 'enotif_impersonal_salutation' => '{{SITENAME}} тиись',
-'changed' => 'полафтсь',
-'created' => 'тиф',
-'enotif_subject' => '{{SITENAME}} page $PAGETITLE has been $CHANGEDORCREATED by $PAGEEDITOR',
 'enotif_lastvisited' => 'Ванк $1 тонь мекольце самдот меле сембе поланематнень няфтеманкса.',
 'enotif_lastdiff' => 'Ванк $1 тя полафнемать няфтеманкса.',
 'enotif_anon_editor' => 'лемфтома тиись $1',
@@ -1788,6 +1743,8 @@ $UNWATCHURL
 
 Азома мекпяли ди иля лезкс:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'тиф',
+'changed' => 'полафтсь',
 
 # Delete
 'deletepage' => 'Нардамс лопать',
@@ -2072,12 +2029,9 @@ $1',
 'ipb_blocked_as_range' => 'Эльбятькс: IP $1 аф кардаф видеста ди соннеда аш кода кардафкссь валхтомс.
 Сон, интай улема, кардафоль кода  $2-нь потмонц пакшец, конань эзда ули кода кардафксонь валхтомс.',
 'ip_range_invalid' => 'Аф кондясти IP потмоц.',
-'blockme' => 'Кардамань монь',
 'proxyblocker' => 'Ётка якаень сёлгома',
-'proxyblocker-disabled' => 'Тя функциесь аф тиеви.',
 'proxyblockreason' => 'Тонь IP адрес пякстафоль сонь панжада прокси-серверонь эзда.
 Тондейть эряви сотомс тонь интернет ладяйть эли текникань нежедемать мархта ди пачфтемс тя прябалать колга.',
-'proxyblocksuccess' => 'Тиф.',
 'sorbsreason' => 'Тонь IP адресце лувови панжада ётка якай сервероннекс DNSBL-са, конась нолдаф тевс {{SITENAME}}са.',
 'sorbs_create_account_reason' => 'Тонь IP адресце лувови панжада ётка якань сервероннекс DNSBL-са конась нолнезь тевс {{SITENAME}}са.
 Тондейть аш кода сёрматфтомать тиемс',
@@ -2434,7 +2388,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Келец',
 'exif-imagelength' => 'Серец',
 'exif-bitspersample' => 'Битт фкя компонентс',
@@ -2548,7 +2502,7 @@ $1',
 'exif-gpsdatestamp' => 'GPS ши',
 'exif-gpsdifferential' => 'GPS диференциень петнема',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Аф компрезияф',
 
 'exif-unknowndate' => 'Аф содаф шись',
@@ -2700,7 +2654,7 @@ $1',
 'namespacesall' => 'сембе',
 'monthsall' => 'сембе',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'Кемостамс электрононь адресть',
 'confirmemail_noemail' => 'Тонь аш кондясти электрононь адрес тяштьф тонь [[Special:Preferences|тиить арафнематнень]] эса.',
 'confirmemail_text' => '{{SITENAME}} веши тонь электрононь адресцень кемокстамац электрононь адресть арафнематнень тевс нолдамада инголе.
@@ -2829,7 +2783,6 @@ $5
 'version-other' => 'Иля',
 'version-mediahandlers' => 'Медиа файлхнень ладямат',
 'version-hooks' => 'Кярьмодихне',
-'version-extension-functions' => 'Келептема функциенза',
 'version-parser-extensiontags' => 'Анализаторонь келептема кодонза',
 'version-parser-function-hooks' => 'Синтаксонь анализаторть функциензон кярьмодихне',
 'version-hook-name' => 'Кярьмодинь лемоц',
@@ -2839,13 +2792,6 @@ $5
 'version-software' => 'Нолдаф програпне',
 'version-software-product' => 'Нолдафкс',
 'version-software-version' => 'Верзие',
-
-# Special:FilePath
-'filepath' => 'Файлти ян',
-'filepath-page' => 'Файл:',
-'filepath-submit' => 'Ян',
-'filepath-summary' => 'Тя башка тевонь лопась няфнесы сембе янць файлти.
-Архтофксне няфневихть сембе синь кувалмосост, иля файлонь сортсна нолдавихть видеста програпнень вельде конат сотфт мархтост.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Вешендемс кафонзаф файлхне',
@@ -2895,6 +2841,6 @@ $5
 # New logging system
 'revdelete-restricted' => 'нолдаф тевс кардафксне системонь вятиксненди',
 'revdelete-unrestricted' => 'системонь вятиксненди кардафксне валхтфт',
-'newuserlog-byemail' => 'сувама валце кучф электрононь сёрмаса',
+'rightsnone' => '(аш)',
 
 );

@@ -34,7 +34,7 @@ interface DeferrableUpdate {
 }
 
 /**
- * Class for mananging the deferred updates.
+ * Class for managing the deferred updates.
  *
  * @since 1.19
  */
@@ -64,9 +64,19 @@ class DeferredUpdates {
 	}
 
 	/**
+	 * Add a callable update.  In a lot of cases, we just need a callback/closure,
+	 * defining a new DeferrableUpdate object is not necessary
+	 * @see MWCallableUpdate::__construct()
+	 * @param callable $callable
+	 */
+	public static function addCallableUpdate( $callable ) {
+		self::addUpdate( new MWCallableUpdate( $callable ) );
+	}
+
+	/**
 	 * Do any deferred updates and clear the list
 	 *
-	 * @param $commit String: set to 'commit' to commit after every update to
+	 * @param string $commit set to 'commit' to commit after every update to
 	 *                prevent lock contention
 	 */
 	public static function doUpdates( $commit = '' ) {
@@ -92,14 +102,14 @@ class DeferredUpdates {
 				$update->doUpdate();
 
 				if ( $doCommit && $dbw->trxLevel() ) {
-					$dbw->commit( __METHOD__ );
+					$dbw->commit( __METHOD__, 'flush' );
 				}
 			} catch ( MWException $e ) {
 				// We don't want exceptions thrown during deferred updates to
 				// be reported to the user since the output is already sent.
 				// Instead we just log them.
 				if ( !$e instanceof ErrorPageError ) {
-					wfDebugLog( 'exception', $e->getLogMessage() );
+					MWExceptionHandler::logException( $e );
 				}
 			}
 		}

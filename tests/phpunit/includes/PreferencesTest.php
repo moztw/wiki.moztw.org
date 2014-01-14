@@ -1,13 +1,20 @@
 <?php
 
+/**
+ * @group Database
+ */
 class PreferencesTest extends MediaWikiTestCase {
-	/** Array of User objects */
+	/**
+	 * @var User[]
+	 */
 	private $prefUsers;
+	/**
+	 * @var RequestContext
+	 */
 	private $context;
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
-		global $wgEnableEmail;
 
 		$this->prefUsers['noemail'] = new User;
 
@@ -15,46 +22,54 @@ class PreferencesTest extends MediaWikiTestCase {
 		$this->prefUsers['notauth']
 			->setEmail( 'noauth@example.org' );
 
-		$this->prefUsers['auth']    = new User;
+		$this->prefUsers['auth'] = new User;
 		$this->prefUsers['auth']
 			->setEmail( 'noauth@example.org' );
 		$this->prefUsers['auth']
 			->setEmailAuthenticationTimestamp( 1330946623 );
 
 		$this->context = new RequestContext;
-		$this->context->setTitle( Title::newFromText('PreferencesTest') );
+		$this->context->setTitle( Title::newFromText( 'PreferencesTest' ) );
+	}
 
-		//some tests depends on email setting
-		$wgEnableEmail = true;
+	protected function setUp() {
+		parent::setUp();
+
+		$this->setMwGlobals( array(
+			'wgEnableEmail' => true,
+			'wgEmailAuthentication' => true,
+		) );
 	}
 
 	/**
 	 * Placeholder to verify bug 34302
 	 * @covers Preferences::profilePreferences
 	 */
-	function testEmailFieldsWhenUserHasNoEmail() {
+	public function testEmailFieldsWhenUserHasNoEmail() {
 		$prefs = $this->prefsFor( 'noemail' );
 		$this->assertArrayHasKey( 'cssclass',
 			$prefs['emailaddress']
 		);
 		$this->assertEquals( 'mw-email-none', $prefs['emailaddress']['cssclass'] );
 	}
+
 	/**
 	 * Placeholder to verify bug 34302
 	 * @covers Preferences::profilePreferences
 	 */
-	function testEmailFieldsWhenUserEmailNotAuthenticated() {
+	public function testEmailFieldsWhenUserEmailNotAuthenticated() {
 		$prefs = $this->prefsFor( 'notauth' );
 		$this->assertArrayHasKey( 'cssclass',
 			$prefs['emailaddress']
 		);
 		$this->assertEquals( 'mw-email-not-authenticated', $prefs['emailaddress']['cssclass'] );
 	}
+
 	/**
 	 * Placeholder to verify bug 34302
 	 * @covers Preferences::profilePreferences
 	 */
-	function testEmailFieldsWhenUserEmailIsAuthenticated() {
+	public function testEmailFieldsWhenUserEmailIsAuthenticated() {
 		$prefs = $this->prefsFor( 'auth' );
 		$this->assertArrayHasKey( 'cssclass',
 			$prefs['emailaddress']
@@ -63,13 +78,14 @@ class PreferencesTest extends MediaWikiTestCase {
 	}
 
 	/** Helper */
-	function prefsFor( $user_key ) {
+	protected function prefsFor( $user_key ) {
 		$preferences = array();
 		Preferences::profilePreferences(
 			$this->prefUsers[$user_key]
 			, $this->context
 			, $preferences
 		);
+
 		return $preferences;
 	}
 }

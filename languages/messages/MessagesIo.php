@@ -138,7 +138,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Montrez mea e-posto adreso en notifiko e-posti',
 'tog-shownumberswatching' => 'Montrez nombro di surveyanta uzanti',
 'tog-fancysig' => 'Traktez signaturo kom wikikodo (sen automata ligilo)',
-'tog-externaleditor' => 'Uzez extera redaktanto nespecigite (nur por experti, bezonas specala moderi ye vua komputoro .[//www.mediawiki.org/wiki/Manual:External_editors Plusa informo.])',
 'tog-forceeditsummary' => 'Notifikez me kande skribanta vakua redakto-rezumo',
 'tog-watchlisthideown' => 'Celez mea redaktaji de la surveyaji',
 'tog-watchlisthidebots' => 'Celez redaktaji da roboti de la surveyaji',
@@ -235,7 +234,6 @@ $messages = array(
 'qbfind' => 'Trovez',
 'qbedit' => 'Redaktar',
 'qbpageoptions' => 'Ica pagino',
-'qbpageinfo' => 'Kuntexto',
 'qbmyoptions' => 'Mea pagini',
 'qbspecialpages' => 'Specala pagini',
 
@@ -309,7 +307,7 @@ $messages = array(
 'jumptonavigation' => 'pilotado',
 'jumptosearch' => 'serchez',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Pri {{SITENAME}}',
 'aboutpage' => 'Project:Pri {{SITENAME}}',
 'copyright' => 'La kontenajo esas disponebla sub $1.',
@@ -319,7 +317,6 @@ $messages = array(
 'disclaimers' => 'Legala averto',
 'disclaimerpage' => 'Project:Generala des-agnosko',
 'edithelp' => 'Helpo pri redaktado',
-'edithelppage' => 'Help:Redaktado',
 'helppage' => 'Help:Helpo',
 'mainpage' => 'Frontispico',
 'mainpage-description' => 'Frontispico',
@@ -410,11 +407,8 @@ nekorekta interlinguale od interwikale ligilo.',
 # Login and logout pages
 'logouttext' => "'''Vu nun esas nun ek {{SITENAME}}.'''
 
-Vu povas durar uzante {{SITENAME}} anonimale, o vu povas [[Special:UserLogin|enirar itere]] kom la sama o diferenta uzanto.
+Vu povas durar uzante {{SITENAME}} anonimale, o vu povas <span class='plainlinks'>[$1 enirar itere]</span> kom la sama o diferenta uzanto.
 Atencez ke kelka pagini posible duras montresar semblante ke vu ne ekirus, til vu vakuigas la tempala-magazino di vua navigilo.",
-'welcomecreation' => '== Bonveno, $1! ==
-Vua konto kreesis.
-Voluntez, ne obliviez chanjor vua [[Special:Preferences|preferaji en {{SITENAME}}]].',
 'yourname' => 'Vua uzantonomo:',
 'yourpassword' => 'Pasovorto:',
 'yourpasswordagain' => 'Riskribez la pasovorto:',
@@ -473,7 +467,7 @@ Voluntez enirar altrafoye pos recevar ol.',
 'newpassword' => 'Nova pasovorto:',
 'retypenew' => 'Riskribez la nova pasovorto:',
 'resetpass_submit' => 'Establisez pasovoro ed enirez',
-'resetpass_success' => 'Vua chanjo di pasovorto sucesis! Nun, vu eniras...',
+'changepassword-success' => 'Vua chanjo di pasovorto sucesis! Nun, vu eniras...',
 'resetpass-submit-loggedin' => 'Chanjar pasovorto',
 'resetpass-temp-password' => 'Provizora pasovorto:',
 
@@ -581,7 +575,6 @@ Publikigante vua skribajo hike, vu asertas ke olu skribesis da vu ipsa o kopiesi
 'template-protected' => '(protektita)',
 'template-semiprotected' => '(mi-protektita)',
 'hiddencategories' => 'Ca pagino esas membro di {{PLURAL:$1|1 celita kategorio|$1 celita kategorii}}:',
-'nocreatetitle' => 'Kreado di pagini limitita',
 'permissionserrorstext-withaction' => 'Vu ne darfas $2, pro la {{PLURAL:$1|kauzo|kauzi}} sequanta:',
 'moveddeleted-notice' => 'Ca pagino efacesabas.
 La efaco-registraro e movo-registraro dil pagino provizesar sequante por refero.',
@@ -663,7 +656,6 @@ Surskriburo: '''({{int:cur}})''' = diferi kun l'aktuala versiono,
 'nextn-title' => 'Sequanta $1 {{PLURAL:$1|rezultajo|rezultaji}}',
 'viewprevnext' => 'Vidar ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-new' => "'''Kreez la pagino \"[[:\$1]]\" in ca wiki!'''",
-'searchhelp-url' => 'Help:Helpo',
 'searchprofile-articles' => 'Temala pagini',
 'searchprofile-project' => 'Helpo',
 'searchprofile-images' => "''Media''",
@@ -694,10 +686,6 @@ Probez prefixizar vua demando kun ''all:'' por serchar omna kontenajo (inkluzant
 'powersearch-togglenone' => 'Nula',
 'search-external' => 'Extera sercho',
 'searchdisabled' => 'La sercho en la kompleta texto desaktivigesis temporale pro superkargo dil servanto. Ni esperas riaktivigar ol pos facar ula proxima aktualigi. Dum ica tempo, vu povas serchar per Google.',
-
-# Quickbar
-'qbsettings' => 'Preferaji pri "Quickbar"',
-'qbsettings-none' => 'Nula',
 
 # Preferences page
 'preferences' => 'Preferaji',
@@ -800,9 +788,11 @@ Ol mustas ne havar plu kam $1 {{PLURAL:$1|litero|literi}}.',
 'right-browsearchive' => 'Serchar pagini efacita',
 'right-rollback' => 'Rapide retrorular la redakti da la lasta uzanto qua redaktis specigita pagino',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Uzanto-kreo-registro',
+
 # User rights log
 'rightslog' => 'Uzanto-yuri-registraro',
-'rightsnone' => '(nula)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lektar ca pagino',
@@ -947,8 +937,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 'statistics-pages' => 'Pagini',
 'statistics-mostpopular' => 'Maxim ofte vizitita pagini',
 
-'disambiguations' => 'Pagini di desambiguizo',
-
 'doubleredirects' => 'Duopla ridirektili',
 
 'brokenredirects' => 'Ridirektili nekorekta',
@@ -1042,14 +1030,11 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 # Special:ActiveUsers
 'activeusers-noresult' => 'Nula uzanto trovesis.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Uzanto-kreo-registro',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Grupo',
 'listgrouprights-members' => '(listo di membri)',
 
-# E-mail user
+# Email user
 'mailnologin' => 'Ne sendar adreso',
 'mailnologintext' => 'Vu mustas [[Special:UserLogin|enirir]] e havar valida e-adreso en vua [[Special:Preferences|preferaji]] por sendar e-posto ad altra uzanti.',
 'emailuser' => 'Sendar e-posto a ca uzanto',
@@ -1079,7 +1064,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 'unwatch' => 'Ne plus surveyar',
 'unwatchthispage' => 'Ne plus surveyar',
 'notanarticle' => 'Ne esas artiklo',
-'watchnochange' => 'Nula artikli ek vua listo di surveyaji redaktesis dum la tempo montrata.',
 'watchmethod-recent' => 'serchante recenta chanji en la listo di surveyaji',
 'watchmethod-list' => 'serchante recenta redakti en la listo di surveyaji',
 'watchlistcontains' => 'Vua listo di surveyaji kontenas $1 {{PLURAL:$1|pagino|pagini}}.',
@@ -1092,7 +1076,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 'watching' => 'Surveyanta…',
 'unwatching' => 'Cesanta surveyar…',
 
-'enotif_newpagetext' => 'Ico esas nula pagino.',
 'enotif_impersonal_salutation' => 'Uzanto di {{SITENAME}}',
 'enotif_anon_editor' => 'anonima uzanto $1',
 
@@ -1185,7 +1168,7 @@ restauris ad lasta versiono da $2.',
 'blanknamespace' => '(Chefa)',
 
 # Contributions
-'contributions' => 'Kontributadi dil uzanto',
+'contributions' => 'Kontributadi dil {{GENDER:$1|uzanto}}',
 'contributions-title' => 'Uzanto-kontributadi di $1',
 'mycontris' => 'Kontributadi',
 'contribsub2' => 'Pro $1 ($2)',
@@ -1263,7 +1246,6 @@ Videz [[Special:BlockList|IP-blokuslisto]] por revizor blokusadi.',
 'unblocklogentry' => 'desblokusis "$1"',
 'ipb_expiry_invalid' => 'Nevalida expiro-tempo.',
 'ip_range_invalid' => 'Nevalida IP-rango.',
-'proxyblocksuccess' => 'Facita.',
 
 # Developer tools
 'lockdb' => 'Blokusar datumaro',
@@ -1412,6 +1394,9 @@ Vu darfos adjuntar kauso en la rezumo.',
 # Spam protection
 'spamprotectiontitle' => 'Filtrilo kontre spamo',
 
+# Info page
+'pageinfo-toolboxlink' => 'Informo di ca pagino',
+
 # Browsing diffs
 'previousdiff' => '← Plu anciena versiono',
 'nextdiff' => 'Plu recenta versiono →',
@@ -1432,7 +1417,7 @@ Vu darfos adjuntar kauso en la rezumo.',
 # Metadata
 'metadata' => 'Metadonaji',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Larjeso',
 'exif-imagelength' => 'Alteso',
 'exif-artist' => 'Autoro',
@@ -1475,7 +1460,7 @@ Vu darfos adjuntar kauso en la rezumo.',
 'namespacesall' => 'omna',
 'monthsall' => 'omna',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail_needlogin' => 'Vu mustas $1 pro konfirmar vua adreso di e-posto.',
 
 # Scary transclusion
@@ -1533,9 +1518,6 @@ Vu darfos adjuntar kauso en la rezumo.',
 'version-software-product' => 'Produkturo',
 'version-software-version' => 'Versiono',
 
-# Special:FilePath
-'filepath-page' => 'Arkivo:',
-
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Serchar',
 
@@ -1563,6 +1545,9 @@ Vu darfos adjuntar kauso en la rezumo.',
 # HTML forms
 'htmlform-reset' => 'Desfacar chanji',
 'htmlform-selectorother-other' => 'Altra',
+
+# New logging system
+'rightsnone' => '(nula)',
 
 # Search suggestions
 'searchsuggest-search' => 'Serchez',

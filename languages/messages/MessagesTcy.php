@@ -43,8 +43,6 @@ $messages = array(
 'tog-shownumberswatching' => 'ಪುಟೊನು ತೂವೊಂದುಪ್ಪುನಂಚಿನ ಸದಸ್ಯೆರ್’ನ ಸಂಖ್ಯೆನ್ ತೊಜ್ಪಾಲೆ',
 'tog-oldsig' => 'ಇತ್ತೆದ ಸಹಿ',
 'tog-fancysig' => 'ಸರಳ ಸಹಿಗಳು (ಲಿಂಕ್ ಇಜ್ಜಂದಿಲೆಕ)',
-'tog-externaleditor' => 'ಯಾಪಲ ಪಿದಯಿದ ಸಂಪಾದನೆ ಉಪಕರಣದ ಉಪಯೋಗ ಮನ್ಪುಲೆ (ಅನುಭವ ಉಪ್ಪುನಂಚಿನ ಸದಸ್ಯೆರೆಗ್ ಮಾತ್ರ, ನಿಕ್ಲೆನ ಕಂಪ್ಯೂಟರ್’ಡ್ ವಿಶೇಷವಾಯಿನ ಬದಲಾವಣೆಲು ಬೋಡಾಪುಂಡು)',
-'tog-externaldiff' => 'ಬಾಹ್ಯ ಮುನ್ನೋಟನ್ ಯಾಪಲ ಉಪಯೋಗ ಮಲ್ಪುಲೆ (ಅನುಭವ ಉಪ್ಪುನಂಚಿನ ಸದಸ್ಯೆರೆಗ್ ಮಾತ್ರ, ನಿಕ್ಲೆನ ಕಂಪ್ಯೂಟರ್’ಡ್ ವಿಶೇಷ ಬದಲಾವಣೆಲು ಬೋಡಾಪುಂಡು)',
 'tog-uselivepreview' => 'ನೇರ ಮುನ್ನೋಟನ್ ಉಪಯೋಗ ಮಲ್ಪುಲೆ (JavaScript) (ಪ್ರಾಯೋಗಿಕ)',
 'tog-forceeditsummary' => 'ಸಂಪಾದನೆ ಸಾರಾಂಶೊನು ಖಾಲಿ ಬುಡ್’ನ್ಡ್ ಎಂಕ್ ನೆನಪು ಮಲ್ಪುಲೆ',
 'tog-watchlisthideown' => 'ವೀಕ್ಷಣಾಪಟ್ಟಿಡ್ ಎನ್ನ ಸಂಪಾದನೆಲೆನ್ ತೊಜ್’ಪಾವೊಚಿ',
@@ -154,7 +152,6 @@ $messages = array(
 'qbbrowse' => 'ಬ್ರೌಸ್',
 'qbedit' => 'ಸಂಪಾದನೆ ಮಲ್ಪುಲೆ',
 'qbpageoptions' => 'ಈ ಪುಟ',
-'qbpageinfo' => 'ಸನ್ನಿವೇಶ',
 'qbmyoptions' => 'ಎನ್ನ ಪುಟೊಲು',
 'qbspecialpages' => 'ವಿಶೇಷ ಪುಟೊಲು',
 'faq' => 'ಸಾಮಾನ್ಯವಾದ್ ಕೇನುನ ಪ್ರಶ್ನೆಲು',
@@ -234,7 +231,7 @@ $messages = array(
 'jumptosearch' => 'ನಾಡ್’ಲೆ',
 'pool-errorunknown' => 'ಗೊತ್ತಿಂಜಂದಿನ  ದೋಷ',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} ದ ಬಗ್ಗೆ',
 'aboutpage' => 'Project:ನಮ್ಮ ಬಗ್ಗೆ',
 'copyright' => 'ಉಂದು ಈ ಕಾಪಿರೈಟ್‌ಡ್ ಲಭ್ಯವುಂಡು $1.',
@@ -244,7 +241,6 @@ $messages = array(
 'disclaimers' => 'ಅಬಾಧ್ಯತೆಲು',
 'disclaimerpage' => 'Project:ಸಾಮಾನ್ಯ ಅಬಾಧ್ಯತೆಲು',
 'edithelp' => 'ಸಂಪಾದನೆ(ಎಡಿಟ್) ಮಲ್ಪೆರೆ ಸಹಾಯ',
-'edithelppage' => 'Help:ಸಂಪಾದನೆ',
 'helppage' => 'Help:ಪರಿವಿಡಿ',
 'mainpage' => 'ಮುಖ್ಯ ಪುಟ',
 'mainpage-description' => 'ಮುಖ್ಯ ಪುಟ',
@@ -269,7 +265,6 @@ $messages = array(
 'newmessagesdifflink' => 'ಕಡೆತ ಬದಲಾವಣೆ',
 'youhavenewmessagesmulti' => '$1 ಡ್ ಇರೆಗ್ ಪೊಸ ಸಂದೇಶೊಲು ಉಂಡು',
 'editsection' => 'ಸಂಪಾದನೆ ಮಲ್ಪುಲೆ',
-'editsection-brackets' => '[$1]',
 'editold' => 'ಸಂಪಾದನೆ ಮಲ್ಪುಲೆ',
 'viewsourceold' => 'ಮೂಲೊನು ತೂಲೆ',
 'editlink' => 'ಎಡಿಟ್ ಮಲ್ಪುಲೆ',
@@ -359,9 +354,6 @@ $messages = array(
 'logouttext' => 'ಈರ್ ಇತ್ತೆ ಲಾಗ್ ಔಟ್ ಆತರ್.
 ಈರ್ {{SITENAME}} ನ್ ಅನಾಮಧೇಯರಾತ್ ಉಪಯೋಗ ಮಲ್ಪೊಲಿ,ಅಥವಾ ಕೂಡ ಉಂದುವೇ ಪುದರ್‘ಡ್ ಯಾ ಬೇತೆ ಪುದರ್‘ಡ್ ಉಪಯೋಗ ಮಲ್ಪೊಲಿ.
 ಗಮನಿಸಾಲೆ: ಈರೆನ ಬ್ರೌಸರ್‘ಡ್ ಮಾಜುನಾಡೆ ಮುಟ್ಟ ಕೆಲವು ಪುಟಕ್‘ಲು ಈರ್ ಇತ್ತೆಲಾ ಲಾಗ್ ಇನ್ ಆಯಿಲೆಕ್ಕನೇ ತೋಜಾವು.',
-'welcomecreation' => '== ಸುಸ್ವಾಗತೊ, $1! ==
-ಈರೆನೆ ಅಕೌಂಟ್‘ನ್  ಶುರು ಮಲ್ತ್‘ಂಡ್.
-ಈರೆನ [[Special:Preferences|{{SITENAME}} ಪ್ರಾಶಸ್ತ್ಯೊಲೆನ್]]  ಬದಲಾವಣೆ ಮಲ್ಪರೆ ಮರಪಡೆ',
 'yourname' => 'ಸದಸ್ಯೆರ್ನ ಪುದರ್:',
 'yourpassword' => 'ಪಾಸ್-ವರ್ಡ್:',
 'yourpasswordagain' => 'ಪಾಸ್ವರ್ಡ್ ಪಿರ ಟೈಪ್ ಮಲ್ಪುಲೆ',
@@ -569,7 +561,6 @@ $messages = array(
 'nextn' => 'ಬೊಕ್ಕದ {{PLURAL:$1|$1}}',
 'viewprevnext' => 'ತೂಲೆ ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-legend' => 'ನಾಡಾಟದ ಆಯ್ಕೆಲು',
-'searchhelp-url' => 'Help:ಪರಿವಿಡಿ',
 'searchprofile-articles' => 'ಲೇಖನ ಪುಟೊ',
 'searchprofile-images' => 'ಬಹುಮಾಧ್ಯಮ',
 'searchprofile-everything' => 'ಪ್ರತಿಯೊಂಜಿ',
@@ -639,6 +630,9 @@ $messages = array(
 'right-delete' => 'ಪುಟೊಕುಲೆನ್ ಮಾಜಾಲೆ',
 'right-undelete' => 'ಪುಟೊನ್ ಮಾಜಾವಡೆ',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ಸದಸ್ಯ ರಚನೆ ಲಾಗ್',
+
 # User rights log
 'rightslog' => 'ಸದಸ್ಯೆರ್ನ ಹಕ್ಕು ದಾಖಲೆ',
 
@@ -691,7 +685,6 @@ $messages = array(
 'recentchangeslinked-feed' => 'ಸಂಬಂಧ ಉಪ್ಪುನಂಚಿನ ಬದಲಾವಣೆಲು',
 'recentchangeslinked-toolbox' => 'ಸಂಬಂಧ ಉಪ್ಪುನಂಚಿನ ಬದಲಾವಣೆಲು',
 'recentchangeslinked-title' => '"$1" ಪುಟೊಟು ಆತಿನ ಬದಲಾವಣೆಲು',
-'recentchangeslinked-noresult' => 'ಕೊರ್ತಿನ ಸಮಯೊಡು ಲಿಂಕ್ ಉಪ್ಪುನ ಪುಟೊಲೆಡ್ ಓವುಲಾ ಬದಲಾವಣೆಲು ಆತಿಜಿ.',
 'recentchangeslinked-summary' => "ಒಂಜಿ ನಿರ್ದಿಷ್ಟ ಪುಟೊರ್ದು (ಅತ್ತ್’ನ್ಡ ನಿರ್ದಿಷ್ಟ ವರ್ಗೊಗು ಸೇರ್ದಿನ ಪುಟೊಲೆರ್ದ್) ಸಂಪರ್ಕ ಉಪ್ಪುನ ಪುಟೊಲೆಡ್ ಇಂಚಿಪ ಮಲ್ತಿನಂಚಿನ ಬದಲಾವಣೆಲೆನ್ ತಿರ್ತ್ ಪಟ್ಟಿ ಮಲ್ಪೆರಾತ್’ನ್ಡ್.
 [[Special:Watchlist|ಇರೆನ ವೀಕ್ಷಣಾಪಟ್ಟಿಡ್]] ಉಪ್ಪುನ ಪುಟೊಲು '''ದಪ್ಪ ಅಕ್ಷರೊಡು''' ಉಂಡು.",
 'recentchangeslinked-page' => 'ಪುಟೊತ ಪುದರ್:',
@@ -744,8 +737,6 @@ $messages = array(
 'statistics' => 'ಅಂಕಿ ಅಂಶೊಲು',
 'statistics-header-pages' => 'ಪುಟೊತ ಅಂಕಿ ಅಂಶಲು',
 
-'disambiguationspage' => 'ದ್ವಂದ್ವ ನಿವಾರಣೆ',
-
 # Miscellaneous special pages
 'nbytes' => '$1 {{PLURAL:$1|ಬೈಟ್|ಬೈಟ್‍ಲು}}',
 'nmembers' => '$1 {{PLURAL:$1|ಸದಸ್ಯೆ|ಸದಸ್ಯೆರ್}}',
@@ -775,13 +766,10 @@ $messages = array(
 'allarticles' => 'ಪೂರಾ ಲೇಖನೊಲು',
 'allpagessubmit' => 'ಪೋ',
 
-# Special:Log/newusers
-'newuserlogpage' => 'ಸದಸ್ಯ ರಚನೆ ಲಾಗ್',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(ಸದಸ್ಯೆರ್ನ ಪಟ್ಟಿ)',
 
-# E-mail user
+# Email user
 'emailuser' => 'ಈ ಸದಸ್ಯೆರೆಗ್ ಇ-ಮೈಲ್ ಕಡಪುಡ್ಲೆ',
 
 # Watchlist

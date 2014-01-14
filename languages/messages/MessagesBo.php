@@ -145,7 +145,6 @@ $messages = array(
 'qbfind' => 'འཚོལ་བ།',
 'qbedit' => 'རྩོམ་སྒྲིག',
 'qbpageoptions' => 'ཤོག་ངོས་འདི།',
-'qbpageinfo' => 'འབྲེལ་ཆགས།',
 'qbmyoptions' => 'ངའི་ཤོག་ངོས།',
 'qbspecialpages' => 'དམིཊ་བསལ་གྱི་བཟོ་བཅོས།',
 'faq' => 'རྒྱུན་ལྡན་དྲི་བ།',
@@ -222,7 +221,7 @@ $messages = array(
 'jumptosearch' => 'འཚོལ།',
 'pool-errorunknown' => 'ངོས་མ་ཟིན་པའི་ནོར་འཁྲུལ།',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}ངེད་ཀྱི་སྐོར།',
 'aboutpage' => 'Project: ཡི་སྐོར།',
 'copyright' => 'དྲ་བའི་ནང་དོན་$1སྟེང་དུ་ཡོད།',
@@ -232,7 +231,6 @@ $messages = array(
 'disclaimers' => 'དགག་བྱ།',
 'disclaimerpage' => 'Project:སྤྱིའི་དགག་བྱ།',
 'edithelp' => 'རྩོམ་སྒྲིག་རོགས་རམ།',
-'edithelppage' => 'Help:རྩོམ་སྒྲིག',
 'helppage' => 'Help:ནང་དོན་',
 'mainpage' => 'གཙོ་ངོས།',
 'mainpage-description' => 'གཙོ་ངོས།',
@@ -334,7 +332,7 @@ $messages = array(
 'newpassword' => 'ལམ་ཡིག་གསར་བ།',
 'retypenew' => 'ལམ་ཡིག་གསར་བ་བསྐྱར་འཇུག་བྱོས།',
 'resetpass_submit' => 'ལམ་ཡིག་བསྒྲིགས་ནས་ནང་འཛུལ་བྱེད་པ།',
-'resetpass_success' => 'ལམ་ཡིག་བདེ་ལེགས་ངང་བརྗེས་ཟིན། ད་ནི་ནང་འཛུལ་བྱེད་བཞིན་པ་་་',
+'changepassword-success' => 'ལམ་ཡིག་བདེ་ལེགས་ངང་བརྗེས་ཟིན། ད་ནི་ནང་འཛུལ་བྱེད་བཞིན་པ་་་',
 'resetpass_forbidden' => 'ལམ་ཡིག་བརྗེ་མི་ཐུབ།',
 'resetpass-submit-loggedin' => 'ལམ་ཡིག་བརྗེ་བ།',
 'resetpass-submit-cancel' => 'རྩིས་མེད་ཐོངས།',
@@ -533,7 +531,6 @@ $messages = array(
 
 # User rights log
 'rightslog' => 'སྤྱོད་མིའི་ཐོབ་ཐང་།',
-'rightsnone' => '(སྟོང་པ།)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ཤོག་ངོས་འདི་ཀློག་པ།',
@@ -683,7 +680,7 @@ $messages = array(
 # Special:ListGroupRights
 'listgrouprights-members' => 'ཁོངས་མིའི་ཐོ་ཡིག',
 
-# E-mail user
+# Email user
 'emailuser' => 'སྤྱོད་མི་འདིར་གློག་འཕྲིན་སྐུར་བ།',
 'emailmessage' => 'སྐད་ཆ།',
 
@@ -703,9 +700,8 @@ $messages = array(
 'unwatching' => 'ལྟ་ཐོ་ལས་འདོར་བཞིན་པ་་་',
 
 'enotif_reset' => 'ཤོག་ངོས་ཚང་མ་བལྟས་ཟིན་དུ་རྟགས་རྒྱོབ།',
-'enotif_newpagetext' => 'ཤོག་ངོས་འདི་གསར་བ་རེད།',
-'changed' => 'བསྒྱུར་ཟིན།',
 'created' => 'བཟོས་ཟིན།',
+'changed' => 'བསྒྱུར་ཟིན།',
 
 # Delete
 'deletepage' => 'ཤོག་ངོས་འདོར་བ།',
@@ -881,5 +877,8 @@ $messages = array(
 
 # Special:SpecialPages
 'specialpages' => 'དམིགས་གསལ་ཤོག་ངོས།',
+
+# New logging system
+'rightsnone' => '(སྟོང་པ།)',
 
 );

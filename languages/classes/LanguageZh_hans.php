@@ -65,4 +65,33 @@ class LanguageZh_hans extends Language {
 		wfProfileOut( __METHOD__ );
 		return $s;
 	}
+
+	/**
+	 * Takes a number of seconds and turns it into a text using values such as hours and minutes.
+	 *
+	 * @since 1.21
+	 *
+	 * @param integer $seconds The amount of seconds.
+	 * @param array $chosenIntervals The intervals to enable.
+	 *
+	 * @return string
+	 */
+	public function formatDuration( $seconds, array $chosenIntervals = array() ) {
+		if ( empty( $chosenIntervals ) ) {
+			$chosenIntervals = array( 'centuries', 'years', 'days', 'hours', 'minutes', 'seconds' );
+		}
+
+		$intervals = $this->getDurationIntervals( $seconds, $chosenIntervals );
+
+		$segments = array();
+
+		foreach ( $intervals as $intervalName => $intervalValue ) {
+			// Messages: duration-seconds, duration-minutes, duration-hours, duration-days, duration-weeks,
+			// duration-years, duration-decades, duration-centuries, duration-millennia
+			$message = wfMessage( 'duration-' . $intervalName )->numParams( $intervalValue );
+			$segments[] = $message->inLanguage( $this )->escaped();
+		}
+
+		return implode( '', $segments );
+	}
 }

@@ -6,37 +6,28 @@
  */
 
 class CSSMinTest extends MediaWikiTestCase {
-	protected $oldServer = null, $oldCanServer = null;
 
-	function setUp() {
+	protected function setUp() {
 		parent::setUp();
 
-		// Fake $wgServer and $wgCanonicalServer
-		global $wgServer, $wgCanonicalServer;
-		$this->oldServer = $wgServer;
-		$this->oldCanServer = $wgCanonicalServer;
-		$wgServer = $wgCanonicalServer = 'http://wiki.example.org';
-	}
+		$server = 'http://doc.example.org';
 
-	function tearDown() {
-		// Restore $wgServer and $wgCanonicalServer
-		global $wgServer, $wgCanonicalServer;
-		$wgServer = $this->oldServer;
-		$wgCanonicalServer = $this->oldCanServer;
-
-		parent::tearDown();
+		$this->setMwGlobals( array(
+			'wgServer' => $server,
+			'wgCanonicalServer' => $server,
+		) );
 	}
 
 	/**
 	 * @dataProvider provideMinifyCases
 	 */
-	function testMinify( $code, $expectedOutput ) {
+	public function testMinify( $code, $expectedOutput ) {
 		$minified = CSSMin::minify( $code );
 
 		$this->assertEquals( $expectedOutput, $minified, 'Minified output should be in the form expected.' );
 	}
 
-	function provideMinifyCases() {
+	public static function provideMinifyCases() {
 		return array(
 			// Whitespace
 			array( "\r\t\f \v\n\r", "" ),
@@ -79,14 +70,14 @@ class CSSMinTest extends MediaWikiTestCase {
 	/**
 	 * @dataProvider provideRemapCases
 	 */
-	function testRemap( $message, $params, $expectedOutput ) {
+	public function testRemap( $message, $params, $expectedOutput ) {
 		$remapped = call_user_func_array( 'CSSMin::remap', $params );
 
 		$messageAdd = " Case: $message";
 		$this->assertEquals( $expectedOutput, $remapped, 'CSSMin::remap should return the expected url form.' . $messageAdd );
 	}
 
-	function provideRemapCases() {
+	public static function provideRemapCases() {
 		// Parameter signature:
 		// CSSMin::remap( $code, $local, $remote, $embedData = true )
 		return array(
@@ -113,7 +104,7 @@ class CSSMinTest extends MediaWikiTestCase {
 			array(
 				'Expand absolute paths',
 				array( 'foo { prop: url(/w/skin/images/bar.png); }', false, 'http://example.org/quux', false ),
-				'foo { prop: url(http://wiki.example.org/w/skin/images/bar.png); }',
+				'foo { prop: url(http://doc.example.org/w/skin/images/bar.png); }',
 			),
 		);
 	}
@@ -124,11 +115,11 @@ class CSSMinTest extends MediaWikiTestCase {
 	 * @group Broken
 	 * @dataProvider provideStringCases
 	 */
-	function testMinifyWithCSSStringValues( $code, $expectedOutput ) {
+	public function testMinifyWithCSSStringValues( $code, $expectedOutput ) {
 		$this->testMinifyOutput( $code, $expectedOutput );
 	}
 
-	function provideStringCases() {
+	public static function provideStringCases() {
 		return array(
 			// String values should be respected
 			// - More than one space in a string value

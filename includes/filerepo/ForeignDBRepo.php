@@ -59,11 +59,12 @@ class ForeignDBRepo extends LocalRepo {
 			$this->dbConn = DatabaseBase::factory( $this->dbType,
 				array(
 					'host' => $this->dbServer,
-					'user'   => $this->dbUser,
+					'user' => $this->dbUser,
 					'password' => $this->dbPassword,
 					'dbname' => $this->dbName,
 					'flags' => $this->dbFlags,
-					'tablePrefix' => $this->tablePrefix
+					'tablePrefix' => $this->tablePrefix,
+					'foreign' => true,
 				)
 			);
 		}
@@ -86,7 +87,7 @@ class ForeignDBRepo extends LocalRepo {
 
 	/**
 	 * Get a key on the primary cache for this repository.
-	 * Returns false if the repository's cache is not accessible at this site. 
+	 * Returns false if the repository's cache is not accessible at this site.
 	 * The parameters are the parts of the key, as for wfMemcKey().
 	 * @return bool|mixed
 	 */

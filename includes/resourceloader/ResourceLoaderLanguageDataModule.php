@@ -28,6 +28,7 @@
 class ResourceLoaderLanguageDataModule extends ResourceLoaderModule {
 
 	protected $language;
+	protected $targets = array( 'desktop', 'mobile' );
 	/**
 	 * Get the grammar forms for the site content language.
 	 *
@@ -47,33 +48,47 @@ class ResourceLoaderLanguageDataModule extends ResourceLoaderModule {
 	}
 
 	/**
+	 * Get the digit groupin Pattern for the site content language.
+	 *
+	 * @return array
+	 */
+	protected function getDigitGroupingPattern() {
+		return $this->language->digitGroupingPattern();
+	}
+
+	/**
 	 * Get the digit transform table for the content language
-	 * Seperator transform table also required here to convert
-	 * the . and , sign to appropriate forms in content language.
 	 *
 	 * @return array
 	 */
 	protected function getDigitTransformTable() {
-		$digitTransformTable = $this->language->digitTransformTable();
-		$separatorTransformTable = $this->language->separatorTransformTable();
-		if ( $digitTransformTable ) {
-			array_merge( $digitTransformTable, (array)$separatorTransformTable );
-		} else {
-			return $separatorTransformTable;
-		}
-		return $digitTransformTable;
+		return $this->language->digitTransformTable();
 	}
 
 	/**
-	 * Get all the dynamic data for the content language to an array
+	 * Get seperator transform table required for converting
+	 * the . and , sign to appropriate forms in site content language.
+	 *
+	 * @return array
+	 */
+	protected function getSeparatorTransformTable() {
+		return $this->language->separatorTransformTable();
+	}
+
+	/**
+	 * Get all the dynamic data for the content language to an array.
+	 *
+	 * NOTE: Before calling this you HAVE to make sure $this->language is set.
 	 *
 	 * @return array
 	 */
 	protected function getData() {
 		return array(
 			'digitTransformTable' => $this->getDigitTransformTable(),
+			'separatorTransformTable' => $this->getSeparatorTransformTable(),
 			'grammarForms' => $this->getSiteLangGrammarForms(),
 			'pluralRules' => $this->getPluralRules(),
+			'digitGroupingPattern' => $this->getDigitGroupingPattern(),
 		);
 	}
 
@@ -91,26 +106,20 @@ class ResourceLoaderLanguageDataModule extends ResourceLoaderModule {
 
 	/**
 	 * @param $context ResourceLoaderContext
-	 * @return array|int|Mixed
+	 * @return int: UNIX timestamp
 	 */
 	public function getModifiedTime( ResourceLoaderContext $context ) {
-		$this->language = Language::factory( $context ->getLanguage() );
-		$cache = wfGetCache( CACHE_ANYTHING );
-		$key = wfMemcKey( 'resourceloader', 'langdatamodule', 'changeinfo' );
+		return max( 1, $this->getHashMtime( $context ) );
+	}
 
-		$data = $this->getData();
-		$hash = md5( serialize( $data ) );
+	/**
+	 * @param $context ResourceLoaderContext
+	 * @return string: Hash
+	 */
+	public function getModifiedHash( ResourceLoaderContext $context ) {
+		$this->language = Language::factory( $context->getLanguage() );
 
-		$result = $cache->get( $key );
-		if ( is_array( $result ) && $result['hash'] === $hash ) {
-			return $result['timestamp'];
-		}
-		$timestamp = wfTimestamp();
-		$cache->set( $key, array(
-			'hash' => $hash,
-			'timestamp' => $timestamp,
-		) );
-		return $timestamp;
+		return md5( serialize( $this->getData() ) );
 	}
 
 	/**

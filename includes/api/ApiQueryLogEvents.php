@@ -49,16 +49,16 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		$this->fld_ids = isset( $prop['ids'] );
 		$this->fld_title = isset( $prop['title'] );
 		$this->fld_type = isset( $prop['type'] );
-		$this->fld_action = isset ( $prop['action'] );
+		$this->fld_action = isset( $prop['action'] );
 		$this->fld_user = isset( $prop['user'] );
 		$this->fld_userid = isset( $prop['userid'] );
 		$this->fld_timestamp = isset( $prop['timestamp'] );
 		$this->fld_comment = isset( $prop['comment'] );
-		$this->fld_parsedcomment = isset ( $prop['parsedcomment'] );
+		$this->fld_parsedcomment = isset( $prop['parsedcomment'] );
 		$this->fld_details = isset( $prop['details'] );
 		$this->fld_tags = isset( $prop['tags'] );
 
-		$hideLogs = LogEventsList::getExcludeClause( $db );
+		$hideLogs = LogEventsList::getExcludeClause( $db, 'user', $this->getUser() );
 		if ( $hideLogs !== false ) {
 			$this->addWhere( $hideLogs );
 		}
@@ -67,10 +67,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		$this->addTables( array( 'logging', 'user', 'page' ) );
 		$this->addOption( 'STRAIGHT_JOIN' );
 		$this->addJoinConds( array(
-			'user' => array( 'JOIN',
+			'user' => array( 'LEFT JOIN',
 				'user_id=log_user' ),
 			'page' => array( 'LEFT JOIN',
-				array(	'log_namespace=page_namespace',
+				array( 'log_namespace=page_namespace',
 					'log_title=page_title' ) ) ) );
 		$index = array( 'logging' => 'times' ); // default, may change
 
@@ -82,8 +82,8 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		) );
 
 		$this->addFieldsIf( array( 'log_id', 'page_id' ), $this->fld_ids );
-		$this->addFieldsIf( array( 'log_user', 'user_name' ), $this->fld_user );
-		$this->addFieldsIf( 'user_id', $this->fld_userid );
+		$this->addFieldsIf( array( 'log_user', 'log_user_text', 'user_name' ), $this->fld_user );
+		$this->addFieldsIf( 'log_user', $this->fld_userid );
 		$this->addFieldsIf( array( 'log_namespace', 'log_title' ), $this->fld_title || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'log_comment', $this->fld_comment || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'log_params', $this->fld_details );
@@ -98,8 +98,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			$this->addTables( 'change_tag' );
 			$this->addJoinConds( array( 'change_tag' => array( 'INNER JOIN', array( 'log_id=ct_log_id' ) ) ) );
 			$this->addWhereFld( 'ct_tag', $params['tag'] );
-			global $wgOldChangeTagsIndex;
-			$index['change_tag'] = $wgOldChangeTagsIndex ? 'ct_tag' : 'change_tag_tag_id';
+			$index['change_tag'] = 'change_tag_tag_id';
 		}
 
 		if ( !is_null( $params['action'] ) ) {
@@ -151,7 +150,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			if ( is_null( $title ) ) {
 				$this->dieUsage( "Bad title value '$prefix'", 'param_prefix' );
 			}
-			$this->addWhereFld( 'log_namespace',  $title->getNamespace() );
+			$this->addWhereFld( 'log_namespace', $title->getNamespace() );
 			$this->addWhere( 'log_title ' . $db->buildLike( $title->getDBkey(), $db->anyString() ) );
 		}
 
@@ -201,7 +200,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	public static function addLogParams( $result, &$vals, $params, $type, $action, $ts, $legacy = false ) {
 		switch ( $type ) {
 			case 'move':
-				if ( $legacy ){
+				if ( $legacy ) {
 					$targetKey = 0;
 					$noredirKey = 1;
 				} else {
@@ -209,21 +208,21 @@ class ApiQueryLogEvents extends ApiQueryBase {
 					$noredirKey = '5::noredir';
 				}
 
-				if ( isset( $params[ $targetKey ] ) ) {
-					$title = Title::newFromText( $params[ $targetKey ] );
+				if ( isset( $params[$targetKey] ) ) {
+					$title = Title::newFromText( $params[$targetKey] );
 					if ( $title ) {
 						$vals2 = array();
 						ApiQueryBase::addTitleInfo( $vals2, $title, 'new_' );
 						$vals[$type] = $vals2;
 					}
 				}
-				if ( isset( $params[ $noredirKey ] ) && $params[ $noredirKey ] ) {
+				if ( isset( $params[$noredirKey] ) && $params[$noredirKey] ) {
 					$vals[$type]['suppressedredirect'] = '';
 				}
 				$params = null;
 				break;
 			case 'patrol':
-				if ( $legacy ){
+				if ( $legacy ) {
 					$cur = 0;
 					$prev = 1;
 					$auto = 2;
@@ -241,7 +240,12 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				break;
 			case 'rights':
 				$vals2 = array();
-				list( $vals2['old'], $vals2['new'] ) = $params;
+				if ( $legacy ) {
+					list( $vals2['old'], $vals2['new'] ) = $params;
+				} else {
+					$vals2['new'] = implode( ', ', $params['5::newgroups'] );
+					$vals2['old'] = implode( ', ', $params['4::oldgroups'] );
+				}
 				$vals[$type] = $vals2;
 				$params = null;
 				break;
@@ -260,11 +264,26 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				$vals[$type] = $vals2;
 				$params = null;
 				break;
+			case 'upload':
+				if ( isset( $params['img_timestamp'] ) ) {
+					$params['img_timestamp'] = wfTimestamp( TS_ISO_8601, $params['img_timestamp'] );
+				}
+				break;
 		}
 		if ( !is_null( $params ) ) {
-			$result->setIndexedTagName( $params, 'param' );
-			$result->setIndexedTagName_recursive( $params, 'param' );
-			$vals = array_merge( $vals, $params );
+			$logParams = array();
+			// Keys like "4::paramname" can't be used for output so we change them to "paramname"
+			foreach ( $params as $key => $value ) {
+				if ( strpos( $key, ':' ) === false ) {
+					$logParams[$key] = $value;
+					continue;
+				}
+				$logParam = explode( ':', $key, 3 );
+				$logParams[$logParam[2]] = $value;
+			}
+			$result->setIndexedTagName( $logParams, 'param' );
+			$result->setIndexedTagName_recursive( $logParams, 'param' );
+			$vals = array_merge( $vals, $logParams );
 		}
 		return $vals;
 	}
@@ -275,18 +294,22 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		if ( $this->fld_ids ) {
 			$vals['logid'] = intval( $row->log_id );
-			$vals['pageid'] = intval( $row->page_id );
 		}
 
 		if ( $this->fld_title || $this->fld_parsedcomment ) {
 			$title = Title::makeTitle( $row->log_namespace, $row->log_title );
 		}
 
-		if ( $this->fld_title ) {
+		if ( $this->fld_title || $this->fld_ids ) {
 			if ( LogEventsList::isDeleted( $row, LogPage::DELETED_ACTION ) ) {
 				$vals['actionhidden'] = '';
 			} else {
-				ApiQueryBase::addTitleInfo( $vals, $title );
+				if ( $this->fld_title ) {
+					ApiQueryBase::addTitleInfo( $vals, $title );
+				}
+				if ( $this->fld_ids ) {
+					$vals['pageid'] = intval( $row->page_id );
+				}
 			}
 		}
 
@@ -316,10 +339,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				$vals['userhidden'] = '';
 			} else {
 				if ( $this->fld_user ) {
-					$vals['user'] = $row->user_name;
+					$vals['user'] = $row->user_name === null ? $row->log_user_text : $row->user_name;
 				}
 				if ( $this->fld_userid ) {
-					$vals['userid'] = $row->user_id;
+					$vals['userid'] = $row->log_user;
 				}
 
 				if ( !$row->log_user ) {
@@ -362,8 +385,12 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
 			// formatComment() calls wfMessage() among other things
 			return 'anon-public-user-private';
-		} else {
+		} elseif ( LogEventsList::getExcludeClause( $this->getDB(), 'user', $this->getUser() )
+			=== LogEventsList::getExcludeClause( $this->getDB(), 'public' )
+		) { // Output can only contain public data.
 			return 'public';
+		} else {
+			return 'anon-public-user-private';
 		}
 	}
 
@@ -432,7 +459,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				' timestamp      - Adds the timestamp for the event',
 				' comment        - Adds the comment of the event',
 				' parsedcomment  - Adds the parsed comment of the event',
-				' details        - Lists addtional details about the event',
+				' details        - Lists additional details about the event',
 				' tags           - Lists tags for the event',
 			),
 			'type' => 'Filter log entries to only this type',
@@ -525,9 +552,5 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Logevents';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

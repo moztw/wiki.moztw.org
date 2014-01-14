@@ -30,29 +30,32 @@
  * @ingroup SpecialPage
  */
 class MostlinkedCategoriesPage extends QueryPage {
-
 	function __construct( $name = 'Mostlinkedcategories' ) {
 		parent::__construct( $name );
 	}
 
-	function isSyndicated() { return false; }
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
-		return array (
-			'tables' => array ( 'category' ),
-			'fields' => array ( 'title' => 'cat_title',
-					'namespace' => NS_CATEGORY,
-					'value' => 'cat_pages' ),
+		return array(
+			'tables' => array( 'category' ),
+			'fields' => array( 'title' => 'cat_title',
+				'namespace' => NS_CATEGORY,
+				'value' => 'cat_pages' ),
 		);
 	}
 
-	function sortDescending() { return true; }
+	function sortDescending() {
+		return true;
+	}
 
 	/**
 	 * Fetch user page links and cache their existence
 	 *
-	 * @param $db DatabaseBase
-	 * @param $res DatabaseResult
+	 * @param DatabaseBase $db
+	 * @param ResultWrapper $res
 	 */
 	function preprocessResults( $db, $res ) {
 		if ( !$res->numRows() ) {
@@ -70,8 +73,8 @@ class MostlinkedCategoriesPage extends QueryPage {
 	}
 
 	/**
-	 * @param $skin Skin
-	 * @param  $result
+	 * @param Skin $skin
+	 * @param object $result Result row
 	 * @return string
 	 */
 	function formatResult( $skin, $result ) {
@@ -79,15 +82,24 @@ class MostlinkedCategoriesPage extends QueryPage {
 
 		$nt = Title::makeTitleSafe( NS_CATEGORY, $result->title );
 		if ( !$nt ) {
-			return Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
-				Linker::getInvalidTitleDescription( $this->getContext(), NS_CATEGORY, $result->title ) );
+			return Html::element(
+				'span',
+				array( 'class' => 'mw-invalidtitle' ),
+				Linker::getInvalidTitleDescription(
+					$this->getContext(),
+					NS_CATEGORY,
+					$result->title )
+			);
 		}
 
 		$text = $wgContLang->convert( $nt->getText() );
-
 		$plink = Linker::link( $nt, htmlspecialchars( $text ) );
-
 		$nlinks = $this->msg( 'nmembers' )->numParams( $result->value )->escaped();
+
 		return $this->getLanguage()->specialList( $plink, $nlinks );
+	}
+
+	protected function getGroupName() {
+		return 'highuse';
 	}
 }

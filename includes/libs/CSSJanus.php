@@ -57,6 +57,7 @@ class CSSJanus {
 		'lookahead_not_open_brace' => null,
 		'lookahead_not_closing_paren' => null,
 		'lookahead_for_closing_paren' => null,
+		'lookahead_not_letter' => '(?![a-zA-Z])',
 		'lookbehind_not_letter' => '(?<![a-zA-Z])',
 		'chars_within_selector' => '[^\}]*?',
 		'noflip_annotation' => '\/\*\s*@noflip\s*\*\/',
@@ -75,6 +76,10 @@ class CSSJanus {
 		'cursor_west' => null,
 		'four_notation_quantity' => null,
 		'four_notation_color' => null,
+		'border_radius' => null,
+		'box_shadow' => null,
+		'text_shadow1' => null,
+		'text_shadow2' => null,
 		'bg_horizontal_percentage' => null,
 		'bg_horizontal_percentage_x' => null,
 	);
@@ -95,25 +100,29 @@ class CSSJanus {
 		$patterns['ident'] = "-?{$patterns['nmstart']}{$patterns['nmchar']}*";
 		$patterns['quantity'] = "{$patterns['num']}(?:\s*{$patterns['unit']}|{$patterns['ident']})?";
 		$patterns['possibly_negative_quantity'] = "((?:-?{$patterns['quantity']})|(?:inherit|auto))";
-		$patterns['color'] = "(#?{$patterns['nmchar']}+)";
+		$patterns['color'] = "(#?{$patterns['nmchar']}+|(?:rgba?|hsla?)\([ \d.,%-]+\))";
 		$patterns['url_chars'] = "(?:{$patterns['url_special_chars']}|{$patterns['nonAscii']}|{$patterns['escape']})*";
-		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\r?\n|\s|#|\:|\.|\,|\+|>)*?{)";
+		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\r?\n|\s|#|\:|\.|\,|\+|>|\(|\))*?{)";
 		$patterns['lookahead_not_closing_paren'] = "(?!{$patterns['url_chars']}?{$patterns['valid_after_uri_chars']}\))";
 		$patterns['lookahead_for_closing_paren'] = "(?={$patterns['url_chars']}?{$patterns['valid_after_uri_chars']}\))";
 		$patterns['noflip_single'] = "/({$patterns['noflip_annotation']}{$patterns['lookahead_not_open_brace']}[^;}]+;?)/i";
 		$patterns['noflip_class'] = "/({$patterns['noflip_annotation']}{$patterns['chars_within_selector']}})/i";
 		$patterns['direction_ltr'] = "/({$patterns['direction']})ltr/i";
 		$patterns['direction_rtl'] = "/({$patterns['direction']})rtl/i";
-		$patterns['left'] = "/{$patterns['lookbehind_not_letter']}(left){$patterns['lookahead_not_closing_paren']}{$patterns['lookahead_not_open_brace']}/i";
-		$patterns['right'] = "/{$patterns['lookbehind_not_letter']}(right){$patterns['lookahead_not_closing_paren']}{$patterns['lookahead_not_open_brace']}/i";
+		$patterns['left'] = "/{$patterns['lookbehind_not_letter']}(left){$patterns['lookahead_not_letter']}{$patterns['lookahead_not_closing_paren']}{$patterns['lookahead_not_open_brace']}/i";
+		$patterns['right'] = "/{$patterns['lookbehind_not_letter']}(right){$patterns['lookahead_not_letter']}{$patterns['lookahead_not_closing_paren']}{$patterns['lookahead_not_open_brace']}/i";
 		$patterns['left_in_url'] = "/{$patterns['lookbehind_not_letter']}(left){$patterns['lookahead_for_closing_paren']}/i";
 		$patterns['right_in_url'] = "/{$patterns['lookbehind_not_letter']}(right){$patterns['lookahead_for_closing_paren']}/i";
 		$patterns['ltr_in_url'] = "/{$patterns['lookbehind_not_letter']}(ltr){$patterns['lookahead_for_closing_paren']}/i";
 		$patterns['rtl_in_url'] = "/{$patterns['lookbehind_not_letter']}(rtl){$patterns['lookahead_for_closing_paren']}/i";
 		$patterns['cursor_east'] = "/{$patterns['lookbehind_not_letter']}([ns]?)e-resize/";
 		$patterns['cursor_west'] = "/{$patterns['lookbehind_not_letter']}([ns]?)w-resize/";
-		$patterns['four_notation_quantity'] = "/{$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}/i";
-		$patterns['four_notation_color'] = "/(-color\s*:\s*){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}/i";
+		$patterns['four_notation_quantity'] = "/(:\s*){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s*[;}])/i";
+		$patterns['four_notation_color'] = "/(-color\s*:\s*){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}(\s*[;}])/i";
+		$patterns['border_radius'] = "/(border-radius\s*:\s*){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s*[;}])/i";
+		$patterns['box_shadow'] = "/(box-shadow\s*:\s*(?:inset\s*)?){$patterns['possibly_negative_quantity']}/i";
+		$patterns['text_shadow1'] = "/(text-shadow\s*:\s*){$patterns['color']}(\s*){$patterns['possibly_negative_quantity']}/i";
+		$patterns['text_shadow2'] = "/(text-shadow\s*:\s*){$patterns['possibly_negative_quantity']}/i";
 		// The two regexes below are parenthesized differently then in the original implementation to make the
 		// callback's job more straightforward
 		$patterns['bg_horizontal_percentage'] = "/(background(?:-position)?\s*:\s*[^%]*?)(-?{$patterns['num']})(%\s*(?:{$patterns['quantity']}|{$patterns['ident']}))/";
@@ -122,7 +131,7 @@ class CSSJanus {
 
 	/**
 	 * Transform an LTR stylesheet to RTL
-	 * @param $css String: stylesheet to transform
+	 * @param string $css stylesheet to transform
 	 * @param $swapLtrRtlInURL Boolean: If true, swap 'ltr' and 'rtl' in URLs
 	 * @param $swapLeftRightInURL Boolean: If true, swap 'left' and 'right' in URLs
 	 * @return string Transformed stylesheet
@@ -159,7 +168,9 @@ class CSSJanus {
 		$css = self::fixLeftAndRight( $css );
 		$css = self::fixCursorProperties( $css );
 		$css = self::fixFourPartNotation( $css );
+		$css = self::fixBorderRadius( $css );
 		$css = self::fixBackgroundPosition( $css );
+		$css = self::fixShadows( $css );
 
 		// Detokenize stuff we tokenized before
 		$css = $comments->detokenize( $css );
@@ -256,8 +267,58 @@ class CSSJanus {
 	 * @return string
 	 */
 	private static function fixFourPartNotation( $css ) {
-		$css = preg_replace( self::$patterns['four_notation_quantity'], '$1$2$7$4$5$6$3', $css );
-		$css = preg_replace( self::$patterns['four_notation_color'], '$1$2$3$8$5$6$7$4', $css );
+		$css = preg_replace( self::$patterns['four_notation_quantity'], '$1$2$3$8$5$6$7$4$9', $css );
+		$css = preg_replace( self::$patterns['four_notation_color'], '$1$2$3$8$5$6$7$4$9', $css );
+		return $css;
+	}
+
+	/**
+	 * Swaps appropriate corners in four-part border-radius rules.
+	 * Needs to undo the effect of fixFourPartNotation() on those rules, too.
+	 *
+	 * @param $css string
+	 * @return string
+	 */
+	private static function fixBorderRadius( $css ) {
+		// Undo four_notation_quantity
+		$css = preg_replace( self::$patterns['border_radius'], '$1$2$3$8$5$6$7$4$9', $css );
+		// Do the real thing
+		$css = preg_replace( self::$patterns['border_radius'], '$1$4$3$2$5$8$7$6$9', $css );
+
+		return $css;
+	}
+
+	/**
+	 * Negates horizontal offset in box-shadow and text-shadow rules.
+	 *
+	 * @param $css string
+	 * @return string
+	 */
+	private static function fixShadows( $css ) {
+		// Flips the sign of a CSS value, possibly with a unit.
+		// (We can't just negate the value with unary minus due to the units.)
+		$flipSign = function ( $cssValue ) {
+			// Don't mangle zeroes
+			if ( intval( $cssValue ) === 0 ) {
+				return $cssValue;
+			} elseif ( $cssValue[0] === '-' ) {
+				return substr( $cssValue, 1 );
+			} else {
+				return "-" . $cssValue;
+			}
+		};
+
+		$css = preg_replace_callback( self::$patterns['box_shadow'], function ( $matches ) use ( $flipSign ) {
+			return $matches[1] . $flipSign( $matches[2] );
+		}, $css );
+
+		$css = preg_replace_callback( self::$patterns['text_shadow1'], function ( $matches ) use ( $flipSign ) {
+			return $matches[1] . $matches[2] . $matches[3] . $flipSign( $matches[4] );
+		}, $css );
+
+		$css = preg_replace_callback( self::$patterns['text_shadow2'], function ( $matches ) use ( $flipSign ) {
+			return $matches[1] . $flipSign( $matches[2] );
+		}, $css );
 
 		return $css;
 	}
@@ -304,8 +365,8 @@ class CSSJanus_Tokenizer {
 
 	/**
 	 * Constructor
-	 * @param $regex string Regular expression whose matches to replace by a token.
-	 * @param $token string Token
+	 * @param string $regex Regular expression whose matches to replace by a token.
+	 * @param string $token Token
 	 */
 	public function __construct( $regex, $token ) {
 		$this->regex = $regex;
@@ -316,7 +377,7 @@ class CSSJanus_Tokenizer {
 	/**
 	 * Replace all occurrences of $regex in $str with a token and remember
 	 * the original strings.
-	 * @param $str String to tokenize
+	 * @param string $str to tokenize
 	 * @return string Tokenized string
 	 */
 	public function tokenize( $str ) {
@@ -335,7 +396,7 @@ class CSSJanus_Tokenizer {
 	/**
 	 * Replace tokens with their originals. If multiple strings were tokenized, it's important they be
 	 * detokenized in exactly the SAME ORDER.
-	 * @param $str String: previously run through tokenize()
+	 * @param string $str previously run through tokenize()
 	 * @return string Original string
 	 */
 	public function detokenize( $str ) {

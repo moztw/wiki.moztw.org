@@ -172,9 +172,6 @@ $messages = array(
 'tog-shownumberswatching' => 'It tal brûkers sjen litte dat dizze side folget',
 'tog-oldsig' => 'Hûdige sinjatuerprintallyk:',
 'tog-fancysig' => 'Sinjatuer as wikitekst behannelje (sûnder automatyske keppeling)',
-'tog-externaleditor' => 'Standert in eksterne tekstbewurker brûke (allinne foar experts - foar dizze funksje binne spesjale ynstellings nedich)',
-'tog-externaldiff' => 'Standert in ekstern ferlikingsprogramma brûke (allinne foar experts - foar dizze funksje binne spesjale ynstellings nedich)',
-'tog-showjumplinks' => '"gean nei"-tapaslikens-links ynskeakelje',
 'tog-uselivepreview' => '"live proefbyld" brûke (JavaScript nedich - eksperimenteel)',
 'tog-forceeditsummary' => 'Warskôgje at ik de gearfetting leech lit.',
 'tog-watchlisthideown' => 'Eigen bewurkings op myn folchlist ferbergje',
@@ -282,7 +279,6 @@ $messages = array(
 'qbbrowse' => 'Blêdzje',
 'qbedit' => 'Bewurkje',
 'qbpageoptions' => 'Side-opsjes',
-'qbpageinfo' => 'Side-ynfo',
 'qbmyoptions' => 'Myn Opsjes',
 'qbspecialpages' => 'Bysûndere siden',
 'faq' => 'FAQ (faak stelde fragen)',
@@ -361,7 +357,7 @@ Wachtsje efkes foardatsto op 'e nij tagong ta dizze side probearrest te krijen.
 
 $1",
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Oer de {{SITENAME}}',
 'aboutpage' => 'Project:Ynfo',
 'copyright' => 'Ynhâld is beskikber ûnder de $1.',
@@ -371,7 +367,6 @@ $1",
 'disclaimers' => 'Foarbehâld',
 'disclaimerpage' => 'Project:Algemien foarbehâld',
 'edithelp' => 'Bewurk-help',
-'edithelppage' => 'Help:Bewurk-rie',
 'helppage' => 'Help:Help',
 'mainpage' => 'Haadside',
 'mainpage-description' => 'Haadside',
@@ -436,16 +431,6 @@ $1",
 # General errors
 'error' => 'Fout',
 'databaseerror' => 'Databankfout',
-'dberrortext' => 'Sinboufout in databankfraach.
-De lêst besochte databankfraach wie:
-<blockquote><tt>$1</tt></blockquote>
-fan funksje "<tt>$2</tt>" út.
-MySQL joech fout "<tt>$3: $4</tt>" werom.',
-'dberrortextcl' => 'Sinboufout yn databankfraach.
-De lêst besochte databankfraach wie:
-"$1"
-fanút funksje "$2" .
-MySQL joech fout "$3: $4"',
 'laggedslavemode' => 'Warskôging: Mûglik binne resinte bewurkings noch net trochfierd.',
 'readonly' => "Databank is 'Net-skriuwe'.",
 'enterlockreason' => "Skriuw wêrom de databank 'net-skriuwe' makke is, en hoenear't men wêr nei alle gedachten wer skriuwe kin.",
@@ -490,7 +475,6 @@ Query: $2',
 'viewsourcetext' => 'Jo kinne de boarnetekst fan dizze side besjen en kopiearje:',
 'protectedinterface' => "Dizze side befettet tekst foar berjochten fan 'e software en is befeilige om misbrûk tefoaren te kommen.",
 'editinginterface' => "'''Warskôging;''' Jo bewurkje in side dy't brûkt wurdt troch software. Bewurkings op dizze side beynfloedzje de gebrûksynterface fan elkenien. Oerweagje foar oersettings [//translatewiki.net/wiki/Main_Page?setlang=fy translatewiki.net] te brûken, it oersetprojekt foar MediaWiki.",
-'sqlhidden' => '(SQL query ferburgen)',
 'cascadeprotected' => 'Dizze side is skoattele tsjin wizigjen, om\'t der in ûnderdiel útmakket fan de neikommende {{PLURAL:$1|side|siden}}, dy\'t skoattele {{PLURAL:$1|is|binne}} mei de "ûnderlizzende siden" opsje ynskeakele: $2',
 'namespaceprotected' => "Jo hawwe gjin rjochten om siden yn'e nammerûmte '''$1''' te bewurkjen.",
 'ns-specialprotected' => "Siden yn'e nammerûmte {{ns:special}} kinne net bewurke wurde.",
@@ -505,10 +489,8 @@ De oanfierde reden is ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Jo binne no ôfmeld.'''
 
-Jo kinne de {{SITENAME}} fierders anonym brûke, of jo op 'e [[Special:UserLogin|nij oanmelde]] ûnder deselde of in oare namme.
+Jo kinne de {{SITENAME}} fierders anonym brûke, of jo op 'e <span class='plainlinks'>[$1 nij oanmelde]</span> ûnder deselde of in oare namme.
 Mûglik wurdt noch in tal siden werjûn as wiene Jo oanmeld, oant Jo de cache fan Jo browser leegje.",
-'welcomecreation' => '<h2>Wolkom, $1!</h2><p>Jo ynstellings binne oanmakke.
-Ferjit net se oan jo foarkar oan te passen.',
 'yourname' => 'Jo meidochnamme:',
 'yourpassword' => 'Jo wachtwurd',
 'yourpasswordagain' => 'Jo wachtwurd (nochris)',
@@ -588,7 +570,7 @@ Jo moatte efkes wachtsje foar't jo it op'e nij besykje kinne.",
 'newpassword' => 'Nij wachtwurd',
 'retypenew' => 'Nij wachtwurd (nochris)',
 'resetpass_submit' => 'Wachtwurd ynstelle en oanmelde',
-'resetpass_success' => 'Jo wachtwurd is feroare. Dwaande mei oanmelden ...',
+'changepassword-success' => 'Jo wachtwurd is feroare. Dwaande mei oanmelden ...',
 'resetpass_forbidden' => 'Wachtwurden kinne net feroare wurde',
 'resetpass-no-info' => "Jo moatte oanmeld wêze foar't Jo dizze side brûke kinne.",
 'resetpass-submit-loggedin' => 'Wachtwurd feroarje',
@@ -741,7 +723,6 @@ In  behearder hat de database blokkearre om de folgjende reden: $1",
 'hiddencategories' => 'Dizze side falt yn de folgjende ferburgen
 {{PLURAL:$1|kategory|kategoryen}}:',
 'edittools' => '<!-- Tekst hjir stiet ûnder bewurkingsfjilden en oanbringfjilden.  -->',
-'nocreatetitle' => 'It oanmeitsjen fan siden is beheind',
 'nocreatetext' => '{{SITENAME}} hat de mûglikheid beheind om nije siden te meitsjen.
 Jo kinne al besteande siden feroarje of jo kinne [[Special:UserLogin|jo oanmelde of in brûker oanmeitsje]].',
 'nocreate-loggedin' => 'Jo meie gjin nije siden meitsje',
@@ -923,7 +904,6 @@ Prebearje in oare sykopdracht.',
 'searchmenu-legend' => 'Sykopsjes',
 'searchmenu-exists' => "'''Der is in side mei namme \"[[:\$1]]\" yn dizze wiki'''",
 'searchmenu-new' => "'''Meitsje de side \"[[:\$1]]\" yn dizze wiki!'''",
-'searchhelp-url' => 'Help:Help',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Sidenammen mei dit foarheaksel werjaan]]',
 'searchprofile-articles' => 'Ynhâldlike siden',
 'searchprofile-project' => 'Projektsiden',
@@ -965,14 +945,6 @@ Jo kinne ek in nammerûmte as foarheaksel brûke.",
 'search-external' => 'Utwindich sykje',
 'searchdisabled' => '<p>Op it stuit stiet it trochsykjen fan tekst út omdat dizze funksje tefolle kompjûterkapasiteit ferget. As we nije apparatuer krije, en dy is ûnderweis, dan wurdt dizze funksje wer aktyf. Oant salang kinne jo sykje fia Google:</p>',
 
-# Quickbar
-'qbsettings' => 'Menu',
-'qbsettings-none' => 'Ut',
-'qbsettings-fixedleft' => 'Lofts fêst',
-'qbsettings-fixedright' => 'Rjochts fêst',
-'qbsettings-floatingleft' => 'Lofts sweevjend',
-'qbsettings-floatingright' => 'Rjochts sweevjend',
-
 # Preferences page
 'preferences' => 'Ynstellings',
 'mypreferences' => 'Myn foarkarynstellings',
@@ -997,7 +969,6 @@ Jo kinne ek in nammerûmte as foarheaksel brûke.",
 'resetprefs' => 'Ynstellings werom sette',
 'restoreprefs' => 'Tebek nei de standertynstellings',
 'prefs-editing' => 'Siden bewurkje',
-'prefs-edit-boxsize' => 'Ofmjittings fan it bewurkingsfinster',
 'rows' => 'Rigen',
 'columns' => 'Kolommen',
 'searchresultshead' => 'Sykje',
@@ -1032,7 +1003,6 @@ Jo kinne ek in nammerûmte as foarheaksel brûke.",
 'prefs-files' => 'Triemen',
 'prefs-custom-js' => 'Persoanlik JS',
 'prefs-emailconfirm-label' => 'Netpostbefêstiging:',
-'prefs-textboxsize' => 'Ofmjittings bewurkingsskerm',
 'youremail' => 'Jo netpostadres:',
 'username' => 'Meidochnamme:',
 'uid' => 'Wikinûmer:',
@@ -1159,11 +1129,13 @@ Jo kinne ek oaren de mûglikheid jaan kontakt mei jo op te nimmen troch in ferwi
 'right-siteadmin' => 'De database blokkearje en wer frij jaan',
 'right-override-export-depth' => 'Alle siden oant en mei in keppelingsdjipte fan fiif fuortskriuwe',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Ynskriuwingsloch',
+'newuserlogpagetext' => "Dit is in loch fan meidoggers dy't de lêste tiid ynskreaun binne.",
+
 # User rights log
 'rightslog' => 'Rjochten-loch',
 'rightslogtext' => 'Dit is in loch fan feroarings fan meidoggerrjochten.',
-'rightslogentry' => 'groep foar $1 feroare fan $2 yn $3',
-'rightsnone' => '(gjin)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'dizze side besjen',
@@ -1239,7 +1211,6 @@ Jo kinne ek oaren de mûglikheid jaan kontakt mei jo op te nimmen troch in ferwi
 'recentchangeslinked-feed' => 'Folgje keppelings',
 'recentchangeslinked-toolbox' => 'Folgje keppelings',
 'recentchangeslinked-title' => 'Feroarings yn ferbân mei "$1"',
-'recentchangeslinked-noresult' => "Der hawwe gjin bewurkings yn 'e bedoelde perioade west op'e siden dy't hjirwei linke wurde.",
 'recentchangeslinked-summary' => "Dizze spesjale side lit de lêste bewurkings sjen op siden dy't keppele wurde fan in spesifisearre side ôf (of fan in spesifisearre Kategory ôf). Siden dy't op [[Special:Watchlist|jo folchlist]] steane, wurde '''tsjûk''' werjûn.",
 'recentchangeslinked-page' => 'Sidenamme:',
 'recentchangeslinked-to' => 'Feroarings oan siden mei ferwizings nei dizze side besjen',
@@ -1496,11 +1467,6 @@ Ferjit net de "Wat is hjirmei keppele" nei te gean foar it fuortheljen fan dit s
 'statistics-users-active-desc' => "Brûkers dy't yn 'e ôfrûne {{PLURAL:$1|dei|$1 dagen}} in hanneling útfierd hawwe",
 'statistics-mostpopular' => 'Meast besjoene siden',
 
-'disambiguations' => 'Betsjuttingssiden',
-'disambiguationspage' => 'Template:Neibetsjuttings',
-'disambiguations-text' => "De ûndersteande siden keppelje mei in '''Betsjuttingssiden'''.
-Se soenen mei de side sels keppele wurde moatte.<br /> In side wurdt sjoen as betsjuttingssiden, as de side ien berjocht fan [[MediaWiki:Disambiguationspage]] brûkt.",
-
 'doubleredirects' => 'Dûbelde synonimen',
 'doubleredirectstext' => '<b>Let op!</b> Der kinne missen yn dizze list stean! Dat komt dan ornaris troch oare keppelings ûnder de "#REDIRECT". Eltse rigel jout keppelings nei it earste synonym, it twadde synonym en dan it werklike doel.',
 'double-redirect-fixed-move' => '[[$1]] is ferplakt en is no in trochferwizing nei [[$2]]',
@@ -1648,10 +1614,6 @@ Stipe protokollen: <code>$1</code>',
 'activeusers' => 'Aktive meidoggers',
 'activeusers-noresult' => 'Gjin meidoggers fûn.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Ynskriuwingsloch',
-'newuserlogpagetext' => "Dit is in loch fan meidoggers dy't de lêste tiid ynskreaun binne.",
-
 # Special:ListGroupRights
 'listgrouprights' => 'Rjochten fan brûkersgroepen',
 'listgrouprights-summary' => 'Op dizze side steane de brûkersgroepen yn dizze wiki beskreaun, mei har derby hearrende rjochten.
@@ -1665,7 +1627,7 @@ Der kin [[{{MediaWiki:Listgrouprights-helppage}}|ekstra ynformaasje]] oer yndivi
 'listgrouprights-addgroup-all' => 'Kin brûkers oan alle groepen tafoegje',
 'listgrouprights-removegroup-all' => 'Kin brûkers út alle groepen fuorthelje',
 
-# E-mail user
+# Email user
 'mailnologin' => 'Gjin adres beskikber',
 'mailnologintext' => 'Jo moatte [[Special:UserLogin|oanmelden]] wêze, en in jildich e-postadres [[Special:Preferences|ynsteld]] hawwe, om oan oare meidoggers e-post stjoere te kinnen.',
 'emailuser' => 'Skriuw meidogger',
@@ -1703,7 +1665,6 @@ At jo letter in side net mear folgje wolle, dan brûke jo op dy side de keppelin
 'unwatch' => 'Ferjit',
 'unwatchthispage' => 'Ferjit dizze side',
 'notanarticle' => 'Dit kin net folge wurde.',
-'watchnochange' => "Fan de siden dy't jo folgje is der yn dizze perioade net ien feroare.",
 'watchlist-details' => 'Jo folchlist hat {{PLURAL:$1|$1 side|$1 siden}}, oerlissiden net meiteld.',
 'watchmethod-recent' => 'Koartlyn feroare ...',
 'watchmethod-list' => 'Folge ...',
@@ -1716,10 +1677,7 @@ At jo letter in side net mear folgje wolle, dan brûke jo op dy side de keppelin
 'watching' => "Dwaande mei op'e folchlist te setten ...",
 'unwatching' => "Dwaande mei fan'e folchlist ôf te heljen ...",
 
-'enotif_newpagetext' => 'Dit is in nije side.',
 'enotif_impersonal_salutation' => 'meidogger fan {{SITENAME}}',
-'changed' => 'feroare',
-'created' => 'oanmakke',
 'enotif_body' => 'Bêste $WATCHINGUSERNAME,
 
 De {{SITENAME}}side \'$PAGETITLE\' is op $PAGEEDITDATE $CHANGEDORCREATED troch meidogger $PAGEEDITOR;
@@ -1743,6 +1701,8 @@ om jo folchlistynstellings te feroarjen.
 
 Reaksjes en fierdere help:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'oanmakke',
+'changed' => 'feroare',
 
 # Delete
 'deletepage' => 'Wisk side',
@@ -1953,7 +1913,6 @@ Meld de krekte reden! Neam bygelyks de siden dy't oantaaste waarden.",
 'ipb_expiry_invalid' => 'Tiid fan ferrinnen is net goed.',
 'ipb_already_blocked' => '"$1" is al útsluten',
 'ipb_cant_unblock' => 'Flater: It útsluten fan ID $1 kin net fûn wurde. It is miskien al net mear útsluten.',
-'proxyblocksuccess' => 'Dien.',
 
 # Developer tools
 'lockdb' => "Meitsje de database 'Net-skriuwe'",
@@ -2125,10 +2084,6 @@ Sjoch: [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation], [//transl
 'spamprotectiontext' => "De side dy't jo fêstlizze woene is blokkearre troch in spam filter. Dit wurdt wierskynlik feroarsake troch in ferwizing nei in ekstern webstee.",
 'spamprotectionmatch' => 'De neikommende tekst hat it spam filter aktivearre: $1',
 
-# Skin names
-'skinname-standard' => 'Standert',
-'skinname-nostalgia' => 'Nostalgy',
-
 # Patrolling
 'markaspatrolleddiff' => 'Markearje as kontroleare',
 'markaspatrolledtext' => 'Markearje dizze side as kontrolearre',
@@ -2186,7 +2141,7 @@ Alle folgjende links dy't op deselde rigel steane, wurde behannele as útsûnder
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-samplesperpixel' => 'Oantal komponinten',
 'exif-xresolution' => 'Horizontale resolúsje',
 'exif-yresolution' => 'Fertikale resolúsje',
@@ -2245,7 +2200,7 @@ Alle folgjende links dy't op deselde rigel steane, wurde behannele as útsûnder
 'namespacesall' => 'alles',
 'monthsall' => 'alle',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'Befêstigjen netpostadres',
 'confirmemail_text' => '{{SITENAME}} freget dat jo jo netpostadres befêstigje eart jo hjir netpost brûke. Brûk de knop hjirûnder om josels in befêstigingskoade ta te stjoeren op it adres dat jo opjûn hawwe. Iepenje de koade dan yn jo blêder om te befêstigjen dat jo netpostadres jildich is.',
 'confirmemail_send' => 'Stjoer in befêstigingskoade',
@@ -2324,11 +2279,6 @@ Wolle jo de side wier op 'e nij skriuwe?",
 'version-software-product' => 'Produkt',
 'version-software-version' => 'Ferzje',
 
-# Special:FilePath
-'filepath' => 'Triempad',
-'filepath-page' => 'Triem:',
-'filepath-submit' => 'Pad',
-
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Sykje op duplikaten',
 'fileduplicatesearch-legend' => 'Sykje op duplikaten',
@@ -2363,6 +2313,6 @@ Wolle jo de side wier op 'e nij skriuwe?",
 # New logging system
 'revdelete-restricted' => 'hat beheinings oplein oan behearders',
 'revdelete-unrestricted' => 'hat beheinings foar behearders goedmakke',
-'newuserlog-byemail' => 'wachtwurd is ferstjoerd oer e-mail',
+'rightsnone' => '(gjin)',
 
 );

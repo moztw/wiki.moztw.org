@@ -97,9 +97,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ipakita ang gidaghanon sa mga gumagamit nga nagbantay usab',
 'tog-oldsig' => 'Paunang tan-aw sa eksisting nga pirma:',
 'tog-fancysig' => 'Hilaw nga pirma (walay awtomatikong sumpay)',
-'tog-externaleditor' => 'Gamita ang eksternal nga editor isip default (para sa mga eksperto lamang, kinahanglan og espesyal nga setting sa imong kompyuter)',
-'tog-externaldiff' => 'Gamita ang eksternal nga diff isip default (para sa mga eksperto lamang, kinahanglan og espesyal nga setting sa imong kompyuter)',
-'tog-showjumplinks' => 'I-enable ang "ambak sa" nga sumpay sa aksesibilidad',
 'tog-uselivepreview' => 'Gamita ang live nga paunang tan-aw (JavaScript kinahanglan) (Eksperimental)',
 'tog-forceeditsummary' => 'Pahibaloi ako kon blangko ang mubong sugid alang sa pag-usab',
 'tog-watchlisthideown' => 'Tagoa ang akong mga giusab',
@@ -208,7 +205,6 @@ $messages = array(
 'qbbrowse' => 'Browse',
 'qbedit' => 'Usba',
 'qbpageoptions' => 'Kini nga panid',
-'qbpageinfo' => 'Konteksto',
 'qbmyoptions' => 'Akong mga panid',
 'qbspecialpages' => 'Mga espesyal nga panid',
 'faq' => 'FAQ',
@@ -289,7 +285,7 @@ Palihog paghulat bag-o nimo sulayan pag-akses og usab ang kining panid.
 
 $1',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Mahitungod sa {{SITENAME}}',
 'aboutpage' => 'Project:Mahitungod sa',
 'copyright' => 'Mga sulod makita sa $1.',
@@ -299,7 +295,6 @@ $1',
 'disclaimers' => 'Mga pagpasabot',
 'disclaimerpage' => 'Project:Mga pagpasabot',
 'edithelp' => 'Tabang sa pag-usab',
-'edithelppage' => 'Help:Pag-usab',
 'helppage' => 'Help:Mga sulod',
 'mainpage' => 'Unang Panid',
 'mainpage-description' => 'Unang Panid',
@@ -366,17 +361,6 @@ Ang lista sa mga balidong espesyal nga mga panid makita sa [[Special:SpecialPage
 # General errors
 'error' => 'Sayop',
 'databaseerror' => 'Sayop sa database',
-'dberrortext' => 'May nahitabong sayop sa database query syntax.
-Mahimong nagpakita kini og bug sa software.
-Ang naulahing gi-attempt nga database query mao ang:
-<blockquote><tt>$1</tt></blockquote>
-from within function "<tt>$2</tt>".
-MySQL returned error "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'May nahitabong sayop sa database query syntax.
-Ang naulahing gi-attempt nga database query mao ang:
-"$1"
-from within function "$2".
-MySQL returned error "$3: $4"',
 'laggedslavemode' => 'Pahibalo: Mahimong dili mahiapil sa panid ang mga bag-ong kausaban.',
 'readonly' => 'Gitrangkahan ang database',
 'enterlockreason' => 'Pagbutang og rason para sa lock, apil ang banabana kon kanus-a ma-release ang lock',
@@ -427,7 +411,6 @@ Palihog sulayi'g usab sa pipila ka minutos.",
 'editinginterface' => "'''Pahibalo:''' Imo nang usbon ang panid nga gigamit sa paghatag og interface text para sa software.
 Ang mga pag-usab niining panid moapekto sa appearance sa user interface nga alang sa ubang gumagamit.
 Para sa mga paghubad, palihog ikonsider ang paggamit sa [//translatewiki.net/wiki/Main_Page?setlang=ceb translatewiki.net], ang MediaWiki localisation project.",
-'sqlhidden' => '(nakatagong SQL query)',
 'cascadeprotected' => 'Ang kining panid giprotektahan sa pag-usab tungod kay nahiapil kini sa mosunod nga {{PLURAL:$1|panid, nga|mga panid, nga}} giprotektahan pinaagi sa pag-turn on gamit ang "cascading" nga opsyon:
 $2',
 'namespaceprotected' => "Wala kay permiso nga mag-usab sa mga panid sa '''$1''' nga ngalang espasyo.",
@@ -443,10 +426,7 @@ Ang rason nga gihatag mao ang "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Nakabiya ka na.'''
 
-Mahimo kang magpadayon sa paggamit sa {{SITENAME}} bisan wala ka magpaila o puyde usab nga [[Special:UserLogin|mag-log in ka'g usab]] o isip laing gumagamit. Palihog hinumdomi nga may ubang mga panid nga magpakita sama nga ikaw naka-log in pa; kini tungod kay wala pa nimo malimpiyohi ang cache sa imong brawser.",
-'welcomecreation' => '== Maayong pag-abot, $1! ==
-Nahimo na ang imong akawnt.
-Ayaw kalimot sa pag-usab sa imong [[Special:Preferences|{{SITENAME}} mga preperensiya]].',
+Mahimo kang magpadayon sa paggamit sa {{SITENAME}} bisan wala ka magpaila o puyde usab nga <span class='plainlinks'>[$1 mag-log in ka'g usab]</span> o isip laing gumagamit. Palihog hinumdomi nga may ubang mga panid nga magpakita sama nga ikaw naka-log in pa; kini tungod kay wala pa nimo malimpiyohi ang cache sa imong brawser.",
 'yourname' => 'Ngalan sa tiggamit:',
 'yourpassword' => 'Pasword:',
 'yourpasswordagain' => 'Itayp og usab ang pasword:',
@@ -715,7 +695,6 @@ Hinumdomi nga ang paggamit sa mga sumpay sa nabigasyon mo-reset sa column.',
 'prevn' => 'miaging {{PLURAL:$1|$1}}',
 'nextn' => 'sunod {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Tan-awa sa ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Mga sulod',
 'searchprofile-everything' => 'Tanan ng bagay',
 'search-result-size' => '$1 ({{PLURAL:$2|1 pulong|$2 ka mga pulong}})',
 'search-redirect' => '(redirek $1)',
@@ -740,14 +719,6 @@ Sulayi'g prefix ang imong gipangita gamit ang ''all:'' alang mangita sa tanang s
 'searchdisabled' => 'Pagpangita sa {{SITENAME}} naka-disable.
 Puyde ka mangita gamit ang Google sa kasamtangan.
 Hinumdomi nga ang ilang indeks sa sulod sa {{SITENAME}} mahimong dugay-dugay na.',
-
-# Quickbar
-'qbsettings' => 'Quickbar',
-'qbsettings-none' => 'Wala',
-'qbsettings-fixedleft' => 'Naka-fix sa wala',
-'qbsettings-fixedright' => 'Naka-fix sa tuo',
-'qbsettings-floatingleft' => 'Floating sa wala',
-'qbsettings-floatingright' => 'Floating sa tuo',
 
 # Preferences page
 'preferences' => 'Mga preperensiya',
@@ -776,7 +747,6 @@ Hinumdomi nga ang ilang indeks sa sulod sa {{SITENAME}} mahimong dugay-dugay na.
 'resetprefs' => 'Limpyohi ang wala matipigi nga mga kausaban',
 'restoreprefs' => 'Ibalik ang tanang default settings',
 'prefs-editing' => 'Nagausab',
-'prefs-edit-boxsize' => 'Size sa edit window.',
 'rows' => 'Mga row:',
 'columns' => 'Mga kolum:',
 'searchresultshead' => 'Pangitaa',
@@ -815,7 +785,6 @@ Hinumdomi nga ang ilang indeks sa sulod sa {{SITENAME}} mahimong dugay-dugay na.
 'prefs-reset-intro' => 'Puyde nimo gamiton ang kining panid aron ma-reset ang imong mga preprensiya ngadto sa default sa sayt.
 Dili kini puyde mabalik.',
 'prefs-emailconfirm-label' => 'Kompirmasyon sa e-mail:',
-'prefs-textboxsize' => 'Size sa editing window',
 'youremail' => 'E-mail:',
 'username' => 'Username:',
 'uid' => 'ID sa gumagamit:',
@@ -848,9 +817,12 @@ Kon gipili nimo nga ihatag kini, gamiton kini aron pasidunggan ka sa imong mga t
 
 'grouppage-sysop' => '{{ns:project}}:Mga tigdumala',
 
+# Special:Log/newusers
+'newuserlogpage' => "Log sa paghimo'g gumagamit",
+'newuserlogpagetext' => "Kini mao ang ''log'' sa bag-ong namugnang mga gumagamit.",
+
 # User rights log
 'rightslog' => 'Log sa mga katungod sa gumagamit',
-'rightsnone' => '(wala)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'basaha kining panid',
@@ -976,14 +948,10 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Special:LinkSearch
 'linksearch' => 'Mga sumpay sa gawas',
 
-# Special:Log/newusers
-'newuserlogpage' => "Log sa paghimo'g gumagamit",
-'newuserlogpagetext' => "Kini mao ang ''log'' sa bag-ong namugnang mga gumagamit.",
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(talaan sa mga miyembro)',
 
-# E-mail user
+# Email user
 'emailuser' => 'I-email kaning gumagamit',
 
 # Watchlist
@@ -1253,6 +1221,6 @@ Ang uban default nga nakatago.
 # New logging system
 'revdelete-restricted' => 'mga na-aplay nga restriksyon sa mga tagdumala',
 'revdelete-unrestricted' => 'gitangtang ang mga restriksyon alang sa mga tagdumala',
-'newuserlog-byemail' => "ang pasword gipadala na pinaagi sa ''e-mail''",
+'rightsnone' => '(wala)',
 
 );

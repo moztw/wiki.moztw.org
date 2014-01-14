@@ -143,25 +143,26 @@ abstract class IndexPager extends ContextSource implements Pager {
 		$this->mOffset = $this->mRequest->getText( 'offset' );
 
 		# Use consistent behavior for the limit options
-		$this->mDefaultLimit = intval( $this->getUser()->getOption( 'rclimit' ) );
+		$this->mDefaultLimit = $this->getUser()->getIntOption( 'rclimit' );
 		if ( !$this->mLimit ) {
 			// Don't override if a subclass calls $this->setLimit() in its constructor.
 			list( $this->mLimit, /* $offset */ ) = $this->mRequest->getLimitOffset();
 		}
 
 		$this->mIsBackwards = ( $this->mRequest->getVal( 'dir' ) == 'prev' );
-		$this->mDb = wfGetDB( DB_SLAVE );
+		# Let the subclass set the DB here; otherwise use a slave DB for the current wiki
+		$this->mDb = $this->mDb ?: wfGetDB( DB_SLAVE );
 
 		$index = $this->getIndexField(); // column to sort on
 		$extraSort = $this->getExtraSortFields(); // extra columns to sort on for query planning
 		$order = $this->mRequest->getVal( 'order' );
-		if( is_array( $index ) && isset( $index[$order] ) ) {
+		if ( is_array( $index ) && isset( $index[$order] ) ) {
 			$this->mOrderType = $order;
 			$this->mIndexField = $index[$order];
 			$this->mExtraSortFields = isset( $extraSort[$order] )
 				? (array)$extraSort[$order]
 				: array();
-		} elseif( is_array( $index ) ) {
+		} elseif ( is_array( $index ) ) {
 			# First element is the default
 			reset( $index );
 			list( $this->mOrderType, $this->mIndexField ) = each( $index );
@@ -175,7 +176,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 			$this->mExtraSortFields = (array)$extraSort;
 		}
 
-		if( !isset( $this->mDefaultDirection ) ) {
+		if ( !isset( $this->mDefaultDirection ) ) {
 			$dir = $this->getDefaultDirections();
 			$this->mDefaultDirection = is_array( $dir )
 				? $dir[$this->mOrderType]
@@ -206,13 +207,25 @@ abstract class IndexPager extends ContextSource implements Pager {
 		# Plus an extra row so that we can tell the "next" link should be shown
 		$queryLimit = $this->mLimit + 1;
 
+		if ( $this->mOffset == '' ) {
+			$isFirst = true;
+		} else {
+			// If there's an offset, we may or may not be at the first entry.
+			// The only way to tell is to run the query in the opposite
+			// direction see if we get a row.
+			$oldIncludeOffset = $this->mIncludeOffset;
+			$this->mIncludeOffset = !$this->mIncludeOffset;
+			$isFirst = !$this->reallyDoQuery( $this->mOffset, 1, !$descending )->numRows();
+			$this->mIncludeOffset = $oldIncludeOffset;
+		}
+
 		$this->mResult = $this->reallyDoQuery(
 			$this->mOffset,
 			$queryLimit,
 			$descending
 		);
 
-		$this->extractResultInfo( $this->mOffset, $queryLimit, $this->mResult );
+		$this->extractResultInfo( $isFirst, $queryLimit, $this->mResult );
 		$this->mQueryDone = true;
 
 		$this->preprocessResults( $this->mResult );
@@ -244,7 +257,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @param $limit Int|String
 	 */
 	function setLimit( $limit ) {
-		$limit = (int) $limit;
+		$limit = (int)$limit;
 		// WebRequest::getLimitOffset() puts a cap of 5000, so do same here.
 		if ( $limit > 5000 ) {
 			$limit = 5000;
@@ -269,11 +282,12 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * Extract some useful data from the result object for use by
 	 * the navigation bar, put it into $this
 	 *
-	 * @param $offset String: index offset, inclusive
+	 * @param $isFirst bool: False if there are rows before those fetched (i.e.
+	 *     if a "previous" link would make sense)
 	 * @param $limit Integer: exact query limit
 	 * @param $res ResultWrapper
 	 */
-	function extractResultInfo( $offset, $limit, ResultWrapper $res ) {
+	function extractResultInfo( $isFirst, $limit, ResultWrapper $res ) {
 		$numRows = $res->numRows();
 		if ( $numRows ) {
 			# Remove any table prefix from index field
@@ -287,8 +301,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 			if ( $numRows > $this->mLimit && $numRows > 1 ) {
 				$res->seek( $numRows - 1 );
 				$this->mPastTheEndRow = $res->fetchObject();
-				$indexField = $this->mIndexField;
-				$this->mPastTheEndIndex = $this->mPastTheEndRow->$indexField;
+				$this->mPastTheEndIndex = $this->mPastTheEndRow->$indexColumn;
 				$res->seek( $numRows - 2 );
 				$row = $res->fetchRow();
 				$lastIndex = $row[$indexColumn];
@@ -312,11 +325,11 @@ abstract class IndexPager extends ContextSource implements Pager {
 
 		if ( $this->mIsBackwards ) {
 			$this->mIsFirst = ( $numRows < $limit );
-			$this->mIsLast = ( $offset == '' );
+			$this->mIsLast = $isFirst;
 			$this->mLastShown = $firstIndex;
 			$this->mFirstShown = $lastIndex;
 		} else {
-			$this->mIsFirst = ( $offset == '' );
+			$this->mIsFirst = $isFirst;
 			$this->mIsLast = ( $numRows < $limit );
 			$this->mLastShown = $lastIndex;
 			$this->mFirstShown = $firstIndex;
@@ -336,7 +349,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * Do a query with specified parameters, rather than using the object
 	 * context
 	 *
-	 * @param $offset String: index offset, inclusive
+	 * @param string $offset index offset, inclusive
 	 * @param $limit Integer: exact query limit
 	 * @param $descending Boolean: query direction, false for ascending, true for descending
 	 * @return ResultWrapper
@@ -349,7 +362,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	/**
 	 * Build variables to use by the database wrapper.
 	 *
-	 * @param $offset String: index offset, inclusive
+	 * @param string $offset index offset, inclusive
 	 * @param $limit Integer: exact query limit
 	 * @param $descending Boolean: query direction, false for ascending, true for descending
 	 * @return array
@@ -432,9 +445,9 @@ abstract class IndexPager extends ContextSource implements Pager {
 	/**
 	 * Make a self-link
 	 *
-	 * @param $text String: text displayed on the link
-	 * @param $query Array: associative array of paramter to be in the query string
-	 * @param $type String: value of the "rel" attribute
+	 * @param string $text text displayed on the link
+	 * @param array $query associative array of parameter to be in the query string
+	 * @param string $type value of the "rel" attribute
 	 *
 	 * @return String: HTML fragment
 	 */
@@ -444,12 +457,12 @@ abstract class IndexPager extends ContextSource implements Pager {
 		}
 
 		$attrs = array();
-		if( in_array( $type, array( 'first', 'prev', 'next', 'last' ) ) ) {
+		if ( in_array( $type, array( 'first', 'prev', 'next', 'last' ) ) ) {
 			# HTML5 rel attributes
 			$attrs['rel'] = $type;
 		}
 
-		if( $type ) {
+		if ( $type ) {
 			$attrs['class'] = "mw-{$type}link";
 		}
 
@@ -581,7 +594,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 			$this->doQuery();
 		}
 		// Hide navigation by default if there is nothing to page
-		return !($this->mIsFirst && $this->mIsLast);
+		return !( $this->mIsFirst && $this->mIsLast );
 	}
 
 	/**
@@ -686,11 +699,13 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 *
 	 * @return Array
 	 */
-	protected function getExtraSortFields() { return array(); }
+	protected function getExtraSortFields() {
+		return array();
+	}
 
 	/**
-	 * Return the default sorting direction: false for ascending, true for de-
-	 * scending.  You can also have an associative array of ordertype => dir,
+	 * Return the default sorting direction: false for ascending, true for
+	 * descending.  You can also have an associative array of ordertype => dir,
 	 * if multiple order types are supported.  In this case getIndexField()
 	 * must return an array, and the keys of that must exactly match the keys
 	 * of this.
@@ -707,9 +722,10 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 *
 	 * @return Boolean
 	 */
-	protected function getDefaultDirections() { return false; }
+	protected function getDefaultDirections() {
+		return false;
+	}
 }
-
 
 /**
  * IndexPager with an alphabetic list and a formatted navigation bar
@@ -728,7 +744,7 @@ abstract class AlphabeticPager extends IndexPager {
 			return '';
 		}
 
-		if( isset( $this->mNavigationBar ) ) {
+		if ( isset( $this->mNavigationBar ) ) {
 			return $this->mNavigationBar;
 		}
 
@@ -751,7 +767,7 @@ abstract class AlphabeticPager extends IndexPager {
 			$this->msg( 'viewprevnext' )->rawParams( $pagingLinks['prev'],
 				$pagingLinks['next'], $limits )->escaped();
 
-		if( !is_array( $this->getIndexField() ) ) {
+		if ( !is_array( $this->getIndexField() ) ) {
 			# Early return to avoid undue nesting
 			return $this->mNavigationBar;
 		}
@@ -759,14 +775,14 @@ abstract class AlphabeticPager extends IndexPager {
 		$extra = '';
 		$first = true;
 		$msgs = $this->getOrderTypeMessages();
-		foreach( array_keys( $msgs ) as $order ) {
-			if( $first ) {
+		foreach ( array_keys( $msgs ) as $order ) {
+			if ( $first ) {
 				$first = false;
 			} else {
 				$extra .= $this->msg( 'pipe-separator' )->escaped();
 			}
 
-			if( $order == $this->mOrderType ) {
+			if ( $order == $this->mOrderType ) {
 				$extra .= $this->msg( $msgs[$order] )->escaped();
 			} else {
 				$extra .= $this->makeLink(
@@ -776,7 +792,7 @@ abstract class AlphabeticPager extends IndexPager {
 			}
 		}
 
-		if( $extra !== '' ) {
+		if ( $extra !== '' ) {
 			$extra = ' ' . $this->msg( 'parentheses' )->rawParams( $extra )->escaped();
 			$this->mNavigationBar .= $extra;
 		}
@@ -786,8 +802,8 @@ abstract class AlphabeticPager extends IndexPager {
 
 	/**
 	 * If this supports multiple order type messages, give the message key for
-	 * enabling each one in getNavigationBar.  The return type is an associa-
-	 * tive array whose keys must exactly match the keys of the array returned
+	 * enabling each one in getNavigationBar.  The return type is an associative
+	 * array whose keys must exactly match the keys of the array returned
 	 * by getIndexField(), and whose values are message keys.
 	 *
 	 * @return Array
@@ -857,9 +873,10 @@ abstract class ReverseChronologicalPager extends IndexPager {
 			$year = $this->mYear;
 		} else {
 			// If no year given, assume the current one
-			$year = gmdate( 'Y' );
+			$timestamp = MWTimestamp::getInstance();
+			$year = $timestamp->format( 'Y' );
 			// If this month hasn't happened yet this year, go back to last year's month
-			if( $this->mMonth > gmdate( 'n' ) ) {
+			if ( $this->mMonth > $timestamp->format( 'n' ) ) {
 				$year--;
 			}
 		}
@@ -867,7 +884,7 @@ abstract class ReverseChronologicalPager extends IndexPager {
 		if ( $this->mMonth ) {
 			$month = $this->mMonth + 1;
 			// For December, we want January 1 of the next year
-			if ($month > 12) {
+			if ( $month > 12 ) {
 				$month = 1;
 				$year++;
 			}
@@ -906,7 +923,9 @@ abstract class TablePager extends IndexPager {
 		}
 
 		$this->mSort = $this->getRequest()->getText( 'sort' );
-		if ( !array_key_exists( $this->mSort, $this->getFieldNames() ) ) {
+		if ( !array_key_exists( $this->mSort, $this->getFieldNames() )
+			|| !$this->isFieldSortable( $this->mSort )
+		) {
 			$this->mSort = $this->getDefaultSort();
 		}
 		if ( $this->getRequest()->getBool( 'asc' ) ) {
@@ -924,16 +943,15 @@ abstract class TablePager extends IndexPager {
 	 */
 	function getStartBody() {
 		global $wgStylePath;
-		$tableClass = htmlspecialchars( $this->getTableClass() );
-		$sortClass = htmlspecialchars( $this->getSortHeaderClass() );
+		$sortClass = $this->getSortHeaderClass();
 
-		$s = "<table style='border:1px;' class=\"mw-datatable $tableClass\"><thead><tr>\n";
+		$s = '';
 		$fields = $this->getFieldNames();
 
 		# Make table header
 		foreach ( $fields as $field => $name ) {
 			if ( strval( $name ) == '' ) {
-				$s .= "<th>&#160;</th>\n";
+				$s .= Html::rawElement( 'th', array(), '&#160;' ) . "\n";
 			} elseif ( $this->isFieldSortable( $field ) ) {
 				$query = array( 'sort' => $field, 'limit' => $this->mLimit );
 				if ( $field == $this->mSort ) {
@@ -952,20 +970,26 @@ abstract class TablePager extends IndexPager {
 						$query['desc'] = '1';
 						$alt = $this->msg( 'ascending_abbrev' )->escaped();
 					}
-					$image = htmlspecialchars( "$wgStylePath/common/images/$image" );
+					$image = "$wgStylePath/common/images/$image";
 					$link = $this->makeLink(
-						"<img width=\"12\" height=\"12\" alt=\"$alt\" src=\"$image\" />" .
-							htmlspecialchars( $name ), $query );
-					$s .= "<th class=\"$sortClass\">$link</th>\n";
+						Html::element( 'img', array( 'width' => 12, 'height' => 12,
+							'alt' => $alt, 'src' => $image ) ) . htmlspecialchars( $name ), $query );
+					$s .= Html::rawElement( 'th', array( 'class' => $sortClass ), $link ) . "\n";
 				} else {
-					$s .= '<th>' . $this->makeLink( htmlspecialchars( $name ), $query ) . "</th>\n";
+					$s .= Html::rawElement( 'th', array(),
+						$this->makeLink( htmlspecialchars( $name ), $query ) ) . "\n";
 				}
 			} else {
-				$s .= '<th>' . htmlspecialchars( $name ) . "</th>\n";
+				$s .= Html::element( 'th', array(), $name ) . "\n";
 			}
 		}
-		$s .= "</tr></thead><tbody>\n";
-		return $s;
+
+		$tableClass = $this->getTableClass();
+		$ret = Html::openElement( 'table', array( 'style' => 'border:1px;', 'class' => "mw-datatable $tableClass" ) );
+		$ret .= Html::rawElement( 'thead', array(), Html::rawElement( 'tr', array(), "\n" . $s . "\n" ) );
+		$ret .= Html::openElement( 'tbody' ) . "\n";
+
+		return $ret;
 	}
 
 	/**
@@ -982,8 +1006,9 @@ abstract class TablePager extends IndexPager {
 	 */
 	function getEmptyBody() {
 		$colspan = count( $this->getFieldNames() );
-		$msgEmpty = $this->msg( 'table_pager_empty' )->escaped();
-		return "<tr><td colspan=\"$colspan\">$msgEmpty</td></tr>\n";
+		$msgEmpty = $this->msg( 'table_pager_empty' )->text();
+		return Html::rawElement( 'tr', array(),
+			Html::element( 'td', array( 'colspan' => $colspan ), $msgEmpty ) );
 	}
 
 	/**
@@ -993,7 +1018,7 @@ abstract class TablePager extends IndexPager {
 	 */
 	function formatRow( $row ) {
 		$this->mCurrentRow = $row; // In case formatValue etc need to know
-		$s = Xml::openElement( 'tr', $this->getRowAttrs( $row ) );
+		$s = Html::openElement( 'tr', $this->getRowAttrs( $row ) ) . "\n";
 		$fieldNames = $this->getFieldNames();
 
 		foreach ( $fieldNames as $field => $name ) {
@@ -1004,10 +1029,10 @@ abstract class TablePager extends IndexPager {
 				$formatted = '&#160;';
 			}
 
-			$s .= Xml::tags( 'td', $this->getCellAttrs( $field, $value ), $formatted );
+			$s .= Html::rawElement( 'td', $this->getCellAttrs( $field, $value ), $formatted ) . "\n";
 		}
 
-		$s .= "</tr>\n";
+		$s .= Html::closeElement( 'tr' ) . "\n";
 
 		return $s;
 	}
@@ -1049,8 +1074,8 @@ abstract class TablePager extends IndexPager {
 	 *
 	 * @protected
 	 *
-	 * @param $field String The column
-	 * @param $value String The cell contents
+	 * @param string $field The column
+	 * @param string $value The cell contents
 	 * @return Array of attr => value
 	 */
 	function getCellAttrs( $field, $value ) {
@@ -1119,7 +1144,7 @@ abstract class TablePager extends IndexPager {
 			'next' => 'arrow_disabled_right_25.png',
 			'last' => 'arrow_disabled_last_25.png',
 		);
-		if( $this->getLanguage()->isRTL() ) {
+		if ( $this->getLanguage()->isRTL() ) {
 			$keys = array_keys( $labels );
 			$images = array_combine( $keys, array_reverse( $images ) );
 			$disabledImages = array_combine( $keys, array_reverse( $disabledImages ) );
@@ -1129,49 +1154,67 @@ abstract class TablePager extends IndexPager {
 		$disabledTexts = array();
 		foreach ( $labels as $type => $label ) {
 			$msgLabel = $this->msg( $label )->escaped();
-			$linkTexts[$type] = "<img src=\"$path/{$images[$type]}\" alt=\"$msgLabel\"/><br />$msgLabel";
-			$disabledTexts[$type] = "<img src=\"$path/{$disabledImages[$type]}\" alt=\"$msgLabel\"/><br />$msgLabel";
+			$linkTexts[$type] = Html::element( 'img', array( 'src' => "$path/{$images[$type]}",
+				'alt' => $msgLabel ) ) . "<br />$msgLabel";
+			$disabledTexts[$type] = Html::element( 'img', array( 'src' => "$path/{$disabledImages[$type]}",
+				'alt' => $msgLabel ) ) . "<br />$msgLabel";
 		}
 		$links = $this->getPagingLinks( $linkTexts, $disabledTexts );
 
-		$navClass = htmlspecialchars( $this->getNavClass() );
-		$s = "<table class=\"$navClass\"><tr>\n";
+		$s = Html::openElement( 'table', array( 'class' => $this->getNavClass() ) );
+		$s .= Html::openElement( 'tr' ) . "\n";
 		$width = 100 / count( $links ) . '%';
 		foreach ( $labels as $type => $label ) {
-			$s .= "<td style='width:$width;'>{$links[$type]}</td>\n";
+			$s .= Html::rawElement( 'td', array( 'style' => "width:$width;" ), $links[$type] ) . "\n";
 		}
-		$s .= "</tr></table>\n";
+		$s .= Html::closeElement( 'tr' ) . Html::closeElement( 'table' ) . "\n";
 		return $s;
 	}
 
 	/**
 	 * Get a "<select>" element which has options for each of the allowed limits
 	 *
+	 * @param $attribs String: Extra attributes to set
 	 * @return String: HTML fragment
 	 */
-	public function getLimitSelect() {
+	public function getLimitSelect( $attribs = array() ) {
+		$select = new XmlSelect( 'limit', false, $this->mLimit );
+		$select->addOptions( $this->getLimitSelectList() );
+		foreach ( $attribs as $name => $value ) {
+			$select->setAttribute( $name, $value );
+		}
+		return $select->getHTML();
+	}
+
+	/**
+	 * Get a list of items to show in a "<select>" element of limits.
+	 * This can be passed directly to XmlSelect::addOptions().
+	 *
+	 * @since 1.22
+	 * @return array
+	 */
+	public function getLimitSelectList() {
 		# Add the current limit from the query string
 		# to avoid that the limit is lost after clicking Go next time
 		if ( !in_array( $this->mLimit, $this->mLimitsShown ) ) {
 			$this->mLimitsShown[] = $this->mLimit;
 			sort( $this->mLimitsShown );
 		}
-		$s = Html::openElement( 'select', array( 'name' => 'limit' ) ) . "\n";
+		$ret = array();
 		foreach ( $this->mLimitsShown as $key => $value ) {
 			# The pair is either $index => $limit, in which case the $value
 			# will be numeric, or $limit => $text, in which case the $value
 			# will be a string.
-			if( is_int( $value ) ){
+			if ( is_int( $value ) ) {
 				$limit = $value;
 				$text = $this->getLanguage()->formatNum( $limit );
 			} else {
 				$limit = $key;
 				$text = $value;
 			}
-			$s .= Xml::option( $text, $limit, $limit == $this->mLimit ) . "\n";
+			$ret[$text] = $limit;
 		}
-		$s .= Html::closeElement( 'select' );
-		return $s;
+		return $ret;
 	}
 
 	/**
@@ -1179,7 +1222,7 @@ abstract class TablePager extends IndexPager {
 	 * Resubmits all defined elements of the query string, except for a
 	 * blacklist, passed in the $blacklist parameter.
 	 *
-	 * @param $blacklist Array parameters from the request query which should not be resubmitted
+	 * @param array $blacklist parameters from the request query which should not be resubmitted
 	 * @return String: HTML fragment
 	 */
 	function getHiddenFields( $blacklist = array() ) {
@@ -1190,9 +1233,7 @@ abstract class TablePager extends IndexPager {
 		}
 		$s = '';
 		foreach ( $query as $name => $value ) {
-			$encName = htmlspecialchars( $name );
-			$encValue = htmlspecialchars( $value );
-			$s .= "<input type=\"hidden\" name=\"$encName\" value=\"$encValue\"/>\n";
+			$s .= Html::hidden( $name, $value ) . "\n";
 		}
 		return $s;
 	}
@@ -1205,12 +1246,14 @@ abstract class TablePager extends IndexPager {
 	function getLimitForm() {
 		global $wgScript;
 
-		return Xml::openElement(
+		return Html::rawElement(
 			'form',
 			array(
 				'method' => 'get',
 				'action' => $wgScript
-			) ) . "\n" . $this->getLimitDropdown() . "</form>\n";
+			),
+			"\n" . $this->getLimitDropdown()
+		) . "\n";
 	}
 
 	/**
@@ -1245,8 +1288,8 @@ abstract class TablePager extends IndexPager {
 	 *
 	 * @protected
 	 *
-	 * @param $name String: the database field name
-	 * @param $value String: the value retrieved from the database
+	 * @param string $name the database field name
+	 * @param string $value the value retrieved from the database
 	 */
 	abstract function formatValue( $name, $value );
 

@@ -86,9 +86,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Тер халх шинҗлдг демнчнрин то үзүлх',
 'tog-oldsig' => 'Бәәдг тәвсн һарна хәләвр:',
 'tog-fancysig' => 'Эврән тәвсн һарна бики темдлһн (авто заалһта уга)',
-'tog-externaleditor' => 'Һаза чикллгч олзлх (һанцхн эрдмчнрт, тана тоолцврт шишлң көг кергтә. [//www.mediawiki.org/wiki/Manual:External_editors Дәкәд өггцн.])',
-'tog-externaldiff' => 'Һаза йилһән үзүлдг програм олзлх (һанцхн эрдмчнрт, тана тоолцврт шишлң көг кергтә [//www.mediawiki.org/wiki/Manual:External_editors Дәкәд өггцн.])',
-'tog-showjumplinks' => 'Туслмҗ заалһуд «-д/-т һарх» йовулх',
 'tog-uselivepreview' => 'Шамдһа хәләвр олзлх (JavaScript кергтә, амслһн)',
 'tog-forceeditsummary' => 'Учр-утх хоосн бәәхлә медүлх',
 'tog-watchlisthideown' => 'Шинҗллһнә сеткүлд мини сольлһиг бултулх',
@@ -199,7 +196,6 @@ $messages = array(
 'qbbrowse' => 'Гүүһәд хәләх',
 'qbedit' => 'Чиклх',
 'qbpageoptions' => 'Тер халх',
-'qbpageinfo' => 'Халхин туск',
 'qbmyoptions' => 'Тана халхс',
 'qbspecialpages' => 'Көдлхнә халхс',
 'faq' => 'Юм би',
@@ -280,7 +276,7 @@ $messages = array(
 
 $1',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} тускар',
 'aboutpage' => 'Project:Тодлҗ бичлһн',
 'copyright' => 'Өггцн $1 йоста орҗ болм',
@@ -290,7 +286,6 @@ $1',
 'disclaimers' => 'Дааврас эс зөвшәрлһн',
 'disclaimerpage' => 'Project:Даарас эс зөвшәрлһн',
 'edithelp' => 'Чикллһнә дөң',
-'edithelppage' => 'Help:Чикллһн',
 'helppage' => 'Help:Һарг',
 'mainpage' => 'Нүр халх',
 'mainpage-description' => 'Нүр халх',
@@ -360,17 +355,6 @@ $1',
 # General errors
 'error' => 'Эндү',
 'databaseerror' => 'Өггцнә базин эндү',
-'dberrortext' => 'Өггцнә базд сурврин синтаксисин эндү аҗглв.
-Эн заклһна теткүлин эндү болвза.
-Шидрә өггцнә базд сурвр:
-<blockquote><tt>$1</tt></blockquote>
-<tt>«$2»</tt> функцас һарад бәәнә.
-Өггцнә баз <tt>«$3: $4»</tt> эндү хәрү өгв.',
-'dberrortextcl' => 'Өггцнә базд сурврин синтаксисин эндү аҗглв.
-Шидрә өггцнә базд сурвр:
-«$1»
-«$2» функцас һарад бәәнә.
-Өггцнә баз «$3: $4» эндү хәрү өгв.',
 'missing-article' => 'Өггцнә халһлд сурсн халхин бичг олв уга. Эн халх олх йоста: "$1" нертә $2.
 
 Тер йовдл һарһсн халхна тууҗин өңгрсн заалһиг дахлһна арһ болад бәәнә.
@@ -388,7 +372,6 @@ $1',
 'badtitletext' => 'Сурсн нерн буру, хоосн, аль му бичсн келн хоорнд нертә. Тиим чигн биз, нерн зөв уга үзгтә.',
 'viewsource' => 'Ишиг хәләх',
 'actionthrottled' => 'Хурдна заг',
-'sqlhidden' => '(SQL сурвр бултулсн)',
 'ns-specialprotected' => 'Шишлң халх чиклсн бәәх болшго.',
 
 # Virus scanner
@@ -397,11 +380,8 @@ $1',
 # Login and logout pages
 'logouttext' => "'''Та һарад бәәнәт.'''
 
-Та {{SITENAME}} гидг ормиг нертә уга олзлҗ чаднат, аль та [[Special:UserLogin|дәкәд орҗ]] цацу аль талдан нертә чаднат.
+Та {{SITENAME}} гидг ормиг нертә уга олзлҗ чаднат, аль та <span class='plainlinks'>[$1 дәкәд орҗ]</span> цацу аль талдан нертә чаднат.
 Зәрм халхс цааранднь та ода чигн орсн мет үзүлҗ чаддг тускар темдглтн (та хәләчин санлиг цеврлтл).",
-'welcomecreation' => '== Ирхитн эрҗәнәвидн, $1! ==
-Таднар шин бичгдлһн бүтв.
-Тадна [[Special:Preferences|{{SITENAME}} preferences]] сольҗ бичә мартн.',
 'yourname' => 'Демнчна нернь:',
 'yourpassword' => 'Нууц үг:',
 'yourpasswordagain' => 'Нууц үгиг давтн:',
@@ -453,7 +433,7 @@ $1',
 'oldpassword' => 'Көгшн нууц үг:',
 'newpassword' => 'Шин нууц үг:',
 'retypenew' => 'Шин нууц үгиг дәкәд бичтн:',
-'resetpass_success' => 'Тана нууц үгиг йовудта сольв! Та ода орнат...',
+'changepassword-success' => 'Тана нууц үгиг йовудта сольв! Та ода орнат...',
 'resetpass-submit-loggedin' => 'Нууц үгиг сольх',
 'resetpass-submit-cancel' => 'Уга кех',
 
@@ -608,9 +588,6 @@ $1',
 'powersearch-field' => 'Хәәх',
 'powersearch-togglenone' => 'Уга',
 
-# Quickbar
-'qbsettings' => 'Ормин самбр',
-
 # Preferences page
 'preferences' => 'Дурллһн',
 'mypreferences' => 'Көгүд',
@@ -712,9 +689,11 @@ $1',
 'grouppage-sysop' => '{{ns:project}}:Закрачуд',
 'grouppage-bureaucrat' => '{{ns:project}}:Нойнчуд',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Бичгдлһнә сеткүл',
+
 # User rights log
 'rightslog' => 'Демнчна зөвәнә сеткүл',
-'rightsnone' => '(уга)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'эн халхиг чиклх',
@@ -752,7 +731,6 @@ $1',
 'recentchangeslinked-feed' => 'Садта чикллһн',
 'recentchangeslinked-toolbox' => 'Садта чикллһн',
 'recentchangeslinked-title' => '$1 садта сольлһн',
-'recentchangeslinked-noresult' => 'Садта халх заасн цагт сольсн уга',
 'recentchangeslinked-summary' => "Эн тер халх заалдг халхсин (аль тер янзин халхсин) шидрә сольлһн.
 Тана [[Special:Watchlist|шинҗллһнә сеткүлин]] халхс '''тарһн''' бичәтә.",
 'recentchangeslinked-page' => 'Халхна нернь:',
@@ -857,13 +835,10 @@ $1',
 # Special:LinkSearch
 'linksearch' => 'Һаза заалһуд',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Бичгдлһнә сеткүл',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(мөчүдин сеткүл)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Энд E-mail йовулх',
 
 # Watchlist
@@ -883,8 +858,6 @@ $1',
 'watching' => 'Шинҗллһнә бүтлклд немлһн...',
 'unwatching' => 'Шинҗлһнә бүрткләс һарһлһн...',
 
-'changed' => 'сольв',
-'created' => 'бүтәв',
 'enotif_body' => 'Мендвт, күндтә $WATCHINGUSERNAME,
 
 $PAGEEDITDATE цагт {{SITENAME}} төсвин $PAGETITLE халхиг $PAGEEDITOR $CHANGEDORCREATED. Ода болсн халхна янз үзҗ седхлә, $PAGETITLE_URL хәләтн.
@@ -907,6 +880,8 @@ e-mail\'ар $PAGEEDITOR_EMAIL
 
 Хәрү холва болн тус:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'бүтәв',
+'changed' => 'сольв',
 
 # Delete
 'deletepage' => 'Эн халхиг һарһҗ',
@@ -1015,7 +990,6 @@ $2 шидрә һарһлһна төлә хәләтн.',
 'blocklogentry' => '[[$1]] бүслсн $2 күртл, $3 учрта',
 'unblocklogentry' => '$1-г бүслсн биш болулв',
 'block-log-flags-nocreate' => 'бичгдлһиг бүтәҗ болшго',
-'blockme' => 'Намаг бүслчк',
 
 # Move page
 'movepagetext' => "Та дораһар цаасар, халхин сольлһна тууҗ көндәд, терүнә нериг сольх.
@@ -1161,7 +1135,7 @@ $2 шидрә һарһлһна төлә хәләтн.',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Өргн',
 'exif-imagelength' => 'Өндр',
 'exif-bitspersample' => 'Өңгин гүн',
@@ -1239,11 +1213,6 @@ $2 шидрә һарһлһна төлә хәләтн.',
 'version-software-product' => 'Һарц',
 'version-software-version' => 'Һарц',
 
-# Special:FilePath
-'filepath' => 'Боомгд хаалһ',
-'filepath-page' => 'Боомг:',
-'filepath-submit' => 'Орх',
-
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Боомгин нерн:',
 'fileduplicatesearch-submit' => 'Хәәх',
@@ -1270,5 +1239,8 @@ $2 шидрә һарһлһна төлә хәләтн.',
 # HTML forms
 'htmlform-reset' => 'Сольлһиг уга кех',
 'htmlform-selectorother-other' => 'Талдан',
+
+# New logging system
+'rightsnone' => '(уга)',
 
 );

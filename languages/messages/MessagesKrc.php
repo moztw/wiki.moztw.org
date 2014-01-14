@@ -39,6 +39,78 @@ $namespaceNames = array(
 // Remove Russian aliases
 $namespaceGenderAliases = array();
 
+$specialPageAliases = array(
+	'Activeusers'               => array( 'Тири_къошулуучула' ),
+	'Allmessages'               => array( 'Системаны_билдириулери' ),
+	'Allpages'                  => array( 'Бютеу_бетле' ),
+	'Blankpage'                 => array( 'Бош_бет' ),
+	'Block'                     => array( 'Блок_эт' ),
+	'Blockme'                   => array( 'Мени_блок_эт' ),
+	'Booksources'               => array( 'Китабланы_къайнакълары' ),
+	'BrokenRedirects'           => array( 'Джыртылгъан_редиректле' ),
+	'Categories'                => array( 'Категорияла' ),
+	'ChangeEmail'               => array( 'E-mail’ни_ауушдур' ),
+	'ChangePassword'            => array( 'Паролну_ауушдур' ),
+	'ComparePages'              => array( 'Бетлени_тенглешдириу' ),
+	'Confirmemail'              => array( 'E-mail’ни_тюзлюгюн_бегит' ),
+	'Contributions'             => array( 'Къошум' ),
+	'CreateAccount'             => array( 'Тергеу_джазыуну_къура', 'Къошулуучуну_къура', 'Регистрация_эт' ),
+	'Deadendpages'              => array( 'Чыкъмазча_бетле' ),
+	'DeletedContributions'      => array( 'Кетерилген_къошум' ),
+	'Disambiguations'           => array( 'Кёб_магъаналы' ),
+	'DoubleRedirects'           => array( 'Экили_редирект' ),
+	'EditWatchlist'             => array( 'Кёздеги_тизмени_тюрлендир' ),
+	'Emailuser'                 => array( 'Къошулуучугъа_джазма', 'Джазма_ий' ),
+	'Export'                    => array( 'Экспорт', 'Къотарыу' ),
+	'FileDuplicateSearch'       => array( 'Файлланы_дубликатларын_излеу' ),
+	'Filepath'                  => array( 'Файлгъа_джол' ),
+	'Import'                    => array( 'Импорт' ),
+	'BlockList'                 => array( 'Блок_этиулени_тизмеси', 'Блок_этиуле' ),
+	'LinkSearch'                => array( 'Джибериуле_излеу' ),
+	'Listadmins'                => array( 'Администраторланы_тизмеси' ),
+	'Listbots'                  => array( 'Ботланы_тизмеси' ),
+	'Listfiles'                 => array( 'Файлланы_тизмеси', 'Суратланы_тизмеси' ),
+	'Listgrouprights'           => array( 'Къошулуучу_къауумланы_хакълары', 'Къауумланы_хакъларыны_тизмеси' ),
+	'Listredirects'             => array( 'Редиректлени_тизмеси' ),
+	'Listusers'                 => array( 'Къошулуучуланы_тизмеси' ),
+	'Lockdb'                    => array( 'Билгиле_базаны_блок_эт' ),
+	'Log'                       => array( 'Журналла', 'Журнал' ),
+	'Lonelypages'               => array( 'Изоляция_этилген_бетле' ),
+	'Longpages'                 => array( 'Узун_бетле' ),
+	'MergeHistory'              => array( 'Тарихлени_бирикдириу' ),
+	'MIMEsearch'                => array( 'MIME’ге_кёре_излеу' ),
+	'Mostimages'                => array( 'Эм_кёб_хайырланнган_файлла' ),
+	'Movepage'                  => array( 'Бетни_атын_тюрлендириу', 'Атны_тюрлендириу', 'Атны_тюрлендир' ),
+	'Mycontributions'           => array( 'Мени_къошумум' ),
+	'Mypage'                    => array( 'Мени_бетим' ),
+	'Mytalk'                    => array( 'Мени_сюзюуюм' ),
+	'Myuploads'                 => array( 'Мени_джюклегенлерим' ),
+	'Newimages'                 => array( 'Джангы_файлла' ),
+	'Newpages'                  => array( 'Джангы_бетле' ),
+	'PasswordReset'             => array( 'Паролну_ийиу' ),
+	'PermanentLink'             => array( 'Дайым_джибериу' ),
+	'Popularpages'              => array( 'Популяр_бетле' ),
+	'Preferences'               => array( 'Джарашдырыула' ),
+	'Protectedpages'            => array( 'Джакъланнган_бетле' ),
+	'Protectedtitles'           => array( 'Джакъланнган_атла' ),
+	'Randompage'                => array( 'Эсде_болмагъан_бет', 'Эсде_болмагъан' ),
+	'Recentchanges'             => array( 'Ахыр_тюрлениуле' ),
+	'Recentchangeslinked'       => array( 'Байламлы_тюрлениуле' ),
+	'Revisiondelete'            => array( 'Кетерилген_тюрлениуле' ),
+	'Search'                    => array( 'Излеу' ),
+	'Shortpages'                => array( 'Къысха_бетле' ),
+	'Specialpages'              => array( 'Энчи_бетле' ),
+	'Statistics'                => array( 'Статистика' ),
+	'Tags'                      => array( 'Белгиле' ),
+	'Unblock'                   => array( 'Блокну_алыу' ),
+);
+
+$magicWords = array(
+	'redirect'                  => array( '0', '#джибериу', '#редирект', '#перенаправление', '#перенапр', '#REDIRECT' ),
+	'notoc'                     => array( '0', '__БАШЛАСЫЗ__', '__БЕЗ_ОГЛАВЛЕНИЯ__', '__БЕЗ_ОГЛ__', '__NOTOC__' ),
+	'nogallery'                 => array( '0', '_ГАЛЛЕРЕЯСЫЗ__', '__БЕЗ_ГАЛЕРЕИ__', '__NOGALLERY__' ),
+);
+
 $messages = array(
 # User preference toggles
 'tog-underline' => 'Джибериулени черт:',
@@ -70,9 +142,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Бетни, кёзде тургъан тизмелерине къошханланы санын кёргюз',
 'tog-oldsig' => 'Бусагъатдагъы къол салыннган:',
 'tog-fancysig' => 'Къол салыуну энчи вики-тексти (автомат джибериусюз)',
-'tog-externaleditor' => 'Тынгылау бла тыш редакторну хайырландырыу (къуру усталагъа, компьютерни энчи джарашдырылыуу керекди; [//www.mediawiki.org/wiki/Manual:External_editors толуракъ])',
-'tog-externaldiff' => 'Версияланы тенглешдириучу тыш программа хайырландырыу  (къуру усталагъа, компьютерни энчи джарашдырылыуу керекди; [//www.mediawiki.org/wiki/Manual:External_editors толуракъ])',
-'tog-showjumplinks' => '«Бар» болушлукъ джибериуню джандыр',
 'tog-uselivepreview' => 'Терк ал къарауну хайырландыр (JavaScript, экспериментал халда)',
 'tog-forceeditsummary' => 'Тюрлендириуню ачыкълау тизгини бош къалса, билдир',
 'tog-watchlisthideown' => 'Кёзюмде тургъан бетден мени тюрлендириулерими джашыр',
@@ -85,9 +154,10 @@ $messages = array(
 'tog-diffonly' => 'Версия тенглешдириуню тюбю бла бетни ичиндегисин кёргюзме',
 'tog-showhiddencats' => 'Джашыртын категорияланы кёргюз',
 'tog-norollbackdiff' => 'Къайтарыудан сора версияланы башхалыкъларын кёргюзме',
+'tog-useeditwarning' => 'Тюрлендириулени сакълатмай редакторлау бетден кетген сагъатымда билдир',
 
 'underline-always' => 'Хаманда',
-'underline-never' => 'Бирзаманда да',
+'underline-never' => 'Бир заманда да',
 'underline-default' => 'Браузерни джарашдырыуларын хайырландыр',
 
 # Font style option in Special:Preferences
@@ -148,6 +218,18 @@ $messages = array(
 'oct' => 'окт',
 'nov' => 'ноя',
 'dec' => 'дек',
+'january-date' => '$1 январь',
+'february-date' => '$1 февраль',
+'march-date' => '$1 март',
+'april-date' => '$1 апрель',
+'may-date' => '$1 май',
+'june-date' => '$1 июнь',
+'july-date' => '$1 июль',
+'august-date' => '$1 август',
+'september-date' => '$1 сентябрь',
+'october-date' => '$1 октябрь',
+'november-date' => '$1 ноябрь',
+'december-date' => '$1 декабрь',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Категория|Категорияла}}',
@@ -173,6 +255,7 @@ $messages = array(
 'newwindow' => '(джангы терезеде ачылады)',
 'cancel' => 'Ызына алыу',
 'moredotdotdot' => 'Баргъаны…',
+'morenotlisted' => 'Энди джукъ джокъду...',
 'mypage' => 'Бет',
 'mytalk' => 'Сюзюу',
 'anontalk' => 'Бу IP-адресге сюзюу бет',
@@ -184,7 +267,6 @@ $messages = array(
 'qbbrowse' => 'Къарау',
 'qbedit' => 'Тюрлендир',
 'qbpageoptions' => 'Бу бет',
-'qbpageinfo' => 'Бетни юсюнден',
 'qbmyoptions' => 'Бетлерим',
 'qbspecialpages' => 'Къуллукъчу бетле',
 'faq' => 'FAQ',
@@ -207,6 +289,7 @@ $messages = array(
 'namespaces' => 'Атланы аламы',
 'variants' => 'Вариантла',
 
+'navigation-heading' => 'Навигация меню',
 'errorpagetitle' => 'Халат',
 'returnto' => '«$1» бетге къайт',
 'tagline' => '{{SITENAME}} сайтдан',
@@ -271,7 +354,7 @@ $1',
 'pool-queuefull' => 'Соруула джыйыучу толуду',
 'pool-errorunknown' => 'Билинмеген халат',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} сайтны юсюнден',
 'aboutpage' => 'Project:Суратлау',
 'copyright' => 'Ичиндегиси,  $1 лицензиягъа кёре бериледи (башха белгиленмеген эсе).',
@@ -281,7 +364,6 @@ $1',
 'disclaimers' => 'Джууаблылыкъны унамау',
 'disclaimerpage' => 'Project:Джууаблылыкъны унамау',
 'edithelp' => 'Тюрлендириуню юсюнден болушлукъ',
-'edithelppage' => 'Help:Тюрлендириу',
 'helppage' => 'Help:Болушлукъ',
 'mainpage' => 'Баш бет',
 'mainpage-description' => 'Баш бет',
@@ -358,17 +440,6 @@ $1',
 # General errors
 'error' => 'Халат',
 'databaseerror' => 'Информация базада халат',
-'dberrortext' => 'Информация базагъа джиберилген сорууда синтаксис халат табылды.
-Программада халатны ачыкъларгъа да боллукъду ол.
-Информация базагъа ахыр соруу:
-<blockquote><code>$1</code></blockquote>
-«<code>$2</code>» функциясындан болгъанды.
-База «<samp>$3: $4</samp>» халатны къайтарды.',
-'dberrortextcl' => 'Информация базагъа джиберилген сорууда синтаксис халат табылды.
-Информация базагъа ахыр соруу:
-«$1»
-«$2» функциясындан болгъанды.
-База «$3: $4»  халатны къайтарды.',
 'laggedslavemode' => 'Эс бёлюгюз! Бу бетге ахыр джангыртыула болмазгъа боллукъдула.',
 'readonly' => 'Информация база джабыкъды',
 'enterlockreason' => 'Блок этилиуню чурумун эм заманын белгилегиз.',
@@ -420,7 +491,6 @@ $1',
 'protectedinterface' => 'Бу бетде программаны интерфейс билдириую барды.
 Бютеу викиледе да бу билдириуню кёчюрмесин къошар неда тюрлендирир ючюн MediaWiki-ни локализациясыны сайты [//translatewiki.net/ translatewiki.net]-ни хайырландырыгъыз.',
 'editinginterface' => "'''Эс бёл:''' Сен системаны интерфейс бетин тюрлендире тураса. Бу, викини башха къошулуучуларына да тиерик затды. Кёчюрюр ючюн неда кёчюрмелени тюрлендирир ючюн, MediaWiki-ни локализация этиу проекти [//translatewiki.net/ translatewiki.net]-ни хайырландырыгъыз.",
-'sqlhidden' => '(SQL соруу джашырылыбды)',
 'cascadeprotected' => 'Бу бет тюрлениуледен джакъланыбды, ол каскадлы джакълау къабыл этилиннген  {{PLURAL:$1|бетге|бетлеге}} киргени ючюндю:
 $2',
 'namespaceprotected' => '«$1» ат аламда бетлени тюрлендирирге эркинлигигиз джокъду.',
@@ -445,16 +515,24 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Аккаунтугъуздан чыкъдыгъыз.'''
 
-Сиз {{SITENAME}} сайтда аноним халда къалыргъа боллкъсуз. неда [[Special:UserLogin|джангыдан кирирге]].
+Сиз {{SITENAME}} сайтда аноним халда къалыргъа боллкъсуз. неда <span class='plainlinks'>[$1 джангыдан кирирге]</span>.
 Талай бетле сиз тергеу джазыу (аккаунт) бла киргенча кёрюнюрге боллукъдула, аны кетерир ючюн кэшни джангыртыгъыз.",
-'welcomecreation' => '== Хош келигиз, $1!  ==
-Сизни тергеу джазыуугъуз (аккаунтугъуз) къуралды.
-Сайтны [[Special:Preferences|персонал джарашдырыуларыны]]  къараргъа унутмагъыз.',
+'welcomeuser' => 'Сау кел, $1!',
+'welcomecreation-msg' => 'Сизни тергеу джазыуугъуз (аккаунтугъуз) къуралды.
+{{SITENAME}} сайтда [[Special:Preferences|джарашдырыуларыгъызны]] тюрлендирирге унутмагъыз.',
 'yourname' => 'Къошулуучуну аты',
+'userlogin-yourname' => 'Тергеу джазыуну аты',
+'userlogin-yourname-ph' => 'Тергеу джазыуунгу атын джаз',
 'yourpassword' => 'Паролюгъуз:',
+'userlogin-yourpassword' => 'Пароль',
+'userlogin-yourpassword-ph' => 'Паролунгу джаз',
+'createacct-yourpassword-ph' => 'Пароль джаз',
 'yourpasswordagain' => 'Паролну джангыдан джаз:',
+'createacct-yourpasswordagain' => 'Паролну бегит',
+'createacct-yourpasswordagain-ph' => 'Паролну энтда бир кере джаз',
 'remembermypassword' => 'Бу компьютерде мени тергеў джазыўуму унутма (эм кёб $1 {{PLURAL:$1|кюн|кюн}})',
-'securelogin-stick-https' => 'Чыкъгъандан сора да HTTPS бла байламлы къой',
+'userlogin-remembermypassword' => 'Системада туруу',
+'userlogin-signwithsecure' => 'Джакъланнган байлам',
 'yourdomainname' => 'Сизни доменигиз:',
 'password-change-forbidden' => 'Бу викиде паролугъузну тюрлендиреллик тюлсюз.',
 'externaldberror' => 'Тыш информация базаны болушлугъу бла аутентификация, халатлы болду, неда тыш аккаунтугъузну тюрлендирирге хакъларагъыз джетмейди.',
@@ -466,18 +544,38 @@ $2',
 'logout' => 'Чыгъыу',
 'userlogout' => 'Чыгъыу',
 'notloggedin' => 'Авторизация ётмегенсиз',
+'userlogin-noaccount' => 'Аккаунтунг джокъмуду?',
+'userlogin-joinproject' => '{{SITENAME}} сайтха къошул',
 'nologin' => 'Тергеу джазыуугъуз (аккаунтугъуз) джокъмуду? $1.',
 'nologinlink' => 'Тергеу джазыу (аккаунт) къурагъыз',
 'createaccount' => 'Джангы къошулуучуну регистрация эт',
 'gotaccount' => 'Тергеу джазыуугъуз (аккаунтугъуз) энди бармыды? $1.',
 'gotaccountlink' => 'Кириу',
 'userlogin-resetlink' => 'Кирир ючюн билгилеригизни унутхан этгенмисиз?',
-'createaccountmail' => 'e-mail бла',
+'userlogin-resetpassword-link' => 'Паролну джибериу',
+'helplogin-url' => 'Help:Кириу',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Системагъа кириуде болушлукъ]]',
+'createacct-join' => 'Билгилеринги тюбюрекде джаз.',
+'createacct-emailrequired' => 'Электрон почтаны адреси',
+'createacct-emailoptional' => 'Электрон почтаны адреси (амалсыз тюлдю)',
+'createacct-email-ph' => 'Электрон почта адресигизни джазыгъыз',
+'createaccountmail' => 'Эсде болмагъанлай генерация этилген болджаллы паролну хайырландыр эм тюбюрекде берилген электрон почта адресге ий:',
+'createacct-realname' => 'Керти атыгъыз (ажымсыз керек тюлдю)',
 'createaccountreason' => 'Чурум:',
+'createacct-reason' => 'Чурум',
+'createacct-reason-ph' => 'Башха тергеу джазыуну нек къураусыз',
+'createacct-captcha' => 'Къоркъуусузлукъну тинтиу',
+'createacct-imgcaptcha-ph' => 'Башыракъда кёрюннген текстни джаз',
+'createacct-submit' => 'Тергеу джазыуну къура',
+'createacct-benefit-heading' => '{{SITENAME}} сизнича адамла бла къуралгъанды.',
+'createacct-benefit-body1' => '{{PLURAL:$1|тюрлениу}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|бет}}',
+'createacct-benefit-body3' => 'арт заманда {{PLURAL:$1|къошум этген}}',
 'badretype' => 'Джазгъан паролларыгъыз бир-бирине келишмейдиле.',
 'userexists' => 'Джазылгъан ат хайырландырылады.
 Башха ат сайлагъыз.',
 'loginerror' => 'Кириу хата',
+'createacct-error' => 'Тергеу джазыу къурауда халат',
 'createaccounterror' => 'Быллай тергеу джазыу (аккаунт) къураргъа болмайды: $1',
 'nocookiesnew' => 'Къошлуучу регистрацияны ётгенди, алай кирмегенди. {{SITENAME}} къошулуучуланы таныр ючюн «cookies»-ни хайырландырады. Сиз «cookies»-ни эркин этмегенсиз. «Cookies»-ни эркин этигиза да, андан сора джангы атыгъыз эм паролюгъуз бла киригиз.',
 'nocookieslogin' => '{{SITENAME}} къошулуучуланы таныр ючюн «cookies»-ни хаырландырады. Сиз аны джукълатыб турасыз. «Cookies»-ни эркин этигизда джангыдан кёрюгюз.',
@@ -534,9 +632,10 @@ $2',
 'loginlanguagelabel' => 'Тил: $1',
 'suspicious-userlogout' => 'Терс браузер неда кэш этиучу прокси берген соруугъа ушагъаны ючюн, Сизни чыгъаргъа сорууугъуз алынмагъанды.',
 
-# E-mail sending
+# Email sending
 'php-mail-error-unknown' => "PHP's mail() функцияда белгили болмагъан халат",
 'user-mail-no-addy' => 'Бир e-mail адрес болмагъанлай e-mail иерге кюрешди',
+'user-mail-no-body' => 'Бош неда магъанасыз къысха джазыу бла билдириу иерге изледи.',
 
 # Change password dialog
 'resetpass' => 'Паролну тюрлендириу',
@@ -545,9 +644,8 @@ $2',
 'oldpassword' => 'Эски пароль:',
 'newpassword' => 'Джангы пароль:',
 'retypenew' => 'Джангы паролну къайтарыгъыз:',
-'resetpass-abort-generic' => 'Пароль тюрлендириуню кенгертиу тыйды.',
 'resetpass_submit' => 'Паролну бегит эм кир',
-'resetpass_success' => 'Сизни паролюгъуз тыйыншлы тюрлендирилди! Системагъа кириу барады…',
+'changepassword-success' => 'Сизни паролюгъуз тыйыншлы тюрлендирилди! Системагъа кириу барады…',
 'resetpass_forbidden' => 'Пароль тюрленирге болмайды',
 'resetpass-no-info' => 'Бу бетни кёрюр ючюн сиз системагъа тергеу джазыуугъуз (аккаунтугъуз) бла кирирге керексиз.',
 'resetpass-submit-loggedin' => 'Паролну тюрлендир',
@@ -555,13 +653,15 @@ $2',
 'resetpass-wrong-oldpass' => 'Терс пароль.
 Сиз энди паролну тюрлендирген неда джангы болджаллы пароль соргъан болурсуз.',
 'resetpass-temp-password' => 'Болджаллы пароль:',
+'resetpass-abort-generic' => 'Пароль тюрлендириуню кенгертиу тыйды.',
 
 # Special:PasswordReset
 'passwordreset' => 'Паролну джибериу',
-'passwordreset-text' => 'Паролугъуз джиберилир ючюн бу форманы толтуругъуз.',
+'passwordreset-text-one' => 'Паролугъуз джиберилир ючюн бу форманы толтуругъуз.',
+'passwordreset-text-many' => '{{PLURAL:$1|Пароль ийилир ючюн билгилени бир бёлюмюн джазыгъыз.}}',
 'passwordreset-legend' => 'Паролну атыу',
 'passwordreset-disabled' => 'Бу викиде паролла атыу амал джукъланыбды.',
-'passwordreset-pretext' => '{{PLURAL:$1||Тюбюрекде берилген билгиледен бирин джазыгъыз}}',
+'passwordreset-emaildisabled' => 'Бу викиде электрон почтаны функциялары джукъланыбдыла.',
 'passwordreset-username' => 'Къошулуучуну аты:',
 'passwordreset-domain' => 'Домен:',
 'passwordreset-capture' => 'Джазылгъан билдириуню эсебине къара?',
@@ -570,9 +670,9 @@ $2',
 'passwordreset-emailtitle' => '{{SITENAME}} сайтдагъы тергеу джазыуну юсюнден билгиле',
 'passwordreset-emailelement' => 'Къошулуучуну аты: $1
 Болджаллы пароль: $2',
-'passwordreset-emailsent' => 'Эсгертиу e-mail ийилди.',
-'passwordreset-emailsent-capture' => 'Ийилген эсгертиу e-mail тюбюрекде берилибди.',
-'passwordreset-emailerror-capture' => 'Ийилген эсгертиу e-mail тюбюрекде берилибди, аны ашырыуу джетишимсиз болду, чурум: $1',
+'passwordreset-emailsent' => 'Пароль бла e-mail ийилди.',
+'passwordreset-emailsent-capture' => 'Ийилген пароль эсгертиу e-mail тюбюрекде берилибди.',
+'passwordreset-emailerror-capture' => 'Пароль эсгертиу e-mail генерация этилди (тюбюрекде берилибди), аны {{GENDER:$2|къошулуучугъа}} ашырыу джетишимсиз болду, чурум: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'Электрон почтаны адресин ауушдур',
@@ -582,6 +682,7 @@ $2',
 'changeemail-oldemail' => 'Почтаны бусагъатдагъы адреси:',
 'changeemail-newemail' => 'Электрон почтаны джангы адреси:',
 'changeemail-none' => '(джокъ)',
+'changeemail-password' => '«{{SITENAME}}» проектде паролугъуз:',
 'changeemail-submit' => 'Адресни тюрлендир',
 'changeemail-cancel' => 'Ызына алыу',
 
@@ -749,7 +850,6 @@ $2',
 'template-semiprotected' => '(джарты джакъланыбды)',
 'hiddencategories' => 'Бу бет $1 {{PLURAL:$1|1 джашырылыннган категориягъа|$1 джашырылыннган категориялагъа}} киреди:',
 'edittools' => '<!-- Былайда орналгъан текст тюрлениу эмда джюклениу формада кёрюннюкдю. -->',
-'nocreatetitle' => 'Бетле къурау чекленибди',
 'nocreatetext' => 'Бу сайтда джангы бет къуралыу тыйылгъанды.
 Ызына къайтыб болгъан бетни тюрлендирирге боллукъсуз, [[Special:UserLogin|системагъа кесигизни танытыргъа неда джангы тергеу джазыу (аккаунт) къураргъа]].',
 'nocreate-loggedin' => 'Джангы бетле къураргъа эркинлигигиз джокъду.',
@@ -771,9 +871,21 @@ $2',
 Кетерилген болур.',
 'edit-conflict' => 'Тюрлендириулени конфликти.',
 'edit-no-change' => 'Текстде тюрлениуле эсленмегени ючюн, сизни тюрлендириуюгюз къабыл этилмеди.',
+'postedit-confirmation' => 'Тюрлендириуюгюз сакъланды.',
 'edit-already-exists' => 'Джангы бет къураргъа боллукъ тюлдю.
 Алайсызда барды бу атлы бет.',
 'defaultmessagetext' => 'Тынгылау бла текст',
+'content-failed-to-parse' => '$2 контент $1 типге келишмейди: $3',
+'invalid-content-data' => 'Джаламагъан билгиле',
+'content-not-allowed-here' => '[[$2]] бетни ичинде "$1" контент джарамайды',
+'editwarning-warning' => 'Башха бетге кёчсегиз, этген тюрлениулеригиз тас болургъа боллукъдула.
+Системада регистрацияны ётген эсегиз, бу билдириуню джарашдырыуларыгъызны «Тюрлендириу» деген бёлюмюнде джукълатыргъа боллукъсуз.',
+
+# Content models
+'content-model-wikitext' => 'вики-текст',
+'content-model-text' => 'тюз текст',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Эсгериу:''' Бу бетде асыры кёб къайнакълы функция барды.
@@ -1009,7 +1121,6 @@ $1",
 'searchmenu-legend' => 'Излеуню джарашдырыулары',
 'searchmenu-exists' => "'''Бу викиде «[[:$1]]» бет барды'''",
 'searchmenu-new' => "'''Бу вики-проектде «[[:$1]]» бетни къура!'''",
-'searchhelp-url' => 'Help:Ичиндегиле',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Бу префикс бла бетни кёргюз]]',
 'searchprofile-articles' => 'Баш бетле',
 'searchprofile-project' => 'Болушлукъ эм проект бетле',
@@ -1019,7 +1130,7 @@ $1",
 'searchprofile-articles-tooltip' => '$1 ичинде изле',
 'searchprofile-project-tooltip' => '$1 ичинде изле',
 'searchprofile-images-tooltip' => 'Файлланы изле',
-'searchprofile-everything-tooltip' => 'Бютёу бетледе изле (сюзюу бетледе да)',
+'searchprofile-everything-tooltip' => 'Бютеу бетледе изле (сюзюу бетледе да)',
 'searchprofile-advanced-tooltip' => 'Энчи ат аланладада изле',
 'search-result-size' => '$1 ({{PLURAL:$2|$2 сёз}})',
 'search-result-category-size' => '{{PLURAL:$1|1 элемент|$1 элемент}} ({{PLURAL:$2|1 тюбкатегория|$2 тюбкатегория}}, {{PLURAL:$3|1 файл|$3 файл}})',
@@ -1031,14 +1142,14 @@ $1",
 'search-interwiki-default' => '$1 эсеблери:',
 'search-interwiki-more' => '(дагъыда)',
 'search-relatedarticle' => 'Байламлы',
-'mwsuggest-disable' => 'AJAX юретиулени джукълатыгъыз',
-'searcheverything-enable' => 'Атланы бютёу аламларында изле',
+'mwsuggest-disable' => 'Излеуде юретиулени джукълат',
+'searcheverything-enable' => 'Атланы бютеу аламларында изле',
 'searchrelated' => 'бейламлы',
-'searchall' => 'бютёу',
+'searchall' => 'бютеу',
 'showingresults' => 'Тюбюрек №&nbsp;<strong>$2</strong> башлаб <strong>$1</strong> {{PLURAL:$1|эсеб|эсебле}} {{PLURAL:$1|кёргюзюлгенди|кёргюзюлгендиле}}.',
 'showingresultsnum' => 'Тюбюрек №&nbsp;<strong>$2</strong> башлаб <strong>$3</strong> {{PLURAL:$3|эсеб|эсебле}} {{PLURAL:$3|кёргюзюлгенди|кёргюзюлгендиле}}.',
 'showingresultsheader' => "'''$4''' ючюн {{PLURAL:$5|'''$3''' эсебден '''$1'''|'''$1 — $2''' арасы '''$3''' эсеб}}",
-'nonefound' => "'''Эсгериу.''' Тынгылау бла излеу бютёу атланы аламында бардырылмайды. Бютёу атланы аламында (къошулуучуланы сюзюулери, шаблонла эмда башхала) излер ючюн аллындан ''all:'' префиксни хайырландырыгъыз неда керекли атланы аламын белгилегиз.",
+'nonefound' => "'''Эсгериу:''' тынгылау бла излеу бютеу атланы аламында бардырылмайды. Бютеу атланы аламында (къошулуучуланы сюзюулери, шаблонла эмда башхала) излер ючюн аллындан ''all:'' префиксни хайырландырыгъыз неда керекли атланы аламын белгилегиз.",
 'search-nonefound' => 'Соруу бла келишген эсеб джокъду',
 'powersearch' => 'Кенг излеу',
 'powersearch-legend' => 'Кенг излеу',
@@ -1050,15 +1161,7 @@ $1",
 'powersearch-togglenone' => 'Бири да',
 'search-external' => 'Тыш излеу',
 'searchdisabled' => '{{SITENAME}} сайтда излеу талай заманнга тохтатылгъанды. Бусагъатда Google бла хайырланыб {{SITENAME}} ичинде излеу этерге боллукъсуз. Излеу сайтлада индекслери бир кесек эски болургъа боллугъун унутмагъыз.',
-
-# Quickbar
-'qbsettings' => 'Джюрютюуню панели',
-'qbsettings-none' => 'Кёргюзтме',
-'qbsettings-fixedleft' => 'Солу къатды',
-'qbsettings-fixedright' => 'Онгу къатды',
-'qbsettings-floatingleft' => 'Солгъа джюзеди',
-'qbsettings-floatingright' => 'Оннга джюзеди',
-'qbsettings-directionality' => 'Тилигизни джазмасыны онг/сол таба джазылгъанына кёре бегитилибди',
+'search-error' => 'Излеуде халат чыкъды: $1',
 
 # Preferences page
 'preferences' => 'Джарашдырыула',
@@ -1092,7 +1195,6 @@ $1",
 'resetprefs' => 'Тюрлениулени ызына къайтар',
 'restoreprefs' => 'Тынгылау бла джарашдырыуланы ызына къайтар',
 'prefs-editing' => 'Тюрлендириу',
-'prefs-edit-boxsize' => 'Тюрлениу терезени ёлчеми',
 'rows' => 'Тизгинле:',
 'columns' => 'Колонкала:',
 'searchresultshead' => 'Излеу',
@@ -1103,9 +1205,6 @@ $1",
 'recentchangesdays-max' => '(максимум $1 {{PLURAL:$1|кюн|кюн}})',
 'recentchangescount' => 'Тынгылау бла кёргюзюллюк тюрлениулени саны:',
 'prefs-help-recentchangescount' => 'Бу, ахыр тюрлениулени, бетни тарихлерин эмда журналланы ичине къошады.',
-'prefs-help-watchlist-token' => 'Бу аланны джашыртын ачхыч бла толтуруу, кёзде тургъан тизмегиз ючюн бир RSS-трансляция къурайды.
-Бу аландагъы ачхычны билгенле кёзде тургъан тизмегизни окъургъа боллукъду, ол себебден сырлы магъана сайлагъыз.
-Сакъланмагъанлай генерация этилген магъананы хайырландырыргъа боллукъсуз: $1',
 'savedprefs' => 'Джарашдырыуларыгъыз сакъландыла.',
 'timezonelegend' => 'Заман бел:',
 'localtime' => 'Джерли заман:',
@@ -1136,11 +1235,10 @@ $1",
 'prefs-reset-intro' => 'Бу бетни джарашдырыуларыгъызны тынгылыау бла салыннган джарашдырыулагъа кёчюрюрге хайырланаллыкъсыз.
 Бу ишлемни къабыл этсегиз, ызына къайтараллыкъ тюлсюз.',
 'prefs-emailconfirm-label' => 'Электрон почтаны бегитиу:',
-'prefs-textboxsize' => 'Тюрлендириу терезени ёлчеми',
 'youremail' => 'Электрон почта:',
-'username' => 'Къошулуучу ат:',
-'uid' => 'Къошулуучуну идентификатору:',
-'prefs-memberingroups' => '{{PLURAL:$1|Группаны|Группаланы}} члени:',
+'username' => '{{GENDER:$1|Къошулуучу ат}}:',
+'uid' => '{{GENDER:$1|Къошулуучуну}} коду:',
+'prefs-memberingroups' => '{{PLURAL:$1|Группаны|Группаланы}} {{GENDER:$2|члени}}:',
 'prefs-memberingroups-type' => '$1',
 'prefs-registration' => 'Регистрацияны этилген заманы:',
 'prefs-registration-date-time' => '$1',
@@ -1181,7 +1279,7 @@ $1 {{PLURAL:$1|символдан|символладан}} кеб болургъ
 'prefs-displaywatchlist' => 'Кёрюнюуню джарашдырыулары',
 'prefs-diffs' => 'Версияланы башхалыкълары',
 
-# User preference: e-mail validation using jQuery
+# User preference: email validation using jQuery
 'email-address-validity-valid' => 'E-mail адрес тюзге ушайды',
 'email-address-validity-invalid' => 'Тюз e-mail адрес джазыгъыз!',
 
@@ -1207,6 +1305,7 @@ $1 {{PLURAL:$1|символдан|символладан}} кеб болургъ
 'userrights-changeable-col' => 'Сиз тюрлендиреллик къауумла',
 'userrights-unchangeable-col' => 'Сиз тюрлендирелмезлик къауумла',
 'userrights-irreversible-marker' => '$1*',
+'userrights-conflict' => 'Къошулуучу хакъланы конфликти! Тюрлендириуню джангыдан сакълатыб кёрюгюз.',
 
 # Groups
 'group' => 'Группа:',
@@ -1294,12 +1393,13 @@ $1 {{PLURAL:$1|символдан|символладан}} кеб болургъ
 'right-sendemail' => 'Башха къошулуучулагъа электрон почта джиберирге',
 'right-passwordreset' => "пароль тюрлениуле бла e-mail'леге къарау",
 
+# Special:Log/newusers
+'newuserlogpage' => 'Къошулуучуланы регистрацияларыны журналы',
+'newuserlogpagetext' => 'Кёб болмай регистрация этген къошулуучуланы тизмеси.',
+
 # User rights log
 'rightslog' => 'Къошулуучуну хакъларыны журналы',
 'rightslogtext' => 'Бу къошулуучуну хакъларыны тюрлениуюню журналыды',
-'rightslogentry' => '$1-ни къауумлада членлиги $2-ден $3-ге тюрленнгенди',
-'rightslogentry-autopromote' => '$2 къауумдан автомат халда $3 къауумгъа кёчюрюлдю',
-'rightsnone' => '(джокъ)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'бу бетни окъуу',
@@ -1380,7 +1480,6 @@ $1 {{PLURAL:$1|символдан|символладан}} кеб болургъ
 'recentchangeslinked-feed' => 'Байламлы тюрлендириуле',
 'recentchangeslinked-toolbox' => 'Байламлы тюрлендириуле',
 'recentchangeslinked-title' => '$1 бет бла байламлы тюрлендириуле',
-'recentchangeslinked-noresult' => 'Берилген кёзюуню ичинде белгиленнген бетге байламлы башха бетледе тюрлениуле болмагъандыла',
 'recentchangeslinked-summary' => "Белгиленнген бет (неда белгиленнген категориягъа киргенле) джиберген бетледе джангы тюрлениулени тизмеси.
 [[Special:Watchlist|Кёзде тургъан тизмеге]] кирген бетле '''чертилибдиле'''.",
 'recentchangeslinked-page' => 'Бетни аты:',
@@ -1583,7 +1682,6 @@ CGI тамалында ишлерге эмда <code>img_auth</code> бла иш
 'http-read-error' => 'HTTP окъууну халаты.',
 'http-timed-out' => 'HTTP-сорууну сакълау заман ётдю.',
 'http-curl-error' => 'Бу URL-гъа сорууну халаты: $1',
-'http-host-unreachable' => 'URL-ге джетелмеди',
 'http-bad-status' => 'HTTP-соруу ишлеген заманында проблема чыкъгъанды: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1729,11 +1827,7 @@ URL-ни тюз , сайтны ачыкъ болгъанына ишексиз б
 'statistics-users-active-desc' => 'Ахыр {{PLURAL:$1|1 кюнде|$1 кюнде}} ишлеме этген къошулуучула',
 'statistics-mostpopular' => 'Эм кёб къаралгъан бетле',
 
-'disambiguations' => 'Ангылам айыргъан бетлеге джибериулери болгъан бетле',
-'disambiguationspage' => 'Template:кёб магъаналылыкъ',
-'disambiguations-text' => "Келтирилген бетледе '''кёб магъаналы бетлеге''' эм азы бла бир джибериу барды.
-Аны орнуна ала белгили бир статьягъа джибериу этерге керек болурла.<br />
-[[MediaWiki:Disambiguationspage]] бетде аты салыннган шаблон бар эсе, ол бет кёб магъаналы бетге саналады.",
+'pageswithprop-submit' => 'Таб',
 
 'doubleredirects' => 'Джибериу болгъан джибериуле',
 'doubleredirectstext' => 'Бу бетде башхы джибериулеге этилген джибериулени тизмеси барды.
@@ -1854,6 +1948,9 @@ URL-ни тюз , сайтны ачыкъ болгъанына ишексиз б
 'allpages-bad-ns' => '{{SITENAME}} сайтда «$1» ат алам джокъду.',
 'allpages-hide-redirects' => 'Башха бетлеге джиберген бетлени (редиректлени) джашыр',
 
+# SpecialCachedPage
+'cachedspecial-refresh-now' => 'Ахыр версиягъа къарау.',
+
 # Special:Categories
 'categories' => 'Категорияла',
 'categoriespagetext' => 'Ызындан келген {{PLURAL:$1|категория|категорияла}} бет неда медия-файл тутадыла.
@@ -1894,10 +1991,6 @@ URL-ни тюз , сайтны ачыкъ болгъанына ишексиз б
 'activeusers-hidesysops' => 'Администраторланы джашыр',
 'activeusers-noresult' => 'Къошлуучу табылмады.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Къошулуучуланы регистрацияларыны журналы',
-'newuserlogpagetext' => 'Кёб болмай регистрация этген къошулуучуланы тизмеси.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Къошулуучуланы къауумуну хакълары',
 'listgrouprights-summary' => 'Тюбюндеги бу викиде танылгъан къошулуучу къауумланы эмда аланы хакъларыны тизмеси.
@@ -1919,10 +2012,12 @@ URL-ни тюз , сайтны ачыкъ болгъанына ишексиз б
 'listgrouprights-addgroup-self-all' => 'Бютеу къауумланы кесини тергеу джазыууна къошаллыкъды',
 'listgrouprights-removegroup-self-all' => 'Кесини тергеу джазыуундан бютеу къауумланы къораталлыкъды',
 
-# E-mail user
+# Email user
 'mailnologin' => 'Джиберирге адрес джокъду',
 'mailnologintext' => 'Башха къошулуучулагъа эл. почта джиберелир ючюн [[Special:UserLogin|системагъа кирирге]] керексиз эм [[Special:Preferences|джарашдырыуланы]] бетинде джараулу эл. почта адрес болургъа керекди.',
 'emailuser' => 'Къошулуучугъа письмо',
+'emailuser-title-target' => '{{GENDER:$1|Къошулуучугъа}} электрон джазма джазыу',
+'emailuser-title-notarget' => 'Электрон джазма джазыу',
 'emailpage' => 'Къошулуучугъа письмо джибер',
 'emailpagetext' => 'Бу къошулуучуну почтасына письмо джиберир ючюн бу форманы толтурургъа боллукъсуз.
 Ызына адрес болуб, сиз [[Special:Preferences|джарашдырыуларыгъызда]] джазгъан адрес белгиленникди, ол себебден сизни письмогъузну аллыкъ сизге тюз джууаб берирге мадарлы боллукъду.',
@@ -1972,10 +2067,9 @@ URL-ни тюз , сайтны ачыкъ болгъанына ишексиз б
 'unwatchthispage' => 'Кёзде тутууну тохтат',
 'notanarticle' => 'Статья тюлдю',
 'notvisiblerev' => 'Версия кетерилгенди',
-'watchnochange' => 'Къаралгъан кёзюуде, кёзде тургъан тизмеден бир бет да тюрленмегенди.',
 'watchlist-details' => 'Кёзюгюзде тургъан тизмегизде, сюзюу бетлери саналмай {{PLURAL:$1|$1 бет|$1 бет}} барды.',
-'wlheader-enotif' => '* Эл. почта бла хапар бериу джандырылыбды.',
-'wlheader-showupdated' => "* Ахыр кириуюгюзден сора бетни тюрлениулери '''къалын''' джазыу бла кёргюзюлгенди.",
+'wlheader-enotif' => 'Эл. почта бла хапар бериу джандырылыбды.',
+'wlheader-showupdated' => "Ахыр кириуюгюзден сора бетни тюрлениулери '''къалын''' джазыу бла кёргюзюлгенди.",
 'watchmethod-recent' => 'кёзде тургъан бетледе этилген ахыр тюрлениуле кёрюу',
 'watchmethod-list' => 'кёзде тургъан бетледе этилген ахыр тюрлениуле кёрюу',
 'watchlistcontains' => 'Кёзюгюзде тургъан тизмегизде $1 {{PLURAL:$1|бет|бет}} барды.',
@@ -1990,11 +2084,7 @@ URL-ни тюз , сайтны ачыкъ болгъанына ишексиз б
 
 'enotif_mailer' => '{{SITENAME}} Билдириу Почта',
 'enotif_reset' => 'Бютеу бетлени къаралгъанча белгиле',
-'enotif_newpagetext' => 'Бу джангы бетди',
 'enotif_impersonal_salutation' => '{{SITENAME}} къошулуучу',
-'changed' => 'тюрленди',
-'created' => 'къуралды',
-'enotif_subject' => '{{SITENAME}} бет $PAGETITLE, $PAGEEDITOR джанындан $CHANGEDORCREATED этилгенди.',
 'enotif_lastvisited' => 'Ахыр кириуюгюзден бу кереге дери болгъан бютеу тюрлениулени кёрюр ючюн $1-ге къара.',
 'enotif_lastdiff' => 'Бу тюрлениуню кёрюр ючюн, $1 бетге къарагъыз.',
 'enotif_anon_editor' => 'аноним къошулуучу $1',
@@ -2010,20 +2100,22 @@ $NEWPAGE
 эл. почта: $PAGEEDITOR_EMAIL
 вики: $PAGEEDITOR_WIKI
 
-Бу бетге киргинчигизге дери бу бет бла байламлы башха тюрлендириулени юсюнден хапар джибериллик тюлдю. Санчыкълау списогугъуздагъу бютеу бетлени билдириу джибериу опцияларын джукълаталлыкъсыз.
+Бу бетге киргинчигизге дери бу бет бла байламлы башха тюрлендириулени юсюнден хапар джибериллик тюлдю. Кёзде тургъан тизмегиздеги бютеу бетлени билдириу джибериу опцияларын джукълаталлыкъсыз.
 
 {{SITENAME}} сайтны билдириу системасы.
 
 --
 
 Джарашдырыуланы тюрлендирир ючюн:
-{{canonicalurl:Special:Watchlist/edit}}
+{{fullurl:{{#special:Watchlist}}/edit}}
 
 Кёзде тургъан тизмеден кетерир ючюн:
 $UNWATCHURL
 
 Болушлукъ эм теджеуле ючюн:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'къуралды',
+'changed' => 'тюрленди',
 
 # Delete
 'deletepage' => 'Бетни кетер',
@@ -2090,6 +2182,7 @@ $2 тюрлендирген алгъаракъ версиясына къайты
 'unprotectedarticle' => '«[[$1]]» бетден джакълыкъ алыннганды',
 'movedarticleprotection' => 'Къоруулауну джарашдырыулары "[[$2]]" бетден "[[$1]]" бетге кёчюрюлгенди',
 'protect-title' => '"$1" ючюн къоруулау дараджаны сайлагъыз',
+'protect-title-notallowed' => '«$1» джакълау дараджагъа къара',
 'prot_1movedto2' => '[[$1]] бетни джангы аты: [[$2]]',
 'protect-legend' => 'Къоруулауну къабыл эт',
 'protectcomment' => 'Чурум:',
@@ -2110,6 +2203,7 @@ $2 тюрлендирген алгъаракъ версиясына къайты
 'protect-level-sysop' => 'Къуру администраторла',
 'protect-summary-cascade' => 'каскадлы',
 'protect-expiring' => 'бошалады $1 (UTC)',
+'protect-expiring-local' => '$1 бошалады',
 'protect-expiry-indefinite' => 'болджалсыз',
 'protect-cascade' => 'Бу бетге кирген бетлени джакъла (каскадлы джакълау)',
 'protect-cantedit' => 'Сиз бу бетни джакълау дараджасын тюрлендиреллик тюйюлсюз, бу бетни тюрлендирирге хакъыгъыз болмагъаны ючюн.',
@@ -2244,6 +2338,7 @@ $1',
 
 # Block/unblock
 'block' => 'Къошулуучуну блокла',
+'unblock' => 'Къошулуучуну блок этилиуюн алыу',
 'blockip' => 'Бу къошулуучуну блок эт',
 'blockip-title' => 'Къошулуучуну блокга салыу',
 'blockip-legend' => 'Къошулуучуну блокга салыу',
@@ -2343,12 +2438,9 @@ $1',
 Алай  а, бу  $2 диапазонну кесеги кибик тыйылгъанды, диапазонну блокдан чыгъарыргъа боллукъсуз.',
 'ip_range_invalid' => 'Джараусуз IP диапазон.',
 'ip_range_toolarge' => '/$1 кёб диапазонланы блокга салыргъа джарамайды.',
-'blockme' => 'Мени блокга сал',
 'proxyblocker' => 'Проксилени тыйыу',
-'proxyblocker-disabled' => 'Бу функция джукълатылыбды.',
 'proxyblockreason' => 'IP-адресигиз ачыкъ прокси болгъаны ючюн тыйылдыгъыз.
 Тилейбиз, кесигизни интернет-провайдеригиз бла, неда дагъан болгъан къуллукъла бла байланыб, къоркъуусузлукъну бу проблемасын билдиригиз.',
-'proxyblocksuccess' => 'Тындырылды.',
 'sorbsreason' => 'IP-адресигиз, {{SITENAME}} сайтда  хайырланнган DNSBL-де ачыкъ прокси кибик саналады.',
 'sorbs_create_account_reason' => 'IP-адресигиз, translatewiki.net сайтда хайырланнган DNSBL-де ачыкъ прокси кибик саналады. Тергеу джазыу къураяллыкъ тюлсюз.',
 'cant-block-while-blocked' => 'Сиз кесигиз блокда заманда, башха къошулуучуланы блок этеллик тюлсюз.',
@@ -2601,14 +2693,14 @@ MediaWiki локализациясына юлюш къошаргъа излей 
 'tooltip-n-recentchanges' => 'Ахыр тюрлениулени тизмеси',
 'tooltip-n-randompage' => 'Эсде болмагъан бир бетге къара',
 'tooltip-n-help' => '«{{SITENAME}}» проектге джардам этиу',
-'tooltip-t-whatlinkshere' => 'Бу бетге джибериу берген бютёу бетлени тизмеси',
+'tooltip-t-whatlinkshere' => 'Бу бетге джибериу берген бютеу бетлени тизмеси',
 'tooltip-t-recentchangeslinked' => 'Бу бет джибериуле берген бетледе ахыр тюрлениуле',
 'tooltip-feed-rss' => 'Бу битге RSS-трансляция',
 'tooltip-feed-atom' => 'Бу бетге Atom-трансляция',
 'tooltip-t-contributions' => 'Къошулуучуну тюрлендирген бетлерине къара',
 'tooltip-t-emailuser' => 'Бу къошулуучугъа письмо джибер',
 'tooltip-t-upload' => 'Файлланы джюклеу',
-'tooltip-t-specialpages' => 'Бютёу къуллукъчу бетлени тизмеси',
+'tooltip-t-specialpages' => 'Бютеу къуллукъчу бетлени тизмеси',
 'tooltip-t-print' => 'Бу бетни басмагъа версиясы',
 'tooltip-t-permalink' => 'Бетни бу версиясына дайым джибериу',
 'tooltip-ca-nstab-main' => 'Статьяны ичиндеги',
@@ -2669,23 +2761,26 @@ MediaWiki локализациясына юлюш къошаргъа излей 
 'pageinfo-default-sort' => 'Тынгылау бла сортлауну ачхычы',
 'pageinfo-length' => 'Бетни узунлугъу (байтла бла)',
 'pageinfo-article-id' => 'Бетни идентификатору',
+'pageinfo-language' => 'Бетни ичиндегисини тили',
 'pageinfo-robot-policy' => 'Излеу къуллукъла бла индексация',
 'pageinfo-robot-index' => 'Индексация этиледи',
 'pageinfo-robot-noindex' => 'Индексация этилмейди',
 'pageinfo-views' => 'Къарауланы саны',
 'pageinfo-watchers' => 'Бетни кёзде тутханланы саны',
 'pageinfo-redirects-name' => 'Бу бетге редиректле',
+'pageinfo-firstuser' => 'Бетле къураучу',
+'pageinfo-lastuser' => 'Ахыр редактор',
 'pageinfo-edits' => 'Бютеу тюрлендириулени саны',
 'pageinfo-authors' => 'Тюрлю-тюрлю авторланы саны',
+'pageinfo-toolboxlink' => 'Бетни юсюнден',
+'pageinfo-redirectsto' => 'Башха бетге редиректди —',
+'pageinfo-redirectsto-info' => 'билги',
+'pageinfo-contentpage-yes' => 'Хоу',
+'pageinfo-protect-cascading-yes' => 'Хоу',
 
 # Skin names
-'skinname-standard' => 'Стандарт',
-'skinname-nostalgia' => 'Ностальгия',
 'skinname-cologneblue' => 'Кёльн такъылыкъ',
 'skinname-monobook' => 'Моно-китаб',
-'skinname-myskin' => 'Меники',
-'skinname-chick' => 'Шик',
-'skinname-simple' => 'Бош',
 'skinname-modern' => 'Бусагъатдагъы',
 'skinname-vector' => 'Вектор',
 
@@ -2699,6 +2794,7 @@ MediaWiki локализациясына юлюш къошаргъа излей 
 'markedaspatrollederror' => 'Сыналмаганды',
 'markedaspatrollederrortext' => 'Сыналгъан кибик белгилер ючюн версия белгилерге керексиз.',
 'markedaspatrollederror-noautopatrol' => 'Кесигизни тюрлендириулеригизни, сыналгъан кибик белгилерге эркинлигигиз джокъду.',
+'markedaspatrollednotify' => '«$1» бетдеги бу тюрлениу тинтиб къаралгъанча белгиленди.',
 
 # Patrol log
 'patrol-log-page' => 'Патруль этиуню журналы',
@@ -2757,7 +2853,24 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 минут|$1 минут}}',
 'hours' => '{{PLURAL:$1|$1 сагъат|$1 сагъат}}',
 'days' => '{{PLURAL:$1|$1 кюн|$1 кюн}}',
+'weeks' => '{{PLURAL:$1|ыйыкъ}}',
+'months' => '{{PLURAL:$1|ай}}',
+'years' => '{{PLURAL:$1|джыл}}',
 'ago' => '$1 алгъа',
+'just-now' => 'тюз бусагъатда',
+
+# Human-readable timestamps
+'hours-ago' => '$1 {{PLURAL:$1|сагъат}} мындан алгъа',
+'minutes-ago' => '$1 {{PLURAL:$1|минут}} мындан алгъа',
+'seconds-ago' => '$1 {{PLURAL:$1|секунд}} мындан алгъа',
+'monday-at' => '$1 баш кюн',
+'tuesday-at' => '$1 гюрге кюн',
+'wednesday-at' => '$1 барас кюн',
+'thursday-at' => '$1 орта кюн',
+'friday-at' => '$1 барым кюн',
+'saturday-at' => '$1 шабат кюн',
+'sunday-at' => '$1 ыйых кюн',
+'yesterday-at' => '$1 тюнене',
 
 # Bad image list
 'bad_image_list' => 'Формат былай болургъа керекди:
@@ -2786,7 +2899,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Кенглик',
 'exif-imagelength' => 'Мийиклик',
 'exif-bitspersample' => 'Бояуну теренлиги',
@@ -2948,7 +3061,7 @@ $1',
 'exif-organisationinimage' => 'Суратланнган организация',
 'exif-personinimage' => 'Суратланнган адам',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Къысдырылмагъан',
 'exif-compression-3' => 'CCITT Group 3, факс кодлау',
 'exif-compression-4' => 'CCITT Group 4, факс кодлау',
@@ -3174,7 +3287,7 @@ $1',
 'monthsall' => 'бютеу',
 'limitall' => 'бютеую',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'Электорн адресни мюкюл эт',
 'confirmemail_noemail' => '[[Special:Preferences|джарашдырыулада]] тамамланнган, джараулу электрон адресигиз джокоъду.',
 'confirmemail_text' => 'Викини электрон почтасыны адреси бла хайырланыб башлауну аллы бла, аны мюкюл этериге керекди.
@@ -3387,7 +3500,6 @@ $5
 'version-other' => 'Башха',
 'version-mediahandlers' => 'Медияны джарашдырыучула',
 'version-hooks' => 'Тутуучула',
-'version-extension-functions' => 'Кенгертиулени функциялары',
 'version-parser-extensiontags' => 'Синтиаксис анализаторну кенгертиулерин теглери',
 'version-parser-function-hooks' => 'Синтаксис анализаторну функцияларын тутуучула',
 'version-hook-name' => 'Тутуучуну аты',
@@ -3407,13 +3519,6 @@ MediaWiki хайырлы боллукъду деген умут бла джай�
 'version-entrypoints' => 'Кириу нохталаны адреслери',
 'version-entrypoints-header-entrypoint' => 'Кириу нохта',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Файлгъа джол',
-'filepath-page' => 'Файл:',
-'filepath-submit' => 'Кёч',
-'filepath-summary' => 'Бу къуллукъчу бет файл ючюн толу джолну береди.
-Суратла толу резолюциялары бла кёргюзюледиле, башха файл типле алагъа джараулу программала бла ачыладыла.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Дубликат файлланы изле',
@@ -3501,13 +3606,17 @@ MediaWiki хайырлы боллукъду деген умут бла джай�
 'htmlform-submit' => 'Джибер',
 'htmlform-reset' => 'Тюрлендириулени ызына сал',
 'htmlform-selectorother-other' => 'Башха',
+'htmlform-no' => 'Огъай',
+'htmlform-yes' => 'Хоу',
+'htmlform-chosen-placeholder' => 'Вариантны сайлагъыз',
 
 # SQLite database support
 'sqlite-has-fts' => '$1 толу текст излеуню хайырландыргъан',
 'sqlite-no-fts' => '$1 толу текст излеуню хайырландыра билмеген',
 
 # New logging system
-'logentry-delete-delete' => '$1, $3 бетни кетерди',
+'logentry-delete-delete' => '$3 бетни $1 {{GENDER:$2|кетерди}}',
+'logentry-delete-restore' => '$3 бетни $1 {{GENDER:$2|ызына салды}}',
 'revdelete-content-hid' => 'ичиндегиси джашырылыбды',
 'revdelete-summary-hid' => 'тюрлендириуню ачыкълауу джашырылыбды',
 'revdelete-uname-hid' => 'къошулуучуну аты джашырылыбды',
@@ -3517,16 +3626,19 @@ MediaWiki хайырлы боллукъду деген умут бла джай�
 'revdelete-restricted' => 'администраторла ючюн этилген чеклениуле',
 'revdelete-unrestricted' => 'администратолра ючюн этилген чеклениуле къоратылгъандыла',
 'logentry-move-move' => '$1, $3 бетни атын $4 деб тюрлендирди',
-'logentry-move-move-noredirect' => '$1, $3 бетни атын $4 деб тюрлендирди (редирект къоймагъанлай)',
-'logentry-move-move_redir' => '$1, $3 бетни атын $4 деб тюрлендирди (редиректни башы бла)',
-'logentry-move-move_redir-noredirect' => '$1, $3 бетни атын $4 деб тюрлендирди (редиректни башы бла эм редирект къурамай)',
+'logentry-move-move-noredirect' => '$1, $3 бетни атын $4 деб {{GENDER:$2|тюрлендирди}} (редирект къоймагъанлай)',
+'logentry-move-move_redir' => '$1, $3 бетни атын $4 деб {{GENDER:$2|тюрлендирди}} (редиректни башы бла)',
+'logentry-move-move_redir-noredirect' => '$1, $3 бетни атын $4 деб {{GENDER:$2|тюрлендирди}} (редиректни башы бла эм редирект къурамай)',
 'logentry-patrol-patrol' => '$1, $3 бетни $4 версияын партруль этиб чыкъды',
 'logentry-patrol-patrol-auto' => '$1, $3 бетни $4 версиясын автомат халда тинтиб чыкъды',
-'logentry-newusers-newusers' => '$1 тергеу джазыу (аккаунт) къуралды',
+'logentry-newusers-newusers' => '$1 тергеу джазыу (аккаунт) {{GENDER:$2|къуралды}}',
 'logentry-newusers-create' => '$1 тергеу джазыу (аккаунт) къуралды',
 'logentry-newusers-create2' => '$1, $3 тергеу джазыуну къурады',
 'logentry-newusers-autocreate' => '$1 тергеу джазыу автомат халда къуралды',
-'newuserlog-byemail' => 'пароль электрон почта бла джиберилгенди',
+'logentry-rights-rights' => '$1 къошулуучу, $3 къошулуучуну членлигин $4 къауумдан $5 къауумгъа {{GENDER:$2|кёчюрдю}}',
+'logentry-rights-rights-legacy' => '$1 къошулуучу, $3 къушулуучуну къауумлада членлигин тюрлендирди',
+'logentry-rights-autopromote' => '$1 къошулуучу, $4 къауумдан автомат халда $5 къауумгъа {{GENDER:$2|кёчюрюлдю}}',
+'rightsnone' => '(джокъ)',
 
 # Feedback
 'feedback-subject' => 'Тема:',

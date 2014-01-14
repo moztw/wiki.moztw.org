@@ -1,7 +1,7 @@
 /**
  * JavaScript for History action
  */
-jQuery( document ).ready( function ( $ ) {
+jQuery( function ( $ ) {
 	var	$historyCompareForm = $( '#mw-history-compare' ),
 		$historySubmitter,
 		$lis = $( '#pagehistory > li' );
@@ -119,7 +119,7 @@ jQuery( document ).ready( function ( $ ) {
 			e.preventDefault();
 			return false; // Because the submit is special, return false as well.
 		}
-		
+
 		// Continue natural browser handling other wise
 		return true;
 	} );

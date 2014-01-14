@@ -8,6 +8,7 @@
  * @file
  *
  * @author 2Q
+ * @author Aig mest ei varasta
  * @author Andrijko Z.
  * @author Comp1089
  * @author Erdemaslancan
@@ -155,7 +156,7 @@ $messages = array(
 'jumptonavigation' => 'valittsõmisiisõ',
 'jumptosearch' => 'ettsüse',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Tääteja {{GRAMMAR:elative|{{SITENAME}}}}',
 'aboutpage' => 'Project:Täätühsed',
 'copyright' => 'Sisälto on $1 litsentsii mukka svobodnoi.',
@@ -165,7 +166,6 @@ $messages = array(
 'disclaimers' => 'Ceeltümin vassamizõõ',
 'disclaimerpage' => 'Project:Ceeltümin vassamizõõ',
 'edithelp' => 'Muutuzavid',
-'edithelppage' => 'Help:Kui muuttaa cülciä',
 'helppage' => 'Help:Sisälto',
 'mainpage' => 'Esicülci',
 'mainpage-description' => 'Esicülci',
@@ -403,9 +403,6 @@ Proovvi lizät etsün alkuu ''all:'', nii ettsü etsib kõikkõõ sisältoo (taa
 'powersearch-redir' => 'Spiiska mešaitussijõ',
 'powersearch-field' => 'Etsi',
 
-# Quickbar
-'qbsettings-none' => 'Eb õõ',
-
 # Preferences page
 'preferences' => 'Koozid',
 'mypreferences' => 'Minu koozid',
@@ -444,9 +441,11 @@ Proovvi lizät etsün alkuu ''all:'', nii ettsü etsib kõikkõõ sisältoo (taa
 'grouppage-user' => '{{ns:project}}:Сäüttijäd',
 'grouppage-sysop' => '{{ns:project}}:Praviťeľad',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Uuvvõd cäüttijäd',
+
 # User rights log
 'rightslog' => 'Cäütteminõikuslogi',
-'rightsnone' => '(eb õõ)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'muutu sitä cülciä',
@@ -485,7 +484,6 @@ Proovvi lizät etsün alkuu ''all:'', nii ettsü etsib kõikkõõ sisältoo (taa
 'recentchangeslinked-feed' => 'Sukulaizõd muutussõd',
 'recentchangeslinked-toolbox' => 'Sukulaizõd muutussõd',
 'recentchangeslinked-title' => 'Cüľľelt $1 linkitettüďďe cülcije muutuhsõd.',
-'recentchangeslinked-noresult' => 'Cüseizez aigakõhaz eväd õltu milliziitäid muuttumiziit.',
 'recentchangeslinked-summary' => "Kase osoobennoi cülci näütteb muutusõd cülcillä, kummalõõ on seltä cüľľeltä näüteltü.
 Cüľľed, kummad õmad teďďellä [[Special:Watchlist|kattsõspiizgalla]] on cirjuttõnnu '''pimmiässi'''.",
 'recentchangeslinked-page' => 'Cüľľee nimi:',
@@ -546,8 +544,6 @@ Seness [$2 kuvauhsõ lehocülless] informaattsija on alapallõ annõttu.',
 'statistics' => 'Staťisťikka',
 'statistics-pages' => 'Cülcid',
 
-'disambiguationspage' => 'Template:disambig',
-
 'brokenredirects-edit' => 'muuttaa',
 'brokenredirects-delete' => 'pühi',
 
@@ -597,19 +593,16 @@ Seness [$2 kuvauhsõ lehocülless] informaattsija on alapallõ annõttu.',
 # Special:ListUsers
 'listusers-submit' => 'Näüt väľľää',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Uuvvõd cäüttijäd',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(selttsilainspiiska)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Lähettega elektropoštia selle cäüttijälle',
 'emailusername' => 'Cäüttijänimi:',
 'emailmessage' => 'Ilmottamin:',
 
 # Watchlist
-'watchlist' => 'Minu kattsõspiiska',
+'watchlist' => 'Kattsõspiiska',
 'mywatchlist' => 'Minu kattsõspiiska',
 'watchlistfor2' => '$2 - $1 vart',
 'addedwatchtext' => "Cülci \"[[:\$1]]\" on lisättü Teďďee [[Special:Watchlist|kattsospiizgallõ]].
@@ -626,8 +619,6 @@ Cülci leeb cirjutõttu '''pimmiässi''' [[Special:RecentChanges|spiizgall viime
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching' => 'Kattsõõn…',
 'unwatching' => 'Kattsõõmizõõ lõpõttõmin…',
-
-'enotif_newpagetext' => 'Kase on vassõn cülci.',
 
 # Delete
 'deletepage' => 'Pühi cülci',
@@ -690,7 +681,7 @@ Cüľľellä $2 on spiiska viimeiziss pühcimühsiiss.',
 'blanknamespace' => '(Artikkelid)',
 
 # Contributions
-'contributions' => 'Cäüttijää avittamizõd',
+'contributions' => '{{GENDER:$1|Cäüttijää}} avittamizõd',
 'contributions-title' => 'Cäüttijää $1 avittamizõd',
 'mycontris' => 'Minu avittamizõd',
 'contribsub2' => 'Cäüttijää $1 ($2) avittamizõd',
@@ -743,7 +734,6 @@ Cüľľellä $2 on spiiska viimeiziss pühcimühsiiss.',
 'blocklogentry' => 'piätteli cäüttijää vai IP-cislaa [[$1]]. Piättelemin lõpub $2 $3',
 'unblocklogentry' => 'rooci cäüttijält $1 muutuzpiäsüss',
 'block-log-flags-nocreate' => 'lukuloomin piäteltü',
-'proxyblocksuccess' => 'On tehtü.',
 
 # Move page
 'movepagetext' => "Alla õlõvall ruumõll võitta anta cüľľelle uutt nimiä; kõik cüľľee istori leeb liikutõttu uuvvõ nimee alle.
@@ -892,7 +882,7 @@ Kui faili on muutõttu, siiz detaaľid võivad õlla kahõllaizõd muutõtull fa
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-gpstimestamp' => 'GPS-aika',
 'exif-languagecode' => 'Ceeli',
 'exif-iimcategory' => 'Gruppa',
@@ -936,10 +926,6 @@ Kui faili on muutõttu, siiz detaaľid võivad õlla kahõllaizõd muutõtull fa
 # Core parser functions
 'duplicate-defaultsort' => '\'\'\'Warning:\'\'\' Default sort key "$2" overrides earlier default sort key "$1".',
 
-# Special:FilePath
-'filepath-page' => 'Faili:',
-'filepath-submit' => 'Mee',
-
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Failinimi:',
 'fileduplicatesearch-submit' => 'Etsi',
@@ -963,6 +949,9 @@ Kui faili on muutõttu, siiz detaaľid võivad õlla kahõllaizõd muutõtull fa
 
 # HTML forms
 'htmlform-selectorother-other' => 'Muu',
+
+# New logging system
+'rightsnone' => '(eb õõ)',
 
 # Feedback
 'feedback-message' => 'Ilmottamin:',

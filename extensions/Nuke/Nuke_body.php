@@ -30,12 +30,14 @@ class SpecialNuke extends SpecialPage {
 		// Normalise name
 		if ( $target !== '' ) {
 			$user = User::newFromName( $target );
-			if ( $user ) $target = $user->getName();
+			if ( $user ) {
+				$target = $user->getName();
+			}
 		}
 
 		$msg = $target === '' ?
 			$this->msg( 'nuke-multiplepeople' )->inContentLanguage()->text() :
-			$this->msg( 'nuke-defaultreason', "[[Special:Contributions/$target|$target]]" )->
+			$this->msg( 'nuke-defaultreason', $target )->
 				inContentLanguage()->text();
 		$reason = $req->getText( 'wpReason', $msg );
 
@@ -85,7 +87,7 @@ class SpecialNuke extends SpecialPage {
 			)
 			. '<table><tr>'
 				. '<td>' . Xml::label( $this->msg( 'nuke-userorip' )->text(), 'nuke-target' ) . '</td>'
-				. '<td>' . Xml::input( 'target', 40, $userName, array( 'id' => 'nuke-target' ) ) . '</td>'
+				. '<td>' . Xml::input( 'target', 40, $userName, array( 'id' => 'nuke-target', 'autofocus' => true ) ) . '</td>'
 			. '</tr><tr>'
 				. '<td>' . Xml::label( $this->msg( 'nuke-pattern' )->text(), 'nuke-pattern' ) . '</td>'
 				. '<td>' . Xml::input( 'pattern', 40, '', array( 'id' => 'nuke-pattern' ) ) . '</td>'

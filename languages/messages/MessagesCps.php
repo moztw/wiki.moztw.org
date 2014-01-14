@@ -43,10 +43,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ipakita ang mga numero sang mga gatan-aw nga manug-usar',
 'tog-oldsig' => 'Nagkayara nga pirma:',
 'tog-fancysig' => 'Ituring ang pirma bilang teksto sang wiki (wala sang automatik nga link)',
-'tog-externaleditor' => 'Maggamit sang panggwa nga manug-ilis paagi sa default ( para sa mga ekspeto lang, kinanglan ang espesyal nga mga setting sa imo kompyuter)',
-'tog-externaldiff' => 'Maggamit sang panggwa nga kinala-in paagi sa default ( para sa mga ekspeto lang, kinanglan ang espesyal nga setting sa imo kumpyuter.
-[//www.mediawiki.org/wiki/Manual:External_editors Mas madamu pa nga impormasyon.])',
-'tog-showjumplinks' => 'Pasugtan ang mga "tumbo sa" kadali-an nga mga link',
 'tog-uselivepreview' => 'Maggamit sang buhi nga prebyu (kinanglan ang Javascript) (Eksperimental)',
 'tog-forceeditsummary' => 'Hambalan ako kung nagapasulod sang wala unod nga pag-ilis kabilugan',
 'tog-watchlisthideown' => 'Itago ang akon mga pagbag-o halin sa listahan sang mga ginabantayan',
@@ -158,7 +154,6 @@ $messages = array(
 'qbbrowse' => 'Pangita-on',
 'qbedit' => 'Ilisan',
 'qbpageoptions' => 'Mini nga pahina',
-'qbpageinfo' => 'Konteksto',
 'qbmyoptions' => 'Akon mga pahina',
 'qbspecialpages' => 'Pinasahi nga mga pahina',
 'faq' => 'Mga perme napamangkot ("FAQ")',
@@ -245,7 +240,7 @@ $1',
 'pool-queuefull' => 'Puno na ang pisan sang mga pila',
 'pool-errorunknown' => 'Wala nabal-an nga kasal-anan',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Tuhoy sa {{SITENAME}}',
 'aboutpage' => 'Project:Nahanungod sa',
 'copyright' => 'Ang unod bakante sa idalum sang $1',
@@ -255,7 +250,6 @@ $1',
 'disclaimers' => 'Mga pagpangindi',
 'disclaimerpage' => 'Project:Pangkabilugan nga pagpangindi',
 'edithelp' => 'Bulig sa pag-ilis',
-'edithelppage' => 'Help:Pag-ilis',
 'helppage' => 'Help:Mga ka-undan',
 'mainpage' => 'Panguna nga pahina',
 'mainpage-description' => 'Panguna nga pahina',
@@ -329,17 +323,6 @@ Ang listahan sang inbalido nga mga pinasahi nga pahina makit-an sa [[Special:Spe
 # General errors
 'error' => 'Sala',
 'databaseerror' => 'Diperensya sa database',
-'dberrortext' => 'May sala sa database query syntax.
-Posible tungod mini sa depekto sa software.
-Ang nagligad nga database query mini:
-<blockquote><tt>$1</tt></blockquote>
-nga halin sa ulubrahon nga "<tt>$2</tt>".
-Nagbalik sang sala nga "<tt>$3: $4</tt>" ang MySQL.',
-'dberrortextcl' => 'May ara sang kasal-anan sa usisa nga pangpapagpaangot sa kalipunan sang datos.
-Ang ulihi nga pagtisting pagusisa sa kalipunan sang datos amu ang:
-"$1"
-halin sa ulubrahon nga "$2".
-Ginbalik sang kalipunan sang datos ang kasal-anan nga "$3: $4"',
 'laggedslavemode' => 'Pahibalo: Posible nga wala unod ang pahina sang mga yanda nga bag-ong nadugang.',
 'readonly' => 'Nakakandado ang database',
 'enterlockreason' => 'Maghatag sang kabangdanan sa pagkakandado, upod ang bana-bana kung san-o ang kandado ibuy-an',
@@ -392,7 +375,6 @@ Palihog tistingan liwat sa pila ka minutos.',
 'editinginterface' => "'''Paandam:''' gin-islan mo ang pahina nga gina-usar nga nagahatag teksto sang interface sa sopwer.
 Makaapekto ang mga gin-islan sa mini nga pahina sa gwaan nga itsura ka interface sang manug-usar sa iban nga mga manug-usar.
 Para sa mga pagtransleyt, palihog konsidera gamit ang [http://translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], ang MediaWiki proyekto sa paglokalisa.",
-'sqlhidden' => '(nakatago ang pamangkot sang SQL)',
 'cascadeprotected' => 'Ginprotektahan ang mini nga pahina sa pagpangilis, tungod naupod ini sa mga gasunod nga {{PLURAL:$1|pahina, nga|mga pahina, nga}} protektado upod ang "cascading" nga pilili-an nga naga-andar:
 $2',
 'namespaceprotected' => "Wala ka sang permiso nga magliwat sang mga pahina nga ara sa namespace nga '''$1'''.",
@@ -408,11 +390,8 @@ Mini ang ginhatag nga kabangdanan "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Nakagwa ka na.'''
 
-Pwede mo mapadayon usar ang {{SITENAME}}, ukon pwede ka [[Special:UserLogin|lmagsulod liwat]] bilang pareho ukon la-in nga manug-usar.
+Pwede mo mapadayon usar ang {{SITENAME}}, ukon pwede ka <span class='plainlinks'>[$1 lmagsulod liwat]</span> bilang pareho ukon la-in nga manug-usar.
 Tandaan nga ang iban nga pahina magapadayon nga ipakita nga nakasulod ka man gyapon kuno abi, asta panason mo ang cache sang imo browser.",
-'welcomecreation' => '==Malipayon nga pag-abot, $1! ==
-Nahimo na ang imo account.
-Indi pagkalimtan nga islan ang imo [[Special:Preferences|mga uyon mo sa {{SITENAME}}]].',
 'yourname' => 'Hayo (username):',
 'yourpassword' => 'Password:',
 'yourpasswordagain' => 'Liwata ka pindot ang password:',
@@ -611,6 +590,9 @@ Tistingan mo i-prefiks ang imo pamangkot upod sang ''tanan:'' para makita mo ang
 
 'grouppage-sysop' => '{{ns:project}}:Mga manugdumala',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Listahan sang pag-ubra sang manug-usar',
+
 # User rights log
 'rightslog' => 'Lista sang mga karapatan sang manug-usar',
 
@@ -718,13 +700,10 @@ Ang paglarawan nga yara sa ibabaw sang [$2 pahina sang paglarawan sang akta] sin
 # Special:LinkSearch
 'linksearch' => 'Panggwa nga mga link',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Listahan sang pag-ubra sang manug-usar',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(lista sang mga myembro)',
 
-# E-mail user
+# Email user
 'emailuser' => 'I-email mini nga naga-usar',
 
 # Watchlist

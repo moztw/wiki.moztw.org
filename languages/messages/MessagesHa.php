@@ -41,8 +41,6 @@ $messages = array(
 'tog-shownumberswatching' => "A nuna adadin ma'aikata masu bin sawun wannan shafi",
 'tog-oldsig' => 'Rigya-ganin sa-hannu da ake da shi',
 'tog-fancysig' => 'A ɗauki matanin sa-hannu a matsayin matanin Wiki (ba tare da mahaɗin otomatik ba)',
-'tog-externaleditor' => 'Bisa manufa, a yi amfani da editan matani daban (zuwa ga ƙwararri: kuna buƙatar sauya saitin kwamfyutarku)',
-'tog-externaldiff' => 'Bisa manufa, a yi amfani da kwatantau daban (zuwa ga ƙwararri: kuna buƙatar sauya saitin kwamfyutarku)',
 'tog-showjumplinks' => 'A lamunta mahaɗan "a tsallaka zuwa"',
 'tog-uselivepreview' => 'A yi amfani da rigya-gani mai sauƙi (ana buƙatar JavaScript) (hajar gwaji)',
 'tog-forceeditsummary' => 'A gargaɗe ni idan na ajiye kangon fili na taƙaitawa',
@@ -374,6 +372,9 @@ Ku gwada tare da amfani da \"all:\" don bincikar duka shafunan (har da shafunan 
 
 'grouppage-sysop' => '{{ns:project}}:Masu hukunci',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Rajistan sabbin akwantoci',
+
 # User rights log
 'rightslog' => "Rajistan bayar da izini ga ma'aikata",
 
@@ -483,13 +484,10 @@ Ku gwada tare da amfani da \"all:\" don bincikar duka shafunan (har da shafunan 
 # Special:ListUsers
 'listusers-submit' => 'Nuna',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Rajistan sabbin akwantoci',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(jerin mambobi)',
 
-# E-mail user
+# Email user
 'emailuser' => "Aika wa wannan ma'aikaci imel",
 
 # Watchlist

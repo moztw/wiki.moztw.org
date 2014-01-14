@@ -43,12 +43,37 @@ var language = {
 	 * @param forms array List of plural forms
 	 * @return string Correct form for quantifier in this language
 	 */
-	convertPlural: function( count, forms ) {
-		var pluralFormIndex = 0;
+	convertPlural: function ( count, forms ) {
+		var pluralRules,
+			formCount,
+			form,
+			index,
+			equalsPosition,
+			pluralFormIndex = 0;
+
 		if ( !forms || forms.length === 0 ) {
 			return '';
 		}
-		var pluralRules = mw.language.getData( mw.config.get( 'wgUserLanguage' ), 'pluralRules' );
+
+		// Handle for explicit n= forms
+		for ( index = 0; index < forms.length; index++ ) {
+			form = forms[index];
+			if ( /^\d+=/.test( form ) ) {
+				equalsPosition = form.indexOf( '=' );
+				formCount = parseInt( form.substring( 0, equalsPosition ), 10 );
+				if ( formCount === count ) {
+					return form.substr( equalsPosition + 1 );
+				}
+				forms[index] = undefined;
+			}
+		}
+
+		// Remove explicit plural forms from the forms.
+		forms = $.map( forms, function ( form ) {
+			return form;
+		} );
+
+		pluralRules = mw.language.getData( mw.config.get( 'wgUserLanguage' ), 'pluralRules' );
 		if ( !pluralRules ) {
 			// default fallback.
 			return ( count === 1 ) ? forms[0] : forms[1];
@@ -73,43 +98,6 @@ var language = {
 	},
 
 	/**
-	 * Converts a number using digitTransformTable.
-	 *
-	 * @param {num} number Value to be converted
-	 * @param {boolean} integer Convert the return value to an integer
-	 */
-	convertNumber: function( num, integer ) {
-		var i, tmp, transformTable;
-
-		if ( !mw.language.digitTransformTable ) {
-			return num;
-		}
-		// Set the target Transform table:
-		transformTable = mw.language.digitTransformTable;
-		// Check if the "restore" to Latin number flag is set:
-		if ( integer ) {
-			if ( parseInt( num, 10 ) === num ) {
-				return num;
-			}
-			tmp = [];
-			for ( i in transformTable ) {
-				tmp[ transformTable[ i ] ] = i;
-			}
-			transformTable = tmp;
-		}
-		var numberString = '' + num;
-		var convertedNumber = '';
-		for ( i = 0; i < numberString.length; i++ ) {
-			if ( transformTable[ numberString[i] ] ) {
-				convertedNumber += transformTable[numberString[i]];
-			} else {
-				convertedNumber += numberString[i];
-			}
-		}
-		return integer ? parseInt( convertedNumber, 10 ) : convertedNumber;
-	},
-
-	/**
 	 * Provides an alternative text depending on specified gender.
 	 * Usage {{gender:[gender|user object]|masculine|feminine|neutral}}.
 	 * If second or third parameter are not specified, masculine is used.
@@ -121,7 +109,7 @@ var language = {
 	 *
 	 * @return string
 	 */
-	gender: function( gender, forms ) {
+	gender: function ( gender, forms ) {
 		if ( !forms || forms.length === 0 ) {
 			return '';
 		}
@@ -151,10 +139,8 @@ var language = {
 			return grammarForms[form][word] || word;
 		}
 		return word;
-	},
+	}
 
-	// Digit Transform Table, populated by language classes where applicable
-	digitTransformTable: mw.language.getData( mw.config.get( 'wgUserLanguage' ), 'digitTransformTable' )
 };
 
 $.extend( mw.language, language );

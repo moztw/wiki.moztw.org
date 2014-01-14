@@ -24,13 +24,14 @@
 		otherAction = action === 'watch' ? 'unwatch' : 'watch';
 		accesskeyTip = $link.attr( 'title' ).match( mw.util.tooltipAccessKeyRegexp );
 		$li = $link.closest( 'li' );
+
 		/**
 		 * Trigger a 'watchpage' event for this List item.
 		 * Announce the otherAction value as the first param.
 		 * Used to monitor the state of watch link.
 		 * TODO: Revise when system wide hooks are implemented
 		 */
-		if( state === undefined ) {
+		if ( state === undefined ) {
 			$li.trigger( 'watchpage.mw', otherAction );
 		}
 
@@ -70,7 +71,7 @@
 
 		actionPaths = mw.config.get( 'wgActionPaths' );
 
-		// @todo: Does MediaWiki give action path or query param
+		// @todo Does MediaWiki give action path or query param
 		// precedence ? If the former, move this to the bottom
 		action = mw.util.getParamValue( 'action', url );
 		if ( action !== null ) {
@@ -96,10 +97,10 @@
 
 	// Expose local methods
 	mw.page.watch = {
-		'updateWatchLink': updateWatchLink
+		updateWatchLink: updateWatchLink
 	};
 
-	$( document ).ready( function () {
+	$( function () {
 		var $links = $( '.mw-watchlink a, a.mw-watchlink, ' +
 			'#ca-watch a, #ca-unwatch a, #mw-unwatch-link1, ' +
 			'#mw-unwatch-link2, #mw-watch-link2, #mw-watch-link1' );
@@ -134,7 +135,9 @@
 					otherAction = action === 'watch' ? 'unwatch' : 'watch';
 					$li = $link.closest( 'li' );
 
-					mw.notify( $.parseHTML( watchResponse.message ), { tag: 'watch-self' } );
+					mw.notify( $.parseHTML( watchResponse.message ), {
+						tag: 'watch-self'
+					} );
 
 					// Set link to opposite
 					updateWatchLink( $link, otherAction );
@@ -144,7 +147,7 @@
 					if ( watchResponse.watched !== undefined ) {
 						$( '#wpWatchthis' ).prop( 'checked', true );
 					} else {
-						$( '#wpWatchthis' ).removeProp( 'checked' );
+						$( '#wpWatchthis' ).prop( 'checked', false );
 					}
 				},
 				// Error
@@ -158,18 +161,18 @@
 					cleanTitle = title.replace( /_/g, ' ' );
 					link = mw.html.element(
 						'a', {
-							href: mw.util.wikiGetlink( title ),
+							href: mw.util.getUrl( title ),
 							title: cleanTitle
 						}, cleanTitle
 					);
-					msg = mw.messsage( 'watcherrortext', link );
+					msg = mw.message( 'watcherrortext', link );
 
 					// Report to user about the error
 					mw.notify( msg, { tag: 'watch-self' } );
 
 				}
 			);
-		});
-	});
+		} );
+	} );
 
 }( mediaWiki, jQuery ) );

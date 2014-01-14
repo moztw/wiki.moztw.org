@@ -1,15 +1,9 @@
-/**
- * mw.Api objects represent the API of a particular MediaWiki server.
- */
 ( function ( mw, $ ) {
 
-	/**
-	 * @var defaultOptions {Object}
-	 * We allow people to omit these default parameters from API requests
-	 * there is very customizable error handling here, on a per-call basis
-	 * wondering, would it be simpler to make it easy to clone the api object,
-	 * change error handling, and use that instead?
-	 */
+	// We allow people to omit these default parameters from API requests
+	// there is very customizable error handling here, on a per-call basis
+	// wondering, would it be simpler to make it easy to clone the api object,
+	// change error handling, and use that instead?
 	var defaultOptions = {
 
 			// Query parameters for API requests
@@ -26,26 +20,28 @@
 
 				dataType: 'json'
 			}
-		};
+		},
+		tokenCache = {};
 
 	/**
 	 * Constructor to create an object to interact with the API of a particular MediaWiki server.
+	 * mw.Api objects represent the API of a particular MediaWiki server.
 	 *
-	 * @todo Share API objects with exact same config.
-	 * @example
-	 * <code>
-	 * var api = new mw.Api();
-	 * api.get( {
-	 *     action: 'query',
-	 *     meta: 'userinfo'
-	 * }, {
-	 *     ok: function () { console.log( arguments ); }
-	 * } );
-	 * </code>
+	 * TODO: Share API objects with exact same config.
+	 *
+	 *     var api = new mw.Api();
+	 *     api.get( {
+	 *         action: 'query',
+	 *         meta: 'userinfo'
+	 *     } ).done ( function ( data ) {
+	 *         console.log( data );
+	 *     } );
+	 *
+	 * @class
 	 *
 	 * @constructor
-	 * @param options {Object} See defaultOptions documentation above. Ajax options can also be
-	 * overridden for each individual request to jQuery.ajax() later on.
+	 * @param {Object} options See defaultOptions documentation above. Ajax options can also be
+	 *  overridden for each individual request to {@link jQuery#ajax} later on.
 	 */
 	mw.Api = function ( options ) {
 
@@ -69,13 +65,12 @@
 		/**
 		 * Normalize the ajax options for compatibility and/or convenience methods.
 		 *
-		 * @param {undefined|Object|Function} An object contaning one or more of options.ajax,
-		 * or just a success function (options.ajax.ok).
+		 * @param {Object} [arg] An object contaning one or more of options.ajax.
 		 * @return {Object} Normalized ajax options.
 		 */
 		normalizeAjaxOptions: function ( arg ) {
 			// Arg argument is usually empty
-			// (before MW 1.20 it was often used to pass ok/err callbacks)
+			// (before MW 1.20 it was used to pass ok callbacks)
 			var opts = arg || {};
 			// Options can also be a success callback handler
 			if ( typeof arg === 'function' ) {
@@ -87,8 +82,8 @@
 		/**
 		 * Perform API get request
 		 *
-		 * @param {Object} request parameters
-		 * @param {Object|Function} [optional] ajax options
+		 * @param {Object} parameters
+		 * @param {Object|Function} [ajaxOptions]
 		 * @return {jQuery.Promise}
 		 */
 		get: function ( parameters, ajaxOptions ) {
@@ -99,10 +94,11 @@
 
 		/**
 		 * Perform API post request
-		 * @todo Post actions for nonlocal will need proxy
 		 *
-		 * @param {Object} request parameters
-		 * @param {Object|Function} [optional] ajax options
+		 * TODO: Post actions for non-local hostnames will need proxy.
+		 *
+		 * @param {Object} parameters
+		 * @param {Object|Function} [ajaxOptions]
 		 * @return {jQuery.Promise}
 		 */
 		post: function ( parameters, ajaxOptions ) {
@@ -114,15 +110,14 @@
 		/**
 		 * Perform the API call.
 		 *
-		 * @param {Object} request parameters
-		 * @param {Object} ajax options
-		 * @return {jQuery.Promise}
-		 * - done: API response data as first argument
-		 * - fail: errorcode as first arg, details (string or object) as second arg.
+		 * @param {Object} parameters
+		 * @param {Object} [ajaxOptions]
+		 * @return {jQuery.Promise} Done: API response data. Fail: Error code
 		 */
 		ajax: function ( parameters, ajaxOptions ) {
 			var token,
-				apiDeferred = $.Deferred();
+				apiDeferred = $.Deferred(),
+				xhr;
 
 			parameters = $.extend( {}, this.defaults.parameters, parameters );
 			ajaxOptions = $.extend( {}, this.defaults.ajax, ajaxOptions );
@@ -154,7 +149,7 @@
 			}
 
 			// Make the AJAX request
-			$.ajax( ajaxOptions )
+			xhr = $.ajax( ajaxOptions )
 				// If AJAX fails, reject API call with error code 'http'
 				// and details in second argument.
 				.fail( function ( xhr, textStatus, exception ) {
@@ -179,15 +174,91 @@
 				} );
 
 			// Return the Promise
-			return apiDeferred.promise().fail( function ( code, details ) {
+			return apiDeferred.promise( { abort: xhr.abort } ).fail( function ( code, details ) {
 				mw.log( 'mw.Api error: ', code, details );
-			});
-		}
+			} );
+		},
 
+		/**
+		 * Post to API with specified type of token. If we have no token, get one and try to post.
+		 * If we have a cached token try using that, and if it fails, blank out the
+		 * cached token and start over. For example to change an user option you could do:
+		 *
+		 *     new mw.Api().postWithToken( 'options', {
+		 *         action: 'options',
+		 *         optionname: 'gender',
+		 *         optionvalue: 'female'
+		 *     } );
+		 *
+		 * @param {string} tokenType The name of the token, like options or edit.
+		 * @param {Object} params API parameters
+		 * @return {jQuery.Promise} See #post
+		 */
+		postWithToken: function ( tokenType, params ) {
+			var api = this, hasOwn = tokenCache.hasOwnProperty;
+			if ( hasOwn.call( tokenCache, tokenType ) && tokenCache[tokenType] !== undefined ) {
+				params.token = tokenCache[tokenType];
+				return api.post( params ).then(
+					null,
+					function ( code ) {
+						if ( code === 'badtoken' ) {
+							// force a new token, clear any old one
+							tokenCache[tokenType] = params.token = undefined;
+							return api.post( params );
+						}
+						// Pass the promise forward, so the caller gets error codes
+						return this;
+					}
+				);
+			} else {
+				return api.getToken( tokenType ).then( function ( token ) {
+					tokenCache[tokenType] = params.token = token;
+					return api.post( params );
+				} );
+			}
+		},
+
+		/**
+		 * Api helper to grab any token.
+		 *
+		 * @param {string} type Token type.
+		 * @return {jQuery.Promise}
+		 * @return {Function} return.done
+		 * @return {string} return.done.token Received token.
+		 */
+		getToken: function ( type ) {
+			var apiPromise,
+				d = $.Deferred();
+
+			apiPromise = this.get( {
+					action: 'tokens',
+					type: type
+				}, {
+					// Due to the API assuming we're logged out if we pass the callback-parameter,
+					// we have to disable jQuery's callback system, and instead parse JSON string,
+					// by setting 'jsonp' to false.
+					// TODO: This concern seems genuine but no other module has it. Is it still
+					// needed and/or should we pass this by default?
+				} )
+				.done( function ( data ) {
+					// If token type is not available for this user,
+					// key '...token' is missing or can contain Boolean false
+					if ( data.tokens && data.tokens[type + 'token'] ) {
+						d.resolve( data.tokens[type + 'token'] );
+					} else {
+						d.reject( 'token-missing', data );
+					}
+				} )
+				.fail( d.reject );
+
+			return d.promise( { abort: apiPromise.abort } );
+		}
 	};
 
 	/**
-	 * @var {Array} List of errors we might receive from the API.
+	 * @static
+	 * @property {Array}
+	 * List of errors we might receive from the API.
 	 * For now, this just documents our expectation that there should be similar messages
 	 * available.
 	 */
@@ -237,7 +308,9 @@
 	];
 
 	/**
-	 * @var {Array} List of warnings we might receive from the API.
+	 * @static
+	 * @property {Array}
+	 * List of warnings we might receive from the API.
 	 * For now, this just documents our expectation that there should be similar messages
 	 * available.
 	 */

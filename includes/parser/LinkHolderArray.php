@@ -43,9 +43,9 @@ class LinkHolderArray {
 		}
 	}
 
- 	/**
+	/**
 	 * Don't serialize the parent object, it is big, and not needed when it is
-	 * a parameter to mergeForeign(), which is the only application of 
+	 * a parameter to mergeForeign(), which is the only application of
 	 * serializing at present.
 	 *
 	 * Compact the titles, only serialize the text form.
@@ -103,15 +103,15 @@ class LinkHolderArray {
 	}
 
 	/**
-	 * Merge a LinkHolderArray from another parser instance into this one. The 
-	 * keys will not be preserved. Any text which went with the old 
-	 * LinkHolderArray and needs to work with the new one should be passed in 
+	 * Merge a LinkHolderArray from another parser instance into this one. The
+	 * keys will not be preserved. Any text which went with the old
+	 * LinkHolderArray and needs to work with the new one should be passed in
 	 * the $texts array. The strings in this array will have their link holders
 	 * converted for use in the destination link holder. The resulting array of
 	 * strings will be returned.
 	 *
 	 * @param $other LinkHolderArray
-	 * @param $texts Array of strings
+	 * @param array $texts of strings
 	 * @return Array
 	 */
 	function mergeForeign( $other, $texts ) {
@@ -126,7 +126,7 @@ class LinkHolderArray {
 				$maxId = $newKey > $maxId ? $newKey : $maxId;
 			}
 		}
-		$texts = preg_replace_callback( '/(<!--LINK \d+:)(\d+)(-->)/', 
+		$texts = preg_replace_callback( '/(<!--LINK \d+:)(\d+)(-->)/',
 			array( $this, 'mergeForeignCallback' ), $texts );
 
 		# Renumber interwiki links
@@ -135,7 +135,7 @@ class LinkHolderArray {
 			$this->interwikis[$newKey] = $entry;
 			$maxId = $newKey > $maxId ? $newKey : $maxId;
 		}
-		$texts = preg_replace_callback( '/(<!--IWLINK )(\d+)(-->)/', 
+		$texts = preg_replace_callback( '/(<!--IWLINK )(\d+)(-->)/',
 			array( $this, 'mergeForeignCallback' ), $texts );
 
 		# Set the parent link ID to be beyond the highest used ID
@@ -159,8 +159,8 @@ class LinkHolderArray {
 		# Internal links
 		$pos = 0;
 		while ( $pos < strlen( $text ) ) {
-			if ( !preg_match( '/<!--LINK (\d+):(\d+)-->/', 
-				$text, $m, PREG_OFFSET_CAPTURE, $pos ) ) 
+			if ( !preg_match( '/<!--LINK (\d+):(\d+)-->/',
+				$text, $m, PREG_OFFSET_CAPTURE, $pos ) )
 			{
 				break;
 			}
@@ -210,14 +210,14 @@ class LinkHolderArray {
 	 *
 	 * @param $nt Title
 	 * @param $text String
-	 * @param $query Array [optional]
-	 * @param $trail String [optional]
-	 * @param $prefix String [optional]
+	 * @param array $query [optional]
+	 * @param string $trail [optional]
+	 * @param string $prefix [optional]
 	 * @return string
 	 */
-	function makeHolder( $nt, $text = '', $query = array(), $trail = '', $prefix = ''  ) {
+	function makeHolder( $nt, $text = '', $query = array(), $trail = '', $prefix = '' ) {
 		wfProfileIn( __METHOD__ );
-		if ( ! is_object($nt) ) {
+		if ( !is_object( $nt ) ) {
 			# Fail gracefully
 			$retVal = "<!-- ERROR -->{$prefix}{$text}{$trail}";
 		} else {
@@ -226,7 +226,7 @@ class LinkHolderArray {
 
 			$entry = array(
 				'title' => $nt,
-				'text' => $prefix.$text.$inside,
+				'text' => $prefix . $text . $inside,
 				'pdbk' => $nt->getPrefixedDBkey(),
 			);
 			if ( $query !== array() ) {
@@ -254,12 +254,12 @@ class LinkHolderArray {
 	 * @todo FIXME: Update documentation. makeLinkObj() is deprecated.
 	 * Replace <!--LINK--> link placeholders with actual links, in the buffer
 	 * Placeholders created in Skin::makeLinkObj()
-	 * Returns an array of link CSS classes, indexed by PDBK.
+	 * @return array of link CSS classes, indexed by PDBK.
 	 */
 	function replace( &$text ) {
 		wfProfileIn( __METHOD__ );
 
-		$colours = $this->replaceInternal( $text );
+		$colours = $this->replaceInternal( $text ); // FIXME: replaceInternal doesn't return a value
 		$this->replaceInterwiki( $text );
 
 		wfProfileOut( __METHOD__ );
@@ -281,93 +281,95 @@ class LinkHolderArray {
 		$linkCache = LinkCache::singleton();
 		$output = $this->parent->getOutput();
 
-		wfProfileIn( __METHOD__.'-check' );
-		$dbr = wfGetDB( DB_SLAVE );
-		$threshold = $this->parent->getOptions()->getStubThreshold();
+		if ( $linkCache->useDatabase() ) {
+			wfProfileIn( __METHOD__ . '-check' );
+			$dbr = wfGetDB( DB_SLAVE );
+			$threshold = $this->parent->getOptions()->getStubThreshold();
 
-		# Sort by namespace
-		ksort( $this->internals );
+			# Sort by namespace
+			ksort( $this->internals );
 
-		$linkcolour_ids = array();
+			$linkcolour_ids = array();
 
-		# Generate query
-		$queries = array();
-		foreach ( $this->internals as $ns => $entries ) {
-			foreach ( $entries as $entry ) {
-				$title = $entry['title'];
-				$pdbk = $entry['pdbk'];
+			# Generate query
+			$queries = array();
+			foreach ( $this->internals as $ns => $entries ) {
+				foreach ( $entries as $entry ) {
+					$title = $entry['title'];
+					$pdbk = $entry['pdbk'];
 
-				# Skip invalid entries.
-				# Result will be ugly, but prevents crash.
-				if ( is_null( $title ) ) {
-					continue;
-				}
+					# Skip invalid entries.
+					# Result will be ugly, but prevents crash.
+					if ( is_null( $title ) ) {
+						continue;
+					}
 
-				# Check if it's a static known link, e.g. interwiki
-				if ( $title->isAlwaysKnown() ) {
-					$colours[$pdbk] = '';
-				} elseif ( $ns == NS_SPECIAL ) {
-					$colours[$pdbk] = 'new';
-				} elseif ( ( $id = $linkCache->getGoodLinkID( $pdbk ) ) != 0 ) {
-					$colours[$pdbk] = Linker::getLinkColour( $title, $threshold );
-					$output->addLink( $title, $id );
-					$linkcolour_ids[$id] = $pdbk;
-				} elseif ( $linkCache->isBadLink( $pdbk ) ) {
-					$colours[$pdbk] = 'new';
-				} else {
-					# Not in the link cache, add it to the query
-					$queries[$ns][] = $title->getDBkey();
+					# Check if it's a static known link, e.g. interwiki
+					if ( $title->isAlwaysKnown() ) {
+						$colours[$pdbk] = '';
+					} elseif ( $ns == NS_SPECIAL ) {
+						$colours[$pdbk] = 'new';
+					} elseif ( ( $id = $linkCache->getGoodLinkID( $pdbk ) ) != 0 ) {
+						$colours[$pdbk] = Linker::getLinkColour( $title, $threshold );
+						$output->addLink( $title, $id );
+						$linkcolour_ids[$id] = $pdbk;
+					} elseif ( $linkCache->isBadLink( $pdbk ) ) {
+						$colours[$pdbk] = 'new';
+					} else {
+						# Not in the link cache, add it to the query
+						$queries[$ns][] = $title->getDBkey();
+					}
 				}
 			}
-		}
-		if ( $queries ) {
-			$where = array();
-			foreach( $queries as $ns => $pages ){
-				$where[] = $dbr->makeList(
-					array(
-						'page_namespace' => $ns,
-						'page_title' => $pages,
-					),
-					LIST_AND
+			if ( $queries ) {
+				$where = array();
+				foreach ( $queries as $ns => $pages ) {
+					$where[] = $dbr->makeList(
+						array(
+							'page_namespace' => $ns,
+							'page_title' => $pages,
+						),
+						LIST_AND
+					);
+				}
+
+				$res = $dbr->select(
+					'page',
+					array( 'page_id', 'page_namespace', 'page_title', 'page_is_redirect', 'page_len', 'page_latest' ),
+					$dbr->makeList( $where, LIST_OR ),
+					__METHOD__
 				);
-			}
 
-			$res = $dbr->select(
-				'page',
-				array( 'page_id', 'page_namespace', 'page_title', 'page_is_redirect', 'page_len', 'page_latest' ),
-				$dbr->makeList( $where, LIST_OR ),
-				__METHOD__
-			);
-
-			# Fetch data and form into an associative array
-			# non-existent = broken
-			foreach ( $res as $s ) {
-				$title = Title::makeTitle( $s->page_namespace, $s->page_title );
-				$pdbk = $title->getPrefixedDBkey();
-				$linkCache->addGoodLinkObjFromRow( $title, $s );
-				$output->addLink( $title, $s->page_id );
-				# @todo FIXME: Convoluted data flow
-				# The redirect status and length is passed to getLinkColour via the LinkCache
-				# Use formal parameters instead
-				$colours[$pdbk] = Linker::getLinkColour( $title, $threshold );
-				//add id to the extension todolist
-				$linkcolour_ids[$s->page_id] = $pdbk;
+				# Fetch data and form into an associative array
+				# non-existent = broken
+				foreach ( $res as $s ) {
+					$title = Title::makeTitle( $s->page_namespace, $s->page_title );
+					$pdbk = $title->getPrefixedDBkey();
+					$linkCache->addGoodLinkObjFromRow( $title, $s );
+					$output->addLink( $title, $s->page_id );
+					# @todo FIXME: Convoluted data flow
+					# The redirect status and length is passed to getLinkColour via the LinkCache
+					# Use formal parameters instead
+					$colours[$pdbk] = Linker::getLinkColour( $title, $threshold );
+					//add id to the extension todolist
+					$linkcolour_ids[$s->page_id] = $pdbk;
+				}
+				unset( $res );
 			}
-			unset( $res );
+			if ( count( $linkcolour_ids ) ) {
+				//pass an array of page_ids to an extension
+				wfRunHooks( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
+			}
+			wfProfileOut( __METHOD__ . '-check' );
 		}
-		if ( count($linkcolour_ids) ) {
-			//pass an array of page_ids to an extension
-			wfRunHooks( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
-		}
-		wfProfileOut( __METHOD__.'-check' );
 
 		# Do a second query for different language variants of links and categories
-		if($wgContLang->hasVariants()) {
+		if ( $wgContLang->hasVariants() ) {
 			$this->doVariants( $colours );
 		}
 
 		# Construct search and replace arrays
-		wfProfileIn( __METHOD__.'-construct' );
+		wfProfileIn( __METHOD__ . '-construct' );
 		$replacePairs = array();
 		foreach ( $this->internals as $ns => $entries ) {
 			foreach ( $entries as $index => $entry ) {
@@ -377,6 +379,10 @@ class LinkHolderArray {
 				$key = "$ns:$index";
 				$searchkey = "<!--LINK $key-->";
 				$displayText = $entry['text'];
+				if ( isset( $entry['selflink'] ) ) {
+					$replacePairs[$searchkey] = Linker::makeSelfLinkObj( $title, $displayText, $query );
+					continue;
+				}
 				if ( $displayText === '' ) {
 					$displayText = null;
 				}
@@ -399,16 +405,17 @@ class LinkHolderArray {
 			}
 		}
 		$replacer = new HashtableReplacer( $replacePairs, 1 );
-		wfProfileOut( __METHOD__.'-construct' );
+		wfProfileOut( __METHOD__ . '-construct' );
 
 		# Do the thing
-		wfProfileIn( __METHOD__.'-replace' );
+		wfProfileIn( __METHOD__ . '-replace' );
 		$text = preg_replace_callback(
 			'/(<!--LINK .*?-->)/',
 			$replacer->cb(),
-			$text);
+			$text
+		);
 
-		wfProfileOut( __METHOD__.'-replace' );
+		wfProfileOut( __METHOD__ . '-replace' );
 		wfProfileOut( __METHOD__ );
 	}
 
@@ -424,7 +431,7 @@ class LinkHolderArray {
 		# Make interwiki link HTML
 		$output = $this->parent->getOutput();
 		$replacePairs = array();
-		foreach( $this->interwikis as $key => $link ) {
+		foreach ( $this->interwikis as $key => $link ) {
 			$replacePairs[$key] = Linker::link( $link['title'], $link['text'] );
 			$output->addInterwikiLink( $link['title'] );
 		}
@@ -454,20 +461,17 @@ class LinkHolderArray {
 		// single string to all variants. This would improve parser's performance
 		// significantly.
 		foreach ( $this->internals as $ns => $entries ) {
+			if ( $ns == NS_SPECIAL ) {
+				continue;
+			}
 			foreach ( $entries as $index => $entry ) {
 				$pdbk = $entry['pdbk'];
 				// we only deal with new links (in its first query)
 				if ( !isset( $colours[$pdbk] ) || $colours[$pdbk] === 'new' ) {
-					$title = $entry['title'];
-					$titleText = $title->getText();
-					$titlesAttrs[] = array(
-						'ns' => $ns,
-						'key' => "$ns:$index",
-						'titleText' => $titleText,
-					);
+					$titlesAttrs[] = array( $index, $entry['title'] );
 					// separate titles with \0 because it would never appears
 					// in a valid title
-					$titlesToBeConverted .= $titleText . "\0";
+					$titlesToBeConverted .= $entry['title']->getText() . "\0";
 				}
 			}
 		}
@@ -478,39 +482,58 @@ class LinkHolderArray {
 		foreach ( $titlesAllVariants as &$titlesVariant ) {
 			$titlesVariant = explode( "\0", $titlesVariant );
 		}
-		$l = count( $titlesAttrs );
+
 		// Then add variants of links to link batch
-		for ( $i = 0; $i < $l; $i ++ ) {
+		$parentTitle = $this->parent->getTitle();
+		foreach ( $titlesAttrs as $i => $attrs ) {
+			list( $index, $title ) = $attrs;
+			$ns = $title->getNamespace();
+			$text = $title->getText();
+
 			foreach ( $allVariantsName as $variantName ) {
 				$textVariant = $titlesAllVariants[$variantName][$i];
-				if ( $textVariant != $titlesAttrs[$i]['titleText'] ) {
-					$variantTitle = Title::makeTitle( $titlesAttrs[$i]['ns'], $textVariant );
-					if( is_null( $variantTitle ) ) {
-						continue;
-					}
-					$linkBatch->addObj( $variantTitle );
-					$variantMap[$variantTitle->getPrefixedDBkey()][] = $titlesAttrs[$i]['key'];
+				if ( $textVariant === $text ) {
+					continue;
 				}
+
+				$variantTitle = Title::makeTitle( $ns, $textVariant );
+				if ( is_null( $variantTitle ) ) {
+					continue;
+				}
+
+				// Self-link checking for mixed/different variant titles. At this point, we
+				// already know the exact title does not exist, so the link cannot be to a
+				// variant of the current title that exists as a separate page.
+				if ( $variantTitle->equals( $parentTitle ) && $title->getFragment() === '' ) {
+					$this->internals[$ns][$index]['selflink'] = true;
+					continue 2;
+				}
+
+				$linkBatch->addObj( $variantTitle );
+				$variantMap[$variantTitle->getPrefixedDBkey()][] = "$ns:$index";
 			}
 		}
 
 		// process categories, check if a category exists in some variant
 		$categoryMap = array(); // maps $category_variant => $category (dbkeys)
 		$varCategories = array(); // category replacements oldDBkey => newDBkey
-		foreach( $output->getCategoryLinks() as $category ){
+		foreach ( $output->getCategoryLinks() as $category ) {
+			$categoryTitle = Title::makeTitleSafe( NS_CATEGORY, $category );
+			$linkBatch->addObj( $categoryTitle );
 			$variants = $wgContLang->autoConvertToAllVariants( $category );
-			foreach($variants as $variant){
-				if($variant != $category){
-					$variantTitle = Title::newFromDBkey( Title::makeName(NS_CATEGORY,$variant) );
-					if(is_null($variantTitle)) continue;
+			foreach ( $variants as $variant ) {
+				if ( $variant !== $category ) {
+					$variantTitle = Title::makeTitleSafe( NS_CATEGORY, $variant );
+					if ( is_null( $variantTitle ) ) {
+						continue;
+					}
 					$linkBatch->addObj( $variantTitle );
-					$categoryMap[$variant] = $category;
+					$categoryMap[$variant] = array( $category, $categoryTitle );
 				}
 			}
 		}
 
-
-		if(!$linkBatch->isEmpty()){
+		if ( !$linkBatch->isEmpty() ) {
 			// construct query
 			$dbr = wfGetDB( DB_SLAVE );
 			$varRes = $dbr->select( 'page',
@@ -529,14 +552,14 @@ class LinkHolderArray {
 				$vardbk = $variantTitle->getDBkey();
 
 				$holderKeys = array();
-				if( isset( $variantMap[$varPdbk] ) ) {
+				if ( isset( $variantMap[$varPdbk] ) ) {
 					$holderKeys = $variantMap[$varPdbk];
 					$linkCache->addGoodLinkObjFromRow( $variantTitle, $s );
 					$output->addLink( $variantTitle, $s->page_id );
 				}
 
 				// loop over link holders
-				foreach( $holderKeys as $key ) {
+				foreach ( $holderKeys as $key ) {
 					list( $ns, $index ) = explode( ':', $key, 2 );
 					$entry =& $this->internals[$ns][$index];
 					$pdbk = $entry['pdbk'];
@@ -556,25 +579,28 @@ class LinkHolderArray {
 				}
 
 				// check if the object is a variant of a category
-				if(isset($categoryMap[$vardbk])){
-					$oldkey = $categoryMap[$vardbk];
-					if($oldkey != $vardbk)
-						$varCategories[$oldkey]=$vardbk;
+				if ( isset( $categoryMap[$vardbk] ) ) {
+					list( $oldkey, $oldtitle ) = $categoryMap[$vardbk];
+					if ( !isset( $varCategories[$oldkey] ) && !$oldtitle->exists() ) {
+						$varCategories[$oldkey] = $vardbk;
+					}
 				}
 			}
 			wfRunHooks( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
 
 			// rebuild the categories in original order (if there are replacements)
-			if(count($varCategories)>0){
+			if ( count( $varCategories ) > 0 ) {
 				$newCats = array();
 				$originalCats = $output->getCategories();
-				foreach($originalCats as $cat => $sortkey){
+				foreach ( $originalCats as $cat => $sortkey ) {
 					// make the replacement
-					if( array_key_exists($cat,$varCategories) )
+					if ( array_key_exists( $cat, $varCategories ) ) {
 						$newCats[$varCategories[$cat]] = $sortkey;
-					else $newCats[$cat] = $sortkey;
+					} else {
+						$newCats[$cat] = $sortkey;
+					}
 				}
-				$output->setCategoryLinks($newCats);
+				$output->setCategoryLinks( $newCats );
 			}
 		}
 	}
@@ -607,14 +633,14 @@ class LinkHolderArray {
 	 */
 	function replaceTextCallback( $matches ) {
 		$type = $matches[1];
-		$key  = $matches[2];
-		if( $type == 'LINK' ) {
+		$key = $matches[2];
+		if ( $type == 'LINK' ) {
 			list( $ns, $index ) = explode( ':', $key, 2 );
-			if( isset( $this->internals[$ns][$index]['text'] ) ) {
+			if ( isset( $this->internals[$ns][$index]['text'] ) ) {
 				return $this->internals[$ns][$index]['text'];
 			}
-		} elseif( $type == 'IWLINK' ) {
-			if( isset( $this->interwikis[$key]['text'] ) ) {
+		} elseif ( $type == 'IWLINK' ) {
+			if ( isset( $this->interwikis[$key]['text'] ) ) {
 				return $this->interwikis[$key]['text'];
 			}
 		}

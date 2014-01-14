@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Andrijko Z.
  * @author Erdemaslancan
  * @author Ohpuu
  * @author Warbola
@@ -136,7 +137,7 @@ $messages = array(
 'jumptonavigation' => 'navigīerimiz kast',
 'jumptosearch' => 'Vȯtšõgid',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Iļ {{SITENAME}}',
 'aboutpage' => 'Project:Tītõl tieutõkst',
 'copyright' => 'Amā tekstõ um kȭlbatõmist litsents #$1 pierrõ',
@@ -146,7 +147,6 @@ $messages = array(
 'disclaimers' => 'Kūondõkst',
 'disclaimerpage' => 'Project:Kūondõkst',
 'edithelp' => 'Redigīerimiz opātõks',
-'edithelppage' => 'Help:Redigīerimiz_opātõks',
 'helppage' => 'Help:Sižāli',
 'mainpage' => 'Eḑḑilēḑ',
 'mainpage-description' => 'Eḑḑilēḑ',
@@ -372,6 +372,9 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 
 'grouppage-sysop' => '{{ns:project}}:Administrātord',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Kȭlbatijizt lūomiz log',
+
 # User rights log
 'rightslog' => 'Kȭlbatijiz õigõmt log',
 
@@ -412,7 +415,6 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 'recentchangeslinked' => 'Sidtõd mõitõkst',
 'recentchangeslinked-toolbox' => 'Sidtõd mõitõkst',
 'recentchangeslinked-title' => '"$1" sidtõd mõitõkst',
-'recentchangeslinked-noresult' => 'Andtõd āigal äb ūo sidtõd lēḑis mõitõkši tīedõd.',
 'recentchangeslinked-summary' => "Täs um lugdõd andtõd līedstõ sidtõd (agā andtõd kategōrij) lēḑis tīedõd perrizt mõitõkst. Sin [[Special:Watchlist|iļ-vaņtlimiz.nimkēra]] lēḑõd ātõ  ' ' ' razzistiz ' ' ' jeddõ tūodõd.",
 'recentchangeslinked-page' => 'Līed nim:',
 'recentchangeslinked-to' => 'Nägţ sīe azmõl mõitõkši lēḑis, mis sīen līed pǟlõ sidābõd',
@@ -451,8 +453,6 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 # Statistics
 'statistics' => 'Lug tīetõkst',
 
-'disambiguationspage' => 'Template:Jarā-seļţimiz-lēḑ',
-
 # Miscellaneous special pages
 'nbytes' => '$1 {{PLURAL:$1|bait|baitõ}}',
 'nmembers' => '$1 {{PLURAL:$1|nõtkõm| nõtkõmḑi}}',
@@ -488,13 +488,10 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 'linksearch' => 'Uļļizt siḑīmõd',
 'linksearch-line' => '$1 um sidtõd līedst $2',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Kȭlbatijizt lūomiz log',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(nõtkõmd nimkēra)',
 
-# E-mail user
+# Email user
 'emailuser' => 'Sōtõgid sīen kȭlbatijizõn e-kēra',
 
 # Watchlist
@@ -560,7 +557,7 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 'blanknamespace' => '(Kēratõkst)',
 
 # Contributions
-'contributions' => 'Kȭlbatijiz kubsõtīe',
+'contributions' => '{{GENDER:$1|Kȭlbatijiz}} kubsõtīe',
 'contributions-title' => 'Kȭlbatijiz $1 kubsõtīe',
 'mycontris' => 'Min kubsõtīed',
 'contribsub2' => 'Kȭlbatiji $1 ($2) pierāst',

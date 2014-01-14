@@ -78,7 +78,8 @@
 		// Chop off characters from the end of the "inserted content" string
 		// until the limit is statisfied.
 		if ( fn ) {
-			while ( $.byteLength( fn( inpParts.join( '' ) ) ) > byteLimit ) {
+			// stop, when there is nothing to slice - bug 41450
+			while ( $.byteLength( fn( inpParts.join( '' ) ) ) > byteLimit && inpParts[1].length > 0 ) {
 				inpParts[1] = inpParts[1].slice( 0, -1 );
 			}
 		} else {
@@ -221,8 +222,11 @@
 				// This is a side-effect of limiting after the fact.
 				if ( res.trimmed === true ) {
 					this.value = res.newVal;
-					prevSafeVal = res.newVal;
 				}
+				// Always adjust prevSafeVal to reflect the input value. Not doing this could cause
+				// trimValForByteLength to compare the new value to an empty string instead of the
+				// old value, resulting in trimming always from the end (bug 40850).
+				prevSafeVal = res.newVal;
 			} );
 		} );
 	};

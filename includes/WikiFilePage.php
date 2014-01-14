@@ -41,7 +41,9 @@ class WikiFilePage extends WikiPage {
 	}
 
 	public function getActionOverrides() {
-		return array( 'revert' => 'RevertFileAction' );
+		$overrides = parent::getActionOverrides();
+		$overrides['revert'] = 'RevertFileAction';
+		return $overrides;
 	}
 
 	/**
@@ -103,13 +105,12 @@ class WikiFilePage extends WikiPage {
 	}
 
 	/**
-	 * @param bool $text
 	 * @return bool
 	 */
-	public function isRedirect( $text = false ) {
+	public function isRedirect() {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
-			return parent::isRedirect( $text );
+			return parent::isRedirect();
 		}
 
 		return (bool)$this->mFile->getRedirected();
@@ -181,6 +182,10 @@ class WikiFilePage extends WikiPage {
 			// even if the file supposedly doesn't exist, force any cached information
 			// to be updated (in case the cached information is wrong)
 			$this->mFile->purgeCache( array( 'forThumbRefresh' => true ) );
+		}
+		if ( $this->mRepo ) {
+			// Purge redirect cache
+			$this->mRepo->invalidateImageRedirect( $this->mTitle );
 		}
 		return parent::doPurge();
 	}

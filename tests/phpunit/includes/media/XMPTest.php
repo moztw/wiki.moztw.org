@@ -1,8 +1,13 @@
 <?php
+
+/**
+ * @todo covers tags
+ */
 class XMPTest extends MediaWikiTestCase {
 
-	function setUp() {
-		if ( !wfDl( 'xml' ) ) {
+	protected function setUp() {
+		parent::setUp();
+		if ( !extension_loaded( 'xml' ) ) {
 			$this->markTestSkipped( 'Requires libxml to do XMP parsing' );
 		}
 	}
@@ -14,7 +19,8 @@ class XMPTest extends MediaWikiTestCase {
 	 * @param $expected Array expected result of parsing the xmp.
 	 * @param $info String Short sentence on what's being tested.
 	 *
-	 * @dataProvider dataXMPParse
+	 * @throws Exception
+	 * @dataProvider provideXMPParse
 	 */
 	public function testXMPParse( $xmp, $expected, $info ) {
 		if ( !is_string( $xmp ) || !is_array( $expected ) ) {
@@ -25,8 +31,8 @@ class XMPTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $reader->getResults(), $info, 0.0000000001 );
 	}
 
-	public function dataXMPParse() {
-		$xmpPath = __DIR__ . '/../../data/xmp/' ;
+	public static function provideXMPParse() {
+		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$data = array();
 
 		// $xmpFiles format: array of arrays with first arg file base name,
@@ -53,16 +59,18 @@ class XMPTest extends MediaWikiTestCase {
 			array( 'utf32LE', 'UTF-32LE encoding' ),
 			array( 'xmpExt', 'Extended XMP missing second part' ),
 			array( 'gps', 'Handling of exif GPS parameters in XMP' ),
-		 );
-		foreach( $xmpFiles as $file ) {
+		);
+
+		foreach ( $xmpFiles as $file ) {
 			$xmp = file_get_contents( $xmpPath . $file[0] . '.xmp' );
 			// I'm not sure if this is the best way to handle getting the
 			// result array, but it seems kind of big to put directly in the test
 			// file.
 			$result = null;
-			include( $xmpPath . $file[0] . '.result.php' );
+			include $xmpPath . $file[0] . '.result.php';
 			$data[] = array( $xmp, $result, '[' . $file[0] . '.xmp] ' . $file[1] );
 		}
+
 		return $data;
 	}
 
@@ -72,7 +80,7 @@ class XMPTest extends MediaWikiTestCase {
 	 * @todo This is based on what the standard says. Need to find a real
 	 * world example file to double check the support for this is right.
 	 */
-	function testExtendedXMP() {
+	public function testExtendedXMP() {
 		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$standardXMP = file_get_contents( $xmpPath . 'xmpExt.xmp' );
 		$extendedXMP = file_get_contents( $xmpPath . 'xmpExt2.xmp' );
@@ -87,8 +95,8 @@ class XMPTest extends MediaWikiTestCase {
 		$reader->parseExtended( $extendedPacket );
 		$actual = $reader->getResults();
 
-		$expected = array( 'xmp-exif' =>
-			array(
+		$expected = array(
+			'xmp-exif' => array(
 				'DigitalZoomRatio' => '0/10',
 				'Flash' => 9,
 				'FNumber' => '2/10',
@@ -102,7 +110,7 @@ class XMPTest extends MediaWikiTestCase {
 	 * This test has an extended XMP block with a wrong guid (md5sum)
 	 * and thus should only return the StandardXMP, not the ExtendedXMP.
 	 */
-	function testExtendedXMPWithWrongGUID() {
+	public function testExtendedXMPWithWrongGUID() {
 		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$standardXMP = file_get_contents( $xmpPath . 'xmpExt.xmp' );
 		$extendedXMP = file_get_contents( $xmpPath . 'xmpExt2.xmp' );
@@ -117,8 +125,8 @@ class XMPTest extends MediaWikiTestCase {
 		$reader->parseExtended( $extendedPacket );
 		$actual = $reader->getResults();
 
-		$expected = array( 'xmp-exif' =>
-			array(
+		$expected = array(
+			'xmp-exif' => array(
 				'DigitalZoomRatio' => '0/10',
 				'Flash' => 9,
 			)
@@ -126,11 +134,12 @@ class XMPTest extends MediaWikiTestCase {
 
 		$this->assertEquals( $expected, $actual );
 	}
+
 	/**
 	 * Have a high offset to simulate a missing packet,
 	 * which should cause it to ignore the ExtendedXMP packet.
 	 */
-	function testExtendedXMPMissingPacket() {
+	public function testExtendedXMPMissingPacket() {
 		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$standardXMP = file_get_contents( $xmpPath . 'xmpExt.xmp' );
 		$extendedXMP = file_get_contents( $xmpPath . 'xmpExt2.xmp' );
@@ -145,8 +154,8 @@ class XMPTest extends MediaWikiTestCase {
 		$reader->parseExtended( $extendedPacket );
 		$actual = $reader->getResults();
 
-		$expected = array( 'xmp-exif' =>
-			array(
+		$expected = array(
+			'xmp-exif' => array(
 				'DigitalZoomRatio' => '0/10',
 				'Flash' => 9,
 			)
@@ -154,5 +163,4 @@ class XMPTest extends MediaWikiTestCase {
 
 		$this->assertEquals( $expected, $actual );
 	}
-
 }

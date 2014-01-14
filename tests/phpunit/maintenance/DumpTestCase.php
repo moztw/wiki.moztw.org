@@ -35,7 +35,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 * @throws MWExcepion
 	 */
 	protected function addRevision( Page $page, $text, $summary ) {
-		$status = $page->doEdit( $text, $summary );
+		$status = $page->doEditContent( ContentHandler::makeContent( $text, $page->getTitle() ), $summary );
 		if ( $status->isGood() ) {
 			$value = $status->getValue();
 			$revision = $value['revision'];
@@ -57,14 +57,17 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 */
 	protected function gunzip( $fname ) {
 		$gzipped_contents = file_get_contents( $fname );
-		if ( $gzipped_contents === FALSE ) {
+		if ( $gzipped_contents === false ) {
 			$this->fail( "Could not get contents of $fname" );
 		}
-		// We resort to use gzinflate instead of gzdecode, as gzdecode
-		// need not be available
-		$contents = gzinflate( substr( $gzipped_contents, 10, -8 ) );
-		$this->assertEquals( strlen( $contents ),
-			file_put_contents( $fname, $contents ), "# bytes written" );
+
+		$contents = gzdecode( $gzipped_contents );
+
+		$this->assertEquals(
+			strlen( $contents ),
+			file_put_contents( $fname, $contents ),
+			'# bytes written'
+		);
 	}
 
 	/**
@@ -72,9 +75,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 *
 	 * Clears $wgUser, and reports errors from addDBData to PHPUnit
 	 */
-	public function setUp() {
-		global $wgUser;
-
+	protected function setUp() {
 		parent::setUp();
 
 		// Check if any Exception is stored for rethrowing from addDBData
@@ -83,7 +84,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 			throw $this->exceptionFromAddDBData;
 		}
 
-		$wgUser = new User();
+		$this->setMwGlobals( 'wgUser', new User() );
 	}
 
 	/**
@@ -116,15 +117,17 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 * @param $name string: name of the closing element to look for
 	 *           (e.g.: "mediawiki" when looking for </mediawiki>)
 	 *
-	 * @return bool: true iff the end node could be found. false otherwise.
+	 * @return bool: true if the end node could be found. false otherwise.
 	 */
 	protected function skipToNodeEnd( $name ) {
 		while ( $this->xml->read() ) {
 			if ( $this->xml->nodeType == XMLReader::END_ELEMENT &&
-				$this->xml->name == $name ) {
+				$this->xml->name == $name
+			) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -146,6 +149,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -189,7 +193,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	protected function skipWhitespace() {
 		$cont = true;
 		while ( $cont && ( ( $this->xml->nodeType == XMLReader::WHITESPACE )
-				|| ( $this->xml->nodeType == XMLReader::SIGNIFICANT_WHITESPACE ) ) ) {
+			|| ( $this->xml->nodeType == XMLReader::SIGNIFICANT_WHITESPACE ) ) ) {
 			$cont = $this->xml->read();
 		}
 	}
@@ -272,7 +276,6 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 		$this->assertTextNode( "title", $name );
 		$this->assertTextNode( "ns", $ns );
 		$this->assertTextNode( "id", $id );
-
 	}
 
 	/**
@@ -295,10 +298,13 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 * @param $text_sha1 string: the base36 SHA-1 of the revision's text
 	 * @param $text string|false: (optional) The revision's string, or false to check for a
 	 *            revision stub
+	 * @param $model String: the expected content model id (default: CONTENT_MODEL_WIKITEXT)
+	 * @param $format String: the expected format model id (default: CONTENT_FORMAT_WIKITEXT)
 	 * @param $parentid int|false: (optional) id of the parent revision
 	 */
-	protected function assertRevision( $id, $summary, $text_id, $text_bytes, $text_sha1, $text = false, $parentid = false ) {
-
+	protected function assertRevision( $id, $summary, $text_id, $text_bytes, $text_sha1, $text = false, $parentid = false,
+		$model = CONTENT_MODEL_WIKITEXT, $format = CONTENT_FORMAT_WIKITEXT
+	) {
 		$this->assertNodeStart( "revision" );
 		$this->skipWhitespace();
 
@@ -315,9 +321,33 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 		$this->skipWhitespace();
 
 		$this->assertTextNode( "comment", $summary );
+		$this->skipWhitespace();
+
+		if ( $this->xml->name == "text" ) {
+			// note: <text> tag may occur here or at the very end.
+			$text_found = true;
+			$this->assertText( $id, $text_id, $text_bytes, $text );
+		} else {
+			$text_found = false;
+		}
 
 		$this->assertTextNode( "sha1", $text_sha1 );
 
+		$this->assertTextNode( "model", $model );
+		$this->skipWhitespace();
+
+		$this->assertTextNode( "format", $format );
+		$this->skipWhitespace();
+
+		if ( !$text_found ) {
+			$this->assertText( $id, $text_id, $text_bytes, $text );
+		}
+
+		$this->assertNodeEnd( "revision" );
+		$this->skipWhitespace();
+	}
+
+	protected function assertText( $id, $text_id, $text_bytes, $text ) {
 		$this->assertNodeStart( "text", false );
 		if ( $text_bytes !== false ) {
 			$this->assertEquals( $this->xml->getAttribute( "bytes" ), $text_bytes,
@@ -331,7 +361,8 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 			$this->assertFalse( $this->xml->hasValue, "Revision has text" );
 			$this->assertTrue( $this->xml->read(), "Skipping text start tag" );
 			if ( ( $this->xml->nodeType == XMLReader::END_ELEMENT )
-				&& ( $this->xml->name == "text" ) ) {
+				&& ( $this->xml->name == "text" )
+			) {
 
 				$this->xml->read();
 			}
@@ -344,9 +375,5 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 			$this->assertNodeEnd( "text" );
 			$this->skipWhitespace();
 		}
-
-		$this->assertNodeEnd( "revision" );
-		$this->skipWhitespace();
 	}
-
 }

@@ -51,10 +51,6 @@ $messages = array(
 'tog-shownumberswatching' => 'ویکھن آلے لوکاں دی گنتی وکھاؤ۔',
 'tog-oldsig' => 'ہن والے دسخط:',
 'tog-fancysig' => 'دستخط نوں وکی ٹیکسڈ ونگوں؎ ورتو(without an automatic link)',
-'tog-externaleditor' => 'ہمیشہ بارلا لکھن والا ورتو (ماہر لوکاں واسطے، اس واسطے تواڑے کمپیوٹر تے خاص تبدیلیاں چائیدیاں نیں۔ [//www.mediawiki.org/wiki/Manual:External_editors مزید معلومات.])',
-'tog-externaldiff' => '
-ہمیشہ بارلا تبدیلی کرن والا ورتو (ماہر لوکاں واسطے، اس واسطے تواڑے کمپیوٹر تے خاص تبدیلیاں چائیدیاں نیں۔ [//www.mediawiki.org/wiki/Manual:External_editors مزید معلومات۔])',
-'tog-showjumplinks' => '"ایدر چلو" نوں رلن والے جوڑان نال جوڑو',
 'tog-uselivepreview' => 'لائیو پریویو ورتو',
 'tog-forceeditsummary' => 'مینون اوسے ویلے دسو جدوں خالی سمری تے آؤ۔',
 'tog-watchlisthideown' => 'میری اپنی لکھائی نوں اکھ تھلیوں لکاؤ',
@@ -67,6 +63,7 @@ $messages = array(
 'tog-diffonly' => 'تبدیلی توں علاوہ صفحہ نا وکھاؤ',
 'tog-showhiddencats' => 'لکیاں کیٹاگریاں وکھاؤ',
 'tog-norollbackdiff' => 'صفحے دی واپسی تے تبدیلی کڈ دو',
+'tog-useeditwarning' => 'جدوں میں کوئی صفحہ تبدیلی کر کے بچاۓ بغیر چھڈن لگاں تے منوں دس دیو',
 
 'underline-always' => 'ہمیشہ',
 'underline-never' => 'کدی وی نئیں',
@@ -166,7 +163,6 @@ $messages = array(
 'qbbrowse' => 'لبو',
 'qbedit' => 'لکھو',
 'qbpageoptions' => 'اے صفہ',
-'qbpageinfo' => 'محول',
 'qbmyoptions' => 'میرے صفے',
 'qbspecialpages' => 'خاص صفے',
 'faq' => 'FAQ',
@@ -250,7 +246,7 @@ $messages = array(
 'pool-queuefull' => 'چنوتی کرن ل‏ئی بندے پورے نیں۔',
 'pool-errorunknown' => 'انجان غلطی',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'بارے چ {{SITENAME}}',
 'aboutpage' => 'Project:بارے وچ',
 'copyright' => 'مال $1 دے تھلے ہے گا اے۔',
@@ -260,7 +256,6 @@ $messages = array(
 'disclaimers' => 'منکرنا',
 'disclaimerpage' => 'Project:عام منکرنا',
 'edithelp' => 'لکھن وچ مدد',
-'edithelppage' => 'Help:لکھنا',
 'helppage' => 'Help:لسٹ',
 'mainpage' => 'پہلا صفہ',
 'mainpage-description' => 'پہلا صفہ',
@@ -334,17 +329,6 @@ $messages = array(
 # General errors
 'error' => 'غلطی',
 'databaseerror' => 'ڈیٹابیس دی غلطی',
-'dberrortext' => 'اک ڈیٹابیس کویری سنٹیکس غلطی ہوگئی اے۔
-اے سوفٹویر چ اک بگ وی ہوسکدا اے۔
-آخری کوشش کیتی ڈیٹابیس کھوج:
-<blockquote><tt>$1</tt></blockquote>
-فنکشن چوں "<tt>$2</tt>".
-ڈیٹا بیس ریٹرنڈ غلطی "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'اکڈیٹابیس کویری سنٹیکس غلطی ہوگئی اے
-آخری ڈیٹابیس کویری سی:
-"$1"
-فنکش دے اندروں "$2"
-ڈیٹابیس ریٹرنڈ غلطی "$3: $4"',
 'laggedslavemode' => "'''خبردار:''' صفے تے نیڑےتریڈے ہون والیاں تبدیلیاں کوئی نیں۔",
 'readonly' => 'ڈیٹابیس تے تالا',
 'enterlockreason' => 'تالا لان دی وجہ دسو تے اہ وی دسو جے کدوں تالا کھلے گا',
@@ -393,7 +377,6 @@ $messages = array(
 'viewyourtext' => 'تسیں آپنی تبدیلیاں دا ذریعہ ایس صفے تے ویکھ تے کاپی کرسکدے او۔',
 'protectedinterface' => 'اے صفحے سافٹویئر نوں ورتن دی تھاں دیندا اے تے ایدے غلط ورتن نوں روکن واسطے اینوں بچایا ہویا اے۔',
 'editinginterface' => "'''خبردار:''' تسیں اک ایسا صفہ بدل رۓ او جیہڑا مکھی صفے دے سوفٹویر نوں لکھت دیندا اے۔ ایس صفے ج تبدیلی ورتنن والیاں دے مکھی صفے دے وکھالے نوں بدل دے گی۔ بولی وٹاندرے لئی، مہربانی کرکے میڈیاوکی بولی ویونت [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net] ول ویکھو۔",
-'sqlhidden' => '(SQL کھوج چھپائی ہوئي اے)',
 'cascadeprotected' => "ایس صفے نوں تبدیلی توں بچایا گیا اے، کیوں جے ایہ تھلے دتے گۓ {{PLURAL:$1|صفہ|صفے}} چ ہیگا اے تے اینوں ''کیسکیڈنگ'' چنوتی نال بچایا گیا اے:
 
  $2",
@@ -411,17 +394,13 @@ $messages = array(
 
 # Login and logout pages
 'logouttext' => "'''تسی لاگ آؤٹ ہوگۓ او.'''
-تسی   {{SITENAME}} نوں گمنامی چ ورت سکدے او یا تسی [[Special:UserLogin|لاگ ان دوبارہ]] ہوجاؤ اوسے ناں توں یا وکھرے ورتن والے توں۔ اے گل چیتے رکھنا جے کج صفیاں تے تسی لاگ ان دسے جاؤگے جدوں تک تسی اپنے براؤزر دے کاشے نوں صاف ناں کرلو۔
-You can continue to use {{SITENAME}} anonymously, or you can [[Special:UserLogin|log in again]] as the same or as a different user.
+تسی   {{SITENAME}} نوں گمنامی چ ورت سکدے او یا تسی <span class='plainlinks'>[$1 لاگ ان دوبارہ]</span> ہوجاؤ اوسے ناں توں یا وکھرے ورتن والے توں۔ اے گل چیتے رکھنا جے کج صفیاں تے تسی لاگ ان دسے جاؤگے جدوں تک تسی اپنے براؤزر دے کاشے نوں صاف ناں کرلو۔
+You can continue to use {{SITENAME}} anonymously, or you can <span class='plainlinks'>[$1 log in again]</span> as the same or as a different user.
 Note that some pages may continue to be displayed as if you were still logged in, until you clear your browser cache.",
-'welcomecreation' => '== جی آیاں نوں, $1! ==
-تواڈا کھاتا بن گیا اے۔
-اپنیاں [[Special:Preferences|{{SITENAME}} تانگاں]] بدلنا نا پلنا۔',
 'yourname' => 'ورتن والہ:',
 'yourpassword' => 'کنجی:',
 'yourpasswordagain' => 'کنجی دوبارہ لکھو:',
 'remembermypassword' => 'اس براؤزر تے میرا ورتن ناں یاد رکھو ($1 {{PLURAL:$1|دن|دناں}} واسطے)',
-'securelogin-stick-https' => 'لاک ان ہون دے مگروں HTTPS  نال جڑے روو۔',
 'yourdomainname' => 'تواڈا علاقہ:',
 'externaldberror' => 'ڈیٹابیس چ توانوں پہچاننے چ کوئی مسئلہ ہویا اے یا فیر تسی اپنا بارلا کھاتا نئیں بدل سکدے۔',
 'login' => 'اندر آؤ جی',
@@ -507,7 +486,7 @@ Note that some pages may continue to be displayed as if you were still logged in
 'loginlanguagelabel' => 'بولی: $1',
 'suspicious-userlogout' => 'تھواڈی لاگ آؤٹ ہوں دی کوشش رک گئی اینج لگدا اے  جیویں اے ٹٹے براؤزر یا کیشنگ پراکسی توں پیجیا گیا سی۔',
 
-# E-mail sending
+# Email sending
 'php-mail-error-unknown' => 'PHP میل دے کم چ کوئی انجانی غلطی۔',
 'user-mail-no-addy' => 'ای-میل پتے بنا ای-میل کلن دی کوشش۔',
 
@@ -520,7 +499,7 @@ Note that some pages may continue to be displayed as if you were still logged in
 'newpassword' => 'نوی کنجی:',
 'retypenew' => 'نئی کنجی دوبارہ لکھو:',
 'resetpass_submit' => 'کنجی رکھو تے لاگ ان ہو جاو',
-'resetpass_success' => 'تھواڈی کنجی بدلی جاچکی اے!
+'changepassword-success' => 'تھواڈی کنجی بدلی جاچکی اے!
 تسی لاگ ان ہورۓ او۔۔۔۔۔۔',
 'resetpass_forbidden' => 'کنجی بدلی نئیں جاسکدی',
 'resetpass-no-info' => 'تسی لاگ ان ہوکے ای اس صفحے نوں ویکھ سکدے او۔',
@@ -532,10 +511,8 @@ Note that some pages may continue to be displayed as if you were still logged in
 
 # Special:PasswordReset
 'passwordreset' => 'کنجی واپس لیاؤ',
-'passwordreset-text' => 'اے فارم مکمل کرکے اپنے کھاتے دی معلومات اپنے ای-میل تے منگوالو۔',
 'passwordreset-legend' => 'کنجی واپس لیاؤ',
 'passwordreset-disabled' => 'اس وکی تے کنجی واپس نئیں لیائی جاسکدی۔',
-'passwordreset-pretext' => '{{PLURAL:$1||تھلے دتے ہوۓ ڈیٹا چوں اک ایتھے دیو}}',
 'passwordreset-username' => 'ورتن ناں:',
 'passwordreset-domain' => 'ڈومین',
 'passwordreset-capture' => 'آن والی ای-میل ویکھو؟',
@@ -739,7 +716,6 @@ Custom .css تے .js pages use a lowercase title, e.g. {{ns:user}}:Foo/vector.cs
 'template-protected' => '(بچایا گیا)',
 'template-semiprotected' => '(کج بچایا ہویا)',
 'hiddencategories' => 'اے صفہ {{PLURAL:$1|1 چھپی گٹھ|$1 چپھی گٹھیاں}} دا رکن اے:',
-'nocreatetitle' => 'صفحہ بنانے دی حد اے',
 'nocreatetext' => '{{SITENAME}} نے نۓ صفحے بنانے تے پابندی لائی اے۔<br />
 تسی واپس جا کے پہلاں توں موجود صفحیاں تے لکھ سکدے او یا فیر [[Special:UserLogin|اندر آؤ یا نواں کھاتہ کھولو۔]]',
 'nocreate-loggedin' => 'توانوں نواں صفحہ بنانے دی اجازت نئیں۔',
@@ -762,6 +738,8 @@ Custom .css تے .js pages use a lowercase title, e.g. {{ns:user}}:Foo/vector.cs
 'edit-no-change' => 'تواڈی تبدیلی ول کوئی توجہ نئیں، کیوں جے لکھت چ کوئی تبدیلی نئیں۔',
 'edit-already-exists' => 'نواں صفہ نئیں بن سکدا۔
 ایہ پہلے ای ہیگا اے۔',
+'editwarning-warning' => 'اے صفے توں جان تے ہو سکدا اوہ ساریاں تبدیلیاں مک جان جیہڑیاں تساں بناياں نیں۔
+اگر تسیں لاکان او، تسیں ایڈیٹنگ سیکشن چ  اپنی پسنداں چ ایس خبرداری نوں پعلے ناں۔',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''خبردار:''' ایس صفے تے چوکھیاں ساریاں پارسر کلز نیں۔
@@ -981,7 +959,6 @@ $1",
 'searchmenu-legend' => 'چنوتیاں کھوجو',
 'searchmenu-exists' => "'''ایس وکی تے \"[[:\$1]]\" ناں دا صفہ ہے۔.'''",
 'searchmenu-new' => "'''ایس وکی تے \"[[:\$1]]\" بناؤ'''",
-'searchhelp-url' => 'Help:فہرست',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|ایس پریفکس نال صفے کھوجو]]',
 'searchprofile-articles' => 'لسٹ صفے',
 'searchprofile-project' => 'مدد تے ویونت صفے',
@@ -1026,15 +1003,6 @@ $1",
 تسیں گوگل تے کھوج کرو۔
 اے گل یاد رکھنا جے انڈیکس {{SITENAME}} دے پرانے ہون۔',
 
-# Quickbar
-'qbsettings' => 'کوئکبار',
-'qbsettings-none' => 'کوئی نئیں',
-'qbsettings-fixedleft' => 'فکسڈ کھبے',
-'qbsettings-fixedright' => 'فکسڈ سجے',
-'qbsettings-floatingleft' => 'ہلدا کھبے',
-'qbsettings-floatingright' => 'ہلدا سجے',
-'qbsettings-directionality' => '!!!!فکسڈ، تھاڈی بولی تے لپی نال',
-
 # Preferences page
 'preferences' => 'تانگاں',
 'mypreferences' => 'میریاں تانگاں',
@@ -1066,7 +1034,6 @@ $1",
 'resetprefs' => 'ناں بچائیاں ہویاں تبدیلیاں مکاؤ',
 'restoreprefs' => 'ڈیفالٹ سیٹنگز دوبارہ لیاؤ',
 'prefs-editing' => 'لکھائی',
-'prefs-edit-boxsize' => 'تبدیلی کرن والی ونڈو دا ناپ',
 'rows' => 'قطار:',
 'columns' => 'کالم:',
 'searchresultshead' => 'کھوج',
@@ -1077,8 +1044,6 @@ $1",
 'recentchangesdays-max' => 'میکسیمم $1 {{PLURAL:$1|دن|دن}}',
 'recentchangescount' => 'ڈیفالٹ چ تبدیلیاں دی گنتی:',
 'prefs-help-recentchangescount' => 'ہن دیاں تبدیلیاں صفیاں دے رکارڈ تے لاگاں ہیگیاں نیں۔',
-'prefs-help-watchlist-token' => 'ایس فیلڈ نوں پعرنا اک لکی کنجی نال تواڈی اکھ تھلے رکھی لسٹ لئی اک آر ایس ایس فیڈ بناۓ گا۔ کوئی وی ایس فیلڈ چ جیہڑا کنجی جاندا اے  تواڈی اکھ تھلے رکھی  لسٹ نوں پڑھ لے گا، ایس لئی اک پکا نمبر چنو۔
-ایتھے اک الٹا پلٹا نمبر دتا گیا اے جینوں تسیں ورت سکدے او: $1',
 'savedprefs' => 'تواڈیاں تانگاں بچا لئیاں گئیاں نیں۔',
 'timezonelegend' => 'ویلے دا علاقہ',
 'localtime' => 'مقامی ویلا:',
@@ -1110,7 +1075,6 @@ $1",
 
 اے واپس نئیں ہوسکدا۔',
 'prefs-emailconfirm-label' => 'ای-میل کنفرمیشن:',
-'prefs-textboxsize' => 'تبدیلی کرن والی ونڈو دا ناپ',
 'youremail' => 'ای میل:',
 'username' => 'ورتن آلے دا ناں:',
 'uid' => 'ورتن والے دی آئی ڈی',
@@ -1155,7 +1119,7 @@ $1",
 'prefs-displaywatchlist' => 'چنوتیاں دسو',
 'prefs-diffs' => 'ڈفز',
 
-# User preference: e-mail validation using jQuery
+# User preference: email validation using jQuery
 'email-address-validity-valid' => 'ای_میل پتہ ٹھیک لگدا اے۔',
 'email-address-validity-invalid' => 'چلن والا ای-میل پتہ دسو',
 
@@ -1266,12 +1230,13 @@ $1",
 'right-sendemail' => 'دوجے ورتن والیاں نوں ای-میل کرو',
 'right-passwordreset' => 'کنجی بدلی ای-میلاں نوں وکھاؤ',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ورتاوا بنان آلی لاگ',
+'newuserlogpagetext' => 'اے ورتن والا بنان دی لاگ اے۔',
+
 # User rights log
 'rightslog' => 'ورتن والے دے حقاں دی لاگ',
 'rightslogtext' => 'ورتن حقاں چ تبدیلیاں دی اے لاگ اے۔',
-'rightslogentry' => 'ٹولی ممرشپ $1 لئی $2 توں $3 تک بدلو۔',
-'rightslogentry-autopromote' => '$2 توں اپنے آپ $3 تک ودایا گیا۔',
-'rightsnone' => '(کوئی وی نئیں)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'اس صفحے نوں پڑھو',
@@ -1350,7 +1315,6 @@ $1",
 'recentchangeslinked-feed' => 'ملدیاں جلدیاں تبدیلیاں',
 'recentchangeslinked-toolbox' => 'ملدیاں جلدیاں تبدیلیاں',
 'recentchangeslinked-title' => '"$1" نال تعلق آلیاں تبدیلیاں',
-'recentchangeslinked-noresult' => 'جڑیاں صفحیاں چ دتے ہوۓ ویلے چ کوئی تبدیلیاں نہیں۔',
 'recentchangeslinked-summary' => "اے اوناں تبدیلیاں دی لسٹ اے جیڑیاں تھوڑا چر پہلاں بنائیاں گئیاں اوناں صفحیاں تے جیڑے خاص صفحے تے جڑدے نے یا کسی خاص کیٹاگری دے ممبراں نوں۔<br />
 تواڈی [[Special:Watchlist|اکھ تھلے صفحے]] '''موٹے''' نیں۔",
 'recentchangeslinked-page' => 'صفے دا ناں:',
@@ -1577,7 +1541,6 @@ $1",
 'http-read-error' => 'ایچ ٹی ٹی پی  غلطی پڑھدی اے۔',
 'http-timed-out' => 'ایچ ٹی ٹی پی  دی مانگ ویلیوں بار۔',
 'http-curl-error' => 'ایچ ٹی ٹی پی  : $1 لیان چ غلطی۔',
-'http-host-unreachable' => 'ایچ ٹی ٹی پی  تک ناں پونچ سکیا۔',
 'http-bad-status' => 'ایچ ٹی ٹی پی : $1 $2 دی مانگ ویلے رپھڑ',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1723,12 +1686,6 @@ $1",
 'statistics-users-active' => 'اجکل دے کامے',
 'statistics-users-active-desc' => 'ورتنوالے جناں نیں پچھلے {{PLURAL:$1|دن|$1 دناں}}  چ کم کیتا اے۔',
 'statistics-mostpopular' => 'سب توں بوتے ویکھے گۓ صفے',
-
-'disambiguations' => 'اوہ صفے جیہڑے گنجل کھول صفیاں نال جڑدے نیں۔',
-'disambiguationspage' => 'سانچہ: ڈسایمبگ',
-'disambiguations-text' => "تھلے دتے گۓ صفیاں دا اک '''گنجل کھول''' نال جوڑ اے۔
-ایدے بجاۓ ایدا جوڑ کسے ٹھیک سرناویں نال جوڑو<br />
-اک صفہ گنجل کھول صفے لئی منیا جائیگا  اگر اے اک ٹمپلیٹ ورتدا جیدا جوڑ [[MediaWiki:Disambiguationspage]] نال ہووے۔",
 
 'doubleredirects' => 'دوہری ریڈیرکٹس',
 'doubleredirectstext' => 'ایس صفے تے اوناں صفیاں دی لسٹ اے جیہڑے ریڈائرکٹ کردے نیں دوجے ریڈائرکٹ صفیاں ول۔
@@ -1894,10 +1851,6 @@ $1",
 'activeusers-hidesysops' => 'مکھۓ لکاؤ',
 'activeusers-noresult' => 'کوئی ورتن والا نئیں لبیا۔',
 
-# Special:Log/newusers
-'newuserlogpage' => 'ورتاوا بنان آلی لاگ',
-'newuserlogpagetext' => 'اے ورتن والا بنان دی لاگ اے۔',
-
 # Special:ListGroupRights
 'listgrouprights' => 'ورتن ٹرلی حق',
 'listgrouprights-summary' => 'تھلے اک لسٹ اے ورتن ٹولیاں دی ای وکی تے، اپنے رلدے حقاں نال۔ 
@@ -1918,7 +1871,7 @@ $1",
 'listgrouprights-addgroup-self-all' => 'ساریاں ٹولیاں کٹھیاں کرو کھاتہ لئی',
 'listgrouprights-removegroup-self-all' => 'ایس کھاتے توں ساریاں ٹولیاں ہٹاؤ',
 
-# E-mail user
+# Email user
 'mailnologin' => 'ناں پیح پتہ',
 'mailnologintext' => 'تسیں لازمی [[Special:UserLogin|لاگان]] ہوو تے اک پکا ای-میل پتہ تواڈی [[Special:Preferences|تانگ]] چ ہووے تاں جے دوجے ورتن والے توانوں ای-میل کرسکن۔',
 'emailuser' => 'اس ورتن والے نو ای میل کرو',
@@ -1972,10 +1925,9 @@ $1",
 'unwatchthispage' => 'اکھ رکھنا چھڈو',
 'notanarticle' => 'لکھن صفہ نئیں۔',
 'notvisiblerev' => 'آخری ریوین کسے ہور ورتن والے دی مٹادتی گئی اے۔',
-'watchnochange' => 'دسے گۓ ویلے چ تھواڈیاں ویکھیاںشیواں نئیں بدلیاں گیاں۔',
 'watchlist-details' => '{{PLURAL:$1|$1 صفحہ|$1 صفحہ}} تواڈی اکھ تھلے گلاں باتاں شامل نہیں۔',
 'wlheader-enotif' => 'ای-میل نوٹیفیکیشن قابل',
-'wlheader-showupdated' => '*  صفے جیہڑے بدلے کۓ تھواڈے آخری وار آن مکرون  اونان نوں موٹا کرکے دسیا گیا اے۔',
+'wlheader-showupdated' => ' صفے جیہڑے بدلے کۓ تھواڈے آخری وار آن مکرون  اونان نوں موٹا کرکے دسیا گیا اے۔',
 'watchmethod-recent' => 'نیڑے ہویاں تبدیلیاں چائیدے صفیاں دیاں ویکھے جان والے صفیاں لئی۔',
 'watchmethod-list' => 'ویکھے کے صفے نیڑے ہون والیاں تبدیلیاں دی پڑتال',
 'watchlistcontains' => 'تھواڈی اکھ تھلے رکھی لسٹ چ $1 {{PLURAL:$1|صفہ|صفے}}  نیں۔',
@@ -1991,11 +1943,7 @@ $1",
 
 'enotif_mailer' => '{{سائٹ ناں}} نوٹینیکیشن میلر',
 'enotif_reset' => 'سارے ویکھے گۓ صفحیاں تے نشان لاؤ',
-'enotif_newpagetext' => 'اے نواں صفہ اے۔',
 'enotif_impersonal_salutation' => '{{SITENAME}} ورتن والا',
-'changed' => 'بدلیا',
-'created' => 'بن گیا',
-'enotif_subject' => '{{سائیٹتھاں}} صفہ $صفہ سرخی  $تبدیلی بنائی  $صفہ لکھاری',
 'enotif_lastvisited' => '$1 تبدیلیاں ویکھو اپنے آخری واری آن مکروں',
 'enotif_lastdiff' => '$1 ویکھو ایس تبدیلی نون ویکھن لئی۔',
 'enotif_anon_editor' => 'گم نام ورتن آلا $1',
@@ -2031,6 +1979,8 @@ $UNWATCHURL
 
 فیڈبیک تے ہور مدد لئی:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'بن گیا',
+'changed' => 'بدلیا',
 
 # Delete
 'deletepage' => 'صفہ مٹاؤ',
@@ -2380,12 +2330,9 @@ $1',
 اینوں $2 دی رینج چ روکیا گیا، جینوں کھولیا جاسکدا اے۔',
 'ip_range_invalid' => 'ناں منی جان والی آئی پی رینج۔',
 'ip_range_toolarge' => 'رینج روکاں /$1 توں وڈیاں دی اجازت نئیں۔',
-'blockme' => 'مینوں روکو',
 'proxyblocker' => 'دوروں روکن والا',
-'proxyblocker-disabled' => 'اس کم نوں روک دتا گیا اے۔',
 'proxyblockreason' => 'تواڈا آئی پی پتہ تے روک لگادتی گئی جے کیوں جے اے اک کھلا پراکسی اے۔
 مہربانی کرکے اپنے انٹرنٹ سروس دین والے نال  یا تکنیکی مدد دین والے نال تے اوناں ایس بچاؤ خطرے بارے دسو۔',
-'proxyblocksuccess' => 'ہوگیا۔',
 'sorbsreason' => 'تیرا آئی پی پتہ اک کھلی پراکسی وانگوں دتا گیا اے ڈی این ایس بی ایل چ {{سائیٹناں}} نے۔',
 'sorbs_create_account_reason' => 'تواڈا پتہ اک کھلا پراکسی لسٹ چ اے ڈی این ایس بی ایل نال {{سائیٹناں}} چ۔
 تسیں اک کھاتہ نئیں کھول سکدے۔',
@@ -2614,7 +2561,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'JavaScript ٹیسٹنگ',
-'javascripttest-disabled' => 'ایس وکی تے ایہ کم نئیں چلدا۔',
 'javascripttest-title' => 'ٹیسٹ  $1 چلدا اے۔',
 'javascripttest-pagetext-noframework' => 'ایہ صفہ JavaScript  ٹیسٹاں لئی بچایا گیا اے۔',
 'javascripttest-pagetext-unknownframework' => '"$1" انجانا ٹیسٹنگ فریمورک۔',
@@ -2823,7 +2769,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'چوڑائی',
 'exif-imagelength' => 'اچائی',
 'exif-bitspersample' => 'اک کمپوننٹ وچ بٹ',
@@ -3001,7 +2947,7 @@ $1',
 'exif-originalimageheight' => 'مورت دی اچائی کٹن توں پہلے',
 'exif-originalimagewidth' => 'مورت دی چوڑائی کٹن توں پہلے',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'کھولی گئی',
 'exif-compression-2' => 'سی سی آئی ٹی ٹی گروپ 3 1-ڈائمینشنل موڈیفائیڈ ہفمین رن فل لنتھ انکوڈنگ',
 'exif-compression-3' => 'سی سی آئی ٹی ٹی گروپ 3 فیکس اینکوڈنگ',
@@ -3222,7 +3168,7 @@ $1',
 'monthsall' => 'سارے',
 'limitall' => 'سارے',
 
-# E-mail address confirmation
+# Email address confirmation
 'confirmemail' => 'ای میل پتہ پکا کرو',
 'confirmemail_noemail' => 'تواڈے کول اک پکا ای-میل پتہ نئیں اے جیہڑا [[Special:Preferences|ورتن تانگاں]]',
 'confirmemail_text' => '{{سائیٹناں}}  دی ایہ لوڑ اے جے تسیں اپنا ای-میل پتہ پکا کرواؤ ای-میل فیچر ورتن توں پہلے۔ تھلے دتے گۓ بٹن تے پکی کرن چٹھی پیجو اپنے پتے تے منگوان لئی کلک کرو۔
@@ -3391,7 +3337,6 @@ $5
 'version-other' => 'دوجے',
 'version-mediahandlers' => 'میڈیا ہینڈلرز',
 'version-hooks' => 'ہکز',
-'version-extension-functions' => 'ایکسٹنشن فنکشن',
 'version-parser-extensiontags' => 'پاسر ایکسٹنشن ٹیگز',
 'version-parser-function-hooks' => 'پاسر فنکشن ہکز',
 'version-hook-name' => 'ہک ناں',
@@ -3409,13 +3354,6 @@ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
 'version-software' => 'سافٹوئر چڑھ گیا۔',
 'version-software-product' => 'پراڈکٹ',
 'version-software-version' => 'ورژن',
-
-# Special:FilePath
-'filepath' => 'فائل راہ',
-'filepath-page' => 'فائل:',
-'filepath-submit' => 'چلو',
-'filepath-summary' => 'اے خاص صفہاک فائل دا پورا راہ دسدا اے۔
-مورتاں پورے ریزولوشن چ دسیاں گیاں نئیں، دوجیاں فائل ٹائپ نوں نوں اوناں دے رلدے پروکراماں نال ٹوریا گیا اے۔',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'دوہری فائلاں دی کھوج کرو',
@@ -3541,7 +3479,7 @@ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
 'logentry-newusers-create' => '$1 {{جنس:$2|بنایا}} اک ورتن والا کھاتہ',
 'logentry-newusers-create2' => '$1 {{جنس:$2|بنایا}} {{جنس:$4|اک ورتن کھاتہ}} $3',
 'logentry-newusers-autocreate' => 'کھاتہ $1 اپنے آپ ای {{جنس:$2|بنایا گیا}} بنایا گیا۔',
-'newuserlog-byemail' => 'کنجی ای-میل راہ پیج دتی گئی۔',
+'rightsnone' => '(کوئی وی نئیں)',
 
 # Feedback
 'feedback-bugornote' => 'اگر تسیں اک تکنیکی مسلے نوں  پوری طراں دسن لئی تیار او تے فیر مہربانی کرکے [$1 بگ بارے دسو]۔  ںئیں تے تسیں تھلے دتا گیا فارم ورتو۔ تواڈی گل صفہ "[$3 $2]" تے جڑے گی،  تواڈے ورتن والے ناں تے براؤزر جیہڑا تسیں ورت رۓ او۔',
