@@ -5,6 +5,7 @@
  * @file
  * @ingroup Extensions
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -31,6 +32,11 @@ $specialPageAliases['bjn'] = array(
 /** Bosnian (bosanski) */
 $specialPageAliases['bs'] = array(
 	'DeleteBatch' => array( 'BrisanjeBatch' ),
+);
+
+/** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
+$specialPageAliases['cdo'] = array(
+	'DeleteBatch' => array( '批量刪除' ),
 );
 
 /** German (Deutsch) */
@@ -123,6 +129,11 @@ $specialPageAliases['ksh'] = array(
 	'DeleteBatch' => array( 'SiggePöngelFottschmiiße' ),
 );
 
+/** Cornish (kernowek) */
+$specialPageAliases['kw'] = array(
+	'DeleteBatch' => array( 'DileaBagas' ),
+);
+
 /** Ladino (Ladino) */
 $specialPageAliases['lad'] = array(
 	'DeleteBatch' => array( 'EfassarBatch' ),
@@ -131,6 +142,11 @@ $specialPageAliases['lad'] = array(
 /** Luxembourgish (Lëtzebuergesch) */
 $specialPageAliases['lb'] = array(
 	'DeleteBatch' => array( 'Läsch-Batch' ),
+);
+
+/** Minangkabau (Baso Minangkabau) */
+$specialPageAliases['min'] = array(
+	'DeleteBatch' => array( 'HapuihSakaliguih' ),
 );
 
 /** Macedonian (македонски) */
@@ -148,14 +164,14 @@ $specialPageAliases['mr'] = array(
 	'DeleteBatch' => array( 'बॅचवगळा' ),
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎) */
+/** Norwegian Bokmål (norsk bokmål) */
 $specialPageAliases['nb'] = array(
 	'DeleteBatch' => array( 'Slett_en_serie_sider' ),
 );
 
-/** Nedersaksisch (Nedersaksisch) */
+/** Low Saxon (Netherlands) (Nedersaksies) */
 $specialPageAliases['nds-nl'] = array(
-	'DeleteBatch' => array( 'Paginareeks_vortdoon' ),
+	'DeleteBatch' => array( 'Ziedreeks_vortdoon' ),
 );
 
 /** Dutch (Nederlands) */
@@ -186,6 +202,11 @@ $specialPageAliases['pt-br'] = array(
 /** Sanskrit (संस्कृतम्) */
 $specialPageAliases['sa'] = array(
 	'DeleteBatch' => array( 'गणपरित्याग' ),
+);
+
+/** Sicilian (sicilianu) */
+$specialPageAliases['scn'] = array(
+	'DeleteBatch' => array( 'CancellaBatch' ),
 );
 
 /** Slovak (slovenčina) */
