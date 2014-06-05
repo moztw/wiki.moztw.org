@@ -64,7 +64,7 @@ $specialPageAliases['ce'] = array(
 	'Renameuser' => array( 'Декъашхочун_цӀе_хийца' ),
 );
 
-/** Czech (česky) */
+/** Czech (čeština) */
 $specialPageAliases['cs'] = array(
 	'Renameuser' => array( 'Přejmenovat_uživatele' ),
 );
@@ -131,7 +131,7 @@ $specialPageAliases['frp'] = array(
 
 /** Galician (galego) */
 $specialPageAliases['gl'] = array(
-	'Renameuser' => array( 'Renomear_o_usuario' ),
+	'Renameuser' => array( 'Renomear_o_usuario', 'Renomear_usuario', 'Renomear_a_usuaria', 'Renomear_usuaria' ),
 );
 
 /** Swiss German (Alemannisch) */
@@ -316,7 +316,7 @@ $specialPageAliases['sq'] = array(
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
 $specialPageAliases['sr-ec'] = array(
-	'Renameuser' => array( 'Преименуј_корисника' ),
+	'Renameuser' => array( 'ПреименујКорисника', 'Преименуј_корисника' ),
 );
 
 /** Swedish (svenska) */

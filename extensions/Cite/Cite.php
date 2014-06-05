@@ -18,8 +18,6 @@ if ( ! defined( 'MEDIAWIKI' ) )
  */
 
 $wgHooks['ParserFirstCallInit'][] = 'wfCite';
-$wgHooks['BeforePageDisplay'][] = 'wfCiteBeforePageDisplay';
-
 
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
@@ -28,7 +26,9 @@ $wgExtensionCredits['parserhook'][] = array(
 	'descriptionmsg' => 'cite-desc',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:Cite/Cite.php'
 );
+
 $wgParserTestFiles[] = __DIR__ . "/citeParserTests.txt";
+$wgMessagesDirs['Cite'] = __DIR__ . '/i18n/core';
 $wgExtensionMessagesFiles['Cite'] = __DIR__ . "/Cite.i18n.php";
 $wgAutoloadClasses['Cite'] = __DIR__ . "/Cite_body.php";
 $wgSpecialPageGroups['Cite'] = 'pagetools';
@@ -97,23 +97,5 @@ $wgResourceModules['ext.rtlcite'] = $citeResourceTemplate + array(
 	'styles' => 'ext.rtlcite.css',
 	'position' => 'top',
 );
-
-/**
- * @param $out OutputPage
- * @param $sk Skin
- * @return bool
- */
-function wfCiteBeforePageDisplay( $out, &$sk ) {
-	global $wgCiteEnablePopups;
-
-	$out->addModules( 'ext.cite' );
-	if ( $wgCiteEnablePopups ) {
-		$out->addModules( 'ext.cite.popups' );
-	}
-
-	/* RTL support quick-fix module */
-	$out->addModuleStyles( 'ext.rtlcite' );
-	return true;
-}
 
 /**#@-*/

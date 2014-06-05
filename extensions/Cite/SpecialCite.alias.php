@@ -74,7 +74,7 @@ $specialPageAliases['ce'] = array(
 	'Cite' => array( 'Дош' ),
 );
 
-/** Czech (česky) */
+/** Czech (čeština) */
 $specialPageAliases['cs'] = array(
 	'Cite' => array( 'Citovat' ),
 );
@@ -264,7 +264,7 @@ $specialPageAliases['mt'] = array(
 	'Cite' => array( 'Iċċita' ),
 );
 
-/** Nahuatl (Nāhuatl) */
+/** Nāhuatl (Nāhuatl) */
 $specialPageAliases['nah'] = array(
 	'Cite' => array( 'Tlahtoa', 'Citar' ),
 );

@@ -52,6 +52,8 @@ class InputBox {
 			case 'create':
 			case 'comment':
 				return $this->getCreateForm();
+			case 'move':
+				return $this->getMoveForm();
 			case 'commenttitle':
 				return $this->getCommentForm();
 			case 'search':
@@ -84,10 +86,10 @@ class InputBox {
 
 		// Use button label fallbacks
 		if ( !$this->mButtonLabel ) {
-			$this->mButtonLabel = wfMessage( 'tryexact' )->escaped();
+			$this->mButtonLabel = wfMessage( 'inputbox-tryexact' )->text();
 		}
 		if ( !$this->mSearchButtonLabel ) {
-			$this->mSearchButtonLabel = wfMessage( 'searchfulltext' )->escaped();
+			$this->mSearchButtonLabel = wfMessage( 'inputbox-searchfulltext' )->text();
 		}
 
 		// Build HTML
@@ -101,7 +103,7 @@ class InputBox {
 				'name' => 'searchbox',
 				'id' => 'searchbox',
 				'class' => 'searchbox',
-				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
+				'action' => SpecialPage::getTitleFor( 'Search' )->getLocalUrl(),
 			)
 		);
 		$htmlOut .= Xml::element( 'input',
@@ -239,7 +241,7 @@ class InputBox {
 	public function getSearchForm2() {
 		// Use button label fallbacks
 		if ( !$this->mButtonLabel ) {
-			$this->mButtonLabel = wfMessage( 'tryexact' )->escaped();
+			$this->mButtonLabel = wfMessage( 'inputbox-tryexact' )->text();
 		}
 
 		$id = Sanitizer::escapeId( $this->mID, 'noninitial' );
@@ -255,7 +257,7 @@ class InputBox {
 				'name' => 'bodySearch' . $id,
 				'id' => 'bodySearch' . $id,
 				'class' => 'bodySearch',
-				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
+				'action' => SpecialPage::getTitleFor( 'Search' )->getLocalUrl(),
 				'style' => $this->mInline ? 'display: inline;' : ''
 			)
 		);
@@ -312,11 +314,11 @@ class InputBox {
 
 		if ( $this->mType == "comment" ) {
 			if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( "postcomment" )->escaped();
+				$this->mButtonLabel = wfMessage( 'postcomment' )->text();
 			}
 		} else {
 			if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( 'createarticle' )->escaped();
+				$this->mButtonLabel = wfMessage( 'inputbox-createarticle' )->text();
 			}
 		}
 
@@ -331,8 +333,8 @@ class InputBox {
 			'action' => $wgScript,
 			'method' => 'get'
 		);
-		if( isset( $this->mId ) ) {
-			$createBoxParams['id'] = Sanitizer::escapeId( $this->mId );
+		if( $this->mID !== '' ) {
+			$createBoxParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $createBoxParams );
 		$htmlOut .= Xml::openElement( 'input',
@@ -421,13 +423,85 @@ class InputBox {
 	}
 
 	/**
+	 * Generate move page form
+	 */
+	public function getMoveForm() {
+		global $wgScript;
+
+		if ( !$this->mButtonLabel ) {
+			$this->mButtonLabel = wfMessage( 'inputbox-movearticle' )->text();
+		}
+
+		$htmlOut = Xml::openElement( 'div',
+			array(
+				'style' => 'margin-left: auto; margin-right: auto; text-align: center; background-color:' . $this->mBGColor
+			)
+		);
+		$moveBoxParams = array(
+			'name' => 'movebox',
+			'class' => 'mw-movebox',
+			'action' => $wgScript,
+			'method' => 'get'
+		);
+		if( $this->mID !== '' ) {
+			$moveBoxParams['id'] = Sanitizer::escapeId( $this->mID );
+		}
+		$htmlOut .= Xml::openElement( 'form', $moveBoxParams );
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'title',
+				'value' => SpecialPage::getTitleFor( 'Movepage', $this->mPage )->getPrefixedText(),
+			)
+		);
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'wpReason',
+				'value' => $this->mSummary,
+			)
+		);
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'prefix',
+				'value' => $this->mPrefix,
+			)
+		);
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => $this->mHidden ? 'hidden' : 'text',
+				'name' => 'wpNewTitle',
+				'class' => 'mw-moveboxInput',
+				'value' => $this->mDefaultText,
+				'placeholder' => $this->mPlaceholderText,
+				'size' => $this->mWidth,
+				'dir' => $this->mDir,
+			)
+		);
+		$htmlOut .= $this->mBR;
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'submit',
+				'class' => 'mw-moveboxButton',
+				'value' => $this->mButtonLabel
+			)
+		);
+		$htmlOut .= Xml::closeElement( 'form' );
+		$htmlOut .= Xml::closeElement( 'div' );
+
+		// Return HTML
+		return $htmlOut;
+	}
+
+	/**
 	 * Generate new section form
 	 */
 	public function getCommentForm() {
 		global $wgScript;
 
 		if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( "postcomment" )->escaped();
+				$this->mButtonLabel = wfMessage( 'postcomment' )->text();
 		}
 
 		$htmlOut = Xml::openElement( 'div',
@@ -441,8 +515,8 @@ class InputBox {
 			'action' => $wgScript,
 			'method' => 'get'
 		);
-		if( isset( $this->mId ) ) {
-			$commentFormParams['id'] = Sanitizer::escapeId( $this->mId );
+		if( $this->mID !== '' ) {
+			$commentFormParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $commentFormParams );
 		$htmlOut .= Xml::openElement( 'input',

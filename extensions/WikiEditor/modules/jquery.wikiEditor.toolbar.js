@@ -1,6 +1,7 @@
 /**
  * Toolbar module for wikiEditor
  */
+/*jshint onevar:false */
 ( function ( mw, $ ) { $.wikiEditor.modules.toolbar = {
 
 /**
@@ -17,7 +18,7 @@ api : {
 					var	$sections = context.modules.toolbar.$toolbar.find( 'div.sections' ),
 						$tabs = context.modules.toolbar.$toolbar.find( 'div.tabs' );
 					for ( var section in data[type] ) {
-						if ( section == 'main' ) {
+						if ( section === 'main' ) {
 							// Section
 							context.modules.toolbar.$toolbar.prepend(
 								$.wikiEditor.modules.toolbar.fn.buildSection(
@@ -145,28 +146,28 @@ api : {
 		}
 	},
 	removeFromToolbar : function( context, data ) {
-		if ( typeof data.section == 'string' ) {
+		if ( typeof data.section === 'string' ) {
 			// Section
 			var tab = 'div.tabs span[rel="' + data.section + '"].tab';
 			var target = 'div[rel="' + data.section + '"].section';
 			var group = null;
-			if ( typeof data.group == 'string' ) {
+			if ( typeof data.group === 'string' ) {
 				// Toolbar group
 				target += ' div[rel="' + data.group + '"].group';
-				if ( typeof data.tool == 'string' ) {
+				if ( typeof data.tool === 'string' ) {
 					// Save for later checking if empty
 					group = target;
 					// Tool
 					target += ' a[rel="' + data.tool + '"].tool';
 				}
-			} else if ( typeof data.page == 'string' ) {
+			} else if ( typeof data.page === 'string' ) {
 				// Booklet page
 				var index = target + ' div.index div[rel="' + data.page + '"]';
 				target += ' div.pages div[rel="' + data.page + '"].page';
-				if ( typeof data.character == 'string' ) {
+				if ( typeof data.character === 'string' ) {
 					// Character
 					target += ' span[rel="' + data.character + '"]';
-				} else if ( typeof data.row == 'number' ) {
+				} else if ( typeof data.row === 'number' ) {
 					// Table row
 					target += ' table tr:not(:has(th)):eq(' + data.row + ')';
 				} else {
@@ -198,14 +199,12 @@ api : {
  * Event handlers
  */
 evt: {
-	resize: function( context, event ) {
+	/**
+	 * @param context
+	 * @param event
+	 */
+	resize: function( context ) {
 		context.$ui.find( '.sections' ).height( context.$ui.find( '.sections .section-visible' ).outerHeight() );
-	},
-	tocCollapse: function( context, event ) {
-		$.wikiEditor.modules.toolbar.evt.resize( context, event );
-	},
-	tocExpand: function( context, event ) {
-		$.wikiEditor.modules.toolbar.evt.resize( context, event );
 	}
 },
 /**
@@ -222,7 +221,7 @@ fn: {
 		if ( '$toolbar' in context.modules.toolbar ) {
 			return;
 		}
-		context.modules.toolbar.$toolbar = $( '<div/>' )
+		context.modules.toolbar.$toolbar = $( '<div>' )
 			.addClass( 'wikiEditor-ui-toolbar' )
 			.attr( 'id', 'wikiEditor-ui-toolbar' );
 		$.wikiEditor.modules.toolbar.fn.build( context, config );
@@ -235,7 +234,7 @@ fn: {
 	 * @param {Object} action
 	 * @param {Object} source
 	 */
-	doAction : function( context, action, source ) {
+	doAction : function( context, action ) {
 		switch ( action.type ) {
 			case 'replace':
 			case 'encapsulate':
@@ -244,7 +243,7 @@ fn: {
 					'peri' : $.wikiEditor.autoMsg( action.options, 'peri' ),
 					'post' : $.wikiEditor.autoMsg( action.options, 'post' )
 				};
-				var replace = action.type == 'replace';
+				var replace = action.type === 'replace';
 				if ( 'regex' in action.options && 'regexReplace' in action.options ) {
 					var selection = context.$textarea.textSelection( 'getSelection' );
 					if ( selection !== '' && selection.match( action.options.regex ) ) {
@@ -258,12 +257,9 @@ fn: {
 					'encapsulateSelection',
 					$.extend( {}, action.options, parts, { 'replace': replace } )
 				);
-				if ( context.$iframe !== undefined ) {
-					context.$iframe[0].contentWindow.focus();
-				}
 				break;
 			case 'callback':
-				if ( typeof action.execute == 'function' ) {
+				if ( typeof action.execute === 'function' ) {
 					action.execute( context );
 				}
 				break;
@@ -275,10 +271,13 @@ fn: {
 		}
 	},
 	buildGroup : function( context, id, group ) {
-		var $group = $( '<div/>' ).attr( { 'class' : 'group group-' + id, 'rel' : id } );
+		var $group = $( '<div>' ).attr( { 'class' : 'group group-' + id, 'rel' : id } );
 		var label = $.wikiEditor.autoMsg( group, 'label' );
 		if ( label ) {
-			$group.append( '<span class="label">' + label + '</div>' );
+			var $label = $( '<span />' )
+				.addClass( 'label' )
+				.html( label );
+			$group.append( $label );
 		}
 		var empty = true;
 		if ( 'tools' in group ) {
@@ -287,7 +286,7 @@ fn: {
 				if ( tool ) {
 					// Consider a group with only hidden tools empty as well
 					// .is( ':visible' ) always returns false because tool is not attached to the DOM yet
-					empty = empty && tool.css( 'display' ) == 'none';
+					empty = empty && tool.css( 'display' ) === 'none';
 					$group.append( tool );
 				}
 			}
@@ -315,7 +314,7 @@ fn: {
 						$.wikiEditor.imgPath + 'toolbar/'
 					);
 					if ( typeof offsetOrIcon === 'object' ) {
-						$button = $( '<a/>' )
+						$button = $( '<a>' )
 							.attr( {
 								'href' : '#',
 								'title' : label,
@@ -328,7 +327,7 @@ fn: {
 					}
 				}
 				if ( !$button ) {
-					$button = $( '<img/>' )
+					$button = $( '<img>' )
 						.attr( {
 							'src' : src,
 							'width' : 22,
@@ -360,14 +359,14 @@ fn: {
 				}
 				return $button;
 			case 'select':
-				var $select = $( '<div/>' )
+				var $select = $( '<div>' )
 					.attr( { 'rel' : id, 'class' : 'tool tool-select' } );
-				var $options = $( '<div/>' ).addClass( 'options' );
+				var $options = $( '<div>' ).addClass( 'options' );
 				if ( 'list' in tool ) {
 					for ( var option in tool.list ) {
 						var optionLabel = $.wikiEditor.autoMsg( tool.list[option], 'label' );
 						$options.append(
-							$( '<a/>' )
+							$( '<a>' )
 								.data( 'action', tool.list[option].action )
 								.data( 'context', context )
 								.mousedown( function( e ) {
@@ -395,8 +394,8 @@ fn: {
 						);
 					}
 				}
-				$select.append( $( '<div/>' ).addClass( 'menu' ).append( $options ) );
-				$select.append( $( '<a/>' )
+				$select.append( $( '<div>' ).addClass( 'menu' ).append( $options ) );
+				$select.append( $( '<a>' )
 						.addClass( 'label' )
 						.text( label )
 						.data( 'options', $options )
@@ -419,7 +418,7 @@ fn: {
 	},
 	buildBookmark : function( context, id, page ) {
 		var label = $.wikiEditor.autoMsg( page, 'label' );
-		return $( '<div/>' )
+		return $( '<div>' )
 			.text( label )
 			.attr( 'rel', id )
 			.data( 'context', context )
@@ -447,8 +446,8 @@ fn: {
 			} );
 	},
 	buildPage : function( context, id, page ) {
-		var html;
-		var $page = $( '<div/>' ).attr( {
+		var html, i;
+		var $page = $( '<div>' ).attr( {
 			'class' : 'page page-' + id,
 			'rel' : id
 		} );
@@ -461,7 +460,7 @@ fn: {
 					html += $.wikiEditor.modules.toolbar.fn.buildHeading( context, page.headings );
 				}
 				if ( 'rows' in page ) {
-					for ( var i = 0; i < page.rows.length; i++ ) {
+					for ( i = 0; i < page.rows.length; i++ ) {
 						html += $.wikiEditor.modules.toolbar.fn.buildRow( context, page.rows[i] );
 					}
 				}
@@ -469,7 +468,7 @@ fn: {
 				break;
 			case 'characters':
 				$page.addClass( 'page-characters' );
-				var $characters = $( '<div/>' ).data( 'context', context ).data( 'actions', {} );
+				var $characters = $( '<div>' ).data( 'context', context ).data( 'actions', {} );
 				var actions = $characters.data( 'actions' );
 				if ( 'language' in page ) {
 					$characters.attr( 'lang', page.language );
@@ -484,7 +483,7 @@ fn: {
 				}
 				if ( 'characters' in page ) {
 					html = '';
-					for ( var i = 0; i < page.characters.length; i++ ) {
+					for ( i = 0; i < page.characters.length; i++ ) {
 						html += $.wikiEditor.modules.toolbar.fn.buildCharacter( page.characters[i], actions );
 					}
 					$characters
@@ -521,13 +520,13 @@ fn: {
 	buildRow : function( context, row ) {
 		var html = '<tr>';
 		for ( var cell in row ) {
-			html += '<td class="cell cell-' + cell + '" valign="top"><span>' +
+			html += '<td class="cell cell-' + cell + '"><span>' +
 				$.wikiEditor.autoMsg( row[cell], ['html', 'text'] ) + '</span></td>';
 		}
 		return html + '</tr>';
 	},
 	buildCharacter : function( character, actions ) {
-		if ( typeof character == 'string' ) {
+		if ( typeof character === 'string' ) {
 			character = {
 				'label' : character,
 				'action' : {
@@ -564,8 +563,9 @@ fn: {
 				return mw.html.element( 'span', { 'rel': character.label }, character.label );
 			}
 		}
-		mw.log( "A character for the toolbar was undefined. This is not supposed to happen. Double check the config." );
-		return ""; // bug 31673; also an additional fix for bug 24208...
+		mw.log( 'A character for the toolbar was undefined. This is not supposed to happen. Double check the config.' );
+		// bug 31673; also an additional fix for bug 24208...
+		return '';
 	},
 	buildTab : function( context, id, section ) {
 		var selected = $.cookie( 'wikiEditor-' + context.instance + '-toolbar-section' );
@@ -574,8 +574,8 @@ fn: {
 			$.cookie( 'wikiEditor-' + context.instance + '-toolbar-section', selected, { expires: 30, path: '/' } );
 		}
 		var $link =
-			$( '<a/>' )
-				.addClass( selected == id ? 'current' : null )
+			$( '<a>' )
+				.addClass( selected === id ? 'current' : null )
 				.attr( {
 					href: '#',
 					role: 'button',
@@ -584,7 +584,7 @@ fn: {
 				} )
 				.text( $.wikiEditor.autoMsg( section, 'label' ) )
 				.data( 'context', context )
-				.mouseup( function( e ) {
+				.mouseup( function () {
 					$(this).blur();
 				} )
 				.mousedown( function( e ) {
@@ -604,7 +604,7 @@ fn: {
 					var $sections = $(this).data( 'context' ).$ui.find( '.sections' );
 					var $section =
 						$(this).data( 'context' ).$ui.find( '.section-' + $(this).parent().attr( 'rel' ) );
-					var show = $section.css( 'display' ) == 'none';
+					var show = $section.css( 'display' ) === 'none';
 					$section.parent().find( '.section-visible' )
 						.css( 'position', 'absolute' )
 						.attr( 'aria-expanded', 'false' )
@@ -654,7 +654,7 @@ fn: {
 					e.preventDefault();
 					return false;
 				});
-		return $( '<span/>' )
+		return $( '<span>' )
 			.attr({
 				'class' : 'tab tab-' + id,
 				'rel' : id
@@ -662,17 +662,17 @@ fn: {
 			.append( $link );
 	},
 	buildSection: function( context, id, section ) {
-		var $section = $( '<div/>' ).attr( {
+		var $section = $( '<div>' ).attr( {
 			'class': section.type + ' section section-' + id,
 			'rel': id,
 			id: 'wikiEditor-section-' + id
 		} );
 		var selected = $.cookie( 'wikiEditor-' + context.instance + '-toolbar-section' );
-		var show = selected == id;
+		var show = selected === id;
 
 		if ( section.deferLoad !== undefined && section.deferLoad && id !== 'main' && !show ) {
 			// This class shows the spinner and serves as a marker for the click handler in buildTab()
-			$section.addClass( 'loading' ).append( $( '<div/>' ).addClass( 'spinner' ) );
+			$section.addClass( 'loading' ).append( $( '<div>' ).addClass( 'spinner' ) );
 			$section.bind( 'loadSection', function() {
 				$.wikiEditor.modules.toolbar.fn.reallyBuildSection( context, id, section, $section );
 				$section.removeClass( 'loading' );
@@ -706,8 +706,8 @@ fn: {
 				}
 				break;
 			case 'booklet':
-				var $pages = $( '<div/>' ).addClass( 'pages' );
-				var $index = $( '<div/>' ).addClass( 'index' );
+				var $pages = $( '<div>' ).addClass( 'pages' );
+				var $index = $( '<div>' ).addClass( 'index' );
 				if ( 'pages' in section ) {
 					for ( var page in section.pages ) {
 						$pages.append(
@@ -724,6 +724,7 @@ fn: {
 		}
 	},
 	updateBookletSelection : function( context, id, $pages, $index ) {
+		/*jshint eqnull:true */
 		var cookie = 'wikiEditor-' + context.instance + '-booklet-' + id + '-page';
 		var selected = $.cookie( cookie );
 		// Re-save cookie
@@ -742,12 +743,12 @@ fn: {
 		$selectedIndex.addClass( 'current' );
 	},
 	build : function( context, config ) {
-		var $tabs = $( '<div/>' ).addClass( 'tabs' ).appendTo( context.modules.toolbar.$toolbar );
-		var $sections = $( '<div/>' ).addClass( 'sections' ).appendTo( context.modules.toolbar.$toolbar );
-		context.modules.toolbar.$toolbar.append( $( '<div/>' ).css( 'clear', 'both' ) );
+		var $tabs = $( '<div>' ).addClass( 'tabs' ).appendTo( context.modules.toolbar.$toolbar );
+		var $sections = $( '<div>' ).addClass( 'sections' ).appendTo( context.modules.toolbar.$toolbar );
+		context.modules.toolbar.$toolbar.append( $( '<div>' ).css( 'clear', 'both' ) );
 		var sectionQueue = [];
 		for ( var section in config ) {
-			if ( section == 'main' ) {
+			if ( section === 'main' ) {
 				context.modules.toolbar.$toolbar.prepend(
 					$.wikiEditor.modules.toolbar.fn.buildSection( context, section, config[section] )
 				);
