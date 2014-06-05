@@ -8,14 +8,14 @@ class SecurePoll_Option extends SecurePoll_Entity {
 	/**
 	 * Constructor
 	 * @param $context SecurePoll_Context
-	 * @param $info Associative array of entity info
+	 * @param $info array Associative array of entity info
 	 */
 	function __construct( $context, $info ) {
 		parent::__construct( $context, 'option', $info );
 	}
 
 	/**
-	 * Get a list of localisable message names. This is used to provide the 
+	 * Get a list of localisable message names. This is used to provide the
 	 * translate subpage with a list of messages to localise.
 	 */
 	function getMessageNames() {

@@ -1,0 +1,19 @@
+{
+    "@metadata": {
+        "authors": [
+            "Les Meloures",
+            "Robby"
+        ]
+    },
+    "sitematrix": "Lëscht vun de Wikimedia-Wikien",
+    "sitematrix-summary": "Op dëser Spezialsäit stinn all Wikimedia Wikien.",
+    "sitematrix-desc": "Weis eng  [[Special:SiteMatrix|Lëscht vun de Wikimedia-Wikien]]",
+    "sitematrix-language": "Sprooch",
+    "sitematrix-project": "Numm vum Projet, Interprojet-Link an Interwiki-Link",
+    "sitematrix-others": "Aner Wikimedia-Projeten",
+    "sitematrix-other-projects": "Aner Projeten",
+    "sitematrix-total": "'''Total vum Kont: $1'''",
+    "sitematrix-sitetotal": "Total",
+    "sitematrix-private": "privat",
+    "sitematrix-fishbowl": "ännere limitéiert"
+}

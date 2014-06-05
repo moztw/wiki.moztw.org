@@ -1,0 +1,18 @@
+{
+    "@metadata": {
+        "authors": [
+            "Helix84"
+        ]
+    },
+    "sitematrix": "Zoznam wiki projektov Nadácie Wikimedia",
+    "sitematrix-summary": "Táto špeciálna stránka obsahuje zoznam všetkých lokalít Wikimedia.",
+    "sitematrix-desc": "Zobrazenie [[Special:SiteMatrix|zoznamu wiki projektov Wikimedia]]",
+    "sitematrix-language": "Jazyk",
+    "sitematrix-project": "Názov projektu, medziprojektový odkaz a interwiki odkaz",
+    "sitematrix-others": "Iné projekty nadácie Wikimedia",
+    "sitematrix-other-projects": "Ďalšie projekty",
+    "sitematrix-total": "'''Celkový počet: $1'''",
+    "sitematrix-sitetotal": "Celkom",
+    "sitematrix-private": "súkromné",
+    "sitematrix-fishbowl": "úpravy obmedzené"
+}

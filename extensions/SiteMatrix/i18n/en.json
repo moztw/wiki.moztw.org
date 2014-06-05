@@ -1,0 +1,16 @@
+{
+    "@metadata": {
+        "authors": []
+    },
+    "sitematrix": "List of Wikimedia wikis",
+    "sitematrix-summary": "This special page lists all Wikimedia wikis.",
+    "sitematrix-desc": "Displays a [[Special:SiteMatrix|list of Wikimedia wikis]]",
+    "sitematrix-language": "Language",
+    "sitematrix-project": "Name of project, interproject link and interwiki link",
+    "sitematrix-others": "Other projects of Wikimedia",
+    "sitematrix-other-projects": "Other projects",
+    "sitematrix-total": "'''Total count: $1'''",
+    "sitematrix-sitetotal": "Total",
+    "sitematrix-private": "private",
+    "sitematrix-fishbowl": "editing restricted"
+}

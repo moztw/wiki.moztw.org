@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gaoxuewei",
+			"Gzdavidwong",
+			"PhiLiP",
+			"Yfdyh000",
+			"Liuxinyu970226"
+		]
+	},
+	"unicodeconverter": "Unicode转换器",
+	"unicodeconverter-desc": "特殊页面模块的简单例子。[[Special:UnicodeConverter|在UTF-8下指定一个字符串]]，它将转换成适配于ISO 8859-1网页的HTML实体",
+	"unicodeconverter-ok": "确定",
+	"unicodeconverter-oldtext": "原文字：",
+	"unicodeconverter-newtext": "转换后文字"
+}

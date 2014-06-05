@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Crt",
+            "Nike",
+            "Olli"
+        ]
+    },
+    "sitematrix": "Luettelo Wikimedian wikeistä",
+    "sitematrix-summary": "Tämä toimintosivu näyttää luettelon kaikista Wikimedian wikeistä.",
+    "sitematrix-desc": "Näyttää [[Special:SiteMatrix|luettelon Wikimedian wikeistä]].",
+    "sitematrix-language": "Kieli",
+    "sitematrix-project": "Projektin nimi, projektienvälinen linkki ja interwiki-linkki",
+    "sitematrix-others": "Muut Wikimedian projektit",
+    "sitematrix-other-projects": "Muut projektit",
+    "sitematrix-total": "'''Wikejä yhteensä: $1'''",
+    "sitematrix-sitetotal": "Yhteensä",
+    "sitematrix-private": "yksityinen",
+    "sitematrix-fishbowl": "muokkaaminen rajoitettu"
+}

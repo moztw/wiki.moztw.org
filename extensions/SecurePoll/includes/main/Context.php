@@ -1,18 +1,18 @@
 <?php
 
 /**
- * This object contains caches and various items of processing context for 
- * SecurePoll. It manages instances of long-lived objects such as the 
+ * This object contains caches and various items of processing context for
+ * SecurePoll. It manages instances of long-lived objects such as the
  * SecurePoll_Store subclass.
  *
  * Long-lived data should be stored here, rather than in global variables or
  * static member variables.
  *
  * A context object is passed to almost all SecurePoll constructors. This class
- * provides factory functions for these objects, to simplify object creation 
+ * provides factory functions for these objects, to simplify object creation
  * and avoid having to use the SecurePoll_* prefixed class names.
  *
- * For debugging purposes, a var_dump() workalike which omits context objects 
+ * For debugging purposes, a var_dump() workalike which omits context objects
  * is available as $context->varDump().
  */
 class SecurePoll_Context {
@@ -21,12 +21,12 @@ class SecurePoll_Context {
 
 	/** Message text cache */
 	var $messageCache = array();
-	
+
 	/** election cache */
 	var $electionCache = array();
 
-	/** 
-	 * Which messages are loaded. 2-d array: language and entity ID, value arbitrary. 
+	/**
+	 * Which messages are loaded. 2-d array: language and entity ID, value arbitrary.
 	 */
 	var $messagesLoaded = array();
 
@@ -100,14 +100,14 @@ class SecurePoll_Context {
 		$this->messageCache = $this->messagesLoaded = array();
 		$this->store = $store;
 	}
-	
+
 	/** Get the type of a particular entity **/
 	function getEntityType( $id ) {
 		return $this->getStore()->getEntityType( $id );
 	}
 
-	/** 
-	 * Get an election object from the store, with a given entity ID. Returns 
+	/**
+	 * Get an election object from the store, with a given entity ID. Returns
 	 * false if it does not exist.
 	 */
 	function getElection( $id ) {
@@ -123,7 +123,7 @@ class SecurePoll_Context {
 	}
 
 	/**
-	 * Get an election object from the store, with a given name. Returns false 
+	 * Get an election object from the store, with a given name. Returns false
 	 * if there is no such election.
 	 */
 	function getElectionByTitle( $name ) {
@@ -155,7 +155,7 @@ class SecurePoll_Context {
 	 * Create a voter with the given parameters. Assumes the voter does not exist,
 	 * and inserts it into the database.
 	 *
-	 * The row needs to be locked before this function is called, to avoid 
+	 * The row needs to be locked before this function is called, to avoid
 	 * duplicate key errors.
 	 */
 	function createVoter( $params ) {
@@ -164,6 +164,7 @@ class SecurePoll_Context {
 
 	/**
 	 * Create a voter object from the database
+	 * @param $id
 	 * @return SecurePoll_Voter or false if the ID is not valid
 	 */
 	function getVoter( $id ) {
@@ -171,7 +172,7 @@ class SecurePoll_Context {
 	}
 
 	/**
-	 * Get a SecurePoll_Random instance. This provides cryptographic random 
+	 * Get a SecurePoll_Random instance. This provides cryptographic random
 	 * number generation.
 	 * @return SecurePoll_Random
 	 */
@@ -182,9 +183,9 @@ class SecurePoll_Context {
 		return $this->random;
 	}
 	/**
-	 * Set the global language fallback sequence. 
+	 * Set the global language fallback sequence.
 	 *
-	 * @param $languages array A list of language codes. When a message is 
+	 * @param $languages array A list of language codes. When a message is
 	 *     requested, the first code in the array will be tried first, followed
 	 *     by the subsequent codes.
 	 */
@@ -193,12 +194,13 @@ class SecurePoll_Context {
 	}
 
 	/**
-	 * Get some messages from the backend store or the cache. 
-	 * This is an internal interface for SecurePoll_Entity, generally you 
+	 * Get some messages from the backend store or the cache.
+	 * This is an internal interface for SecurePoll_Entity, generally you
 	 * should use SecurePoll_Entity::getMessage() instead.
 	 *
-	 * @param $lang Language code
-	 * @param $ids Entity IDs
+	 * @param $lang string Language code
+	 * @param $ids array Entity IDs
+	 * @return array
 	 */
 	function getMessages( $lang, $ids ) {
 		if ( isset( $this->messagesLoaded[$lang] ) ) {
@@ -224,12 +226,13 @@ class SecurePoll_Context {
 
 	/**
 	 * Get a particular message.
-	 * This is an internal interface for SecurePoll_Entity, generally you 
+	 * This is an internal interface for SecurePoll_Entity, generally you
 	 * should use SecurePoll_Entity::getMessage() instead.
 	 *
-	 * @param $lang Language code
-	 * @param $id Entity ID
-	 * @param $key Message key
+	 * @param $lang string Language code
+	 * @param $id string|int Entity ID
+	 * @param $key string Message key
+	 * @return bool
 	 */
 	function getMessage( $lang, $id, $key ) {
 		if ( !isset( $this->messagesLoaded[$lang][$id] ) ) {
@@ -243,7 +246,7 @@ class SecurePoll_Context {
 	}
 
 	/**
-	 * Get a database object, or throw an exception if the current store object 
+	 * Get a database object, or throw an exception if the current store object
 	 * does not support database operations.
 	 * @return DatabaseBase
 	 */
@@ -254,38 +257,78 @@ class SecurePoll_Context {
 		return $this->db;
 	}
 
+	/**
+	 * @param $info
+	 * @return SecurePoll_Election
+	 */
 	function newElection( $info ) {
 		return new SecurePoll_Election( $this, $info );
 	}
 
+	/**
+	 * @param $info
+	 * @return SecurePoll_Question
+	 */
 	function newQuestion( $info ) {
 		return new SecurePoll_Question( $this, $info );
 	}
 
+	/**
+	 * @param $info
+	 * @return SecurePoll_Option
+	 */
 	function newOption( $info ) {
 		return new SecurePoll_Option( $this, $info );
 	}
 
+	/**
+	 * @param $type
+	 * @param $election
+	 * @return bool|SecurePoll_GpgCrypt
+	 */
 	function newCrypt( $type, $election ) {
 		return SecurePoll_Crypt::factory( $this, $type, $election );
 	}
 
+	/**
+	 * @param $type
+	 * @param $electionTallier
+	 * @param $question
+	 * @return SecurePoll_Tallier
+	 */
 	function newTallier( $type, $electionTallier, $question ) {
 		return SecurePoll_Tallier::factory( $this, $type, $electionTallier, $question );
 	}
 
+	/**
+	 * @param $type
+	 * @param $election
+	 * @return SecurePoll_Ballot
+	 */
 	function newBallot( $type, $election ) {
 		return SecurePoll_Ballot::factory( $this, $type, $election );
 	}
 
+	/**
+	 * @param $type
+	 * @return SecurePoll_Auth
+	 */
 	function newAuth( $type ) {
 		return SecurePoll_Auth::factory( $this, $type );
 	}
 
+	/**
+	 * @param $params
+	 * @return SecurePoll_Voter
+	 */
 	function newVoter( $params ) {
 		return new SecurePoll_Voter( $this, $params );
-	}	
+	}
 
+	/**
+	 * @param $election
+	 * @return SecurePoll_ElectionTallier
+	 */
 	function newElectionTallier( $election ) {
 		return new SecurePoll_ElectionTallier( $this, $election );
 	}
@@ -295,8 +338,9 @@ class SecurePoll_Context {
 	 * but omitting the $obj->context member variables for brevity.
 	 *
 	 * @param $var mixed
-	 * @param $return True to return the text instead of echoing
-	 * @param $level Recursion level, leave this as zero when calling.
+	 * @param $return bool True to return the text instead of echoing
+	 * @param $level int Recursion level, leave this as zero when calling.
+	 * @return mixed|string
 	 */
 	function varDump( $var, $return = false, $level = 0 ) {
 		$tab = '    ';
@@ -304,7 +348,7 @@ class SecurePoll_Context {
 		if ( is_array( $var ) ) {
 			$s = "array(\n";
 			foreach ( $var as $key => $value ) {
-				$s .= "$indent$tab" . $this->varDump( $key, true, $level + 1 ) . " => " . 
+				$s .= "$indent$tab" . $this->varDump( $key, true, $level + 1 ) . " => " .
 					$this->varDump( $value, true, $level + 1 ) . ",\n";
 			}
 			$s .= "{$indent})";
@@ -333,8 +377,12 @@ class SecurePoll_Context {
 		}
 	}
 
+	/**
+	 * @param $resource
+	 * @return string
+	 */
 	function getResourceUrl( $resource ) {
 		global $wgScriptPath;
 		return "$wgScriptPath/extensions/SecurePoll/resources/$resource";
-	}	
+	}
 }

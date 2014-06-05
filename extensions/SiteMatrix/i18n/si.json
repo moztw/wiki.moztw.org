@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Singhalawap",
+            "දසනැබළයෝ",
+            "නන්දිමිතුරු"
+        ]
+    },
+    "sitematrix": "විකිමීඩියාවට අයත් විකි ලැයිස්තුව",
+    "sitematrix-summary": "මෙම විශේෂ පිටුව විකිමීඩියාවේ සියළු  විකියන් ලැයිස්තුගත කරයි.",
+    "sitematrix-desc": "[[Special:SiteMatrix|විකිමාධ්‍ය විකියන්ගේ ලැයිස්තුවක්]] ප්‍රදර්ශනය කරන්න",
+    "sitematrix-language": "භාෂාව",
+    "sitematrix-project": "ව්‍යාපෘතිය, අන්තර්-ව්‍යාපෘති සබැඳිය හා අන්තර්විකි සබැඳිය හි නම",
+    "sitematrix-others": "විකිමීඩියාවට අයත් අනෙකුත් ව්‍යාපෘති",
+    "sitematrix-other-projects": "අනෙකුත් ව්‍යාපෘති",
+    "sitematrix-total": "'''මුළු ගණනය: $1'''",
+    "sitematrix-sitetotal": "මුළු",
+    "sitematrix-private": "පෞද්ගලික",
+    "sitematrix-fishbowl": "සංස්කරණය කෙරුම පරිසීමාකෙරිණි"
+}

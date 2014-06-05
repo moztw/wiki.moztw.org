@@ -1,0 +1,21 @@
+{
+    "@metadata": {
+        "authors": [
+            "Ainali",
+            "Lejonel",
+            "M.M.S.",
+            "לערי ריינהארט"
+        ]
+    },
+    "sitematrix": "Lista över Wikimedias wikier",
+    "sitematrix-summary": "Denna specialsida listar alla Wikimedias wikier.",
+    "sitematrix-desc": "Visar en [[Special:SiteMatrix|lista över Wikimedias wikier]]",
+    "sitematrix-language": "Språk",
+    "sitematrix-project": "Projektnamn, interprojektlänk och interwiki-länk",
+    "sitematrix-others": "Andra Wikimediaprojekt",
+    "sitematrix-other-projects": "Andra projekt",
+    "sitematrix-total": "'''Totalt antal: $1'''",
+    "sitematrix-sitetotal": "Total",
+    "sitematrix-private": "privat",
+    "sitematrix-fishbowl": "redigering begränsad"
+}

@@ -1,0 +1,18 @@
+{
+    "@metadata": {
+        "authors": [
+            "Gazeb"
+        ]
+    },
+    "sitematrix": "Список проєктів Вікімедія",
+    "sitematrix-summary": "Тота шпеціална сторінка обсягує список вшыткых вікі Фонду Вікімедія",
+    "sitematrix-desc": "Указує [[Special:SiteMatrix|список проєктів фонду Вікімедія]]",
+    "sitematrix-language": "Язык",
+    "sitematrix-project": "Назва проєкту, міджіпроєктовый одказ і міджіязыковый одказ",
+    "sitematrix-others": "Іншы проєкты Фонду «Вікімедія»",
+    "sitematrix-other-projects": "Другы проєкты",
+    "sitematrix-total": "'''Цілкове чісло: $1'''",
+    "sitematrix-sitetotal": "Цілком",
+    "sitematrix-private": "пріватный",
+    "sitematrix-fishbowl": "едітованя обмеджене"
+}

@@ -1,0 +1,18 @@
+{
+    "@metadata": {
+        "authors": [
+            "AnakngAraw"
+        ]
+    },
+    "sitematrix": "Talaan ng mga wiki ng Wikimedia",
+    "sitematrix-summary": "Nagtatala ang pahinang ito ng lahat ng mga wiki ng Wikimedia.",
+    "sitematrix-desc": "Nagpapakita ng isang [[Special:SiteMatrix|talaan ng mga wiki ng Wikimedia]]",
+    "sitematrix-language": "Wika",
+    "sitematrix-project": "Pangalan ng proyekto, kawing sa kaugnay na proyekto (inter-proyekto) at kawing sa kaugnay na wiki (''interwiki'')",
+    "sitematrix-others": "Iba pang mga proyekto ng Wikimedia",
+    "sitematrix-other-projects": "Iba pang mga proyekto",
+    "sitematrix-total": "'''Kabuoang bilang: $1'''",
+    "sitematrix-sitetotal": "Kabuoan",
+    "sitematrix-private": "pribado (pansarili)",
+    "sitematrix-fishbowl": "pinagbabawalan ang pagbago"
+}

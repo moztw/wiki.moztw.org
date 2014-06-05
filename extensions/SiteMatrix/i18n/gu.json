@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Ashok modhvadia",
+            "Dsvyas",
+            "KartikMistry"
+        ]
+    },
+    "sitematrix": "વિકિમીડિયા વિકિઓની યાદી",
+    "sitematrix-summary": "આ ખાસ પાનું તમામ વિકિમીડિયા વિકિઓની યાદી દર્શાવે છે.",
+    "sitematrix-desc": "[[Special:SiteMatrix|વિકિમીડિયા વિકિઓની યાદી]] દર્શાવે છે",
+    "sitematrix-language": "ભાષા",
+    "sitematrix-project": "પરિયોજનાનું નામ, આંતરપરિયોજનાની કડી અને આંતરવિકિની કડી",
+    "sitematrix-others": "વિકિમીડિયાની અન્ય પરિયોજનાઓ",
+    "sitematrix-other-projects": "અન્ય પ્રકલ્પ",
+    "sitematrix-total": "'''કુલ સંખ્યા: $1'''",
+    "sitematrix-sitetotal": "કુલ",
+    "sitematrix-private": "અંગત",
+    "sitematrix-fishbowl": "સંપાદન પ્રતિબંધિત"
+}

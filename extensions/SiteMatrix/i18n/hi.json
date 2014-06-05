@@ -1,0 +1,21 @@
+{
+    "@metadata": {
+        "authors": [
+            "Ansumang",
+            "Kaustubh",
+            "Shyam",
+            "Siddhartha Ghai"
+        ]
+    },
+    "sitematrix": "विकिमीडिया विकियों की सूची",
+    "sitematrix-summary": "यह विशेष पृष्ठ विकिमीडिया विकियों की सूची दर्शाता है।",
+    "sitematrix-desc": "[[Special:SiteMatrix|विकिमीडिया विकियों की सूची]] दर्शाता है",
+    "sitematrix-language": "भाषा",
+    "sitematrix-project": "प्रकल्प का नाम, अंतरप्रकल्प कड़ी और अंतरविकि कड़ी",
+    "sitematrix-others": "विकिमीडिया के अन्य प्रकल्प",
+    "sitematrix-other-projects": "अन्य प्रकल्प",
+    "sitematrix-total": "'''कुल गिनती: $1'''",
+    "sitematrix-sitetotal": "कुल",
+    "sitematrix-private": "निजी",
+    "sitematrix-fishbowl": "संपादन प्रतिबंधित"
+}

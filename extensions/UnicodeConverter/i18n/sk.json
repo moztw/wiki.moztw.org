@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Helix84"
+		]
+	},
+	"unicodeconverter": "Konverzia Unicode",
+	"unicodeconverter-desc": "Jednoduchý príklad modulu špeciálnej stránky. [[Special:UnicodeConverter|Po zadaní reťazca v UTF-8]] ho skonvertuje na HTML entity vhodné na použitie na webstránke v kódovaní ISO 8859-1.",
+	"unicodeconverter-ok": "OK",
+	"unicodeconverter-oldtext": "Pôvodný text:",
+	"unicodeconverter-newtext": "Skonvertovaný text:"
+}

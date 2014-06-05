@@ -1,0 +1,17 @@
+{
+    "@metadata": {
+        "authors": [
+            "Ibrahim"
+        ]
+    },
+    "sitematrix": "Феҳристи викиҳои Викимедиа",
+    "sitematrix-summary": "Ин саҳифаи вижа тамоми викиҳои Викимедиаро феҳрист мекунад.",
+    "sitematrix-desc": "[[Special:SiteMatrix|Феҳристи викиҳои Викимедиа]]ро намоиш медиҳад",
+    "sitematrix-language": "Забон",
+    "sitematrix-project": "Номи лоиҳа, пайванди миёнилоиҳа ва пайванди миёнивики",
+    "sitematrix-others": "Дигар лоиҳаҳои Викимедиа",
+    "sitematrix-total": "'''Ҷамъи кул: $1'''",
+    "sitematrix-sitetotal": "Кул",
+    "sitematrix-private": "шахсӣ",
+    "sitematrix-fishbowl": "вироишкунӣ маҳдуд шудааст"
+}

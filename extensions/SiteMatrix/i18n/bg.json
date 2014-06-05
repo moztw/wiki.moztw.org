@@ -1,0 +1,21 @@
+{
+    "@metadata": {
+        "authors": [
+            "DCLXVI",
+            "Spiritia",
+            "Stanqo",
+            "Turin",
+            "לערי ריינהארט"
+        ]
+    },
+    "sitematrix": "Списък на уикитата на Уикимедия",
+    "sitematrix-summary": "Тази специална страница съдържа списък на всички уикита на Уикимедия.",
+    "sitematrix-desc": "Показва списък с [[Special:SiteMatrix|уикитата във фермата]]",
+    "sitematrix-language": "Език",
+    "sitematrix-project": "Име на проекта, междупроектна препратка и междууики",
+    "sitematrix-others": "Други проекти на Уикимедия",
+    "sitematrix-other-projects": "Други проекти",
+    "sitematrix-total": "'''Общ брой: $1'''",
+    "sitematrix-sitetotal": "Общо",
+    "sitematrix-fishbowl": "редактирането е ограничено"
+}

@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Alexsh",
+            "Hydra",
+            "Xiaomingyan"
+        ]
+    },
+    "sitematrix": "维基媒体网站列表",
+    "sitematrix-summary": "本特殊页面列示所有维基媒体基金会的所有MediaWiki网站。",
+    "sitematrix-desc": "显示[[Special:SiteMatrix|维基媒体所有网站的列表]]",
+    "sitematrix-language": "语言",
+    "sitematrix-project": "计划名称、跨计划链接以及跨维基链接",
+    "sitematrix-others": "维基媒体的其它计划",
+    "sitematrix-other-projects": "其他项目",
+    "sitematrix-total": "'''合计：$1'''",
+    "sitematrix-sitetotal": "总数",
+    "sitematrix-private": "私用",
+    "sitematrix-fishbowl": "编辑限制"
+}

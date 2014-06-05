@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pyt"
+		]
+	},
+	"unicodeconverter": "Unicode-Konverter",
+	"unicodeconverter-desc": "Einfach Biespil foar ne Spezioalsiede. [[Special:UnicodeConverter|Iengoawe fon n Teeken in UTF-8]], Uutgoawe as HTML-Entität toun Gebruuk in ne ISO 8859-1 Websiede",
+	"unicodeconverter-ok": "OK",
+	"unicodeconverter-oldtext": "Originoaltext:",
+	"unicodeconverter-newtext": "Konvertierden Text:"
+}

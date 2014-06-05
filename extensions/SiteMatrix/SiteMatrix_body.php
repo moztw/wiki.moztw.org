@@ -1,29 +1,41 @@
 <?php
 
 if ( !defined( 'MEDIAWIKI' ) ) {
-    echo "SiteMatrix extension\n";
-    exit( 1 );
+	echo "SiteMatrix extension\n";
+	exit( 1 );
 }
-
-global $IP;
-require_once( $IP.'/languages/Names.php' );
 
 class SiteMatrix {
 	protected $langlist, $sites, $names, $hosts;
-	protected $private = null, $fishbowl = null, $closed = null;
+
+	/**
+	 * @var array|null
+	 */
+	protected $private = null;
+
+	/**
+	 * @var array|null
+	 */
+	protected $fishbowl = null;
+
+	/**
+	 * @var array|null
+	 */
+	protected $closed = null;
+
 	protected $specials, $matrix, $count, $countPerSite;
 
-	public function __construct(){
+	public function __construct() {
 		global $wgSiteMatrixFile, $wgSiteMatrixSites;
 		global $wgLocalDatabases, $wgConf;
 
 		$wgConf->loadFullData();
 
-		if( file_exists( $wgSiteMatrixFile ) ){
+		if ( file_exists( $wgSiteMatrixFile ) ) {
 			$this->langlist = $this->extractFile( $wgSiteMatrixFile );
 			$hideEmpty = false;
 		} else {
-			$this->langlist = array_keys( Language::getLanguageNames( false ) );
+			$this->langlist = array_keys( Language::fetchLanguageNames( false ) );
 			$hideEmpty = true;
 		}
 
@@ -34,7 +46,7 @@ class SiteMatrix {
 		$this->names = array();
 		$this->hosts = array();
 
-		foreach( $wgSiteMatrixSites as $site => $conf ){
+		foreach ( $wgSiteMatrixSites as $site => $conf ) {
 			$this->sites[] = $site;
 			$this->names[$site] = $conf['name'] . ( isset( $conf['prefix'] ) ?
 				'<br />' . $conf['prefix'] : '' );
@@ -43,22 +55,22 @@ class SiteMatrix {
 
 		# Initialize $countPerSite
 		$this->countPerSite = array();
-		foreach( $this->sites as $site ) {
+		foreach ( $this->sites as $site ) {
 			$this->countPerSite[$site] = 0;
 		}
 
 		# Tabulate the matrix
 		$this->specials = array();
 		$this->matrix = array();
-		foreach( $wgLocalDatabases as $db ) {
+		foreach ( $wgLocalDatabases as $db ) {
 			# Find suffix
 			$found = false;
 			foreach ( $this->sites as $site ) {
 				$m = array();
 				if ( preg_match( "/(.*)$site\$/", $db, $m ) ) {
 					$lang = $m[1];
-					$langhost = str_replace( '_', '-', $lang);
-					if( isset( $xLanglist[$langhost] ) ) {
+					$langhost = str_replace( '_', '-', $lang );
+					if ( isset( $xLanglist[$langhost] ) ) {
 						$this->matrix[$site][$langhost] = 1;
 						$this->countPerSite[$site]++;
 					} else {
@@ -68,7 +80,7 @@ class SiteMatrix {
 					break;
 				}
 			}
-			if( !$found ){
+			if ( !$found ) {
 				list( $major, $minor ) = $wgConf->siteFromDB( $db );
 				$this->specials[] = array( str_replace( '-', '_', $minor ), $major );
 			}
@@ -76,15 +88,15 @@ class SiteMatrix {
 
 		uasort( $this->specials, array( __CLASS__, 'sortSpecial' ) );
 
-		if( $hideEmpty ){
-			foreach( $xLanglist as $lang => $unused ){
+		if ( $hideEmpty ) {
+			foreach ( $xLanglist as $lang => $unused ) {
 				$empty = true;
 				foreach ( $this->sites as $site ) {
-					if( !empty( $this->matrix[$site][$lang] ) ){
+					if ( !empty( $this->matrix[$site][$lang] ) ) {
 						$empty = false;
 					}
 				}
-				if( $empty ){
+				if ( $empty ) {
 					unset( $xLanglist[$lang] );
 				}
 			}
@@ -94,36 +106,79 @@ class SiteMatrix {
 		$this->count = count( $wgLocalDatabases );
 	}
 
-	public static function sortSpecial( $a1, $a2 ){
+	/**
+	 * @param $a1 array
+	 * @param $a2 array
+	 * @return int
+	 */
+	public static function sortSpecial( $a1, $a2 ) {
 		return strcmp( $a1[0], $a2[0] );
 	}
 
-	public function getLangList(){
+	/**
+	 * @return array
+	 */
+	public function getLangList() {
 		return $this->langlist;
 	}
 
-	public function getNames(){
+	/**
+	 * @return array
+	 */
+	public function getNames() {
 		return $this->names;
 	}
 
-	public function getSites(){
+	/**
+	 * @return array
+	 */
+	public function getSites() {
 		return $this->sites;
 	}
 
-	public function getSpecials(){
+	/**
+	 * @return array
+	 */
+	public function getSpecials() {
 		return $this->specials;
 	}
 
-	public function getCount(){
+	/**
+	 * @return int
+	 */
+	public function getCount() {
 		return $this->count;
 	}
 
-	public function getCountPerSite( $site ){
+	/**
+	 * @param $site string
+	 * @return int
+	 */
+	public function getCountPerSite( $site ) {
 		return $this->countPerSite[$site];
 	}
 
-	public function getSiteUrl( $site ){
-		return 'http://' . $this->hosts[$site] . '/';
+	/**
+	 * @param $site string
+	 * @return string
+	 */
+	public function getSiteUrl( $site ) {
+		return '//' . $this->hosts[$site] . '/';
+	}
+
+	/**
+	 * @param string $minor Language
+	 * @param string $major Site
+	 * @param bool $canonical: use getCanonicalUrl()
+	 * @return Mixed
+	 */
+	public function getUrl( $minor, $major, $canonical = false ) {
+		global $wgConf;
+		$dbname = $this->getDBName( $minor, $major );
+		$minor = str_replace( '_', '-', $minor );
+		return $wgConf->get( $canonical ? 'wgCanonicalServer' : 'wgServer',
+			$dbname, $major, array( 'lang' => $minor, 'site' => $major )
+		);
 	}
 
 	/**
@@ -131,12 +186,19 @@ class SiteMatrix {
 	 * @param string $major Site
 	 * @return Mixed
 	 */
-	public function getUrl( $minor, $major ){
+	public function getCanonicalUrl( $minor, $major ) {
+		return $this->getUrl( $minor, $major, true );
+	}
+
+	/**
+	 * @param $minor string
+	 * @param $major string
+	 * @return string
+	 */
+	public function getSitename( $minor, $major ) {
 		global $wgConf;
 		$dbname = $this->getDBName( $minor, $major );
-		$minor = str_replace( '_', '-', $minor );
-		return $wgConf->get( 'wgCanonicalServer', $dbname, $major,
-			array( 'lang' => $minor, 'site' => $major ) );
+		return $wgConf->get( 'wgSitename', $dbname );
 	}
 
 	/**
@@ -145,7 +207,7 @@ class SiteMatrix {
 	 * @return string
 	 */
 	public function getDBName( $minor, $major ) {
-		return $minor . $major;
+		return str_replace( '-', '_', $minor ) . $major;
 	}
 
 	/**
@@ -153,7 +215,7 @@ class SiteMatrix {
 	 * @param string $major Site
 	 * @return bool
 	 */
-	public function exist( $minor, $major ){
+	public function exist( $minor, $major ) {
 		return !empty( $this->matrix[$major][$minor] );
 	}
 
@@ -172,15 +234,17 @@ class SiteMatrix {
 			// not very reliable.
 			global $wgConf;
 
-			if( $wgConf->get( 'wgReadOnly', $dbname, $major, array( 'site' => $major, 'lang' => $minor ) ) )
+			if ( $wgConf->get( 'wgReadOnly', $dbname, $major, array( 'site' => $major, 'lang' => $minor ) ) ) {
 				return true;
+			}
 			$readOnlyFile = $wgConf->get( 'wgReadOnlyFile', $dbname, $major, array( 'site' => $major, 'lang' => $minor ) );
-			if( $readOnlyFile && file_exists( $readOnlyFile ) )
+			if ( $readOnlyFile && file_exists( $readOnlyFile ) ) {
 				return true;
+			}
 			return false;
 		}
 
-		if( $this->closed == null ) {
+		if ( $this->closed == null ) {
 			$this->closed = $this->extractDbList( $wgSiteMatrixClosedSites );
 		}
 		return in_array( $dbname, $this->closed );
@@ -252,10 +316,9 @@ class SiteMatrix {
 	/**
 	 * Handler method for the APISiteInfoGeneralInfo hook
 	 *
-	 * @static
 	 * @param ApiQuerySiteinfo $module
 	 * @param array $results
-	 * @return void
+	 * @return bool
 	 */
 	public static function APIQuerySiteInfoGeneralInfo( $module, &$results ) {
 		global $wgDBname, $wgConf;
@@ -264,142 +327,22 @@ class SiteMatrix {
 
 		list( $site, $lang ) = $wgConf->siteFromDB( $wgDBname );
 
-		if ( $matrix->isClosed( $lang, $site ) )  {
+		if ( $matrix->isClosed( $lang, $site ) ) {
 			$results['closed'] = '';
 		}
 
-		if ( $matrix->isSpecial( $wgDBname ) )  {
+		if ( $matrix->isSpecial( $wgDBname ) ) {
 			$results['special'] = '';
 		}
 
-		if ( $matrix->isPrivate( $wgDBname ) )  {
+		if ( $matrix->isPrivate( $wgDBname ) ) {
 			$results['private'] = '';
 		}
 
-		if ( $matrix->isFishbowl( $wgDBname ) )  {
+		if ( $matrix->isFishbowl( $wgDBname ) ) {
 			$results['fishbowl'] = '';
 		}
 
 		return true;
-	}
-}
-
-class SiteMatrixPage extends SpecialPage {
-
-	function __construct() {
-		parent::__construct( 'SiteMatrix' );
-	}
-
-	/**
-	 * @return array
-	 */
-	public static function getLocalLanguageNames() {
-		if( class_exists( 'LanguageNames' ) ) {
-			global $wgLang;
-			return LanguageNames::getNames( $wgLang->getCode() );
-		}
-		return array();
-	}
-
-	function execute( $par ) {
-		global $wgOut;
-		$langNames = Language::getLanguageNames();
-
-		$this->setHeaders();
-		$this->outputHeader();
-
-		$matrix = new SiteMatrix();
-
-		$localLanguageNames = self::getLocalLanguageNames();
-
-		# Construct the HTML
-
-		# Header row
-		$s = Xml::openElement( 'table', array( 'class' => 'wikitable', 'id' => 'mw-sitematrix-table' ) ) .
-			"<tr>" .
-				Xml::element( 'th', array( 'rowspan' => 2 ), wfMsg( 'sitematrix-language' ) ) .
-				Xml::element( 'th', array( 'colspan' => count( $matrix->getSites() ) ), wfMsg( 'sitematrix-project' ) ) .
-			"</tr>
-			<tr>";
-		foreach ( $matrix->getNames() as $id => $name ) {
-			$url = $matrix->getSiteUrl( $id );
-			$s .= Xml::tags( 'th', null, "<a href=\"{$url}\">{$name}</a>" );
-		}
-		$s .= "</tr>\n";
-
-		# Bulk of table
-		foreach ( $matrix->getLangList() as $lang ) {
-			$anchor = strtolower( '<a id="' . htmlspecialchars( $lang ) . '" name="' . htmlspecialchars( $lang ) . '"></a>' );
-			$s .= '<tr>';
-			$attribs = array();
-			if( isset( $localLanguageNames[$lang] ) ) {
-				$attribs['title'] = $localLanguageNames[$lang];
-			}
-
-			$langDisplay = ( isset( $langNames[$lang] ) ? $langNames[$lang] : '' );
-			if ( isset( $localLanguageNames[$lang] ) && strlen( $localLanguageNames[$lang] ) && $langDisplay != $localLanguageNames[$lang] ) {
-				$langDisplay .= ' (' . $localLanguageNames[$lang] . ')';
-			}
-			$s .= '<td>' . $anchor . Xml::element( 'strong', $attribs, $langDisplay ) . '</td>';
-
-			foreach ( $matrix->getNames() as $site => $name ) {
-				$url = $matrix->getUrl( $lang, $site );
-				if ( $matrix->exist( $lang, $site ) ) {
-					# Wiki exists
-					$closed = $matrix->isClosed( $lang, $site );
-					$s .= "<td>" . ($closed ? "<del>" : '') . "<a href=\"{$url}\">{$lang}</a>" . ($closed ? "</del>" : '') . '</td>';
-				} else {
-					# Non-existent wiki
-					$s .= "<td><a href=\"{$url}\" class=\"new\">{$lang}</a></td>";
-				}
-			}
-			$s .= "</tr>\n";
-		}
-
-		# Total
-		$s .= '<tr style="font-weight: bold"><th><a id="total" name="total"></a>' . wfMsgHtml( 'sitematrix-sitetotal' ) . '</th>';
-		foreach( $matrix->getNames() as $site => $name ) {
-			$url = $matrix->getSiteUrl( $site );
-			$count = $matrix->getCountPerSite( $site );
-			$s .= "<th><a href=\"{$url}\">{$count}</a></th>";
-		}
-		$s .= '</tr>';
-		$s .= Xml::closeElement( 'table' ) . "\n";
-
-		# Specials
-		$s .= '<h2 id="mw-sitematrix-others">' . wfMsg( 'sitematrix-others' ) . '</h2>';
-
-		$s .= Xml::openElement( 'table', array( 'class' => 'wikitable', 'id' => 'mw-sitematrix-other-table' ) ) .
-			"<tr>" .
-				Xml::element( 'th', null, wfMsg( 'sitematrix-other-projects' ) ) .
-			"</tr>";
-
-		foreach ( $matrix->getSpecials() as $special ) {
-			list( $lang, $site ) = $special;
-			$langhost = str_replace( '_', '-', $lang );
-			$url = $matrix->getUrl( $lang, $site );
-
-			# Handle options
-			$flags = array();
-			if( $matrix->isPrivate( $lang . $site ) ) {
-				$flags[] = wfMsgHtml( 'sitematrix-private' );
-			}
-			if( $matrix->isFishbowl( $lang . $site ) ) {
-				$flags[] = wfMsgHtml( 'sitematrix-fishbowl' );
-			}
-			$flagsStr = implode( ', ', $flags );
-			if( $site != 'wiki' ) {
-				$langhost .= $site;
-			}
-			$closed = $matrix->isClosed( $lang, $site );
-			$s .= '<tr><td>' . ( $closed ? '<del>' : '' ) .
-				wfSpecialList( '<a href="' . $url . '/">' . $langhost . "</a>", $flagsStr ) .
-				( $closed ? '</del>' : '' ) . "</td></tr>\n";
-		}
-
-		$s .= Xml::closeElement( 'table' ) . "\n";
-
-		$wgOut->addHTML( $s );
-		$wgOut->addWikiMsg( 'sitematrix-total', $matrix->getCount() );
 	}
 }

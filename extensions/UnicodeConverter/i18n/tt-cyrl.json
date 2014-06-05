@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ильнар"
+		]
+	},
+	"unicodeconverter": "Unicode конвертеры",
+	"unicodeconverter-desc": "Мәсәлән, [[Special:UnicodeConverter| UTF-8 кодировкасындагы]]  текст, ISO 8859-1 кодировка битендә эшләүгә яраклы HTML-биткә әйләнә.",
+	"unicodeconverter-ok": "ОК",
+	"unicodeconverter-oldtext": "Башлангыч текст:",
+	"unicodeconverter-newtext": "Үзгәртелгән текст:"
+}

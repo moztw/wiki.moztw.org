@@ -1,0 +1,21 @@
+{
+    "@metadata": {
+        "authors": [
+            "Geitost",
+            "Kghbln",
+            "Raimond Spekking",
+            "לערי ריינהארט"
+        ]
+    },
+    "sitematrix": "Liste der Wikimedia-Wikis",
+    "sitematrix-summary": "Diese Spezialseite listet alle Wikimedia-Wikis auf.",
+    "sitematrix-desc": "Ergänzt eine [[Special:SiteMatrix|Spezialseite]] mit einer Liste der Wikimedia-Wikis",
+    "sitematrix-language": "Sprache",
+    "sitematrix-project": "Projektname, Interprojektlink und Interwikilink",
+    "sitematrix-others": "Weitere Wikimedia-Projekte",
+    "sitematrix-other-projects": "Weitere Projekte",
+    "sitematrix-total": "'''Gesamtanzahl: $1'''",
+    "sitematrix-sitetotal": "Insgesamt",
+    "sitematrix-private": "Privat",
+    "sitematrix-fishbowl": "Bearbeitung eingeschränkt"
+}

@@ -4,25 +4,20 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit( 1 );
 }
 
-class SpecialUnicodeConverter extends SpecialPage
-{
+class SpecialUnicodeConverter extends SpecialPage {
 	function __construct() {
 		parent::__construct("UnicodeConverter");
 	}
 
 	function execute( $par ) {
-		global $wgRequest, $wgOut;
-
-		
-
 		$this->setHeaders();
 
-		$q = $wgRequest->getText( 'q' );
+		$q = $this->getRequest()->getText( 'q' );
 		$encQ = htmlspecialchars( $q );
-		$action = $this->getTitle()->escapeLocalUrl();
-		$ok = htmlspecialchars( wfMsg( 'unicodeconverter-ok' ) );
+		$action = htmlspecialchars( $this->getPageTitle()->getLocalUrl() );
+		$ok = $this->msg( 'unicodeconverter-ok' )->escaped();
 
-		$wgOut->addHTML( <<<END
+		$this->getOutput()->addHTML( <<<END
 <form name="ucf" method="post" action="$action">
 <textarea rows="15" cols="80" name="q">$encQ</textarea><br />
 <input type="submit" name="submit" value="$ok" /><br /><br />
@@ -32,13 +27,24 @@ END
 
 		if ( !is_null( $q ) ) {
 			$html = wfUtf8ToHTML( htmlspecialchars( $q ) );
-			$wgOut->addHTML( "<br /><b>". wfMsg('unicodeconverter-oldtext'). "</b><br /><br />" . nl2br( $html ) . "<br /><br /><hr /><br /><b>" . wfMsg('unicodeconverter-newtext'). "</b><br /><br />".
-			  nl2br( htmlspecialchars( $html ) ) . "<br /><br />" );
+			$this->getOutput()->addHTML( "<br /><b>" .
+					$this->msg('unicodeconverter-oldtext')->escaped() .
+					"</b><br /><br />" .
+					nl2br( $html ) .
+					"<br /><br /><hr /><br /><b>" .
+					$this->msg('unicodeconverter-newtext')->escaped() .
+					"</b><br /><br />" .
+			  		nl2br( htmlspecialchars( $html ) ) .
+					"<br /><br />" );
 		}
 	}
 }
 
-# Converts a single UTF-8 character into the corresponding HTML character entity
+/**
+ * Converts a single UTF-8 character into the corresponding HTML character entity
+ * @param array $matches
+ * @return string
+ */
 function wfUtf8Entity( $matches ) {
 	$char = $matches[0];
 	# Find the length
@@ -74,7 +80,11 @@ function wfUtf8Entity( $matches ) {
 	return "&#$z;";
 }
 
-# Converts all multi-byte characters in a UTF-8 string into the appropriate character entity
-function wfUtf8ToHTML($string) {
+/**
+ * Converts all multi-byte characters in a UTF-8 string into the appropriate character entity
+ * @param string $string
+ * @return string
+ */
+function wfUtf8ToHTML( $string ) {
 	return preg_replace_callback( '/[\\xc0-\\xfd][\\x80-\\xbf]*/', 'wfUtf8Entity', $string );
 }

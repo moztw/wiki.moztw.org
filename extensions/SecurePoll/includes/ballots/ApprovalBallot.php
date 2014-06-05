@@ -7,7 +7,12 @@ class SecurePoll_ApprovalBallot extends SecurePoll_Ballot {
 	function getTallyTypes() {
 		return array( 'plurality' );
 	}
-	
+
+	/**
+	 * @param $question SecurePoll_Question
+	 * @param $options array
+	 * @return string
+	 */
 	function getQuestionForm( $question, $options ) {
 		global $wgRequest;
 		$name = 'securepoll_q' . $question->getId();
@@ -17,7 +22,7 @@ class SecurePoll_ApprovalBallot extends SecurePoll_Ballot {
 			$optionId = $option->getId();
 			$inputId = "{$name}_opt{$optionId}";
 			$oldValue = $wgRequest->getBool( $inputId );
-			$s .= 
+			$s .=
 				'<div class="securepoll-option-approval">' .
 				Xml::check( $inputId, $oldValue, array( 'id' => $inputId ) ) .
 				'&#160;' .
@@ -28,6 +33,11 @@ class SecurePoll_ApprovalBallot extends SecurePoll_Ballot {
 		return $s;
 	}
 
+	/**
+	 * @param $question SecurePoll_Question
+	 * @param $status Status
+	 * @return string
+	 */
 	function submitQuestion( $question, $status ) {
 		global $wgRequest;
 
@@ -46,8 +56,8 @@ class SecurePoll_ApprovalBallot extends SecurePoll_Ballot {
 		$scores = array();
 		$itemLength = 2*8 + 7;
 		for ( $offset = 0; $offset < strlen( $record ); $offset += $itemLength ) {
-			if ( !preg_match( '/Q([0-9A-F]{8})-A([0-9A-F]{8})-([yn])--/A', 
-				$record, $m, 0, $offset ) ) 
+			if ( !preg_match( '/Q([0-9A-F]{8})-A([0-9A-F]{8})-([yn])--/A',
+				$record, $m, 0, $offset ) )
 			{
 				wfDebug( __METHOD__.": regex doesn't match\n" );
 				return false;
@@ -83,6 +93,6 @@ class SecurePoll_ApprovalBallot extends SecurePoll_Ballot {
 		}
 		return $result;
 	}
-		
+
 }
 

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Malafaya"
+		]
+	},
+	"unicodeconverter": "Unicode-konverto",
+	"unicodeconverter-ok": "O.K.",
+	"unicodeconverter-oldtext": "Texto originala:",
+	"unicodeconverter-newtext": "Texto konvertita:"
+}

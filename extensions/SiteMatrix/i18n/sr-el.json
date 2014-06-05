@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Michaello",
+            "Жељко Тодоровић",
+            "לערי ריינהארט"
+        ]
+    },
+    "sitematrix": "Tabela svih vikija",
+    "sitematrix-summary": "Ova posebna stranica lista sve Vikimedijine vikije.",
+    "sitematrix-desc": "Prikazuje [[Special:SiteMatrix|spisak Vikimedijinih vikija]].",
+    "sitematrix-language": "Jezik",
+    "sitematrix-project": "Ime projekta, međuprojekatska veza i međuviki veza.",
+    "sitematrix-others": "Ostali Vikimedijini projekti.",
+    "sitematrix-other-projects": "Ostali projekti",
+    "sitematrix-total": "'''Ukupan zbir: $1.'''",
+    "sitematrix-sitetotal": "ukupno",
+    "sitematrix-private": "privatno",
+    "sitematrix-fishbowl": "zabrana menjanja"
+}

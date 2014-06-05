@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"EugeneZelenko",
+			"Jim-by"
+		]
+	},
+	"unicodeconverter": "Канвэртар Unicode",
+	"unicodeconverter-desc": "Просты прыклад модуля спэцыяльнай старонкі. [[Special:UnicodeConverter|Пададзены радок у кадыроўцы UTF-8]] будзе сканвэртаваны ў фармат HTML прыдатны для вэб-старонак у кадыроўцы ISO 8859-1",
+	"unicodeconverter-ok": "Добра",
+	"unicodeconverter-oldtext": "Арыгінальны тэкст:",
+	"unicodeconverter-newtext": "Канвэртаваны тэкст:"
+}

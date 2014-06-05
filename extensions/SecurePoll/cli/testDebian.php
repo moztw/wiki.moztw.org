@@ -50,7 +50,7 @@ function spRunTest( $fileName, $debResult ) {
 		}
 		$line = trim( $line );
 		if ( !preg_match( '/^V: ([0-9-]*)$/', $line, $m ) ) {
-			echo "Skipping unrecognised line $line\n";
+			echo "Skipping unrecognized line $line\n";
 			continue;
 		}
 
@@ -112,7 +112,7 @@ function spRunDebianVote( $fileName ) {
 	$result = wfShellExec(
 		wfEscapeShellArg(
 			"$spDebianVoteDir/debian-vote",
-			$fileName 
+			$fileName
 		)
 	);
 	if ( !$result ) {
@@ -132,7 +132,7 @@ function spGetRandom( $min, $max ) {
 function spGenerateTest( $fileName ) {
 	global $spDebianVoteDir;
 	wfShellExec(
-		wfEscapeShellArg( "$spDebianVoteDir/votegen" ) . ' > ' . 
+		wfEscapeShellArg( "$spDebianVoteDir/votegen" ) . ' > ' .
 		wfEscapeShellArg( $fileName )
 	);
 }

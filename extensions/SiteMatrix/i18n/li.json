@@ -1,0 +1,19 @@
+{
+    "@metadata": {
+        "authors": [
+            "Matthias",
+            "Ooswesthoesbes"
+        ]
+    },
+    "sitematrix": "Lies van Wikimedia wiki's",
+    "sitematrix-summary": "Dees speciaal pazjena belies alle Wikimedia wikji's.",
+    "sitematrix-desc": "Toent 'n [[Special:SiteMatrix|lijst van Wikimedia-wiki's]]",
+    "sitematrix-language": "Taal",
+    "sitematrix-project": "Naam van 't perjèk, interperjèk link enne interwiki link",
+    "sitematrix-others": "Anger perjèkter van Wikimedia",
+    "sitematrix-other-projects": "Anger projekte",
+    "sitematrix-total": "'''Totaal aantal: $1'''",
+    "sitematrix-sitetotal": "Totaal",
+    "sitematrix-private": "beperkte toegang",
+    "sitematrix-fishbowl": "beperk bewerke"
+}

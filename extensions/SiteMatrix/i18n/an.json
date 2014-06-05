@@ -1,0 +1,18 @@
+{
+    "@metadata": {
+        "authors": [
+            "Juanpabl"
+        ]
+    },
+    "sitematrix": "Lista de wikis de Wikimedia",
+    "sitematrix-summary": "Ista pachina especial amuestra a lista de wikis de Wikimedia.",
+    "sitematrix-desc": "Amuestra una [[Special:SiteMatrix|lista de wikis de Wikimedia]]",
+    "sitematrix-language": "Idioma",
+    "sitematrix-project": "Nombre d'o procheuto, vinclo entre procheutos y vinclo interwiki",
+    "sitematrix-others": "Atros procheutos de Wikimedia",
+    "sitematrix-other-projects": "Atros prochectos",
+    "sitematrix-total": "'''Total: $1'''",
+    "sitematrix-sitetotal": "Total",
+    "sitematrix-private": "privau",
+    "sitematrix-fishbowl": "edición restrinchita"
+}

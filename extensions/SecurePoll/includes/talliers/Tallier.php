@@ -2,7 +2,7 @@
 
 /**
  * Base class for objects which tally individual questions.
- * See SecurePoll_ElectionTallier for an object which can tally multiple 
+ * See SecurePoll_ElectionTallier for an object which can tally multiple
  * questions.
  */
 abstract class SecurePoll_Tallier {
@@ -14,6 +14,14 @@ abstract class SecurePoll_Tallier {
 
 	abstract function finishTally();
 
+	/**
+	 * @param $context
+	 * @param $type
+	 * @param $electionTallier
+	 * @param $question
+	 * @return SecurePoll_Tallier
+	 * @throws MWException
+	 */
 	static function factory( $context, $type, $electionTallier, $question ) {
 		switch ( $type ) {
 		case 'plurality':
@@ -44,6 +52,10 @@ abstract class SecurePoll_Tallier {
 		}
 	}
 
+	/**
+	 * @param $ranks
+	 * @return string
+	 */
 	function convertRanksToHtml( $ranks ) {
 		$s = "<table class=\"securepoll-table\">";
 		$ids = array_keys( $ranks );
@@ -65,6 +77,10 @@ abstract class SecurePoll_Tallier {
 		return $s;
 	}
 
+	/**
+	 * @param $ranks
+	 * @return string
+	 */
 	function convertRanksToText( $ranks ) {
 		$s = '';
 		$ids = array_keys( $ranks );
@@ -82,7 +98,7 @@ abstract class SecurePoll_Tallier {
 			}
 
 			$option = $this->optionsById[$oid];
-			$s .= str_pad( $rank, 6 ) . ' | ' . 
+			$s .= str_pad( $rank, 6 ) . ' | ' .
 				$option->getMessage( 'text' ) . "\n";
 		}
 		return $s;

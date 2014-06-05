@@ -7,7 +7,7 @@ abstract class SecurePoll_Ballot {
 	var $election, $context;
 
 	/**
-	 * Get a list of names of tallying methods, which may be used to produce a 
+	 * Get a list of names of tallying methods, which may be used to produce a
 	 * result from this ballot type.
 	 * @return array
 	 */
@@ -17,11 +17,10 @@ abstract class SecurePoll_Ballot {
 	 * Get the HTML form segment for a single question
 	 * @param $question SecurePoll_Question
 	 * @param $options Array of options, in the order they should be displayed
-	 * @param $prevStatus Status of previous form submission
 	 * @return string
 	 */
 	abstract function getQuestionForm( $question, $options );
-	
+
 	/**
 	 * Get any extra messages that this ballot type uses to render questions.
 	 * Used to get the list of translatable messages for TranslatePage.
@@ -33,9 +32,9 @@ abstract class SecurePoll_Ballot {
 	}
 
 	/**
-	 * Called when the form is submitted. This returns a Status object which, 
-	 * when successful, contains a voting record in the value member. To 
-	 * preserve voter privacy, voting records should be the same length 
+	 * Called when the form is submitted. This returns a Status object which,
+	 * when successful, contains a voting record in the value member. To
+	 * preserve voter privacy, voting records should be the same length
 	 * regardless of voter choices.
 	 */
 	function submitForm() {
@@ -55,10 +54,11 @@ abstract class SecurePoll_Ballot {
 	/**
 	 * Construct a string record for a given question, during form submission.
 	 *
-	 * If there is a problem with the form data, the function should set a 
+	 * If there is a problem with the form data, the function should set a
 	 * fatal error in the $status object and return null.
 	 *
-	 * @param Status
+	 * @param $question
+	 * @param $status
 	 * @return string
 	 */
 	abstract function submitQuestion( $question, $status );
@@ -86,6 +86,8 @@ abstract class SecurePoll_Ballot {
 	 * @param $context SecurePoll_Context
 	 * @param $type string
 	 * @param $election SecurePoll_Election
+	 * @throws MWException
+	 * @return SecurePoll_Ballot
 	 */
 	static function factory( $context, $type, $election ) {
 		switch ( $type ) {
@@ -97,6 +99,8 @@ abstract class SecurePoll_Ballot {
 			return new SecurePoll_ChooseBallot( $context, $election );
 		case 'radio-range':
 			return new SecurePoll_RadioRangeBallot( $context, $election );
+		case 'radio-range-comment':
+			return new SecurePoll_RadioRangeCommentBallot( $context, $election );
 		default:
 			throw new MWException( "Invalid ballot type: $type" );
 		}
@@ -157,7 +161,7 @@ abstract class SecurePoll_Ballot {
 			return '';
 		}
 		$this->usedErrorIds[$id] = true;
-		return 
+		return
 			Xml::element( 'img', array(
 				'src' => $this->context->getResourceUrl( 'warning-22.png' ),
 				'width' => 22,
@@ -175,7 +179,7 @@ abstract class SecurePoll_Ballot {
 	function formatStatus( $status ) {
 		return $status->sp_getHTML( $this->usedErrorIds );
 	}
-	
+
 	/**
 	 * Get the way the voter cast their vote previously, if we're allowed
 	 * to show that information.
@@ -183,17 +187,17 @@ abstract class SecurePoll_Ballot {
 	 *     of unpackRecord().
 	 */
 	function getCurrentVote(){
-		
+
 		if( !$this->election->getOption( 'show-change' ) ){
 			return false;
 		}
-			
+
 		$auth = $this->election->getAuth();
 
 		# Get voter from session
 		$voter = $auth->getVoterFromSession( $this->election );
 		# If there's no session, try creating one.
-		# This will fail if the user is not authorised to vote in the election
+		# This will fail if the user is not authorized to vote in the election
 		if ( !$voter ) {
 			$status = $auth->newAutoSession( $this->election );
 			if ( $status->isOK() ) {
@@ -202,7 +206,7 @@ abstract class SecurePoll_Ballot {
 				return false;
 			}
 		}
-		
+
 		$store = $this->context->getStore();
 		$status = $store->callbackValidVotes(
 			$this->election->info['id'],
@@ -212,12 +216,12 @@ abstract class SecurePoll_Ballot {
 		if( !$status->isOK() ){
 			return false;
 		}
-		
+
 		return isset( $this->currentVote )
 			? $this->unpackRecord( $this->currentVote )
 			: false;
 	}
-	
+
 	function getCurrentVoteCallback( $store, $record ){
 		$this->currentVote = $record;
 		return Status::newGood();
@@ -257,7 +261,7 @@ class SecurePoll_BallotStatus extends Status {
 			if ( isset( $error['securepoll-id'] ) ) {
 				$id = $error['securepoll-id'];
 				if ( isset( $usedIds[$id] ) ) {
-					$s .= '<li>' . 
+					$s .= '<li>' .
 						Xml::openElement( 'a', array(
 							'href' => '#' . urlencode( "$id-location" ),
 							'class' => 'securepoll-error-jump'
@@ -266,7 +270,7 @@ class SecurePoll_BallotStatus extends Status {
 							'alt' => '',
 							'src' => $this->sp_context->getResourceUrl( 'down-16.png' ),
 						) ) .
-						'</a>' . 
+						'</a>' .
 						htmlspecialchars( $text ) .
 						"</li>\n";
 					continue;

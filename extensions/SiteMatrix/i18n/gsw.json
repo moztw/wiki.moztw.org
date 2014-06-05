@@ -1,0 +1,19 @@
+{
+    "@metadata": {
+        "authors": [
+            "Als-Chlämens",
+            "Als-Holder"
+        ]
+    },
+    "sitematrix": "Lischt vu dr Wikimedia-Wiki",
+    "sitematrix-summary": "Die Spezialsyte zeigt alli Wiki vu dr Wikimedia Foundation.",
+    "sitematrix-desc": "Zeigt e [[Special:SiteMatrix|Lischt vu dr Wikimedia-Wiki]]",
+    "sitematrix-language": "Sproch",
+    "sitematrix-project": "Projäktname, Interprojäkt-Link un Interwiki-Link",
+    "sitematrix-others": "Wyteri Wikimedia-Projäkt",
+    "sitematrix-other-projects": "Andri Projäkt",
+    "sitematrix-total": "'''Gsamtaazahl: $1'''",
+    "sitematrix-sitetotal": "Gsamt",
+    "sitematrix-private": "Privat",
+    "sitematrix-fishbowl": "Bearbeitig yygschränkt"
+}

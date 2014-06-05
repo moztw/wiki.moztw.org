@@ -1,0 +1,23 @@
+{
+    "@metadata": {
+        "authors": [
+            "Badseed",
+            "Consta",
+            "Dead3y3",
+            "Glavkos",
+            "Omnipaedista",
+            "ZaDiak"
+        ]
+    },
+    "sitematrix": "Κατάλογος wiki του Wikimedia",
+    "sitematrix-summary": "Αυτή η ειδική σελίδα περιέχει σε λίστα όλα τα wikis του Wikimedia.",
+    "sitematrix-desc": "Εμφανίζει μία [[Special:SiteMatrix|λίστα με wikis του Wikimedia]]",
+    "sitematrix-language": "Γλώσσα",
+    "sitematrix-project": "Όνομα εγχειρήματος, διαεγχειρηματικός (interproject) σύνδεσμος και διαγλωσσικός (interwiki) σύνδεσμος",
+    "sitematrix-others": "Άλλα εγχειρήματα του Wikimedia",
+    "sitematrix-other-projects": "Άλλα εγχειρήματα",
+    "sitematrix-total": "'''Συνολικός αριθμός: $1'''",
+    "sitematrix-sitetotal": "Συνολικά",
+    "sitematrix-private": "ιδιωτικό",
+    "sitematrix-fishbowl": "η επεξεργασία απαγορεύεται"
+}

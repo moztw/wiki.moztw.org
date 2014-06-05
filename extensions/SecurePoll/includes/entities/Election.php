@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Class representing an *election*. The term is intended to include straw polls, 
- * surveys, etc. An election has one or more *questions* which voters answer. 
+ * Class representing an *election*. The term is intended to include straw polls,
+ * surveys, etc. An election has one or more *questions* which voters answer.
  * The *voters* submit their *votes*, which are later tallied to provide a result.
  * An election runs only once and produces a single result.
  *
- * Each election has its own independent set of voters. Voters are created 
+ * Each election has its own independent set of voters. Voters are created
  * when the underlying user attempts to vote. A voter may vote more than once,
  * unless the election disallows this, but only one of their votes is counted.
  *
- * Elections have a list of key/value pairs called properties, which are defined 
+ * Elections have a list of key/value pairs called properties, which are defined
  * and used by various modules in order to configure the election. The properties,
  * in order of the module that defines them, are as follows:
  *
@@ -37,7 +37,7 @@
  *          	True if voters need to not be blocked on more than X projects
  *          central-block-threshold
  *          	Number of blocks across projects that disqualify a user from voting.
- *      
+ *
  *      See the other module for documentation of the following.
  *
  *      RemoteMWAuth
@@ -63,12 +63,12 @@ class SecurePoll_Election extends SecurePoll_Entity {
 	var $startDate, $endDate, $authType;
 
 	/**
-	 * Constructor. 
+	 * Constructor.
 	 *
-	 * Do not use this constructor directly, instead use 
-	 * SecurePoll_Context::getElection(). 
-	 *
-	 * @param $id integer
+	 * Do not use this constructor directly, instead use
+	 * SecurePoll_Context::getElection().
+	 * @param $context SecurePoll_Context
+	 * @param string $info
 	 */
 	function __construct( $context, $info ) {
 		parent::__construct( $context, 'election', $info );
@@ -94,7 +94,7 @@ class SecurePoll_Election extends SecurePoll_Entity {
 			'unqualified-error',
 		);
 	}
-	
+
 	/**
 	 * Get the election's parent election... hmm...
 	 */
@@ -121,7 +121,8 @@ class SecurePoll_Election extends SecurePoll_Entity {
 
 	/**
 	 * Returns true if the election has started.
-	 * @param $ts The reference timestamp, or false for now.
+	 * @param $ts string|bool The reference timestamp, or false for now.
+	 * @return bool
 	 */
 	function isStarted( $ts = false ) {
 		if ( $ts === false ) {
@@ -132,7 +133,7 @@ class SecurePoll_Election extends SecurePoll_Entity {
 
 	/**
 	 * Returns true if the election has finished.
-	 * @param $ts The reference timestamp, or false for now.
+	 * @param $ts string|bool The reference timestamp, or false for now.
 	 */
 	function isFinished( $ts = false ) {
 		if ( $ts === false ) {
@@ -153,9 +154,9 @@ class SecurePoll_Election extends SecurePoll_Entity {
 	}
 
 	/**
-	 * Determine whether a voter would be qualified to vote in this election, 
+	 * Determine whether a voter would be qualified to vote in this election,
 	 * based on the given associative array of parameters.
-	 * @param $params Associative array
+	 * @param $params array Associative array
 	 * @return Status
 	 */
 	function getQualifiedStatus( $params ) {
@@ -174,10 +175,12 @@ class SecurePoll_Election extends SecurePoll_Entity {
 		$maxDate = $this->getProperty( 'max-registration' );
 		$date = isset( $props['registration'] ) ? $props['registration'] : 0;
 		if ( $maxDate && $date > $maxDate ) {
-			$status->fatal( 
-				'securepoll-too-new', 
-				$wgLang->timeanddate( $maxDate ), 
-				$wgLang->timeanddate( $date )
+			$status->fatal(
+				'securepoll-too-new',
+				$wgLang->date( $maxDate ),
+				$wgLang->date( $date ),
+				$wgLang->time( $maxDate ),
+				$wgLang->time( $date )
 			);
 		}
 
@@ -187,7 +190,7 @@ class SecurePoll_Election extends SecurePoll_Entity {
 		if ( $notBlocked && $isBlocked ) {
 			$status->fatal( 'securepoll-blocked' );
 		}
-		
+
 		# Centrally blocked on more than X projects
 		$notCentrallyBlocked = $this->getProperty( 'not-centrally-blocked' );
 		$centralBlockCount = isset( $props['central-block-count'] ) ? $props['central-block-count'] : 0;
@@ -231,6 +234,7 @@ class SecurePoll_Election extends SecurePoll_Entity {
 	/**
 	 * Returns true if the user is an admin of the current election.
 	 * @param $user User
+	 * @return bool
 	 */
 	function isAdmin( $user ) {
 		$admins = array_map( 'trim', explode( '|', $this->getProperty( 'admins' ) ) );
@@ -279,7 +283,7 @@ class SecurePoll_Election extends SecurePoll_Entity {
 	}
 
 	/**
-	 * Get the authorisation object.
+	 * Get the authorization object.
 	 * @return SecurePoll_Auth
 	 */
 	function getAuth() {
@@ -301,7 +305,8 @@ class SecurePoll_Election extends SecurePoll_Entity {
 	/**
 	 * Get the cryptography module for this election, or false if none is
 	 * defined.
-	 * @return SecurePoll_Crypt or false
+	 * @throws MWException
+	 * @return SecurePoll_Crypt|bool
 	 */
 	function getCrypt() {
 		$type = $this->getProperty( 'encrypt-type' );
@@ -370,18 +375,18 @@ class SecurePoll_Election extends SecurePoll_Entity {
 			Xml::element( 'endDate', array(), wfTimestamp( TS_ISO_8601, $this->endDate ) ) . "\n" .
 			$this->getConfXmlEntityStuff( $params );
 
-		# If we're making a jump dump, we need to add some extra properties, and 
+		# If we're making a jump dump, we need to add some extra properties, and
 		# override the auth type
 		if ( !empty( $params['jump'] ) ) {
-			$s .= 
+			$s .=
 				Xml::element( 'auth', array(), 'local' ) . "\n" .
-				Xml::element( 'property', 
-					array( 'name' => 'jump-url' ), 
+				Xml::element( 'property',
+					array( 'name' => 'jump-url' ),
 					$this->context->getSpecialTitle()->getCanonicalUrl()
 				) . "\n" .
 				Xml::element( 'property',
 					array( 'name' => 'jump-id' ),
-					$this->getId() 
+					$this->getId()
 				) . "\n";
 		} else {
 			$s .= Xml::element( 'auth', array(), $this->authType ) . "\n";
@@ -413,6 +418,7 @@ class SecurePoll_Election extends SecurePoll_Entity {
 	 * Tally the valid votes for this election.
 	 * Returns a Status object. On success, the value property will contain a
 	 * SecurePoll_ElectionTallier object.
+	 * @return Status
 	 */
 	function tally() {
 		$tallier = $this->context->newElectionTallier( $this );

@@ -35,7 +35,7 @@ class SpecialDeleteBatch extends SpecialPage {
 		}
 
 		$this->getOutput()->setPageTitle( $this->msg( 'deletebatch-title' ) );
-		$cSF = new DeleteBatchForm( $par, $this->getTitle(), $this->getContext() );
+		$cSF = new DeleteBatchForm( $par, $this->getPageTitle(), $this->getContext() );
 
 		$request = $this->getRequest();
 		$action = $request->getVal( 'action' );

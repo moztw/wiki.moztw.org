@@ -1,0 +1,18 @@
+{
+    "@metadata": {
+        "authors": [
+            "Pikne"
+        ]
+    },
+    "sitematrix": "Wikimedia vikide nimekiri",
+    "sitematrix-summary": "See erilehekülg loetleb kõik Wikimedia vikid.",
+    "sitematrix-desc": "Kuvab [[Special:SiteMatrix|Wikimedia vikide loendi]].",
+    "sitematrix-language": "Keel",
+    "sitematrix-project": "Projekti nimi, sõsarprojekti link ja interviki link",
+    "sitematrix-others": "Muud Wikimedia projektid",
+    "sitematrix-other-projects": "Muud projektid",
+    "sitematrix-total": "'''Vikisid kokku: $1'''",
+    "sitematrix-sitetotal": "Kokku",
+    "sitematrix-private": "eraviki",
+    "sitematrix-fishbowl": "muutmine piiratud"
+}

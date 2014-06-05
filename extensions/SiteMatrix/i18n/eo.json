@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Tlustulimu",
+            "Yekrats",
+            "לערי ריינהארט"
+        ]
+    },
+    "sitematrix": "Listo de vikioj de Wikimedia",
+    "sitematrix-summary": "Ĉi tiu speciala paĝo montras ĉiujn vikiojn de Wikimedia.",
+    "sitematrix-desc": "Montras [[Special:SiteMatrix|liston de vikioj de Wikimedia]]",
+    "sitematrix-language": "Lingvo",
+    "sitematrix-project": "Nomo de projekto, interprojekta ligilo kaj intervikia ligilo",
+    "sitematrix-others": "Aliaj projektoj de Wikimedia",
+    "sitematrix-other-projects": "Aliaj projektoj",
+    "sitematrix-total": "'''Tuta nombrado: $1'''",
+    "sitematrix-sitetotal": "Tuto",
+    "sitematrix-private": "privata",
+    "sitematrix-fishbowl": "redaktado estas limigita"
+}

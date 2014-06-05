@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Darth Kule"
+		]
+	},
+	"unicodeconverter": "Convertitore Unicode",
+	"unicodeconverter-desc": "Un semplice esempio di un modulo di pagina speciale. [[Special:UnicodeConverter|Data una stringa in UTF-8]], la converte in entity HTML adatte per una pagina web ISO 8859-1",
+	"unicodeconverter-ok": "OK",
+	"unicodeconverter-oldtext": "Testo originale:",
+	"unicodeconverter-newtext": "Testo convertito:"
+}

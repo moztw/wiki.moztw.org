@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Matěj Grabovský"
+		]
+	},
+	"unicodeconverter": "Konverze Unicode",
+	"unicodeconverter-desc": "Jednoduchý příklad modulu speciální stránky. [[Special:UnicodeConverter|Po zadání řetezce v UTF-8]] ho zkonvertuje na HTML entity vhodné pro použití na webové stránce v kódování ISO 8859-1.",
+	"unicodeconverter-ok": "OK",
+	"unicodeconverter-oldtext": "Původní text:",
+	"unicodeconverter-newtext": "Zkonvertovaný text:"
+}

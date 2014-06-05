@@ -9,17 +9,17 @@ class SecurePoll_DetailsPage extends SecurePoll_Page {
 	 * @param $params array Array of subpage parameters.
 	 */
 	function execute( $params ) {
-		global $wgOut, $wgUser, $wgLang;
+		global $wgOut, $wgUser, $wgLang, $wgSecurePollKeepPrivateInfoDays;
 
 		if ( !count( $params ) ) {
 			$wgOut->addWikiMsg( 'securepoll-too-few-params' );
 			return;
 		}
-		
+
 		$this->voteId = intval( $params[0] );
 
 		$db = $this->context->getDB();
-		$row = $db->selectRow( 
+		$row = $db->selectRow(
 			array( 'securepoll_votes', 'securepoll_elections', 'securepoll_voters' ),
 			'*',
 			array(
@@ -37,8 +37,17 @@ class SecurePoll_DetailsPage extends SecurePoll_Page {
 		$this->election = $this->context->newElectionFromRow( $row );
 		$this->initLanguage( $wgUser, $this->election );
 
-		$this->parent->setSubtitle( array( 
-			$this->parent->getTitle( 'list/' . $this->election->getId() ), 
+		$vote_ip = '';
+		$vote_xff = '';
+		$vote_ua = '';
+		if ( $row->el_end_date >= wfTimestamp( TS_MW, time() - ($wgSecurePollKeepPrivateInfoDays * 24 * 60 * 60 ) ) ) {
+			$vote_ip = IP::formatHex( $row->vote_ip );
+			$vote_xff = $row->vote_xff;
+			$vote_ua = $row->vote_ua;
+		}
+
+		$this->parent->setSubtitle( array(
+			$this->parent->getTitle( 'list/' . $this->election->getId() ),
 			wfMsg( 'securepoll-list-title', $this->election->getMessage( 'title' ) ) ) );
 
 		if ( !$this->election->isAdmin( $wgUser ) ) {
@@ -46,33 +55,33 @@ class SecurePoll_DetailsPage extends SecurePoll_Page {
 			return;
 		}
 		# Show vote properties
-		$wgOut->setPageTitle( wfMsg( 
+		$wgOut->setPageTitle( wfMsg(
 			'securepoll-details-title', $this->voteId ) );
 
 		$wgOut->addHTML(
-			'<table class="TablePager">' .
+			'<table class="mw-datatable TablePager">' .
 			$this->detailEntry( 'securepoll-header-id', $row->vote_id ) .
 			$this->detailEntry( 'securepoll-header-timestamp', $row->vote_timestamp ) .
 			$this->detailEntry( 'securepoll-header-voter-name', $row->voter_name ) .
 			$this->detailEntry( 'securepoll-header-voter-type', $row->voter_type ) .
 			$this->detailEntry( 'securepoll-header-voter-domain', $row->voter_domain ) .
 			$this->detailEntry( 'securepoll-header-url', $row->voter_url ) .
-			$this->detailEntry( 'securepoll-header-ip', IP::formatHex( $row->vote_ip ) ) .
-			$this->detailEntry( 'securepoll-header-xff', $row->vote_xff ) .
-			$this->detailEntry( 'securepoll-header-ua', $row->vote_ua ) .
+			$this->detailEntry( 'securepoll-header-ip', $vote_ip ) .
+			$this->detailEntry( 'securepoll-header-xff', $vote_xff ) .
+			$this->detailEntry( 'securepoll-header-ua', $vote_ua ) .
 			$this->detailEntry( 'securepoll-header-token-match', $row->vote_token_match ) .
 			'</table>'
 		);
 
 		# Show voter properties
 		$wgOut->addHTML( '<h2>' . wfMsgHTML( 'securepoll-voter-properties' ) . "</h2>\n" );
-		$wgOut->addHTML( '<table class="TablePager">' );
+		$wgOut->addHTML( '<table class="mw-datatable TablePager">' );
 		$props = SecurePoll_Voter::decodeProperties( $row->voter_properties );
 		foreach ( $props as $name => $value ) {
 			if ( is_array( $value ) ) {
 				$value = implode( ', ', $value );
 			}
-			$wgOut->addHTML( 
+			$wgOut->addHTML(
 				'<td class="securepoll-detail-header">' .
 				htmlspecialchars( $name ) . "</td>\n" .
 				'<td>' . htmlspecialchars( $value ) . "</td></tr>\n"
@@ -84,28 +93,28 @@ class SecurePoll_DetailsPage extends SecurePoll_Page {
 		$cmTable = $db->tableName( 'securepoll_cookie_match' );
 		$voterId = intval( $row->voter_id );
 		$sql = "(SELECT cm_voter_2 as voter, cm_timestamp FROM $cmTable WHERE cm_voter_1=$voterId)" .
-			" UNION " . 
+			" UNION " .
 			"(SELECT cm_voter_1 as voter, cm_timestamp FROM $cmTable WHERE cm_voter_2=$voterId)";
 		$res = $db->query( $sql, __METHOD__ );
 		if ( $res->numRows() ) {
 			$wgOut->addHTML( '<h2>' . wfMsgHTML( 'securepoll-cookie-dup-list' ) . '</h2>' );
-			$wgOut->addHTML( '<table class="TablePager">' );
+			$wgOut->addHTML( '<table class="mw-datatable TablePager">' );
 			foreach ( $res as $row ) {
 				$voter = $this->context->getVoter( $row->voter );
 				$wgOut->addHTML(
 					'<tr>' .
-					'<td>' . htmlspecialchars( $wgLang->timeanddate( $row->cm_timestamp ) ) . '</td>' . 
-					'<td>' . 
-					Xml::element( 
-						'a', 
-						array( 'href' => $voter->getUrl() ), 
+					'<td>' . htmlspecialchars( $wgLang->timeanddate( $row->cm_timestamp ) ) . '</td>' .
+					'<td>' .
+					Xml::element(
+						'a',
+						array( 'href' => $voter->getUrl() ),
 						$voter->getName() . '@' . $voter->getDomain()
 					) .
 					'</td></tr>'
 				);
 			}
 			$wgOut->addHTML( '</table>' );
-		}		
+		}
 
 		# Show strike log
 		$wgOut->addHTML( '<h2>' . wfMsgHTML( 'securepoll-strike-log' ) . "</h2>\n" );
@@ -162,11 +171,10 @@ class SecurePoll_StrikePager extends TablePager {
 	}
 
 	function formatValue( $name, $value ) {
-		global $wgUser, $wgLang;
-		$skin = $wgUser->getSkin();
+		global $wgLang;
 		switch ( $name ) {
 		case 'st_user':
-			return $skin->userLink( $value, $this->mCurrentRow->user_name );
+			return Linker::userLink( $value, $this->mCurrentRow->user_name );
 		case 'st_timestamp':
 			return $wgLang->timeanddate( $value );
 		default:

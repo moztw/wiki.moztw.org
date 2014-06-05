@@ -5,17 +5,17 @@
  */
 
 # Not a valid entry point, skip unless MEDIAWIKI is defined
-if (!defined('MEDIAWIKI')) {
+if ( !defined( 'MEDIAWIKI' ) ) {
 	echo "This file is part of MediaWiki, it is not a valid entry point.\n";
-	exit(1);
+	exit( 1 );
 }
 
 $wgExtensionCredits['specialpage'][] = array(
 	'path'           => __FILE__,
 	'name'           => 'SiteMatrix',
 	'author'         => array( 'Tim Starling', 'Brion Vibber', 'Victor Vasiliev', 'Alexandre Emsenhuber' ),
-	'version'        => '1.1',
-	'url'            => 'http://www.mediawiki.org/wiki/Extension:SiteMatrix',
+	'version'        => '1.3.0',
+	'url'            => 'https://www.mediawiki.org/wiki/Extension:SiteMatrix',
 	'descriptionmsg' => 'sitematrix-desc',
 );
 
@@ -55,20 +55,27 @@ $wgSiteMatrixSites = array(
 		'name' => 'Wikiversity',
 		'host' => 'www.wikiversity.org',
 		'prefix' => 'v',
+	),
+	'wikivoyage' => array(
+		'name' => 'Wikivoyage',
+		'host' => 'www.wikivoyage.org',
+		'prefix' => 'voy',
 	)
 );
 $wgSiteMatrixPrivateSites = null;
 $wgSiteMatrixFishbowlSites = null;
 $wgSiteMatrixClosedSites = null;
 
-$dir = dirname(__FILE__) . '/';
+$dir = __DIR__ . '/';
 
+$wgMessagesDirs['SiteMatrix'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['SiteMatrix'] = $dir . 'SiteMatrix.i18n.php';
-$wgExtensionAliasesFiles['SiteMatrix'] = $dir . 'SiteMatrix.alias.php';
+$wgExtensionMessagesFiles['SiteMatrixAlias'] = $dir . 'SiteMatrix.alias.php';
 
 $wgAutoloadClasses['SiteMatrix'] = $dir . 'SiteMatrix_body.php';
-$wgAutoloadClasses['SiteMatrixPage'] = $dir . 'SiteMatrix_body.php';
-$wgSpecialPages['SiteMatrix'] = 'SiteMatrixPage';
+
+$wgAutoloadClasses['SpecialSiteMatrix'] = $dir . 'SpecialSiteMatrix.php';
+$wgSpecialPages['SiteMatrix'] = 'SpecialSiteMatrix';
 $wgSpecialPageGroups['SiteMatrix'] = 'wiki';
 
 $wgAutoloadClasses['ApiQuerySiteMatrix'] = $dir . 'SiteMatrixApi.php';

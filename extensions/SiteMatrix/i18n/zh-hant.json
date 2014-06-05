@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Alexsh",
+            "Mark85296341",
+            "Waihorace"
+        ]
+    },
+    "sitematrix": "維基媒體網站清單",
+    "sitematrix-summary": "本特殊頁面列示所有維基媒體基金會的所有 MediaWiki 網站。",
+    "sitematrix-desc": "顯示[[Special:SiteMatrix|維基媒體所有網站的清單]]",
+    "sitematrix-language": "語言",
+    "sitematrix-project": "計劃名稱、跨計劃連結以及跨維基連結",
+    "sitematrix-others": "維基媒體的其他計畫",
+    "sitematrix-other-projects": "其他計劃",
+    "sitematrix-total": "'''合計：$1'''",
+    "sitematrix-sitetotal": "總數",
+    "sitematrix-private": "私用",
+    "sitematrix-fishbowl": "編輯限制"
+}

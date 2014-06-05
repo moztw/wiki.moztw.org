@@ -1,0 +1,18 @@
+{
+    "@metadata": {
+        "authors": [
+            "Michawiki"
+        ]
+    },
+    "sitematrix": "Lisćina wšěch wikijow we Wikimediji",
+    "sitematrix-summary": "Tuta specialna strona wšě Wikimedijowe wikije nalistuje.",
+    "sitematrix-desc": "Zwobraznja [[Special:SiteMatrix|lisćinu wikijow Wikimedije]]",
+    "sitematrix-language": "Rěč",
+    "sitematrix-project": "Projektowe mjeno, mjezyprojektowy wotkaz a mjezyrěčny wotkaz",
+    "sitematrix-others": "Dalše projekty we Wikimediji",
+    "sitematrix-other-projects": "Druhe projekty",
+    "sitematrix-total": "'''Cyłkowna ličba: $1'''",
+    "sitematrix-sitetotal": "Dohromady",
+    "sitematrix-private": "priwatny",
+    "sitematrix-fishbowl": "wobdźěłowanje wobmjezowane"
+}

@@ -21,7 +21,7 @@ $specialPageAliases['ar'] = array(
 
 /** Egyptian Spoken Arabic (مصرى) */
 $specialPageAliases['arz'] = array(
-	'DeleteBatch' => array( 'مشح_الBatch' ),
+	'DeleteBatch' => array( 'مشح_الباتش' ),
 );
 
 /** Banjar (Bahasa Banjar) */

@@ -23,7 +23,7 @@ $listName = $args[0];
 $startBatch = 0;
 $batchSize = 100;
 
-$listExists = $dbr->selectField( 'securepoll_lists', '1', 
+$listExists = $dbr->selectField( 'securepoll_lists', '1',
 	array( 'li_name' => $listName ), $fname );
 if ( $listExists ) {
 	if ( isset( $options['replace'] ) ) {
@@ -35,11 +35,13 @@ if ( $listExists ) {
 	}
 }
 
+$total = 0;
 while ( true ) {
 	$res = $dbr->select( 'user', 'user_id',
 		array( 'user_id > ' . $dbr->addQuotes( $startBatch ) ),
 		$fname,
-		array( 'LIMIT' => $batchSize ) );
+		array( 'LIMIT' => $batchSize )
+	);
 
 	if ( !$res->numRows() ) {
 		break;
@@ -65,6 +67,11 @@ while ( true ) {
 		}
 	}
 	if ( $insertBatch ) {
+		$count = count( $insertBatch );
+		$total += $count;
+		echo "$count rows inserted, total $total rows";
 		$dbw->insert( 'securepoll_lists', $insertBatch, $fname );
 	}
 }
+
+echo "Done!\n";

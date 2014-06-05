@@ -31,7 +31,7 @@ class SecurePoll_VotePage extends SecurePoll_Page {
 		$this->voter = $this->auth->getVoterFromSession( $this->election );
 
 		# If there's no session, try creating one.
-		# This will fail if the user is not authorised to vote in the election
+		# This will fail if the user is not authorized to vote in the election
 		if ( !$this->voter ) {
 			$status = $this->auth->newAutoSession( $this->election );
 			if ( $status->isOK() ) {
@@ -67,7 +67,7 @@ class SecurePoll_VotePage extends SecurePoll_Page {
 			$this->showJumpForm();
 			return;
 		}
-		
+
 		// This is when it starts getting all serious; disable JS
 		// that might be used to sniff cookies or log voting data.
 		$wgOut->disallowUserJs();
@@ -112,14 +112,14 @@ class SecurePoll_VotePage extends SecurePoll_Page {
 
 		// Show form
 		$thisTitle = $this->getTitle();
-		$encAction = $thisTitle->escapeLocalURL( "action=vote" );
+		$encAction = htmlspecialchars( $thisTitle->getLocalURL( "action=vote" ) );
 		$encOK = wfMsgHtml( 'securepoll-submit' );
 		$encToken = htmlspecialchars( $this->parent->getEditToken() );
 
 		$wgOut->addHTML(
 			"<form name=\"securepoll\" id=\"securepoll\" method=\"post\" action=\"$encAction\">\n" .
 			$this->election->getBallot()->getForm( $status ) .
-			"<br />\n" . 
+			"<br />\n" .
 			"<input name=\"submit\" type=\"submit\" value=\"$encOK\">\n" .
 			"<input type='hidden' name='edit_token' value=\"{$encToken}\" /></td>\n" .
 			"</form>"
@@ -127,7 +127,7 @@ class SecurePoll_VotePage extends SecurePoll_Page {
 	}
 
 	/**
-	 * Submit the voting form. If successful, adds a record to the database. 
+	 * Submit the voting form. If successful, adds a record to the database.
 	 * Shows an error message on failure.
 	 */
 	function doSubmit() {

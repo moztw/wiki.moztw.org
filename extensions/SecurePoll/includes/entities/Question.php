@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class representing a question, which the voter will answer. There may be 
+ * Class representing a question, which the voter will answer. There may be
  * more than one question in an election.
  */
 class SecurePoll_Question extends SecurePoll_Entity {
@@ -10,7 +10,7 @@ class SecurePoll_Question extends SecurePoll_Entity {
 	/**
 	 * Constructor
 	 * @param $context SecurePoll_Context
-	 * @param $info Associative array of entity info
+	 * @param $info array Associative array of entity info
 	 */
 	function __construct( $context, $info ) {
 		parent::__construct( $context, 'question', $info );
@@ -26,7 +26,7 @@ class SecurePoll_Question extends SecurePoll_Entity {
 	function getMessageNames() {
 		$ballot = $this->getElection()->getBallot();
 		return array_merge( $ballot->getMessageNames( $this ), array( 'text' ) );
-		
+
 	}
 
 	/**

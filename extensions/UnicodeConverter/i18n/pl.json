@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Derbeth",
+			"Jwitos",
+			"Leinad"
+		]
+	},
+	"unicodeconverter": "Konwerter unicode",
+	"unicodeconverter-desc": "Prosty przykład modułu ze stroną specjalną. [[Special:UnicodeConverter|Podany ciąg znaków w UTF-8]] zostanie skonwertowany na encje HTML odpowiednie dla strony WWW zakodowanej w standardzie ISO 8859-1",
+	"unicodeconverter-ok": "OK",
+	"unicodeconverter-oldtext": "Oryginalny tekst:",
+	"unicodeconverter-newtext": "Przekonwertowany tekst:"
+}

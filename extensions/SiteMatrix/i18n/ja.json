@@ -1,0 +1,24 @@
+{
+    "@metadata": {
+        "authors": [
+            "Aotake",
+            "Fryed-peach",
+            "JtFuruhata",
+            "Muttley",
+            "Ohgi",
+            "Shirayuki",
+            "לערי ריינהארט"
+        ]
+    },
+    "sitematrix": "ウィキメディアのウィキ一覧",
+    "sitematrix-summary": "この特別ページではウィキメディアのすべてのウィキを表示しています。",
+    "sitematrix-desc": "[[Special:SiteMatrix|ウィキメディアのウィキ一覧]]を表示する",
+    "sitematrix-language": "言語",
+    "sitematrix-project": "プロジェクト名、プロジェクト間リンク、ウィキ間リンク",
+    "sitematrix-others": "ウィキメディアの他のプロジェクト",
+    "sitematrix-other-projects": "他のプロジェクト",
+    "sitematrix-total": "'''総計: $1'''",
+    "sitematrix-sitetotal": "合計",
+    "sitematrix-private": "非公開",
+    "sitematrix-fishbowl": "編集は制限されています"
+}

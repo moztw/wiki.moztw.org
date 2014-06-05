@@ -12,6 +12,11 @@ class SecurePoll_PreferentialBallot extends SecurePoll_Ballot {
 		return array( 'schulze' );
 	}
 
+	/**
+	 * @param $question SecurePoll_Question
+	 * @param Array $options
+	 * @return string
+	 */
 	function getQuestionForm( $question, $options ) {
 		global $wgRequest;
 		$name = 'securepoll_q' . $question->getId();
@@ -21,7 +26,7 @@ class SecurePoll_PreferentialBallot extends SecurePoll_Ballot {
 			$optionId = $option->getId();
 			$inputId = "{$name}_opt{$optionId}";
 			$oldValue = $wgRequest->getVal( $inputId, '' );
-			$s .= 
+			$s .=
 				'<div class="securepoll-option-preferential">' .
 				Xml::input( $inputId, '3', $oldValue, array(
 					'id' => $inputId,
@@ -36,6 +41,11 @@ class SecurePoll_PreferentialBallot extends SecurePoll_Ballot {
 		return $s;
 	}
 
+	/**
+	 * @param $question SecurePoll_Question
+	 * @param $status Status
+	 * @return string
+	 */
 	function submitQuestion( $question, $status ) {
 		global $wgRequest;
 
@@ -67,7 +77,7 @@ class SecurePoll_PreferentialBallot extends SecurePoll_Ballot {
 				$ok = false;
 				continue;
 			}
-			$record .= sprintf( 'Q%08X-A%08X-R%08X--', 
+			$record .= sprintf( 'Q%08X-A%08X-R%08X--',
 				$question->getId(), $option->getId(), $rank );
 		}
 		if ( $ok ) {
@@ -79,8 +89,8 @@ class SecurePoll_PreferentialBallot extends SecurePoll_Ballot {
 		$ranks = array();
 		$itemLength = 3*8 + 7;
 		for ( $offset = 0; $offset < strlen( $record ); $offset += $itemLength ) {
-			if ( !preg_match( '/Q([0-9A-F]{8})-A([0-9A-F]{8})-R([0-9A-F]{8})--/A', 
-				$record, $m, 0, $offset ) ) 
+			if ( !preg_match( '/Q([0-9A-F]{8})-A([0-9A-F]{8})-R([0-9A-F]{8})--/A',
+				$record, $m, 0, $offset ) )
 			{
 				wfDebug( __METHOD__.": regex doesn't match\n" );
 				return false;

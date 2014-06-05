@@ -23,7 +23,7 @@ abstract class SecurePoll_Page {
 	abstract function execute( $params );
 
 	/**
-	 * Internal utility function for initialising the global entity language 
+	 * Internal utility function for initializing the global entity language
 	 * fallback sequence.
 	 */
 	function initLanguage( $user, $election ) {
@@ -38,16 +38,14 @@ abstract class SecurePoll_Page {
 		}
 		$wgLang = Language::factory( $userLang );
 
-		$languages = array( $userLang );
-		$fallback = $userLang;
-		while ( $fallback = Language::getFallbackFor( $fallback ) ) {
-			$languages[] = $fallback;
+		$languages = array_merge(
+			array( $userLang ),
+			Language::getFallbacksFor( $userLang ) );
+
+		if ( !in_array( $election->getLanguage(), $languages ) ) {
+			$languages[] = $election->getLanguage();
 		}
-		if ( $fallback != $election->getLanguage() ) {
-			$fallback = $election->getLanguage();
-			$languages[] = $fallback;
-		}
-		if ( $fallback != 'en' ) {
+		if ( !in_array( 'en', $languages ) ) {
 			$languages[] = 'en';
 		}
 		$this->context->setLanguages( $languages );

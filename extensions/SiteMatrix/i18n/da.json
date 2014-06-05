@@ -1,0 +1,20 @@
+{
+    "@metadata": {
+        "authors": [
+            "Jan Friberg",
+            "Morten LJ",
+            "Peter Alberti"
+        ]
+    },
+    "sitematrix": "Alle Wikimedias wikier",
+    "sitematrix-summary": "Denne specialside oplister alle Wikimedias wikier.",
+    "sitematrix-desc": "Viser en [[Special:SiteMatrix|liste med alle Wikimedias wikier]]",
+    "sitematrix-language": "Sprog",
+    "sitematrix-project": "Projektnavn, interprojektlink og interwikilink",
+    "sitematrix-others": "Andre projekter under Wikimedia",
+    "sitematrix-other-projects": "Andre projekter",
+    "sitematrix-total": "'''I alt $1 wikier'''",
+    "sitematrix-sitetotal": "I alt",
+    "sitematrix-private": "privat",
+    "sitematrix-fishbowl": "redigering begrænset"
+}

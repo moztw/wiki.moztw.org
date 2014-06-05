@@ -16,7 +16,7 @@ $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'SecurePoll',
 	'author' => array( 'Tim Starling', '...' ),
-	'url' => 'http://www.mediawiki.org/wiki/Extension:SecurePoll',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:SecurePoll',
 	'descriptionmsg' => 'securepoll-desc',
 );
 
@@ -36,13 +36,24 @@ $wgSecurePollTempDir = '/tmp';
  */
 $wgSecurePollShowErrorDetail = false;
 
+/**
+ * Relative URL path to auth-api.php
+ */
+$wgSecurePollScript = 'extensions/SecurePoll/auth-api.php';
+
+/**
+ * Time (in days) to keep IP addresses, XFF, UA of voters
+ */
+$wgSecurePollKeepPrivateInfoDays = 90;
+
 ### END CONFIGURATON ###
 
 
 // Set up the new special page
-$dir = dirname( __FILE__ );
+$dir = __DIR__;
+$wgMessagesDirs['SecurePoll'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['SecurePoll'] = "$dir/SecurePoll.i18n.php";
-$wgExtensionAliasesFiles['SecurePoll'] = "$dir/SecurePoll.alias.php";
+$wgExtensionMessagesFiles['SecurePollAlias'] = "$dir/SecurePoll.alias.php";
 
 $wgSpecialPages['SecurePoll'] = 'SecurePoll_BasePage';
 
@@ -53,6 +64,7 @@ $wgAutoloadClasses = $wgAutoloadClasses + array(
 	'SecurePoll_ChooseBallot' => "$dir/includes/ballots/ChooseBallot.php",
 	'SecurePoll_PreferentialBallot' => "$dir/includes/ballots/PreferentialBallot.php",
 	'SecurePoll_RadioRangeBallot' => "$dir/includes/ballots/RadioRangeBallot.php",
+	'SecurePoll_RadioRangeCommentBallot' => "$dir/includes/ballots/RadioRangeCommentBallot.php",
 
 	# crypt
 	'SecurePoll_Crypt' => "$dir/includes/crypt/Crypt.php",
@@ -94,6 +106,7 @@ $wgAutoloadClasses = $wgAutoloadClasses + array(
 	'SecurePoll_SchulzeTallier' => "$dir/includes/talliers/SchulzeTallier.php",
 	'SecurePoll_AlternativeVoteTallier' => "$dir/includes/talliers/AlternativeVoteTallier.php",
 	'SecurePoll_Tallier' => "$dir/includes/talliers/Tallier.php",
+	'SecurePoll_CommentDumper' => "$dir/includes/talliers/CommentDumper.php",
 
 	# user
 	'SecurePoll_Auth' => "$dir/includes/user/Auth.php",
@@ -109,5 +122,29 @@ function wfSecurePollStrike( $action, $id, $reason ) {
 }
 function wfSecurePollLogout( $user ) {
 	$_SESSION['securepoll_voter'] = null;
+	return true;
+}
+
+$wgHooks['LoadExtensionSchemaUpdates'][] = 'efSecurePollSchemaUpdates';
+
+/**
+ * @param $updater DatabaseUpdater
+ * @return bool
+ */
+function efSecurePollSchemaUpdates( $updater ) {
+	$base = dirname( __FILE__ );
+	switch ( $updater->getDB()->getType() ) {
+		case 'mysql':
+			$updater->addExtensionTable( 'securepoll_entity', "$base/SecurePoll.sql" );
+			$updater->modifyField( 'securepoll_votes', 'vote_ip',
+				"$base/patches/patch-vote_ip-extend.sql", true );
+			$updater->addExtensionIndex( 'securepoll_options', 'spop_election',
+				"$base/patches/patch-op_election-index.sql"
+			);
+			break;
+		case 'postgres':
+			$updater->addExtensionTable( 'securepoll_entity', "$base/SecurePoll.pg.sql" );
+			break;
+	}
 	return true;
 }
