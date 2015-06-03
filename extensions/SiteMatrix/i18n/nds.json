@@ -1,19 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Joachim Mos",
-            "Slomox"
-        ]
-    },
-    "sitematrix": "List vun de Wikimedia-Wikis",
-    "sitematrix-summary": "Disse Spezialsied wiest all Wikimedia-Wikis.",
-    "sitematrix-desc": "Wiest en [[Special:SiteMatrix|List vun all Wikimedia-Wikis]]",
-    "sitematrix-language": "Spraak",
-    "sitematrix-project": "Naam vun dat Projekt, Interprojekt-Lenk un Interwiki-Lenk",
-    "sitematrix-others": "Annere Projekten vun Wikimedia",
-    "sitematrix-other-projects": "Annere Projekten",
-    "sitematrix-total": "'''Alltohoop: $1'''",
-    "sitematrix-sitetotal": "Alltohoop",
-    "sitematrix-private": "privat",
-    "sitematrix-fishbowl": "Ännern is inschränkt"
+	"@metadata": {
+		"authors": [
+			"Joachim Mos",
+			"Slomox"
+		]
+	},
+	"sitematrix": "List vun de Wikimedia-Wikis",
+	"sitematrix-summary": "Disse Spezialsied wiest all Wikimedia-Wikis.",
+	"sitematrix-desc": "Wiest en [[Special:SiteMatrix|List vun all Wikimedia-Wikis]]",
+	"sitematrix-language": "Spraak",
+	"sitematrix-project": "Naam vun dat Projekt, Interprojekt-Lenk un Interwiki-Lenk",
+	"sitematrix-others": "Annere Projekten vun Wikimedia",
+	"sitematrix-other-projects": "Annere Projekten",
+	"sitematrix-total": "'''Alltohoop: $1'''",
+	"sitematrix-sitetotal": "Alltohoop",
+	"sitematrix-private": "privat",
+	"sitematrix-fishbowl": "Ännern is inschränkt"
 }

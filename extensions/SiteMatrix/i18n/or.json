@@ -1,20 +1,20 @@
 {
-    "@metadata": {
-        "authors": [
-            "Ansumang",
-            "Odisha1",
-            "Psubhashish"
-        ]
-    },
-    "sitematrix": "ଉଇକିମିଡ଼ିଆ ଉଇକିମାନଙ୍କର ତାଲିକା",
-    "sitematrix-summary": "ଏହି ବିଶେଷ ପୃଷ୍ଠାଟିରେ ସବୁଯାକ ଉଇକିମିଡ଼ିଆ ଉଇକିର ତାଲିକା ଅଛି ।",
-    "sitematrix-desc": "[[Special:SiteMatrix|ଉଇକିମିଡ଼ିଆ ଉଇକିର ତାଲିକା]] ଦେଖାଇଥାଏ",
-    "sitematrix-language": "ଭାଷା",
-    "sitematrix-project": "ପ୍ରକଳ୍ପର ନାମ, ଅନ୍ତ-ପ୍ରକଳ୍ପ ଲିଙ୍କ, ଇଣ୍ଟରଉଇକି ଲିଙ୍କ",
-    "sitematrix-others": "ଉଇକିମିଡ଼ିଆର ବାକି ପ୍ରକଳ୍ପ",
-    "sitematrix-other-projects": "ବାକି ପ୍ରକଳ୍ପସମୂହ",
-    "sitematrix-total": "'''ମୋଟ ଗଣନା: $1'''",
-    "sitematrix-sitetotal": "ସର୍ବମୋଟ",
-    "sitematrix-private": "ନିଜସ୍ଵ",
-    "sitematrix-fishbowl": "ବଦଳାଇବାକୁ ବାରଣ କରାଯାଇଅଛି"
+	"@metadata": {
+		"authors": [
+			"Ansumang",
+			"Odisha1",
+			"Psubhashish"
+		]
+	},
+	"sitematrix": "ଉଇକିମିଡ଼ିଆ ଉଇକିମାନଙ୍କର ତାଲିକା",
+	"sitematrix-summary": "ଏହି ବିଶେଷ ପୃଷ୍ଠାଟିରେ ସବୁଯାକ ଉଇକିମିଡ଼ିଆ ଉଇକିର ତାଲିକା ଅଛି ।",
+	"sitematrix-desc": "[[Special:SiteMatrix|ଉଇକିମିଡ଼ିଆ ଉଇକିର ତାଲିକା]] ଦେଖାଇଥାଏ",
+	"sitematrix-language": "ଭାଷା",
+	"sitematrix-project": "ପ୍ରକଳ୍ପର ନାମ, ଅନ୍ତ-ପ୍ରକଳ୍ପ ଲିଙ୍କ, ଇଣ୍ଟରଉଇକି ଲିଙ୍କ",
+	"sitematrix-others": "ଉଇକିମିଡ଼ିଆର ବାକି ପ୍ରକଳ୍ପ",
+	"sitematrix-other-projects": "ବାକି ପ୍ରକଳ୍ପସମୂହ",
+	"sitematrix-total": "'''ମୋଟ ଗଣନା: $1'''",
+	"sitematrix-sitetotal": "ସର୍ବମୋଟ",
+	"sitematrix-private": "ନିଜସ୍ଵ",
+	"sitematrix-fishbowl": "ବଦଳାଇବାକୁ ବାରଣ କରାଯାଇଅଛି"
 }

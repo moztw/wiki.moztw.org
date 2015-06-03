@@ -1,11 +1,11 @@
 {
-    "@metadata": {
-        "authors": [
-            "Better"
-        ]
-    },
-    "sitematrix": "Lista e güiquis de Wikimedia",
-    "sitematrix-language": "Palra",
-    "sitematrix-project": "Nombri el proyeutu, atihu entriproyeutu i atihu entrigüiqui",
-    "sitematrix-others": "Otrus proyeutus de Wikimedia"
+	"@metadata": {
+		"authors": [
+			"Better"
+		]
+	},
+	"sitematrix": "Lista e güiquis de Wikimedia",
+	"sitematrix-language": "Palra",
+	"sitematrix-project": "Nombri el proyeutu, atihu entriproyeutu i atihu entrigüiqui",
+	"sitematrix-others": "Otrus proyeutus de Wikimedia"
 }

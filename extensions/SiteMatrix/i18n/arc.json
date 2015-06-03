@@ -1,10 +1,10 @@
 {
-    "@metadata": {
-        "authors": [
-            "Basharh"
-        ]
-    },
-    "sitematrix": "ܡܟܬܒܘܬܐ ܕܘܝܩܝ̈ܐ ܕܘܝܩܝܡܝܕܝܐ",
-    "sitematrix-language": "ܠܫܢܐ",
-    "sitematrix-private": "ܦܪܨܘܦܝܐ"
+	"@metadata": {
+		"authors": [
+			"Basharh"
+		]
+	},
+	"sitematrix": "ܡܟܬܒܘܬܐ ܕܘܝܩܝ̈ܐ ܕܘܝܩܝܡܝܕܝܐ",
+	"sitematrix-language": "ܠܫܢܐ",
+	"sitematrix-private": "ܦܪܨܘܦܝܐ"
 }

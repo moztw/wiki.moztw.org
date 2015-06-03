@@ -1,18 +1,18 @@
 {
-    "@metadata": {
-        "authors": [
-            "HalanTul"
-        ]
-    },
-    "sitematrix": "Викимедиа бырайыактарын испииһэгэ",
-    "sitematrix-summary": "Бу анал сирэйгэ Wikimedia пуондатын бырайыактара тиһиллибиттэр.",
-    "sitematrix-desc": "[[Special:SiteMatrix|Викимедиа бырайыактарын испииһэгин]] көрдөрөр",
-    "sitematrix-language": "Тыла",
-    "sitematrix-project": "Бырайыак аата, бырайыак ыккардынааҕы ыйынньык уонна интервики",
-    "sitematrix-others": "«Викимедиа» атын бырайыактара",
-    "sitematrix-other-projects": "Атын бырайыактар",
-    "sitematrix-total": "'''Уопсай ахсаана: $1'''",
-    "sitematrix-sitetotal": "Барыта",
-    "sitematrix-private": "приватнай/чааһынай",
-    "sitematrix-fishbowl": "көннөрүү хааччахтаммыт"
+	"@metadata": {
+		"authors": [
+			"HalanTul"
+		]
+	},
+	"sitematrix": "Викимедиа бырайыактарын испииһэгэ",
+	"sitematrix-summary": "Бу анал сирэйгэ Wikimedia пуондатын бырайыактара тиһиллибиттэр.",
+	"sitematrix-desc": "[[Special:SiteMatrix|Викимедиа бырайыактарын испииһэгин]] көрдөрөр",
+	"sitematrix-language": "Тыла",
+	"sitematrix-project": "Бырайыак аата, бырайыак ыккардынааҕы ыйынньык уонна интервики",
+	"sitematrix-others": "«Викимедиа» атын бырайыактара",
+	"sitematrix-other-projects": "Атын бырайыактар",
+	"sitematrix-total": "'''Уопсай ахсаана: $1'''",
+	"sitematrix-sitetotal": "Барыта",
+	"sitematrix-private": "приватнай/чааһынай",
+	"sitematrix-fishbowl": "көннөрүү хааччахтаммыт"
 }

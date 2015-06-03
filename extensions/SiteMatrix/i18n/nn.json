@@ -1,19 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Eirik",
-            "Harald Khan",
-            "Njardarlogar"
-        ]
-    },
-    "sitematrix": "Liste over wikiar frå Wikimedia",
-    "sitematrix-summary": "Denne spesialsida listar opp alle Wikimedia sine wikiar.",
-    "sitematrix-desc": "Viser ei [[Special:SiteMatrix|lista over Wikimedia-wikiar]]",
-    "sitematrix-language": "Språk",
-    "sitematrix-project": "Namnet på prosjektet, interprosjektlenkje og interwikilenkje",
-    "sitematrix-others": "Andre prosjekt frå Wikimedia",
-    "sitematrix-total": "'''Totalt tal: $1'''",
-    "sitematrix-sitetotal": "Totalt",
-    "sitematrix-private": "privat",
-    "sitematrix-fishbowl": "endring avgrensa"
+	"@metadata": {
+		"authors": [
+			"Eirik",
+			"Harald Khan",
+			"Njardarlogar"
+		]
+	},
+	"sitematrix": "Liste over wikiar frå Wikimedia",
+	"sitematrix-summary": "Denne spesialsida listar opp alle Wikimedia sine wikiar.",
+	"sitematrix-desc": "Viser ei [[Special:SiteMatrix|lista over Wikimedia-wikiar]]",
+	"sitematrix-language": "Språk",
+	"sitematrix-project": "Namnet på prosjektet, interprosjektlenkje og interwikilenkje",
+	"sitematrix-others": "Andre prosjekt frå Wikimedia",
+	"sitematrix-total": "'''Totalt tal: $1'''",
+	"sitematrix-sitetotal": "Totalt",
+	"sitematrix-private": "privat",
+	"sitematrix-fishbowl": "endring avgrensa"
 }

@@ -1,23 +1,23 @@
 {
-    "@metadata": {
-        "authors": [
-            "AdiJapan",
-            "Cin",
-            "KlaudiuMihaila",
-            "Minisarm",
-            "Stelistcristi",
-            "לערי ריינהארט"
-        ]
-    },
-    "sitematrix": "Lista proiectelor Wikimedia",
-    "sitematrix-summary": "Această pagină specială afișează toate proiectele wiki ale Wikimedia.",
-    "sitematrix-desc": "Afișează o [[Special:SiteMatrix|listă de wikiuri susținute de Wikimedia]]",
-    "sitematrix-language": "Limbă",
-    "sitematrix-project": "Numele proiectului, legătura către interproiect și legăturile interwiki",
-    "sitematrix-others": "Alte proiecte ale Fundației Wikimedia",
-    "sitematrix-other-projects": "Alte proiecte",
-    "sitematrix-total": "'''Număr total: $1'''",
-    "sitematrix-sitetotal": "Total",
-    "sitematrix-private": "privat",
-    "sitematrix-fishbowl": "modificare restricționată"
+	"@metadata": {
+		"authors": [
+			"AdiJapan",
+			"Cin",
+			"KlaudiuMihaila",
+			"Minisarm",
+			"Stelistcristi",
+			"לערי ריינהארט"
+		]
+	},
+	"sitematrix": "Lista proiectelor Wikimedia",
+	"sitematrix-summary": "Această pagină specială afișează toate proiectele wiki ale Wikimedia.",
+	"sitematrix-desc": "Afișează o [[Special:SiteMatrix|listă de wikiuri susținute de Wikimedia]]",
+	"sitematrix-language": "Limbă",
+	"sitematrix-project": "Numele proiectului, legătura către interproiect și legăturile interwiki",
+	"sitematrix-others": "Alte proiecte ale Fundației Wikimedia",
+	"sitematrix-other-projects": "Alte proiecte",
+	"sitematrix-total": "'''Număr total: $1'''",
+	"sitematrix-sitetotal": "Total",
+	"sitematrix-private": "privat",
+	"sitematrix-fishbowl": "modificare restricționată"
 }

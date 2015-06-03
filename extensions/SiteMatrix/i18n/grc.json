@@ -1,12 +1,12 @@
 {
-    "@metadata": {
-        "authors": [
-            "LeighvsOptimvsMaximvs",
-            "Omnipaedista",
-            "SPQRobin"
-        ]
-    },
-    "sitematrix-language": "Γλῶττα",
-    "sitematrix-sitetotal": "Συνολικός",
-    "sitematrix-private": "ἰδιωτικός"
+	"@metadata": {
+		"authors": [
+			"LeighvsOptimvsMaximvs",
+			"Omnipaedista",
+			"SPQRobin"
+		]
+	},
+	"sitematrix-language": "Γλῶττα",
+	"sitematrix-sitetotal": "Συνολικός",
+	"sitematrix-private": "ἰδιωτικός"
 }

@@ -9,13 +9,24 @@ class SecurePoll_EntryPage extends SecurePoll_Page {
 	 * @param $params array Array of subpage parameters.
 	 */
 	function execute( $params ) {
-		global $wgOut;
+		global $wgOut, $wgUser;
 		$pager = new SecurePoll_ElectionPager( $this );
 		$wgOut->addWikiMsg( 'securepoll-entry-text' );
 		$wgOut->addHTML(
 			$pager->getBody() .
 			$pager->getNavigationBar()
 		);
+
+		if ( $wgUser->isAllowed( 'securepoll-create-poll' ) ) {
+			$title = SpecialPage::getTitleFor( 'SecurePoll', 'create' );
+			$wgOut->addHTML(
+				Html::rawElement( 'p', array(),
+					Linker::makeKnownLinkObj( $title,
+						$this->msg( 'securepoll-entry-createpoll' )->text()
+					)
+				)
+			);
+		}
 	}
 
 	/**
@@ -30,35 +41,50 @@ class SecurePoll_EntryPage extends SecurePoll_Page {
  * Pager for an election list. See TablePager documentation.
  */
 class SecurePoll_ElectionPager extends TablePager {
-	var $subpages = array(
+	public $subpages = array(
 		'vote' => array(
 			'public' => true,
+			'visible-after-start' => true,
 			'visible-after-close' => false,
 		),
 		'translate' => array(
 			'public' => true,
+			'visible-after-start' => true,
 			'visible-after-close' => true,
 		),
 		'list' => array(
 			'public' => true,
+			'visible-after-start' => true,
+			'visible-after-close' => true,
+		),
+		'edit' => array(
+			'public' => false,
+			'visible-after-start' => false,
+			'visible-after-close' => false,
+		),
+		'votereligibility' => array(
+			'public' => false,
+			'visible-after-start' => true,
 			'visible-after-close' => true,
 		),
 		'dump' => array(
 			'public' => false,
+			'visible-after-start' => true,
 			'visible-after-close' => true,
 		),
 		'tally' => array(
 			'public' => false,
+			'visible-after-start' => true,
 			'visible-after-close' => true,
 		),
 	);
-	var $fields = array(
+	public $fields = array(
 		'el_title',
 		'el_start_date',
 		'el_end_date',
 		'links'
 	);
-	var $entryPage;
+	public $entryPage;
 
 	function __construct( $parent ) {
 		$this->entryPage = $parent;
@@ -126,14 +152,15 @@ class SecurePoll_ElectionPager extends TablePager {
 			// Message keys used here:
 			// securepoll-subpage-vote, securepoll-subpage-translate,
 			// securepoll-subpage-list, securepoll-subpage-dump,
-			// securepoll-subpage-tally
+			// securepoll-subpage-tally, securepoll-subpage-votereligibility
 			$linkText = wfMsgExt( "securepoll-subpage-$subpage", 'parseinline' );
 			if ( $s !== '' ) {
 				$s .= $sep;
 			}
 			if( ( $this->isAdmin || $props['public'] )
-			    && ( !$this->election->isFinished() || $props['visible-after-close'] ) )
-			{
+				&& ( !$this->election->isStarted() || $props['visible-after-start'] )
+				&& ( !$this->election->isFinished() || $props['visible-after-close'] )
+			) {
 				$title = $this->entryPage->parent->getTitle( "$subpage/$id" );
 				$s .= Linker::makeKnownLinkObj( $title, $linkText );
 			} else {

@@ -1,19 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Esbardu",
-            "Xuacu"
-        ]
-    },
-    "sitematrix": "Llista de wikis de Wikimedia",
-    "sitematrix-summary": "Esta páxina especial llista toles wikis de Wikimedia.",
-    "sitematrix-desc": "Amuesa una [[Special:SiteMatrix|llista de les wikis de Wikimedia]]",
-    "sitematrix-language": "Llingua",
-    "sitematrix-project": "Nomes del proyeutu, del enllaz interproyeutu y del enllaz interwiki",
-    "sitematrix-others": "Otros proyeutos de Wikimedia",
-    "sitematrix-other-projects": "Otros proyeutos",
-    "sitematrix-total": "'''Númberu total: $1'''",
-    "sitematrix-sitetotal": "Total",
-    "sitematrix-private": "priváu",
-    "sitematrix-fishbowl": "edición restrinxida"
+	"@metadata": {
+		"authors": [
+			"Esbardu",
+			"Xuacu"
+		]
+	},
+	"sitematrix": "Llista de wikis de Wikimedia",
+	"sitematrix-summary": "Esta páxina especial llista toles wikis de Wikimedia.",
+	"sitematrix-desc": "Amuesa una [[Special:SiteMatrix|llista de les wikis de Wikimedia]]",
+	"sitematrix-language": "Llingua",
+	"sitematrix-project": "Nomes del proyeutu, del enllaz interproyeutu y del enllaz interwiki",
+	"sitematrix-others": "Otros proyeutos de Wikimedia",
+	"sitematrix-other-projects": "Otros proyeutos",
+	"sitematrix-total": "'''Númberu total: $1'''",
+	"sitematrix-sitetotal": "Total",
+	"sitematrix-private": "priváu",
+	"sitematrix-fishbowl": "edición restrinxida"
 }

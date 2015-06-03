@@ -1,21 +1,21 @@
 {
-    "@metadata": {
-        "authors": [
-            "Aspar",
-            "Erdemaslancan",
-            "Marmase",
-            "Mirzali"
-        ]
-    },
-    "sitematrix": "listeya wiki yê heme wikimediyayan",
-    "sitematrix-summary": "no pelo xas listeya wiki yê heme wikimedyayan liste keno",
-    "sitematrix-desc": "[[Special:SiteMatrix|listeya wikiyê Wikimedyayan]] mocneno ra",
-    "sitematrix-language": "Zıwan",
-    "sitematrix-project": "nameyê projeyi, gıreyê benateyê projeyan, wikiyan",
-    "sitematrix-others": "Projeyê Wîkîmedyayê binî",
-    "sitematrix-other-projects": "Proceyê bini",
-    "sitematrix-total": "'''pêro amari: $1'''",
-    "sitematrix-sitetotal": "Pêro piya",
-    "sitematrix-private": "xısusi",
-    "sitematrix-fishbowl": "vuriyayişi qedexe bı"
+	"@metadata": {
+		"authors": [
+			"Aspar",
+			"Erdemaslancan",
+			"Marmase",
+			"Mirzali"
+		]
+	},
+	"sitematrix": "listeya wiki yê heme wikimediyayan",
+	"sitematrix-summary": "no pelo xas listeya wiki yê heme wikimedyayan liste keno",
+	"sitematrix-desc": "[[Special:SiteMatrix|listeya wikiyê Wikimedyayan]] mocneno ra",
+	"sitematrix-language": "Zıwan",
+	"sitematrix-project": "nameyê projeyi, gıreyê benateyê projeyan, wikiyan",
+	"sitematrix-others": "Projeyê Wîkîmedyayê binî",
+	"sitematrix-other-projects": "Proceyê bini",
+	"sitematrix-total": "'''pêro amari: $1'''",
+	"sitematrix-sitetotal": "Pêro piya",
+	"sitematrix-private": "xısusi",
+	"sitematrix-fishbowl": "vuriyayişi qedexe bı"
 }

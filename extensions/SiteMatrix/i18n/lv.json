@@ -1,16 +1,16 @@
 {
-    "@metadata": {
-        "authors": [
-            "GreenZeb",
-            "Papuass",
-            "Xil",
-            "לערי ריינהארט"
-        ]
-    },
-    "sitematrix": "Visu Wikimedia wiki projektu uzskaitījums",
-    "sitematrix-language": "Valoda",
-    "sitematrix-others": "Citi Wikimedia projekti",
-    "sitematrix-other-projects": "Citi projekti",
-    "sitematrix-sitetotal": "Kopā",
-    "sitematrix-private": "privāts"
+	"@metadata": {
+		"authors": [
+			"GreenZeb",
+			"Papuass",
+			"Xil",
+			"לערי ריינהארט"
+		]
+	},
+	"sitematrix": "Visu Wikimedia wiki projektu uzskaitījums",
+	"sitematrix-language": "Valoda",
+	"sitematrix-others": "Citi Wikimedia projekti",
+	"sitematrix-other-projects": "Citi projekti",
+	"sitematrix-sitetotal": "Kopā",
+	"sitematrix-private": "privāts"
 }

@@ -1,18 +1,20 @@
 {
-    "@metadata": {
-        "authors": [
-            "Meno25"
-        ]
-    },
-    "sitematrix": "قائمة ويكيات ويكيميديا",
-    "sitematrix-summary": "هذه الصفحة الخاصة تعرض كل ويكيات ويكيميديا.",
-    "sitematrix-desc": "يعرض [[Special:SiteMatrix|قائمة بويكيات ويكيميديا]]",
-    "sitematrix-language": "اللغة",
-    "sitematrix-project": "اسم المشروع، وصلة المشروع الداخلية ووصلة الإنترويكي",
-    "sitematrix-others": "مشاريع ويكيميديا الأخرى",
-    "sitematrix-other-projects": "المشاريع الأخرى",
-    "sitematrix-total": "'''إجمالي العدد: $1'''",
-    "sitematrix-sitetotal": "الإجمالي",
-    "sitematrix-private": "خاص",
-    "sitematrix-fishbowl": "التعديل محدد"
+	"@metadata": {
+		"authors": [
+			"Meno25",
+			"Abanima"
+		]
+	},
+	"sitematrix": "قائمة ويكيات ويكيميديا",
+	"sitematrix-summary": "هذه الصفحة الخاصة تعرض كل ويكيات ويكيميديا.",
+	"sitematrix-desc": "يعرض [[Special:SiteMatrix|قائمة بويكيات ويكيميديا]]",
+	"sitematrix-language": "اللغة",
+	"sitematrix-project": "اسم المشروع، وصلة المشروع الداخلية ووصلة الإنترويكي",
+	"sitematrix-others": "مشاريع ويكيميديا الأخرى",
+	"sitematrix-other-projects": "المشاريع الأخرى",
+	"sitematrix-total": "'''إجمالي العدد: $1'''",
+	"sitematrix-sitetotal": "الإجمالي",
+	"sitematrix-private": "خاص",
+	"sitematrix-fishbowl": "التعديل محدد",
+	"apihelp-sitematrix-param-limit": "العدد الأقصى للنتائج."
 }

@@ -4,7 +4,7 @@
  * Class for handling guest logins and sessions. Creates SecurePoll_Voter objects.
  */
 class SecurePoll_Auth {
-	var $context;
+	public $context;
 
 	/**
 	 * List of available authorization modules (subclasses)
@@ -24,6 +24,19 @@ class SecurePoll_Auth {
 		}
 		$class = self::$authTypes[$type];
 		return new $class( $context );
+	}
+
+	/**
+	 * Return descriptors for any additional properties or messages this type
+	 * requires for poll creation.
+	 *
+	 * The descriptors should have an additional key, "SecurePoll_type", with
+	 * the value being "property" or "message".
+	 *
+	 * @return array
+	 */
+	static function getCreateDescriptors() {
+		return array();
 	}
 
 	function __construct( $context ) {
@@ -272,6 +285,17 @@ class SecurePoll_LocalAuth extends SecurePoll_Auth {
  * Class for guest login from one MW instance running SecurePoll to another.
  */
 class SecurePoll_RemoteMWAuth extends SecurePoll_Auth {
+	static function getCreateDescriptors() {
+		return array(
+			'script-path' => array(
+				'label-message' => 'securepoll-create-label-remote_mw_script_path',
+				'type' => 'url',
+				'required' => true,
+				'SecurePoll_type' => 'property',
+			),
+		);
+	}
+
 	/**
 	 * Create a voter on a direct request from a remote site.
 	 * @param $election SecurePoll_Election
@@ -294,7 +318,29 @@ class SecurePoll_RemoteMWAuth extends SecurePoll_Auth {
 		}
 
 		$wgConf->loadFullData();
-		$server = $wgConf->get( 'wgServer', $params['wiki'] );
+
+		// Get the site and language from $wgConf, if necessary.
+		if ( !isset( $params['site'] ) || !isset( $params['lang'] ) ) {
+			list( $site, $lang ) = $wgConf->siteFromDB( $params['wiki'] );
+			if ( !isset( $params['site'] ) ) {
+				$params['site'] = $site;
+				$vars['$site'] = $site;
+			}
+			if ( !isset( $params['lang'] ) ) {
+				$params['lang'] = $lang;
+				$vars['$lang'] = $lang;
+			}
+		}
+
+		// In some cases it doesn't matter what we pass for $suffix. When it
+		// does, the correct value is $params['site'] unless there is a string
+		// back-mapping for it in $wgConf->suffixes.
+		$suffixes = array_flip( $wgConf->suffixes );
+		$suffix = isset( $suffixes[$params['site']] ) && is_string( $suffixes[$params['site']] )
+			? $suffixes[$params['site']]
+			: $params['site'];
+
+		$server = $wgConf->get( 'wgServer', $params['wiki'], $suffix, $params );
 		$params['wgServer'] = $server;
 		$vars["\$wgServer"] = $server;
 

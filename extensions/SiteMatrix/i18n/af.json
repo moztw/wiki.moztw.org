@@ -1,21 +1,21 @@
 {
-    "@metadata": {
-        "authors": [
-            "Arnobarnard",
-            "Naudefj",
-            "SPQRobin",
-            "לערי ריינהארט"
-        ]
-    },
-    "sitematrix": "Lys van Wikimedia-wiki's",
-    "sitematrix-summary": "Die spesiale bladsy wys al die Wikimedia-wiki's.",
-    "sitematrix-desc": "Vertoon 'n [[Special:SiteMatrix|lys van Wikimedia-wiki's]]",
-    "sitematrix-language": "Taal",
-    "sitematrix-project": "Projeknaam, skakels na projekte en taalskakels",
-    "sitematrix-others": "Ander projekte van Wikimedia",
-    "sitematrix-other-projects": "Ander projekte",
-    "sitematrix-total": "'''Totale aantal: $1'''",
-    "sitematrix-sitetotal": "Totaal",
-    "sitematrix-private": "beperkte toegang",
-    "sitematrix-fishbowl": "wysiging beperk"
+	"@metadata": {
+		"authors": [
+			"Arnobarnard",
+			"Naudefj",
+			"SPQRobin",
+			"לערי ריינהארט"
+		]
+	},
+	"sitematrix": "Lys van Wikimedia-wiki's",
+	"sitematrix-summary": "Die spesiale bladsy wys al die Wikimedia-wiki's.",
+	"sitematrix-desc": "Vertoon 'n [[Special:SiteMatrix|lys van Wikimedia-wiki's]]",
+	"sitematrix-language": "Taal",
+	"sitematrix-project": "Projeknaam, skakels na projekte en taalskakels",
+	"sitematrix-others": "Ander projekte van Wikimedia",
+	"sitematrix-other-projects": "Ander projekte",
+	"sitematrix-total": "'''Totale aantal: $1'''",
+	"sitematrix-sitetotal": "Totaal",
+	"sitematrix-private": "beperkte toegang",
+	"sitematrix-fishbowl": "wysiging beperk"
 }

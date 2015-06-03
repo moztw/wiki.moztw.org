@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"C.R."
+		]
+	},
+	"unicodeconverter": "Convertitore Unicode",
+	"unicodeconverter-desc": "Nu semprice esempio 'e nu modulo 'e paggena speciale. [[Special:UnicodeConverter|Data na stringa 'n UTF-8]], a cagna dint'a n'entità HTML adatta pe' ne ffà na paggena web ISO 8859-1",
+	"unicodeconverter-ok": "OK",
+	"unicodeconverter-oldtext": "Testo origginale:",
+	"unicodeconverter-newtext": "Testo cunvertito:"
+}

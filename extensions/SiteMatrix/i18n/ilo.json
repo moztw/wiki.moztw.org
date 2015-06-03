@@ -1,18 +1,18 @@
 {
-    "@metadata": {
-        "authors": [
-            "Lam-ang"
-        ]
-    },
-    "sitematrix": "Listaan dagiti Wikimedia wiki",
-    "sitematrix-summary": "Daytoy a naipangruna a panid ket ilista na amin dagiti Wikimedia wiki.",
-    "sitematrix-desc": "Agipakita ti [[Special:SiteMatrix|listaan dagiti Wikimedia wiki]]",
-    "sitematrix-language": "Pagsasao",
-    "sitematrix-project": "Nagan ti gandat, interproject a panilpo ken interwiki a panilpo",
-    "sitematrix-others": "Dagiti sabsabali a gandat ti Wikimedia",
-    "sitematrix-other-projects": "Dagiti sabsabali a gandat",
-    "sitematrix-total": "'''Dagup a bilang: $1'''",
-    "sitematrix-sitetotal": "Dagup",
-    "sitematrix-private": "pribado",
-    "sitematrix-fishbowl": "maiparit ti agurnos"
+	"@metadata": {
+		"authors": [
+			"Lam-ang"
+		]
+	},
+	"sitematrix": "Listaan dagiti Wikimedia wiki",
+	"sitematrix-summary": "Daytoy a naipangruna a panid ket ilista na amin dagiti Wikimedia wiki.",
+	"sitematrix-desc": "Agipakita ti [[Special:SiteMatrix|listaan dagiti Wikimedia wiki]]",
+	"sitematrix-language": "Pagsasao",
+	"sitematrix-project": "Nagan ti gandat, interproject a panilpo ken interwiki a panilpo",
+	"sitematrix-others": "Dagiti sabsabali a gandat ti Wikimedia",
+	"sitematrix-other-projects": "Dagiti sabsabali a gandat",
+	"sitematrix-total": "'''Dagup a bilang: $1'''",
+	"sitematrix-sitetotal": "Dagup",
+	"sitematrix-private": "pribado",
+	"sitematrix-fishbowl": "maiparit ti agurnos"
 }

@@ -1,18 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Joetaras"
-        ]
-    },
-    "sitematrix": "Elenghe de le Uicchi de UicchiMedia",
-    "sitematrix-summary": "Sta pàgena speciale elenghe tutte le Uicchi de UicchiMedia.",
-    "sitematrix-desc": "Face vedè 'n'[[Special:SiteMatrix|elenghe de le Uicchi de UicchiMedia]]",
-    "sitematrix-language": "Lènghe",
-    "sitematrix-project": "Nome de proggette, collegamende 'mbrà inderproggette e collegamende 'mbrà inderuicchi",
-    "sitematrix-others": "Otre pruggette de UicchiMedia",
-    "sitematrix-other-projects": "Otre pruggette",
-    "sitematrix-total": "'''Condegge totale: $1'''",
-    "sitematrix-sitetotal": "Totele",
-    "sitematrix-private": "private",
-    "sitematrix-fishbowl": "cangiaminde limitate"
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"sitematrix": "Elenghe de le Uicchi de UicchiMedia",
+	"sitematrix-summary": "Sta pàgena speciale elenghe tutte le Uicchi de UicchiMedia.",
+	"sitematrix-desc": "Face vedè 'n'[[Special:SiteMatrix|elenghe de le Uicchi de UicchiMedia]]",
+	"sitematrix-language": "Lènghe",
+	"sitematrix-project": "Nome de proggette, collegamende 'mbrà inderproggette e collegamende 'mbrà inderuicchi",
+	"sitematrix-others": "Otre pruggette de UicchiMedia",
+	"sitematrix-other-projects": "Otre pruggette",
+	"sitematrix-total": "'''Condegge totale: $1'''",
+	"sitematrix-sitetotal": "Totele",
+	"sitematrix-private": "private",
+	"sitematrix-fishbowl": "cangiaminde limitate",
+	"apihelp-sitematrix-example-1": "Fà vedè 'a matrice d'u site"
 }

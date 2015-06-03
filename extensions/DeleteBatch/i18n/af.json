@@ -1,11 +1,11 @@
 {
-    "@metadata": {
-        "authors": [
-            "Naudefj"
-        ]
-    },
-    "deletebatch-caption": "Bladsylys:",
-    "deletebatch-or": "<strong>Of</strong>",
-    "deletebatch-delete": "Skrap",
-    "deletebatch-select-yourself": "u"
+	"@metadata": {
+		"authors": [
+			"Naudefj"
+		]
+	},
+	"deletebatch-caption": "Bladsylys:",
+	"deletebatch-or": "<strong>Of</strong>",
+	"deletebatch-delete": "Skrap",
+	"deletebatch-select-yourself": "u"
 }

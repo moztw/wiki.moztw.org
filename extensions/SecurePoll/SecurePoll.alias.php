@@ -24,6 +24,11 @@ $specialPageAliases['arz'] = array(
 	'SecurePoll' => array( 'استطلاع_رأى_امان' ),
 );
 
+/** Avaric (авар) */
+$specialPageAliases['av'] = array(
+	'SecurePoll' => array( 'Защищённое_голосование' ),
+);
+
 /** Bashkir (башҡортса) */
 $specialPageAliases['ba'] = array(
 	'SecurePoll' => array( 'SecurePoll' ),
@@ -57,6 +62,11 @@ $specialPageAliases['diq'] = array(
 /** Lower Sorbian (dolnoserbski) */
 $specialPageAliases['dsb'] = array(
 	'SecurePoll' => array( 'Wěste wótgłosowanje' ),
+);
+
+/** Estonian (eesti) */
+$specialPageAliases['et'] = array(
+	'SecurePoll' => array( 'Turvaline_hääletus' ),
 );
 
 /** Persian (فارسی) */
@@ -106,7 +116,7 @@ $specialPageAliases['hr'] = array(
 
 /** Upper Sorbian (hornjoserbsce) */
 $specialPageAliases['hsb'] = array(
-	'SecurePoll' => array( 'Wěste wothłosowanje' ),
+	'SecurePoll' => array( 'Wěste_wothłosowanje' ),
 );
 
 /** Haitian (Kreyòl ayisyen) */

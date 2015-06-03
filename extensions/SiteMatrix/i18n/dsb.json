@@ -1,18 +1,18 @@
 {
-    "@metadata": {
-        "authors": [
-            "Michawiki"
-        ]
-    },
-    "sitematrix": "Lisćina wikijow Wikimedije",
-    "sitematrix-summary": "Toś ten specialny bok nalistujo wše wikije Wikimedije.",
-    "sitematrix-desc": "Zwobraznjujo [[Special:SiteMatrix|lisćinu wikijow Wikimedije]]",
-    "sitematrix-language": "Rěc",
-    "sitematrix-project": "Projektowe mě, interprojektowy wótkaz a interwiki-wótkaz",
-    "sitematrix-others": "Dalšne projekty Wikimedije",
-    "sitematrix-other-projects": "Druge projekty",
-    "sitematrix-total": "'''Cełkowna licba: $1'''",
-    "sitematrix-sitetotal": "Dogromady",
-    "sitematrix-private": "priwatny",
-    "sitematrix-fishbowl": "wobźěłowanje wobgranicowane"
+	"@metadata": {
+		"authors": [
+			"Michawiki"
+		]
+	},
+	"sitematrix": "Lisćina wikijow Wikimedije",
+	"sitematrix-summary": "Toś ten specialny bok nalistujo wše wikije Wikimedije.",
+	"sitematrix-desc": "Zwobraznjujo [[Special:SiteMatrix|lisćinu wikijow Wikimedije]]",
+	"sitematrix-language": "Rěc",
+	"sitematrix-project": "Projektowe mě, interprojektowy wótkaz a interwiki-wótkaz",
+	"sitematrix-others": "Dalšne projekty Wikimedije",
+	"sitematrix-other-projects": "Druge projekty",
+	"sitematrix-total": "'''Cełkowna licba: $1'''",
+	"sitematrix-sitetotal": "Dogromady",
+	"sitematrix-private": "priwatny",
+	"sitematrix-fishbowl": "wobźěłowanje wobgranicowane"
 }

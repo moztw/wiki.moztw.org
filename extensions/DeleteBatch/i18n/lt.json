@@ -1,11 +1,11 @@
 {
-    "@metadata": {
-        "authors": [
-            "Eitvys200"
-        ]
-    },
-    "deletebatch-caption": "Puslapių sąrašas:",
-    "deletebatch-or": "<strong>arba</strong>",
-    "deletebatch-delete": "Ištrinti",
-    "deletebatch-select-yourself": "Jūs"
+	"@metadata": {
+		"authors": [
+			"Eitvys200"
+		]
+	},
+	"deletebatch-caption": "Puslapių sąrašas:",
+	"deletebatch-or": "<strong>arba</strong>",
+	"deletebatch-delete": "Ištrinti",
+	"deletebatch-select-yourself": "Jūs"
 }

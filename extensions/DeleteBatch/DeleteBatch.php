@@ -32,6 +32,7 @@ $wgMessagesDirs['DeleteBatch'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['DeleteBatch'] = $dir . 'DeleteBatch.i18n.php';
 $wgExtensionMessagesFiles['DeleteBatchAlias'] = $dir . 'DeleteBatch.alias.php';
 $wgAutoloadClasses['SpecialDeleteBatch'] = $dir . 'DeleteBatch.body.php';
+$wgAutoloadClasses['DeleteBatchForm'] = $dir . 'DeleteBatch.body.php';
 $wgSpecialPages['DeleteBatch'] = 'SpecialDeleteBatch';
 $wgSpecialPageGroups['DeleteBatch'] = 'pagetools';
 

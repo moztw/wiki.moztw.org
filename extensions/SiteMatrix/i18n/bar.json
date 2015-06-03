@@ -1,18 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Mucalexx"
-        ]
-    },
-    "sitematrix": "Listen voh dé Wikimedia-Wikis",
-    "sitematrix-summary": "Dé Speziaalseiten do listt oj Wikis voh da Wikimedia Foundation auf.",
-    "sitematrix-desc": "Stöd a Speziaalseiten mid aner [[Special:SiteMatrix|Listen voh d' Wikimedia-Wikis]] bereit",
-    "sitematrix-language": "Sprooch",
-    "sitematrix-project": "Prójektnåm, Interprójektlink und Interwikilink",
-    "sitematrix-others": "Weiderne Wikimedia-Prójektt",
-    "sitematrix-other-projects": "Weiderne Prójektt",
-    "sitematrix-total": "'''Gsåmtåzoi: $1'''",
-    "sitematrix-sitetotal": "Insgsåmmt",
-    "sitematrix-private": "Privaat",
-    "sitematrix-fishbowl": "Beorweitung eihgschränkd"
+	"@metadata": {
+		"authors": [
+			"Mucalexx",
+			"Matthias Klostermayr"
+		]
+	},
+	"sitematrix": "Listn vo de Wikimedia-Wikis",
+	"sitematrix-summary": "De Spezialseiten do lisdt olle Wikis vo da Wikimedia Foundation af.",
+	"sitematrix-desc": "Eagenzt a [[Special:SiteMatrix|Spezialseitn]] mid ana Listn vo Wikimedia-Wikis",
+	"sitematrix-language": "Sproch",
+	"sitematrix-project": "Projektnama, Interprojektlink und Interwikilink",
+	"sitematrix-others": "Weidane Wikimedia-Projektt",
+	"sitematrix-other-projects": "Weidane Projektt",
+	"sitematrix-total": "'''Gsamtozoi: $1'''",
+	"sitematrix-sitetotal": "Insgsamt",
+	"sitematrix-private": "Privat",
+	"sitematrix-fishbowl": "Beorbatung eigschrenkt"
 }

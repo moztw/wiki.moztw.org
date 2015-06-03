@@ -3,7 +3,8 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aurora",
-			"Izzudin"
+			"Izzudin",
+			"Pizza1016"
 		]
 	},
 	"securepoll": "SecurePoll",
@@ -71,7 +72,7 @@
 	"securepoll-strike-log": "Log pemotongan",
 	"securepoll-header-action": "Tindakan",
 	"securepoll-header-reason": "Sebab",
-	"securepoll-header-admin": "Pentadbir",
+	"securepoll-header-admin": "Penyelia",
 	"securepoll-cookie-dup-list": "Pengguna salinan cookie",
 	"securepoll-dump-title": "Longgokan: $1",
 	"securepoll-dump-no-crypt": "Tiada rekod sulit pemilihan yang ada untuk pemilihan ini, kerana pemilihan tidak disusun untuk menggunakan penyulitan.",
@@ -79,6 +80,9 @@
 	"securepoll-dump-no-urandom": "Gagal membuka /dev/urandom.  \nUntuk mengekalkan privasi pengundi, rekod sulit pemilihan hanya tersedia untuk awam apabila ia dirombak dengan aliran nombor rawak yang selamat.",
 	"securepoll-urandom-not-supported": "Pelayan ini tidak menyokong penjanaan nombor rawak kriptografi.\nUntuk mengekalkan keadaan berahsia pengundi, rekod pemilihan tersulit cuma boleh didapati umum apabila ia boleh diubah dengan aliran nombor rawak selamat.",
 	"securepoll-translate-title": "Terjemah: $1",
+	"securepoll-translate-redirect": "Mesej-mesej untuk pilihan ini mesti dikonfigurasikan pada $1",
+	"securepoll-translate-redirect-otherwiki": "wiki utama",
+	"securepoll-translate-label-comment": "Sebab:",
 	"securepoll-invalid-language": "Kod bahasa tidak sah \"$1\"",
 	"securepoll-submit-translate": "Kemas kini",
 	"securepoll-language-label": "Pilih bahasa:",
@@ -110,5 +114,7 @@
 	"securepoll-average-score": "Mata purataba",
 	"securepoll-round": "Pusingan $1",
 	"securepoll-spoilt": "(Rosak)",
-	"securepoll-exhausted": "(Lupus)"
+	"securepoll-exhausted": "(Lupus)",
+	"securepoll-create-label-comment": "Sebab",
+	"securepoll-edit-edited": "{{int:securepoll}}: Tinjauan disunting"
 }

@@ -1,11 +1,11 @@
 {
-    "@metadata": {
-        "authors": [
-            "Teak"
-        ]
-    },
-    "sitematrix": "Վիքիմեդիայի վիքիների ցանկ",
-    "sitematrix-language": "Լեզու",
-    "sitematrix-project": "Նախագծի անվանումը, միջ-նախագծային հղումը և ինտերվիքի հղումը",
-    "sitematrix-others": "Վիքիմեդիայի այլ նախագծեր"
+	"@metadata": {
+		"authors": [
+			"Teak"
+		]
+	},
+	"sitematrix": "Վիքիմեդիայի վիքիների ցանկ",
+	"sitematrix-language": "Լեզու",
+	"sitematrix-project": "Նախագծի անվանումը, միջ-նախագծային հղումը և ինտերվիքի հղումը",
+	"sitematrix-others": "Վիքիմեդիայի այլ նախագծեր"
 }

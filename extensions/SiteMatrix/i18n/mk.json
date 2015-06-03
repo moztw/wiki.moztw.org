@@ -1,18 +1,25 @@
 {
-    "@metadata": {
-        "authors": [
-            "Bjankuloski06"
-        ]
-    },
-    "sitematrix": "Список на Викимедиините викија",
-    "sitematrix-summary": "На оваа специјална страница се наведени сите вики-проекти на Викимедија.",
-    "sitematrix-desc": "Прикажува [[Special:SiteMatrix|список на Викимедиините викија]]",
-    "sitematrix-language": "Јазик",
-    "sitematrix-project": "Име на проектот, меѓупроектна врска и меѓувики-врска",
-    "sitematrix-others": "Други проекти на Викимедија",
-    "sitematrix-other-projects": "Други проекти",
-    "sitematrix-total": "'''Севкупно: $1'''",
-    "sitematrix-sitetotal": "Вкупно",
-    "sitematrix-private": "личен",
-    "sitematrix-fishbowl": "ограничено уредување"
+	"@metadata": {
+		"authors": [
+			"Bjankuloski06"
+		]
+	},
+	"sitematrix": "Список на Викимедиините викија",
+	"sitematrix-summary": "На оваа службена страница се наведени сите вики-проекти на Викимедија.",
+	"sitematrix-desc": "Прикажува [[Special:SiteMatrix|список на Викимедиините викија]]",
+	"sitematrix-language": "Јазик",
+	"sitematrix-project": "Име на проектот, меѓупроектна врска и меѓувики-врска",
+	"sitematrix-others": "Други проекти на Викимедија",
+	"sitematrix-other-projects": "Други проекти",
+	"sitematrix-total": "'''Севкупно: $1'''",
+	"sitematrix-sitetotal": "Вкупно",
+	"sitematrix-private": "личен",
+	"sitematrix-fishbowl": "ограничено уредување",
+	"apihelp-sitematrix-description": "Дај список на Викимедиините викија.\n\nКодот е или едиунствената назнака за посебните, или пак, за јазици, проектниот код.",
+	"apihelp-sitematrix-param-type": "Филтрирај ја матрицата на викито по тип:\n;special: Посебни и повеќејазични Викимедиини проекти.\n;language: Викимедиини проекти под овој јазичен код.",
+	"apihelp-sitematrix-param-state": "Филтрирај ја матрицата на викито по неговата состојба:\n;closed: Без право на менување, а со полно право на читање.\n;private: Читањето и менувањето се ограничени.\n;fishbowl: Ограничено право на менување, а полно право на читање.",
+	"apihelp-sitematrix-param-langprop": "Кои информации за даден јазик да се дадат.",
+	"apihelp-sitematrix-param-siteprop": "Кои информации за дадено вики да се дадат.",
+	"apihelp-sitematrix-param-limit": "Макс. број на резултати.",
+	"apihelp-sitematrix-example-1": "Прикажи ја матрицата на викито"
 }

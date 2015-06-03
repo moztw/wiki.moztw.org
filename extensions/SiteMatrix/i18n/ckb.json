@@ -1,20 +1,20 @@
 {
-    "@metadata": {
-        "authors": [
-            "Asoxor",
-            "Calak",
-            "Muhammed taha"
-        ]
-    },
-    "sitematrix": "پێرستی ویکییەکانی ویکیمیدیا",
-    "sitematrix-summary": "ئەم پەڕە تایبەتە گشت ویکییەکانی ویکیمیدیای بە ڕیزکردووە.",
-    "sitematrix-desc": "[[Special:SiteMatrix|لیستێکی ویکییەکانی ویکیمیدیا]] نیشان دەدات",
-    "sitematrix-language": "زمان",
-    "sitematrix-project": "ناوی پرۆژە، بەستەرکانی نێوانپرۆژە و بەستەرەکانی نێوانویکی",
-    "sitematrix-others": "پرۆژەکانی دیکەی ویکیمیدیا",
-    "sitematrix-other-projects": "پرۆژەکانی تر",
-    "sitematrix-total": "'''ژمارەی سەرجەم: $1'''",
-    "sitematrix-sitetotal": "سەرجەم",
-    "sitematrix-private": "تایبەت",
-    "sitematrix-fishbowl": "دەستکاریکردنی سنووردار"
+	"@metadata": {
+		"authors": [
+			"Asoxor",
+			"Calak",
+			"Muhammed taha"
+		]
+	},
+	"sitematrix": "پێرستی ویکییەکانی ویکیمیدیا",
+	"sitematrix-summary": "ئەم پەڕە تایبەتە گشت ویکییەکانی ویکیمیدیای بە ڕیزکردووە.",
+	"sitematrix-desc": "[[Special:SiteMatrix|لیستێکی ویکییەکانی ویکیمیدیا]] نیشان دەدات",
+	"sitematrix-language": "زمان",
+	"sitematrix-project": "ناوی پرۆژە، بەستەرکانی نێوانپرۆژە و بەستەرەکانی نێوانویکی",
+	"sitematrix-others": "پرۆژەکانی دیکەی ویکیمیدیا",
+	"sitematrix-other-projects": "پرۆژەکانی تر",
+	"sitematrix-total": "'''ژمارەی سەرجەم: $1'''",
+	"sitematrix-sitetotal": "سەرجەم",
+	"sitematrix-private": "تایبەت",
+	"sitematrix-fishbowl": "دەستکاریکردنی سنووردار"
 }

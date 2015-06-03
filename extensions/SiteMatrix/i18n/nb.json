@@ -1,19 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Nghtwlkr",
-            "לערי ריינהארט"
-        ]
-    },
-    "sitematrix": "Liste over Wikimedia-prosjekter",
-    "sitematrix-summary": "Denne spesialsiden lister opp alle Wikimedias wikier.",
-    "sitematrix-desc": "Viser en [[Special:SiteMatrix|liste over Wikimedia-wikier]]",
-    "sitematrix-language": "Språk",
-    "sitematrix-project": "Prosjektets navn, interprosjektlenke og interwikilenke",
-    "sitematrix-others": "Andre Wikimedia-prosjekter",
-    "sitematrix-other-projects": "Andre prosjekt",
-    "sitematrix-total": "'''Totalt antall: $1'''",
-    "sitematrix-sitetotal": "Totalt",
-    "sitematrix-private": "privat",
-    "sitematrix-fishbowl": "redigering begrenset"
+	"@metadata": {
+		"authors": [
+			"Nghtwlkr",
+			"לערי ריינהארט"
+		]
+	},
+	"sitematrix": "Liste over Wikimedia-prosjekter",
+	"sitematrix-summary": "Denne spesialsiden lister opp alle Wikimedias wikier.",
+	"sitematrix-desc": "Viser en [[Special:SiteMatrix|liste over Wikimedia-wikier]]",
+	"sitematrix-language": "Språk",
+	"sitematrix-project": "Prosjektets navn, interprosjektlenke og interwikilenke",
+	"sitematrix-others": "Andre Wikimedia-prosjekter",
+	"sitematrix-other-projects": "Andre prosjekt",
+	"sitematrix-total": "'''Totalt antall: $1'''",
+	"sitematrix-sitetotal": "Totalt",
+	"sitematrix-private": "privat",
+	"sitematrix-fishbowl": "redigering begrenset"
 }

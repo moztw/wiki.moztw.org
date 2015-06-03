@@ -7,6 +7,8 @@
  */
 class SecurePoll_BasePage extends UnlistedSpecialPage {
 	static $pages = array(
+		'create' => 'SecurePoll_CreatePage',
+		'edit' => 'SecurePoll_CreatePage',
 		'details' => 'SecurePoll_DetailsPage',
 		'dump' => 'SecurePoll_DumpPage',
 		'entry' => 'SecurePoll_EntryPage',
@@ -16,9 +18,10 @@ class SecurePoll_BasePage extends UnlistedSpecialPage {
 		'tally' => 'SecurePoll_TallyPage',
 		'translate' => 'SecurePoll_TranslatePage',
 		'vote' => 'SecurePoll_VotePage',
+		'votereligibility' => 'SecurePoll_VoterEligibilityPage',
 	);
 
-	var $sp_context, $request;
+	public $sp_context, $request;
 
 	/**
 	 * Constructor

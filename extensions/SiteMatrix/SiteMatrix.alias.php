@@ -24,6 +24,11 @@ $specialPageAliases['arz'] = array(
 	'SiteMatrix' => array( 'Matrix_السايت', 'ويكيهات_ويكيميديا' ),
 );
 
+/** Avaric (авар) */
+$specialPageAliases['av'] = array(
+	'SiteMatrix' => array( 'Матрица_сайта', 'Вики_Викимедиа' ),
+);
+
 /** Bashkir (башҡортса) */
 $specialPageAliases['ba'] = array(
 	'SiteMatrix' => array( 'SiteMatrix' ),
@@ -116,7 +121,7 @@ $specialPageAliases['hr'] = array(
 
 /** Upper Sorbian (hornjoserbsce) */
 $specialPageAliases['hsb'] = array(
-	'SiteMatrix' => array( 'Lisćina projektow Wikimedije' ),
+	'SiteMatrix' => array( 'Lisćina_projektow_Wikimedije' ),
 );
 
 /** Haitian (Kreyòl ayisyen) */
@@ -171,7 +176,7 @@ $specialPageAliases['mk'] = array(
 
 /** Malayalam (മലയാളം) */
 $specialPageAliases['ml'] = array(
-	'SiteMatrix' => array( 'വിക്കിമീഡിയ_വിക്കികൾ' ),
+	'SiteMatrix' => array( 'സൈറ്റ്‌മട്രിക്സ്', 'വിക്കിമീഡിയ_വിക്കികൾ' ),
 );
 
 /** Marathi (मराठी) */
@@ -269,6 +274,11 @@ $specialPageAliases['vi'] = array(
 	'SiteMatrix' => array( 'Ma_trận_trang' ),
 );
 
+/** Yiddish (ייִדיש) */
+$specialPageAliases['yi'] = array(
+	'SiteMatrix' => array( 'וויקימעדיע_וויקיס' ),
+);
+
 /** Cantonese (粵語) */
 $specialPageAliases['yue'] = array(
 	'SiteMatrix' => array( '站點一覽' ),
@@ -276,7 +286,7 @@ $specialPageAliases['yue'] = array(
 
 /** Simplified Chinese (中文（简体）‎) */
 $specialPageAliases['zh-hans'] = array(
-	'SiteMatrix' => array( '网站方阵', '维基媒体wiki' ),
+	'SiteMatrix' => array( '网站矩阵', '维基媒体Wiki' ),
 );
 
 /** Traditional Chinese (中文（繁體）‎) */

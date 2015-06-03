@@ -1,21 +1,21 @@
 {
-    "@metadata": {
-        "authors": [
-            "EugeneZelenko",
-            "Jim-by",
-            "Red Winged Duck",
-            "Wizardist"
-        ]
-    },
-    "sitematrix": "Сьпіс усіх праектаў фундацыі «Вікімэдыя»",
-    "sitematrix-summary": "Гэтая спэцыяльная старонка ўтрымлівае сьпіс усіх вікі фундацыі «Вікімэдыя».",
-    "sitematrix-desc": "Паказвае [[Special:SiteMatrix|сьпіс вікі фундацыі «Вікімэдыя»]]",
-    "sitematrix-language": "Мова",
-    "sitematrix-project": "Назва праекту, міжпраектная спасылка і спасылка інтэрвікі",
-    "sitematrix-others": "Іншыя праекты фундацыі «Вікімэдыя»",
-    "sitematrix-other-projects": "Іншыя праекты",
-    "sitematrix-total": "'''Агульная колькасьць: $1'''",
-    "sitematrix-sitetotal": "Усяго",
-    "sitematrix-private": "прыватны",
-    "sitematrix-fishbowl": "рэдагаваньне абмежавана"
+	"@metadata": {
+		"authors": [
+			"EugeneZelenko",
+			"Jim-by",
+			"Red Winged Duck",
+			"Wizardist"
+		]
+	},
+	"sitematrix": "Сьпіс усіх праектаў фундацыі «Вікімэдыя»",
+	"sitematrix-summary": "Гэтая спэцыяльная старонка ўтрымлівае сьпіс усіх вікі фундацыі «Вікімэдыя».",
+	"sitematrix-desc": "Паказвае [[Special:SiteMatrix|сьпіс вікі фундацыі «Вікімэдыя»]]",
+	"sitematrix-language": "Мова",
+	"sitematrix-project": "Назва праекту, міжпраектная спасылка і спасылка інтэрвікі",
+	"sitematrix-others": "Іншыя праекты фундацыі «Вікімэдыя»",
+	"sitematrix-other-projects": "Іншыя праекты",
+	"sitematrix-total": "'''Агульная колькасьць: $1'''",
+	"sitematrix-sitetotal": "Усяго",
+	"sitematrix-private": "прыватны",
+	"sitematrix-fishbowl": "рэдагаваньне абмежавана"
 }

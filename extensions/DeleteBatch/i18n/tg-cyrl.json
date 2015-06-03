@@ -1,9 +1,9 @@
 {
-    "@metadata": {
-        "authors": [
-            "Ibrahim"
-        ]
-    },
-    "deletebatch-caption": "Феҳристи саҳифа",
-    "deletebatch-select-yourself": "шумо"
+	"@metadata": {
+		"authors": [
+			"Ibrahim"
+		]
+	},
+	"deletebatch-caption": "Феҳристи саҳифа",
+	"deletebatch-select-yourself": "шумо"
 }

@@ -4,8 +4,8 @@
  * The subpage for casting votes.
  */
 class SecurePoll_VotePage extends SecurePoll_Page {
-	var $languages;
-	var $election, $auth, $user;
+	public $languages;
+	public $election, $auth, $user;
 
 	/**
 	 * Execute the subpage.
@@ -191,7 +191,7 @@ class SecurePoll_VotePage extends SecurePoll_Page {
 				'vote_voter_name' => $this->voter->getName(),
 				'vote_voter_domain' => $this->voter->getDomain(),
 				'vote_record' => $encrypted,
-				'vote_ip' => IP::toHex( wfGetIP() ),
+				'vote_ip' => IP::toHex( $wgRequest->getIP() ),
 				'vote_xff' => $xff,
 				'vote_ua' => $_SERVER['HTTP_USER_AGENT'],
 				'vote_timestamp' => $now,
@@ -243,6 +243,7 @@ class SecurePoll_VotePage extends SecurePoll_Page {
 			Xml::openElement( 'form', array( 'action' => $url, 'method' => 'post' ) ) .
 			Html::hidden( 'token', SecurePoll_RemoteMWAuth::encodeToken( $wgUser->getToken() ) ) .
 			Html::hidden( 'id', $wgUser->getId() ) .
+			Html::hidden( 'wiki', wfWikiID() ) .
 			Xml::submitButton( wfMsg( 'securepoll-jump' ) ) .
 			'</form>'
 		);

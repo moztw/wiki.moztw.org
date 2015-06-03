@@ -1,19 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Candalua",
-            "GatoSelvadego"
-        ]
-    },
-    "sitematrix": "Ełenco de tuti i projeti Wikimedia ne le varie lengoe",
-    "sitematrix-summary": "Sta pagina speciale la elenca tuti i progeti Wikimedia",
-    "sitematrix-desc": "Mostra un [[Special:SiteMatrix|elenco dei siti Wikimedia]]",
-    "sitematrix-language": "Lengua",
-    "sitematrix-project": "Nome del progeto, colegamento interprogeto e colegamento inter-wiki",
-    "sitematrix-others": "Altri progeti Wikimedia",
-    "sitematrix-other-projects": "Altri projeti",
-    "sitematrix-total": "'''Contegio total: $1'''",
-    "sitematrix-sitetotal": "Total",
-    "sitematrix-private": "privato",
-    "sitematrix-fishbowl": "modifiche limità"
+	"@metadata": {
+		"authors": [
+			"Candalua",
+			"GatoSelvadego"
+		]
+	},
+	"sitematrix": "Ełenco de tuti i projeti Wikimedia ne le varie lengoe",
+	"sitematrix-summary": "Sta pagina speciale la elenca tuti i progeti Wikimedia",
+	"sitematrix-desc": "Mostra un [[Special:SiteMatrix|elenco dei siti Wikimedia]]",
+	"sitematrix-language": "Lengua",
+	"sitematrix-project": "Nome del progeto, colegamento interprogeto e colegamento inter-wiki",
+	"sitematrix-others": "Altri progeti Wikimedia",
+	"sitematrix-other-projects": "Altri projeti",
+	"sitematrix-total": "'''Contegio total: $1'''",
+	"sitematrix-sitetotal": "Total",
+	"sitematrix-private": "privato",
+	"sitematrix-fishbowl": "modifiche limità"
 }

@@ -1,11 +1,11 @@
 {
-    "@metadata": {
-        "authors": [
-            "Ukabia"
-        ]
-    },
-    "sitematrix-language": "Ásụ̀sụ̀",
-    "sitematrix-total": "'''Ọgụgụ nílé: $1'''",
-    "sitematrix-sitetotal": "Òlé níle",
-    "sitematrix-private": "zonàrì ñkịtị"
+	"@metadata": {
+		"authors": [
+			"Ukabia"
+		]
+	},
+	"sitematrix-language": "Ásụ̀sụ̀",
+	"sitematrix-total": "'''Ọgụgụ nílé: $1'''",
+	"sitematrix-sitetotal": "Òlé níle",
+	"sitematrix-private": "zonàrì ñkịtị"
 }

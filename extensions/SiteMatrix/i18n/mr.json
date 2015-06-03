@@ -1,20 +1,20 @@
 {
-    "@metadata": {
-        "authors": [
-            "Htt",
-            "Kaustubh",
-            "Mahitgar"
-        ]
-    },
-    "sitematrix": "विकिमीडियाच्या विकिंची यादी",
-    "sitematrix-summary": "हे विशेष पृष्ठ सर्व विकिमीडिया विकिंची यादी देते.",
-    "sitematrix-desc": "[[Special:SiteMatrix|विकिमीडिया विकिंची यादी]] दर्शविते",
-    "sitematrix-language": "भाषा",
-    "sitematrix-project": "प्रकल्पाचे नाव, आंतरप्रकल्प दुवे आणि आंतरविकि दुवे",
-    "sitematrix-others": "विकिमीडियाचे इतर प्रकल्प",
-    "sitematrix-other-projects": "इतर प्रकल्प",
-    "sitematrix-total": "'''एकूण संख्या: $1'''",
-    "sitematrix-sitetotal": "एकूण",
-    "sitematrix-private": "खासगी",
-    "sitematrix-fishbowl": "संपादनांवर बंदी"
+	"@metadata": {
+		"authors": [
+			"Htt",
+			"Kaustubh",
+			"Mahitgar"
+		]
+	},
+	"sitematrix": "विकिमीडियाच्या विकिंची यादी",
+	"sitematrix-summary": "हे विशेष पृष्ठ सर्व विकिमीडिया विकिंची यादी देते.",
+	"sitematrix-desc": "[[Special:SiteMatrix|विकिमीडिया विकिंची यादी]] दर्शविते",
+	"sitematrix-language": "भाषा",
+	"sitematrix-project": "प्रकल्पाचे नाव, आंतरप्रकल्प दुवे आणि आंतरविकि दुवे",
+	"sitematrix-others": "विकिमीडियाचे इतर प्रकल्प",
+	"sitematrix-other-projects": "इतर प्रकल्प",
+	"sitematrix-total": "'''एकूण संख्या: $1'''",
+	"sitematrix-sitetotal": "एकूण",
+	"sitematrix-private": "खासगी",
+	"sitematrix-fishbowl": "संपादनांवर बंदी"
 }

@@ -1,18 +1,18 @@
 {
-    "@metadata": {
-        "authors": [
-            "Dani"
-        ]
-    },
-    "sitematrix": "Az összes Wikimedia wiki listája",
-    "sitematrix-summary": "Wikimedia-wikiket listázó speciális lap",
-    "sitematrix-desc": "A [[Special:SiteMatrix|Wikimedia wikijeinek listája]]",
-    "sitematrix-language": "Nyelv",
-    "sitematrix-project": "A projekt neve, projekt- és nyelvközi link",
-    "sitematrix-others": "Más Wikimedia projektek",
-    "sitematrix-other-projects": "További projektek",
-    "sitematrix-total": "'''Összes: $1'''",
-    "sitematrix-sitetotal": "Összesen",
-    "sitematrix-private": "zártkörű",
-    "sitematrix-fishbowl": "a szerkesztés korlátozott"
+	"@metadata": {
+		"authors": [
+			"Dani"
+		]
+	},
+	"sitematrix": "Az összes Wikimedia wiki listája",
+	"sitematrix-summary": "Wikimedia-wikiket listázó speciális lap",
+	"sitematrix-desc": "A [[Special:SiteMatrix|Wikimedia wikijeinek listája]]",
+	"sitematrix-language": "Nyelv",
+	"sitematrix-project": "A projekt neve, projekt- és nyelvközi link",
+	"sitematrix-others": "Más Wikimedia projektek",
+	"sitematrix-other-projects": "További projektek",
+	"sitematrix-total": "'''Összes: $1'''",
+	"sitematrix-sitetotal": "Összesen",
+	"sitematrix-private": "zártkörű",
+	"sitematrix-fishbowl": "a szerkesztés korlátozott"
 }

@@ -24,6 +24,11 @@ $specialPageAliases['arz'] = array(
 	'DeleteBatch' => array( 'مشح_الباتش' ),
 );
 
+/** Western Balochi (بلوچی رخشانی) */
+$specialPageAliases['bgn'] = array(
+	'DeleteBatch' => array( 'دسته_گ_ئی_پاک_کورتین' ),
+);
+
 /** Banjar (Bahasa Banjar) */
 $specialPageAliases['bjn'] = array(
 	'DeleteBatch' => array( 'Hapus_sakaligus' ),
@@ -236,5 +241,5 @@ $specialPageAliases['zh-hans'] = array(
 
 /** Traditional Chinese (中文（繁體）‎) */
 $specialPageAliases['zh-hant'] = array(
-	'DeleteBatch' => array( '批量刪除' ),
+	'DeleteBatch' => array( '批次刪除' ),
 );

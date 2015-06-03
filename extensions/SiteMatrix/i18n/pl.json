@@ -1,19 +1,19 @@
 {
-    "@metadata": {
-        "authors": [
-            "Derbeth",
-            "Sp5uhe"
-        ]
-    },
-    "sitematrix": "Lista projektów Wikimedia",
-    "sitematrix-summary": "Ta strona specjalna zawiera spis wszystkich wiki Wikimedia.",
-    "sitematrix-desc": "Pokazuje [[Special:SiteMatrix|spis wiki Fundacji Wikimedia]]",
-    "sitematrix-language": "Język",
-    "sitematrix-project": "Nazwa projektu, link do projektu oraz link interwiki",
-    "sitematrix-others": "Inne projekty Wikimedia",
-    "sitematrix-other-projects": "Inne projekty",
-    "sitematrix-total": "'''Ogólna liczba: $1'''",
-    "sitematrix-sitetotal": "Łącznie",
-    "sitematrix-private": "poufny",
-    "sitematrix-fishbowl": "edycja ograniczona"
+	"@metadata": {
+		"authors": [
+			"Derbeth",
+			"Sp5uhe"
+		]
+	},
+	"sitematrix": "Lista projektów Wikimedia",
+	"sitematrix-summary": "Ta strona specjalna zawiera spis wszystkich wiki Wikimedia.",
+	"sitematrix-desc": "Pokazuje [[Special:SiteMatrix|spis wiki Fundacji Wikimedia]]",
+	"sitematrix-language": "Język",
+	"sitematrix-project": "Nazwa projektu, link do projektu oraz link interwiki",
+	"sitematrix-others": "Inne projekty Wikimedia",
+	"sitematrix-other-projects": "Inne projekty",
+	"sitematrix-total": "'''Ogólna liczba: $1'''",
+	"sitematrix-sitetotal": "Łącznie",
+	"sitematrix-private": "poufny",
+	"sitematrix-fishbowl": "edycja ograniczona"
 }

@@ -1,9 +1,9 @@
 {
-    "@metadata": {
-        "authors": [
-            "Schläsinger"
-        ]
-    },
-    "sitematrix-sitetotal": "Gesamt",
-    "sitematrix-private": "Privat"
+	"@metadata": {
+		"authors": [
+			"Schläsinger"
+		]
+	},
+	"sitematrix-sitetotal": "Gesamt",
+	"sitematrix-private": "Privat"
 }

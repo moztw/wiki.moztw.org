@@ -4,8 +4,8 @@
  * Parent class for Special:SecurePoll subpages.
  */
 abstract class SecurePoll_Page {
-	var $parent, $election, $auth, $user;
-	var $context;
+	public $parent, $election, $auth, $user;
+	public $context;
 
 	/**
 	 * Constructor.
@@ -49,5 +49,12 @@ abstract class SecurePoll_Page {
 			$languages[] = 'en';
 		}
 		$this->context->setLanguages( $languages );
+	}
+
+	/**
+	 * Relay for SpecialPage::msg
+	 */
+	protected function msg( /* args */ ) {
+		return call_user_func_array( array( $this->parent, 'msg' ), func_get_args() );
 	}
 }

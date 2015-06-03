@@ -1,9 +1,7 @@
 {
-    "@metadata": {
-        "authors": []
-    },
-    "sitematrix": "Barlıq Wikimedia wïkï tizimi",
-    "sitematrix-language": "Tili",
-    "sitematrix-project": "Joba atawı, joba aralıq siltemesi jäne wïkï aralıq siltemesi",
-    "sitematrix-others": "Basqa Wikimedia jobaları"
+	"@metadata": [],
+	"sitematrix": "Barlıq Wikimedia wïkï tizimi",
+	"sitematrix-language": "Tili",
+	"sitematrix-project": "Joba atawı, joba aralıq siltemesi jäne wïkï aralıq siltemesi",
+	"sitematrix-others": "Basqa Wikimedia jobaları"
 }

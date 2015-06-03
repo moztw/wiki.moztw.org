@@ -1,23 +1,23 @@
 {
-    "@metadata": {
-        "authors": [
-            "Anton008",
-            "Dalibor Bosits",
-            "Dnik",
-            "Ex13",
-            "SpeedyGonsales",
-            "לערי ריינהארט"
-        ]
-    },
-    "sitematrix": "Tablica Wikimedijinih projekata",
-    "sitematrix-summary": "Ova posebna stranica pokazuje popis svih Wikimedijinih wikija.",
-    "sitematrix-desc": "Prikazuje [[Special:SiteMatrix|popis wikija Wikimedije]]",
-    "sitematrix-language": "Jezik",
-    "sitematrix-project": "Ime projekta, poveznica među projektima i međuwiki poveznica",
-    "sitematrix-others": "Ostali Wikimedijini projekti",
-    "sitematrix-other-projects": "Ostali projekti",
-    "sitematrix-total": "'''Ukupni broj: $1'''",
-    "sitematrix-sitetotal": "Ukupno",
-    "sitematrix-private": "privatno",
-    "sitematrix-fishbowl": "uređivanje ograničeno"
+	"@metadata": {
+		"authors": [
+			"Anton008",
+			"Dalibor Bosits",
+			"Dnik",
+			"Ex13",
+			"SpeedyGonsales",
+			"לערי ריינהארט"
+		]
+	},
+	"sitematrix": "Tablica Wikimedijinih projekata",
+	"sitematrix-summary": "Ova posebna stranica pokazuje popis svih Wikimedijinih wikija.",
+	"sitematrix-desc": "Prikazuje [[Special:SiteMatrix|popis wikija Wikimedije]]",
+	"sitematrix-language": "Jezik",
+	"sitematrix-project": "Ime projekta, poveznica među projektima i međuwiki poveznica",
+	"sitematrix-others": "Ostali Wikimedijini projekti",
+	"sitematrix-other-projects": "Ostali projekti",
+	"sitematrix-total": "'''Ukupni broj: $1'''",
+	"sitematrix-sitetotal": "Ukupno",
+	"sitematrix-private": "privatno",
+	"sitematrix-fishbowl": "uređivanje ograničeno"
 }

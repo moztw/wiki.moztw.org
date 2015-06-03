@@ -1,18 +1,25 @@
 {
-    "@metadata": {
-        "authors": [
-            "Purodha"
-        ]
-    },
-    "sitematrix": "Lėß med alle Wikkimedija Wikiß",
-    "sitematrix-summary": "De <span class=\"plainlinks\">[http://www.wikimedia.org/ WikkiMedija Shtefftong]</span> hälld_enne Houfe Wikkis am loufe. Hee sen se all em Övverbleck ze sinn.",
-    "sitematrix-desc": "Zeish en [[Special:SiteMatrix|{{int:Sitematrix}}]].",
-    "sitematrix-language": "Schprooch",
-    "sitematrix-project": "Dem Projek singe Name, dä Lengk zwesche de Projekte, un dä Engerwiki Lengk",
-    "sitematrix-others": "Noch mieh Projekte vun de Wikimedia-Steftung",
-    "sitematrix-other-projects": "Ander Projäkter",
-    "sitematrix-total": "Zosamme jezallt: '''$1'''",
-    "sitematrix-sitetotal": "Zosamme",
-    "sitematrix-private": "(nit öffentlesch)",
-    "sitematrix-fishbowl": "(et Ändere is beschrängk)"
+	"@metadata": {
+		"authors": [
+			"Purodha"
+		]
+	},
+	"sitematrix": "Lėß med alle Wikkimedija Wikiß",
+	"sitematrix-summary": "De <span class=\"plainlinks\">[http://www.wikimedia.org/ WikkiMedija Shtefftong]</span> hälld_enne Houfe Wikkis am loufe. Hee sen se all em Övverbleck ze sinn.",
+	"sitematrix-desc": "Zeish en [[Special:SiteMatrix|{{int:Sitematrix}}]].",
+	"sitematrix-language": "Schprohch",
+	"sitematrix-project": "Dem Projek singe Name, dä Lengk zwesche de Projekte, un dä Engerwiki Lengk",
+	"sitematrix-others": "Noch mieh Projekte vun de Wikimedia-Steftung",
+	"sitematrix-other-projects": "Ander Projäkter",
+	"sitematrix-total": "Zosamme jezallt: '''$1'''",
+	"sitematrix-sitetotal": "Zosamme",
+	"sitematrix-private": "(nit öffentlesch)",
+	"sitematrix-fishbowl": "(et Ändere is beschrängk)",
+	"apihelp-sitematrix-description": "Jangk op de Leß met de Wikkis vun de Wikkimeedija Schtefftong.\n\nEt Köözel för enzejävve es äntweeder at Köözel för de Schprohch mem Köözel för Projägg derhenger udder söns de Ongerdomain un de Houpdomain, alldemohlde der ohne Zweschereum.",
+	"apihelp-sitematrix-param-type": "Donn de Zoot Wikis zom Zeije aanjävve:\n;special:One off and multilingual Wikkimehdija projects.\n;language:Blohß Wikkis met däm Schprohche_Köözel.\n<!--\nhttps://translatewiki.net/wiki/Thread:Support/About_MediaWiki:Apihelp-sitematrix-param-type/ksh\nhttps://translatewiki.net/wiki/Thread:Support/About_MediaWiki:Apihelp-sitematrix-param-type/ksh_(2)\n-->",
+	"apihelp-sitematrix-param-state": "Donn der Zohschtad von de Wikkis zom Zeije aanjävve:\n;<code lang=\"en\" xml:lang=\"en\" dir=\"ltr\">closed</code>:Kam_mer nit dren schrihve, ävver alles lässe.\n;<code lang=\"en\" xml:lang=\"en\" dir=\"ltr\">private</code>:Lässe un Schrihve beschrängk.\n;<code lang=\"en\" xml:lang=\"en\" dir=\"ltr\">fishbowl</code>:Schrihve beschrängk, alles ze lässe.",
+	"apihelp-sitematrix-param-langprop": "Wat övver en Schprohch jezeisch wähde sull.",
+	"apihelp-sitematrix-param-siteprop": "Wadd övver de Wikkis jezeisch wähde sull.",
+	"apihelp-sitematrix-param-limit": "De hühßde Aanzahl aan Antwoote.",
+	"apihelp-sitematrix-example-1": "De Övverseesch övver alle Wikki zeije"
 }

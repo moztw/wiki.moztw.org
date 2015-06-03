@@ -67,7 +67,7 @@ class SpecialDeleteBatch extends SpecialPage {
 
 /* the form for deleting pages */
 class DeleteBatchForm {
-	var $mUser, $mPage, $mFile, $mFileTemp;
+	public $mUser, $mPage, $mFile, $mFileTemp;
 
 	/**
 	 * @var IContextSource|RequestContext

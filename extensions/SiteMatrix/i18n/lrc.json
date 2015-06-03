@@ -1,14 +1,20 @@
 {
-    "@metadata": {
-        "authors": [
-            "Bonevarluri"
-        ]
-    },
-    "sitematrix": "نوم گه ویکی یا ویکی مدیا",
-    "sitematrix-summary": "ای نوم گه یا بلگه ویجه همه ویکی یا ویکی مدیا هئ",
-    "sitematrix-desc": "نشو دئن یه گل [[ویجه:سیلجا ماتریس|سیائه ویکی یا ویکی مدیا]]",
-    "sitematrix-language": "زون",
-    "sitematrix-project": "نوم پروجه، هوم پیوند مین پروجه ای و هوم پیوند مین ویکی",
-    "sitematrix-others": "پروجه یا هنی ویکی رسانه",
-    "sitematrix-other-projects": "پروجه یا هنی"
+	"@metadata": {
+		"authors": [
+			"Bonevarluri",
+			"Mogoeilor"
+		]
+	},
+	"sitematrix": "نوم گه ویکی یا ویکی مدیا",
+	"sitematrix-summary": "ای نوم گه یا بلگه ویجه همه ویکی یا ویکی مدیا هئ",
+	"sitematrix-desc": "نشو دئن یه گل [[ویجه:سیلجا ماتریس|سیائه ویکی یا ویکی مدیا]]",
+	"sitematrix-language": "زون",
+	"sitematrix-project": "نوم پروجه، هوم پیوند مین پروجه ای و هوم پیوند مین ویکی",
+	"sitematrix-others": "پروجه یا هنی ویکی رسانه",
+	"sitematrix-other-projects": "پروجه یا هنی",
+	"sitematrix-sitetotal": "همه",
+	"sitematrix-private": "شخصی",
+	"apihelp-sitematrix-param-langprop": "کوم دونسمنی دباره زون واس ؤرئرده.",
+	"apihelp-sitematrix-param-siteprop": "کوم دونسمنی دباره دیارگه واس ؤرئرده.",
+	"apihelp-sitematrix-param-limit": "انازه بیشترونه نتیجه یا."
 }
