@@ -32,18 +32,19 @@ require_once __DIR__ . '/Maintenance.php';
 class FetchText extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Fetch the revision text from an old_id";
+		$this->mDescription = "Fetch the raw revision blob from an old_id.";
+		$this->mDescription .= "\nNOTE: Export transformations are NOT applied. This is left to backupTextPass.php";
 	}
 
 	/**
 	 * returns a string containing the following in order:
-	 *	 textid
-	 *	 \n
-	 *	 length of text (-1 on error = failure to retrieve/unserialize/gunzip/etc)
-	 *	 \n
-	 *	 text  (may be empty)
+	 *   textid
+	 *   \n
+	 *   length of text (-1 on error = failure to retrieve/unserialize/gunzip/etc)
+	 *   \n
+	 *   text  (may be empty)
 	 *
-	 * note that that the text string itself is *not* followed by newline
+	 * note that the text string itself is *not* followed by newline
 	 */
 	public function execute() {
 		$db = wfGetDB( DB_SLAVE );
@@ -59,8 +60,7 @@ class FetchText extends Maintenance {
 			if ( $text === false ) {
 				# actual error, not zero-length text
 				$textLen = "-1";
-			}
-			else {
+			} else {
 				$textLen = strlen( $text );
 			}
 			$this->output( $textId . "\n" . $textLen . "\n" . $text );
@@ -69,9 +69,9 @@ class FetchText extends Maintenance {
 
 	/**
 	 * May throw a database error if, say, the server dies during query.
-	 * @param $db DatabaseBase object
-	 * @param $id int The old_id
-	 * @return String
+	 * @param DatabaseBase $db
+	 * @param int $id The old_id
+	 * @return string
 	 */
 	private function doGetText( $db, $id ) {
 		$id = intval( $id );
@@ -83,6 +83,7 @@ class FetchText extends Maintenance {
 		if ( $text === false ) {
 			return false;
 		}
+
 		return $text;
 	}
 }

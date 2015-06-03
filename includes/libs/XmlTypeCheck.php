@@ -75,7 +75,7 @@ class XmlTypeCheck {
 	 *        SAX element handler event. This gives you access to the element
 	 *        namespace, name, attributes, and text contents.
 	 *        Filter should return 'true' to toggle on $this->filterMatch
-	 * @param boolean $isFile (optional) indicates if the first parameter is a
+	 * @param bool $isFile (optional) indicates if the first parameter is a
 	 *        filename (default, true) or if it is a string (false)
 	 * @param array $options list of additional parsing options:
 	 *        processing_instruction_handler: Callback for xml_set_processing_instruction_handler
@@ -172,12 +172,12 @@ class XmlTypeCheck {
 
 		// First, move through anything that isn't an element, and
 		// handle any processing instructions with the callback
-				do {
+		do {
 			if( !$this->readNext( $reader ) ) {
 				// Hit the end of the document before any elements
-						$this->wellFormed = false;
-						return;
-					}
+				$this->wellFormed = false;
+				return;
+			}
 			if ( $reader->nodeType === XMLReader::PI ) {
 				$this->processingInstructionHandler( $reader->name, $reader->value );
 			}
@@ -193,7 +193,7 @@ class XmlTypeCheck {
 					);
 					if ( $this->rootElement === '' ) {
 						$this->rootElement = $name;
-			}
+					}
 					$empty = $reader->isEmptyElement;
 					$attrs = $this->getAttributesArray( $reader );
 					$this->elementOpen( $name, $attrs );
@@ -233,14 +233,14 @@ class XmlTypeCheck {
 					// One of DOC, DOC_TYPE, ENTITY, END_ENTITY,
 					// NOTATION, or XML_DECLARATION
 					// xml_parse didn't send these to the filter, so we won't.
-		}
+			}
 
 		} while ( $this->readNext( $reader ) );
 
 		if ( $this->stackDepth !== 0 ) {
 			$this->wellFormed = false;
 		} elseif ( $this->wellFormed === null ) {
-		$this->wellFormed = true;
+			$this->wellFormed = true;
 		}
 
 	}
@@ -257,7 +257,7 @@ class XmlTypeCheck {
 				// XMLReader treats xmlns attributes as normal
 				// attributes, while xml_parse doesn't
 				continue;
-		}
+			}
 			$name = $this->expandNS( $r->name, $r->namespaceURI );
 			$attrs[$name] = $r->value;
 		}
@@ -297,10 +297,10 @@ class XmlTypeCheck {
 
 		if ( is_callable( $this->filterCallback )
 			&& call_user_func(
-			$this->filterCallback,
-			$name,
-			$attribs,
-			$data
+				$this->filterCallback,
+				$name,
+				$attribs,
+				$data
 			)
 		) {
 			// Filter hit
@@ -327,9 +327,9 @@ class XmlTypeCheck {
 				$target,
 				$data
 			) ) {
-			// Filter hit!
-			$this->filterMatch = true;
+				// Filter hit!
+				$this->filterMatch = true;
+			}
 		}
 	}
-}
 }

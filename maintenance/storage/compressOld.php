@@ -50,21 +50,56 @@ require_once __DIR__ . '/../Maintenance.php';
  */
 class CompressOld extends Maintenance {
 	/**
-	 * @todo document
+	 * Option to load each revision individually.
+	 *
 	 */
 	const LS_INDIVIDUAL = 0;
+
+	/**
+	 * Option to load revisions in chunks.
+	 *
+	 */
 	const LS_CHUNKED = 1;
 
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Compress the text of a wiki';
 		$this->addOption( 'type', 'Set compression type to either: gzip|concat', false, true, 't' );
-		$this->addOption( 'chunksize', 'Maximum number of revisions in a concat chunk', false, true, 'c' );
-		$this->addOption( 'begin-date', 'Earliest date to check for uncompressed revisions', false, true, 'b' );
+		$this->addOption(
+			'chunksize',
+			'Maximum number of revisions in a concat chunk',
+			false,
+			true,
+			'c'
+		);
+		$this->addOption(
+			'begin-date',
+			'Earliest date to check for uncompressed revisions',
+			false,
+			true,
+			'b'
+		);
 		$this->addOption( 'end-date', 'Latest revision date to compress', false, true, 'e' );
-		$this->addOption( 'startid', 'The id to start from (gzip -> text table, concat -> page table)', false, true, 's' );
-		$this->addOption( 'extdb', 'Store specified revisions in an external cluster (untested)', false, true );
-		$this->addOption( 'endid', 'The page_id to stop at (only when using concat compression type)', false, true, 'n' );
+		$this->addOption(
+			'startid',
+			'The id to start from (gzip -> text table, concat -> page table)',
+			false,
+			true,
+			's'
+		);
+		$this->addOption(
+			'extdb',
+			'Store specified revisions in an external cluster (untested)',
+			false,
+			true
+		);
+		$this->addOption(
+			'endid',
+			'The page_id to stop at (only when using concat compression type)',
+			false,
+			true,
+			'n'
+		);
 	}
 
 	public function execute() {
@@ -107,36 +142,53 @@ class CompressOld extends Maintenance {
 		}
 	}
 
-	/** @todo document */
+	/**
+	 * Fetch the text row-by-row to 'compressPage' function for compression.
+	 *
+	 * @param int $start
+	 * @param string $extdb
+	 */
 	private function compressOldPages( $start = 0, $extdb = '' ) {
 		$chunksize = 50;
 		$this->output( "Starting from old_id $start...\n" );
 		$dbw = wfGetDB( DB_MASTER );
 		do {
-			$res = $dbw->select( 'text', array( 'old_id', 'old_flags', 'old_text' ),
-				"old_id>=$start", __METHOD__, array( 'ORDER BY' => 'old_id', 'LIMIT' => $chunksize, 'FOR UPDATE' ) );
+			$res = $dbw->select(
+				'text',
+				array( 'old_id', 'old_flags', 'old_text' ),
+				"old_id>=$start",
+				__METHOD__,
+				array( 'ORDER BY' => 'old_id', 'LIMIT' => $chunksize, 'FOR UPDATE' )
+			);
+
 			if ( $res->numRows() == 0 ) {
 				break;
 			}
+
 			$last = $start;
+
 			foreach ( $res as $row ) {
 				# print "  {$row->old_id} - {$row->old_namespace}:{$row->old_title}\n";
 				$this->compressPage( $row, $extdb );
 				$last = $row->old_id;
 			}
+
 			$start = $last + 1; # Deletion may leave long empty stretches
 			$this->output( "$start...\n" );
 		} while ( true );
 	}
 
 	/**
-	 * @todo document
-	 * @param $row
-	 * @param $extdb
+	 * Compress the text in gzip format.
+	 *
+	 * @param stdClass $row
+	 * @param string $extdb
 	 * @return bool
 	 */
 	private function compressPage( $row, $extdb ) {
-		if ( false !== strpos( $row->old_flags, 'gzip' ) || false !== strpos( $row->old_flags, 'object' ) ) {
+		if ( false !== strpos( $row->old_flags, 'gzip' )
+			|| false !== strpos( $row->old_flags, 'object' )
+		) {
 			#print "Already compressed row {$row->old_id}\n";
 			return false;
 		}
@@ -150,6 +202,7 @@ class CompressOld extends Maintenance {
 			$compress = $storeObj->store( $extdb, $compress );
 			if ( $compress === false ) {
 				$this->error( "Unable to store object" );
+
 				return false;
 			}
 		}
@@ -164,16 +217,19 @@ class CompressOld extends Maintenance {
 			), __METHOD__,
 			array( 'LIMIT' => 1 )
 		);
+
 		return true;
 	}
 
 	/**
-	 * @param $startId
-	 * @param $maxChunkSize
-	 * @param $beginDate
-	 * @param $endDate
-	 * @param $extdb string
-	 * @param $maxPageId bool|int
+	 * Compress the text in chunks after concatenating the revisions.
+	 *
+	 * @param int $startId
+	 * @param int $maxChunkSize
+	 * @param string $beginDate
+	 * @param string $endDate
+	 * @param string $extdb
+	 * @param bool|int $maxPageId
 	 * @return bool
 	 */
 	private function compressWithConcat( $startId, $maxChunkSize, $beginDate,
@@ -213,12 +269,15 @@ class CompressOld extends Maintenance {
 		# overwriting bulk storage concat rows. Don't compress external references, because
 		# the script doesn't yet delete rows from external storage.
 		$conds = array(
-			'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'object', $dbr->anyString() ) . ' AND old_flags NOT '
-				. $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ) );
+			'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'object', $dbr->anyString() )
+			. ' AND old_flags NOT '
+			. $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() )
+		);
 
 		if ( $beginDate ) {
 			if ( !preg_match( '/^\d{14}$/', $beginDate ) ) {
 				$this->error( "Invalid begin date \"$beginDate\"\n" );
+
 				return false;
 			}
 			$conds[] = "rev_timestamp>'" . $beginDate . "'";
@@ -226,6 +285,7 @@ class CompressOld extends Maintenance {
 		if ( $endDate ) {
 			if ( !preg_match( '/^\d{14}$/', $endDate ) ) {
 				$this->error( "Invalid end date \"$endDate\"\n" );
+
 				return false;
 			}
 			$conds[] = "rev_timestamp<'" . $endDate . "'";
@@ -303,8 +363,10 @@ class CompressOld extends Maintenance {
 				$usedChunk = false;
 				$primaryOldid = $revs[$i]->rev_text_id;
 
+				// @codingStandardsIgnoreStart Ignore avoid function calls in a FOR loop test part warning
 				# Get the text of each revision and add it to the object
 				for ( $j = 0; $j < $thisChunkSize && $chunk->isHappy(); $j++ ) {
+					// @codingStandardsIgnoreEnd
 					$oldid = $revs[$i + $j]->rev_text_id;
 
 					# Get text
@@ -350,9 +412,10 @@ class CompressOld extends Maintenance {
 				if ( $usedChunk ) {
 					if ( $extdb != "" ) {
 						# Move blob objects to External Storage
-						$stored = $storeObj->store( $extdb, serialize( $chunk ));
+						$stored = $storeObj->store( $extdb, serialize( $chunk ) );
 						if ( $stored === false ) {
 							$this->error( "Unable to store object" );
+
 							return false;
 						}
 						# Store External Storage URLs instead of Stub placeholders
@@ -406,9 +469,9 @@ class CompressOld extends Maintenance {
 			}
 			$this->output( "\n" );
 		}
+
 		return true;
 	}
-
 }
 
 $maintClass = 'CompressOld';

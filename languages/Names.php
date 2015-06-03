@@ -33,7 +33,7 @@
  * Some writing systems require some line-height fixes. This includes
  * most Indic scripts, like Devanagari.
  * If you are adding support for such a language, add it also to
- * the relevant section in skins/common/shared.css.
+ * the relevant section in shared.css.
  *
  * @ingroup Language
  */
@@ -41,6 +41,7 @@
 	'aa' => 'Qafár af',	# Afar
 	'ab' => 'Аҧсшәа',	# Abkhaz
 	'ace' => 'Acèh',	# Aceh
+	'aeb' => 'تونسي',	# Tunisian Arabic
 	'af' => 'Afrikaans',	# Afrikaans
 	'ak' => 'Akan',		# Akan
 	'aln' => 'Gegë',	# Gheg Albanian
@@ -52,13 +53,14 @@
 	'ar' => 'العربية',	# Arabic
 	'arc' => 'ܐܪܡܝܐ',	# Aramaic
 	'arn' => 'mapudungun',	# Mapuche, Mapudungu, Araucanian (Araucano)
-	'arq' => 'جزائري', # Algerian Spoken Arabic
+	'arq' => 'جازايرية', # Algerian Spoken Arabic
 	'ary' => 'Maġribi',	# Moroccan Spoken Arabic
 	'arz' => 'مصرى',	# Egyptian Spoken Arabic
 	'as' => 'অসমীয়া',	# Assamese
 	'ast' => 'asturianu',	# Asturian
 	'av' => 'авар',	# Avar
 	'avk' => 'Kotava', # Kotava
+	'awa' => 'अवधी',	# Awadhi
 	'ay' => 'Aymar aru',	# Aymara
 	'az' => 'azərbaycanca',	# Azerbaijani
 	'azb' => 'تورکجه',	# South Azerbaijani
@@ -73,6 +75,7 @@
 	'be-tarask' => "беларуская (тарашкевіца)\xE2\x80\x8E",	# Belarusian in Taraskievica orthography
 	'be-x-old' => "беларуская (тарашкевіца)\xE2\x80\x8E",	# (be-tarask compat)
 	'bg' => 'български',	# Bulgarian
+	'bgn' => 'بلوچی رخشانی', # Western Balochi
 	'bh' => 'भोजपुरी',	# Bihari macro language. Falls back to Bhojpuri (bho)
 	'bho' => 'भोजपुरी',	# Bhojpuri
 	'bi' => 'Bislama',		# Bislama
@@ -85,6 +88,7 @@
 	'br' => 'brezhoneg',	# Breton
 	'brh' => 'Bráhuí',	# Brahui
 	'bs' => 'bosanski',		# Bosnian
+	'bto' => 'Iriga Bicolano',	# Rinconada Bikol
 	'bug' => 'ᨅᨔ ᨕᨘᨁᨗ',	# Buginese
 	'bxr' => 'буряад',	# Buryat (Russia)
 	'ca' => 'català',	# Catalan
@@ -322,11 +326,11 @@
 	'rmy' => 'Romani',	# Vlax Romany
 	'rn' => 'Kirundi',		# Rundi/Kirundi/Urundi
 	'ro' => 'română',	# Romanian
-	'roa-rup' => 'Armãneashce', # Aromanian (deprecated code, 'rup' exists in ISO 693-3)
+	'roa-rup' => 'armãneashti', # Aromanian (deprecated code, 'rup' exists in ISO 693-3)
 	'roa-tara' => 'tarandíne',	# Tarantino
 	'ru' => 'русский',	# Russian
 	'rue' => 'русиньскый',	# Rusyn
-	'rup' => 'Armãneashce', # Aromanian
+	'rup' => 'armãneashti', # Aromanian
 	'ruq' => 'Vlăheşte',	# Megleno-Romanian (multiple scripts - defaults to Latin)
 	'ruq-cyrl' => 'Влахесте',	# Megleno-Romanian (Cyrillic script)
 	# 'ruq-grek' => 'Βλαεστε',	# Megleno-Romanian (Greek script)
@@ -342,6 +346,7 @@
 	'sdc' => 'Sassaresu',	# Sassarese
 	'se' => 'sámegiella',	# Northern Sami
 	'sei' => 'Cmique Itom',	# Seri
+	'ses' => 'Koyraboro Senni',	# Koyraboro Senni
 	'sg' => 'Sängö',		# Sango/Sangho
 	'sgs' => 'žemaitėška', # Samogitian
 	'sh' => 'srpskohrvatski / српскохрватски', # Serbocroatian
@@ -393,15 +398,18 @@
 	'tt-latn' => 'tatarça',	# Tatar (Latin script)
 	'tum' => 'chiTumbuka',  # Tumbuka
 	'tw' => 'Twi',			# Twi, (FIXME!)
-	'ty' => 'Reo Mā`ohi',	# Tahitian
+	'ty' => 'reo tahiti',	# Tahitian
 	'tyv' => 'тыва дыл',	# Tyvan
+	'tzm' => 'ⵜⴰⵎⴰⵣⵉⵖⵜ',	# Tamazight
 	'udm' => 'удмурт',	# Udmurt
 	'ug' => 'ئۇيغۇرچە / Uyghurche',	# Uyghur (multiple scripts - defaults to Arabic)
 	'ug-arab' => 'ئۇيغۇرچە', # Uyghur (Arabic script) (default)
 	'ug-latn' => 'Uyghurche', # Uyghur (Latin script)
 	'uk' => 'українська',	# Ukrainian
 	'ur' => 'اردو',	# Urdu
-	'uz' => 'oʻzbekcha',	# Uzbek
+	'uz' => "oʻzbekcha/ўзбекча",	# Uzbek (multiple scripts - defaults to Latin)
+	'uz-cyrl' => "ўзбекча",	# Uzbek Cyrillic
+	'uz-latn' => "oʻzbekcha",	# Uzbek Latin (default)
 	've' => 'Tshivenda',		# Venda
 	'vec' => 'vèneto',	# Venetian
 	'vep' => 'vepsän kel’',	# Veps

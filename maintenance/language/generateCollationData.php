@@ -48,7 +48,7 @@ class GenerateCollationData extends Maintenance {
 	 * Important tertiary weights from UTS #10 section 7.2
 	 */
 	const NORMAL_UPPERCASE = 0x08;
-	const NORMAL_HIRAGANA = 0X0E;
+	const NORMAL_HIRAGANA = 0x0E;
 
 	public function __construct() {
 		parent::__construct();
@@ -323,7 +323,7 @@ class GenerateCollationData extends Maintenance {
 			$tertiaryCollator->sort( $x );
 			$cp = $x[0];
 
-			$char = codepointToUtf8( $cp );
+			$char = UtfNormal\Utils::codepointToUtf8( $cp );
 			$headerChars[] = $char;
 			if ( $primaryCollator->compare( $char, $prevChar ) <= 0 ) {
 				$numOutOfOrder++;
@@ -337,7 +337,7 @@ class GenerateCollationData extends Maintenance {
 
 			if ( $this->debugOutFile ) {
 				fwrite( $this->debugOutFile, sprintf( "%05X %s %s (%s)\n", $cp, $weight, $char,
-					implode( ' ', array_map( 'codepointToUtf8', $group ) ) ) );
+					implode( ' ', array_map( 'UtfNormal\Utils::codepointToUtf8', $group ) ) ) );
 			}
 		}
 

@@ -76,19 +76,16 @@ class DeferredUpdates {
 	/**
 	 * Do any deferred updates and clear the list
 	 *
-	 * @param string $commit set to 'commit' to commit after every update to
+	 * @param string $commit Set to 'commit' to commit after every update to
 	 *   prevent lock contention
 	 */
 	public static function doUpdates( $commit = '' ) {
 		global $wgDeferredUpdateList;
 
-		wfProfileIn( __METHOD__ );
-
 		$updates = array_merge( $wgDeferredUpdateList, self::$updates );
 
 		// No need to get master connections in case of empty updates array
 		if ( !count( $updates ) ) {
-			wfProfileOut( __METHOD__ );
 
 			return;
 		}
@@ -99,26 +96,29 @@ class DeferredUpdates {
 			$dbw = wfGetDB( DB_MASTER );
 		}
 
-		/** @var DeferrableUpdate $update */
-		foreach ( $updates as $update ) {
-			try {
-				$update->doUpdate();
+		while ( $updates ) {
+			self::clearPendingUpdates();
 
-				if ( $doCommit && $dbw->trxLevel() ) {
-					$dbw->commit( __METHOD__, 'flush' );
-				}
-			} catch ( MWException $e ) {
-				// We don't want exceptions thrown during deferred updates to
-				// be reported to the user since the output is already sent.
-				// Instead we just log them.
-				if ( !$e instanceof ErrorPageError ) {
-					MWExceptionHandler::logException( $e );
+			/** @var DeferrableUpdate $update */
+			foreach ( $updates as $update ) {
+				try {
+					$update->doUpdate();
+
+					if ( $doCommit && $dbw->trxLevel() ) {
+						$dbw->commit( __METHOD__, 'flush' );
+					}
+				} catch ( Exception $e ) {
+					// We don't want exceptions thrown during deferred updates to
+					// be reported to the user since the output is already sent.
+					// Instead we just log them.
+					if ( !$e instanceof ErrorPageError ) {
+						MWExceptionHandler::logException( $e );
+					}
 				}
 			}
+			$updates = array_merge( $wgDeferredUpdateList, self::$updates );
 		}
 
-		self::clearPendingUpdates();
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**

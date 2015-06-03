@@ -1,8 +1,7 @@
 <?php
 /** Maltese (Malti)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -174,7 +173,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'NUMRUTA\'UTENTI', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'NUMRUTA\'UTENTIATTIVI', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'NUMBRUTA\'MODIFIKI', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'NUMRUTA\'VISTI', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'ISEMTAL-PAĠNA', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'ISEMTAL-PAĠNAE', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'SPAZJUTAL-ISEM', 'NAMESPACE' ),

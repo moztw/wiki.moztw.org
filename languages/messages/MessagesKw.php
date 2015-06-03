@@ -1,8 +1,7 @@
 <?php
 /** Cornish (kernowek)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -111,6 +110,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'AnMoyhaAmendyansow' ),
 	'Movepage'                  => array( 'GwayaFolen' ),
 	'Mycontributions'           => array( 'OwHevrohow' ),
+	'MyLanguage'                => array( 'OwYeth' ),
 	'Mypage'                    => array( 'OwFolen' ),
 	'Mytalk'                    => array( 'OwHeskows' ),
 	'Myuploads'                 => array( 'OwUghkargansow' ),
@@ -165,7 +165,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'NIVERADHEVNYDHYORYON', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'NIVERADHEVNYDHYORYONVYW', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'NIVERAJANJYOW', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'NIVERAWELYANSOW', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'HANOWANFOLEN', 'PAGENAME' ),
 	'fullpagename'              => array( '1', 'HANOWLEUNANFOLEN', 'FULLPAGENAME' ),
 	'img_thumbnail'             => array( '1', 'skeusennik', 'thumbnail', 'thumb' ),

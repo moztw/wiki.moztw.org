@@ -42,7 +42,6 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	}
 
 	function execute( $par ) {
-		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
 
 		$this->setHeaders();
@@ -52,19 +51,20 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$opts->add( 'target', '' );
 		$opts->add( 'namespace', '', FormOptions::INTNULL );
-		$opts->add( 'limit', $wgQueryPageDefaultLimit );
+		$opts->add( 'limit', $this->getConfig()->get( 'QueryPageDefaultLimit' ) );
 		$opts->add( 'from', 0 );
 		$opts->add( 'back', 0 );
 		$opts->add( 'hideredirs', false );
 		$opts->add( 'hidetrans', false );
 		$opts->add( 'hidelinks', false );
 		$opts->add( 'hideimages', false );
+		$opts->add( 'invert', false );
 
 		$opts->fetchValuesFromRequest( $this->getRequest() );
 		$opts->validateIntBounds( 'limit', 0, 5000 );
 
 		// Give precedence to subpage syntax
-		if ( isset( $par ) ) {
+		if ( $par !== null ) {
 			$opts->setValue( 'target', $par );
 		}
 
@@ -73,7 +73,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$this->target = Title::newFromURL( $opts->getValue( 'target' ) );
 		if ( !$this->target ) {
-			$out->addHTML( $this->whatlinkshereForm() );
+			if ( !$this->including() ) {
+				$out->addHTML( $this->whatlinkshereForm() );
+			}
 
 			return;
 		}
@@ -101,10 +103,8 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	 * @param int $back Display from this article ID at backwards scrolling (default: 0)
 	 */
 	function showIndirectLinks( $level, $target, $limit, $from = 0, $back = 0 ) {
-		global $wgMaxRedirectLinksRetrieved;
 		$out = $this->getOutput();
 		$dbr = wfGetDB( DB_SLAVE );
-		$options = array();
 
 		$hidelinks = $this->opts->getValue( 'hidelinks' );
 		$hideredirs = $this->opts->getValue( 'hideredirs' );
@@ -113,77 +113,92 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$fetchlinks = ( !$hidelinks || !$hideredirs );
 
-		// Make the query
-		$plConds = array(
-			'page_id=pl_from',
+		// Build query conds in concert for all three tables...
+		$conds['pagelinks'] = array(
 			'pl_namespace' => $target->getNamespace(),
 			'pl_title' => $target->getDBkey(),
 		);
-		if ( $hideredirs ) {
-			$plConds['rd_from'] = null;
-		} elseif ( $hidelinks ) {
-			$plConds[] = 'rd_from is NOT NULL';
-		}
-
-		$tlConds = array(
-			'page_id=tl_from',
+		$conds['templatelinks'] = array(
 			'tl_namespace' => $target->getNamespace(),
 			'tl_title' => $target->getDBkey(),
 		);
-
-		$ilConds = array(
-			'page_id=il_from',
+		$conds['imagelinks'] = array(
 			'il_to' => $target->getDBkey(),
 		);
 
+		$useLinkNamespaceDBFields = $this->getConfig()->get( 'UseLinkNamespaceDBFields' );
 		$namespace = $this->opts->getValue( 'namespace' );
+		$invert = $this->opts->getValue( 'invert' );
+		$nsComparison = ( $invert ? '!= ' : '= ' ) . $dbr->addQuotes( $namespace );
 		if ( is_int( $namespace ) ) {
-			$plConds['page_namespace'] = $namespace;
-			$tlConds['page_namespace'] = $namespace;
-			$ilConds['page_namespace'] = $namespace;
+			if ( $useLinkNamespaceDBFields ) {
+				$conds['pagelinks'][] = "pl_from_namespace $nsComparison";
+				$conds['templatelinks'][] = "tl_from_namespace $nsComparison";
+				$conds['imagelinks'][] = "il_from_namespace $nsComparison";
+			} else {
+				$conds['pagelinks'][] = "page_namespace $nsComparison";
+				$conds['templatelinks'][] = "page_namespace $nsComparison";
+				$conds['imagelinks'][] = "page_namespace $nsComparison";
+			}
 		}
 
 		if ( $from ) {
-			$tlConds[] = "tl_from >= $from";
-			$plConds[] = "pl_from >= $from";
-			$ilConds[] = "il_from >= $from";
+			$conds['templatelinks'][] = "tl_from >= $from";
+			$conds['pagelinks'][] = "pl_from >= $from";
+			$conds['imagelinks'][] = "il_from >= $from";
 		}
 
-		// Read an extra row as an at-end check
-		$queryLimit = $limit + 1;
+		if ( $hideredirs ) {
+			$conds['pagelinks']['rd_from'] = null;
+		} elseif ( $hidelinks ) {
+			$conds['pagelinks'][] = 'rd_from is NOT NULL';
+		}
 
-		$options['LIMIT'] = $queryLimit;
-		$fields = array( 'page_id', 'page_namespace', 'page_title', 'rd_from' );
-
-		$joinConds = array( 'redirect' => array( 'LEFT JOIN', array(
-			'rd_from = page_id',
-			'rd_namespace' => $target->getNamespace(),
-			'rd_title' => $target->getDBkey(),
-			'rd_interwiki = ' . $dbr->addQuotes( '' ) . ' OR rd_interwiki IS NULL'
-		) ) );
+		$queryFunc = function ( $dbr, $table, $fromCol ) use (
+			$conds, $target, $limit, $useLinkNamespaceDBFields
+		) {
+			// Read an extra row as an at-end check
+			$queryLimit = $limit + 1;
+			$on = array(
+				"rd_from = $fromCol",
+				'rd_title' => $target->getDBkey(),
+				'rd_interwiki = ' . $dbr->addQuotes( '' ) . ' OR rd_interwiki IS NULL'
+			);
+			if ( $useLinkNamespaceDBFields ) { // migration check
+				$on['rd_namespace'] = $target->getNamespace();
+			}
+			// Inner LIMIT is 2X in case of stale backlinks with wrong namespaces
+			$subQuery = $dbr->selectSqlText(
+				array( $table, 'page', 'redirect' ),
+				array( $fromCol, 'rd_from' ),
+				$conds[$table],
+				__CLASS__ . '::showIndirectLinks',
+				array( 'ORDER BY' => $fromCol, 'LIMIT' => 2 * $queryLimit ),
+				array(
+					'page' => array( 'INNER JOIN', "$fromCol = page_id" ),
+					'redirect' => array( 'LEFT JOIN', $on )
+				)
+			);
+			return $dbr->select(
+				array( 'page', 'temp_backlink_range' => "($subQuery)" ),
+				array( 'page_id', 'page_namespace', 'page_title', 'rd_from', 'page_is_redirect' ),
+				array(),
+				__CLASS__ . '::showIndirectLinks',
+				array( 'ORDER BY' => 'page_id', 'LIMIT' => $queryLimit ),
+				array( 'page' => array( 'INNER JOIN', "$fromCol = page_id" ) )
+			);
+		};
 
 		if ( $fetchlinks ) {
-			$options['ORDER BY'] = 'pl_from';
-			$plRes = $dbr->select( array( 'pagelinks', 'page', 'redirect' ), $fields,
-				$plConds, __METHOD__, $options,
-				$joinConds
-			);
+			$plRes = $queryFunc( $dbr, 'pagelinks', 'pl_from' );
 		}
 
 		if ( !$hidetrans ) {
-			$options['ORDER BY'] = 'tl_from';
-			$tlRes = $dbr->select( array( 'templatelinks', 'page', 'redirect' ), $fields,
-				$tlConds, __METHOD__, $options,
-				$joinConds
-			);
+			$tlRes = $queryFunc( $dbr, 'templatelinks', 'tl_from' );
 		}
 
 		if ( !$hideimages ) {
-			$options['ORDER BY'] = 'il_from';
-			$ilRes = $dbr->select( array( 'imagelinks', 'page', 'redirect' ), $fields,
-				$ilConds, __METHOD__, $options,
-				$joinConds
-			);
+			$ilRes = $queryFunc( $dbr, 'imagelinks', 'il_from' );
 		}
 
 		if ( ( !$fetchlinks || !$plRes->numRows() )
@@ -200,6 +215,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 					}
 					$errMsg = is_int( $namespace ) ? 'nolinkshere-ns' : 'nolinkshere';
 					$out->addWikiMsg( $errMsg, $this->target->getPrefixedText() );
+					$out->setStatusCode( 404 );
 				}
 			}
 
@@ -265,11 +281,15 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$nt = Title::makeTitle( $row->page_namespace, $row->page_title );
 
 			if ( $row->rd_from && $level < 2 ) {
-				$out->addHTML( $this->listItem( $row, $nt, true ) );
-				$this->showIndirectLinks( $level + 1, $nt, $wgMaxRedirectLinksRetrieved );
+				$out->addHTML( $this->listItem( $row, $nt, $target, true ) );
+				$this->showIndirectLinks(
+					$level + 1,
+					$nt,
+					$this->getConfig()->get( 'MaxRedirectLinksRetrieved' )
+				);
 				$out->addHTML( Xml::closeElement( 'li' ) );
 			} else {
-				$out->addHTML( $this->listItem( $row, $nt ) );
+				$out->addHTML( $this->listItem( $row, $nt, $target ) );
 			}
 		}
 
@@ -286,7 +306,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		return Xml::openElement( 'ul', ( $level ? array() : array( 'id' => 'mw-whatlinkshere-list' ) ) );
 	}
 
-	protected function listItem( $row, $nt, $notClose = false ) {
+	protected function listItem( $row, $nt, $target, $notClose = false ) {
 		$dirmark = $this->getLanguage()->getDirMark();
 
 		# local message cache
@@ -309,7 +329,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$link = Linker::linkKnown(
 			$nt,
 			null,
-			array(),
+			$row->page_is_redirect ? array( 'class' => 'mw-redirect' ) : array(),
 			$query
 		);
 
@@ -325,6 +345,8 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		if ( $row->is_image ) {
 			$props[] = $msgcache['isimage'];
 		}
+
+		Hooks::run( 'WhatLinksHereProps', array( $row, $nt, $target, &$props ) );
 
 		if ( count( $props ) ) {
 			$propsText = $this->msg( 'parentheses' )
@@ -401,8 +423,6 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	}
 
 	function whatlinkshereForm() {
-		global $wgScript;
-
 		// We get nicer value from the title object
 		$this->opts->consumeValue( 'target' );
 		// Reset these for new requests
@@ -410,9 +430,10 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$target = $this->target ? $this->target->getPrefixedText() : '';
 		$namespace = $this->opts->consumeValue( 'namespace' );
+		$nsinvert = $this->opts->consumeValue( 'invert' );
 
 		# Build up the form
-		$f = Xml::openElement( 'form', array( 'action' => $wgScript ) );
+		$f = Xml::openElement( 'form', array( 'action' => wfScript() ) );
 
 		# Values that should not be forgotten
 		$f .= Html::hidden( 'title', $this->getPageTitle()->getPrefixedText() );
@@ -422,9 +443,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$f .= Xml::fieldset( $this->msg( 'whatlinkshere' )->text() );
 
-		# Target input
+		# Target input (.mw-searchInput enables suggestions)
 		$f .= Xml::inputLabel( $this->msg( 'whatlinkshere-page' )->text(), 'target',
-			'mw-whatlinkshere-target', 40, $target );
+			'mw-whatlinkshere-target', 40, $target, array( 'class' => 'mw-searchInput' ) );
 
 		$f .= ' ';
 
@@ -440,6 +461,15 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 				'class' => 'namespaceselector',
 			)
 		);
+
+		$f .= '&#160;' .
+			Xml::checkLabel(
+				$this->msg( 'invert' )->text(),
+				'invert',
+				'nsinvert',
+				$nsinvert,
+				array( 'title' => $this->msg( 'tooltip-whatlinkshere-invert' )->text() )
+			);
 
 		$f .= ' ';
 
@@ -485,6 +515,24 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$this->msg( 'whatlinkshere-filters' )->text(),
 			$this->getLanguage()->pipeList( $links )
 		);
+	}
+
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return (usually 10)
+	 * @param int $offset Number of results to skip (usually 0)
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit, $offset ) {
+		if ( $search === '' ) {
+			return array();
+		}
+		// Autocomplete subpage the same as a normal search
+		$prefixSearcher = new StringPrefixSearch;
+		$result = $prefixSearcher->search( $search, $limit, array(), $offset );
+		return $result;
 	}
 
 	protected function getGroupName() {

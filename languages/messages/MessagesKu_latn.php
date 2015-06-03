@@ -1,8 +1,7 @@
 <?php
 /** Kurdish (Latin script) (Kurdî (latînî)‎)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -63,6 +62,7 @@ $specialPageAliases = array(
 	'Listbots'                  => array( 'Lîsteya_Botan' ),
 	'Listusers'                 => array( 'Lîsteya_bikarhêneran' ),
 	'Longpages'                 => array( 'Rûpelên_dirêj' ),
+	'MyLanguage'                => array( 'Zimanê_Min' ),
 	'Newpages'                  => array( 'Rûpelên_nû' ),
 	'Randompage'                => array( 'Rûpela_tesadufî' ),
 	'Randomredirect'            => array( 'Redirecta_tasadufî' ),

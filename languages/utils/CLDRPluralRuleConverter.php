@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author Niklas Laxström, Tim Starling
  *
@@ -54,7 +53,7 @@ class CLDRPluralRuleConverter {
 	 * for the level 4 operators, since they return boolean and don't accept
 	 * boolean inputs.
 	 */
-	static $precedence = array(
+	private static $precedence = array(
 		'or' => 2,
 		'and' => 3,
 		'is' => 4,
@@ -97,11 +96,13 @@ class CLDRPluralRuleConverter {
 	 */
 	public static function convert( $rule ) {
 		$parser = new self( $rule );
+
 		return $parser->doConvert();
 	}
 
 	/**
 	 * Private constructor.
+	 * @param string $rule
 	 */
 	protected function __construct( $rule ) {
 		$this->rule = $rule;
@@ -119,13 +120,13 @@ class CLDRPluralRuleConverter {
 
 		// Iterate through all tokens, saving the operators and operands to a
 		// stack per Dijkstra's shunting yard algorithm.
-		/** @var CLDRPluralRuleConverter_Operator $token */
+		/** @var CLDRPluralRuleConverterOperator $token */
 		while ( false !== ( $token = $this->nextToken() ) ) {
 			// In this grammar, there are only binary operators, so every valid
 			// rule string will alternate between operator and operand tokens.
 			$expectOperator = !$expectOperator;
 
-			if ( $token instanceof CLDRPluralRuleConverter_Expression ) {
+			if ( $token instanceof CLDRPluralRuleConverterExpression ) {
 				// Operand
 				if ( $expectOperator ) {
 					$token->error( 'unexpected operand' );
@@ -172,7 +173,7 @@ class CLDRPluralRuleConverter {
 	/**
 	 * Fetch the next token from the input string.
 	 *
-	 * @return CLDRPluralRuleConverter_Fragment The next token
+	 * @return CLDRPluralRuleConverterFragment The next token
 	 */
 	protected function nextToken() {
 		if ( $this->pos >= $this->end ) {
@@ -192,6 +193,7 @@ class CLDRPluralRuleConverter {
 		if ( $length !== 0 ) {
 			$token = $this->newNumber( substr( $this->rule, $this->pos, $length ), $this->pos );
 			$this->pos += $length;
+
 			return $token;
 		}
 
@@ -200,6 +202,7 @@ class CLDRPluralRuleConverter {
 		if ( $op2 === '..' || $op2 === '!=' ) {
 			$token = $this->newOperator( $op2, $this->pos, 2 );
 			$this->pos += 2;
+
 			return $token;
 		}
 
@@ -207,7 +210,8 @@ class CLDRPluralRuleConverter {
 		$op1 = $this->rule[$this->pos];
 		if ( $op1 === ',' || $op1 === '=' || $op1 === '%' ) {
 			$token = $this->newOperator( $op1, $this->pos, 1 );
-			$this->pos ++;
+			$this->pos++;
+
 			return $token;
 		}
 
@@ -235,6 +239,7 @@ class CLDRPluralRuleConverter {
 			if ( isset( self::$precedence[$bothWords] ) ) {
 				$token = $this->newOperator( $bothWords, $this->pos, $nextTokenPos - $this->pos );
 				$this->pos = $nextTokenPos;
+
 				return $token;
 			}
 		}
@@ -243,13 +248,15 @@ class CLDRPluralRuleConverter {
 		if ( isset( self::$precedence[$word1] ) ) {
 			$token = $this->newOperator( $word1, $this->pos, strlen( $word1 ) );
 			$this->pos += strlen( $word1 );
+
 			return $token;
 		}
 
 		// The single-character operand symbols
 		if ( strpos( self::OPERAND_SYMBOLS, $word1 ) !== false ) {
 			$token = $this->newNumber( $word1, $this->pos );
-			$this->pos ++;
+			$this->pos++;
+
 			return $token;
 		}
 
@@ -258,6 +265,7 @@ class CLDRPluralRuleConverter {
 			// Samples are like comments, they have no effect on rule evaluation.
 			// They run from the first sample indicator to the end of the string.
 			$this->pos = $this->end;
+
 			return false;
 		}
 
@@ -269,7 +277,7 @@ class CLDRPluralRuleConverter {
 	 * a fragment with rpn and type members describing the result of that
 	 * operation.
 	 *
-	 * @param CLDRPluralRuleConverter_Operator $op
+	 * @param CLDRPluralRuleConverterOperator $op
 	 */
 	protected function doOperation( $op ) {
 		if ( count( $this->operands ) < 2 ) {
@@ -286,10 +294,10 @@ class CLDRPluralRuleConverter {
 	 *
 	 * @param string $text
 	 * @param int $pos
-	 * @return CLDRPluralRuleConverter_Expression The numerical expression
+	 * @return CLDRPluralRuleConverterExpression The numerical expression
 	 */
 	protected function newNumber( $text, $pos ) {
-		return new CLDRPluralRuleConverter_Expression( $this, 'number', $text, $pos, strlen( $text ) );
+		return new CLDRPluralRuleConverterExpression( $this, 'number', $text, $pos, strlen( $text ) );
 	}
 
 	/**
@@ -298,14 +306,15 @@ class CLDRPluralRuleConverter {
 	 * @param string $type
 	 * @param int $pos
 	 * @param int $length
-	 * @return CLDRPluralRuleConverter_Operator The operator
+	 * @return CLDRPluralRuleConverterOperator The operator
 	 */
 	protected function newOperator( $type, $pos, $length ) {
-		return new CLDRPluralRuleConverter_Operator( $this, $type, $pos, $length );
+		return new CLDRPluralRuleConverterOperator( $this, $type, $pos, $length );
 	}
 
 	/**
 	 * Throw an error
+	 * @param string $message
 	 */
 	protected function error( $message ) {
 		throw new CLDRPluralRuleError( $message );

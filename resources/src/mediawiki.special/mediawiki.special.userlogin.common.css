@@ -1,5 +1,5 @@
 /* Styles for user login and signup forms */
-#mw-userlogin-help {
+.mw-form-related-link-container {
 	text-align: center;
 }
 
@@ -33,7 +33,7 @@ section.mw-form-header {
 	margin-bottom: 10px;
 }
 
-/**** shuffled CAPTCHA ****/
+/* shuffled CAPTCHA */
 #wpCaptchaWord {
 	margin-top: 6px;
 }
@@ -43,6 +43,7 @@ section.mw-form-header {
 	border: 1px solid #c9c9c9;
 	padding: 10px;
 	text-align: center;
+	margin-bottom: 15px;
 }
 
 .mw-createacct-captcha-assisted {

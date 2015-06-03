@@ -34,9 +34,10 @@ class CssContent extends TextContent {
 
 	/**
 	 * @param string $text CSS code.
+	 * @param string $modelId the content content model
 	 */
-	public function __construct( $text ) {
-		parent::__construct( $text, CONTENT_MODEL_CSS );
+	public function __construct( $text, $modelId = CONTENT_MODEL_CSS ) {
+		parent::__construct( $text, $modelId );
 	}
 
 	/**
@@ -58,7 +59,7 @@ class CssContent extends TextContent {
 		$text = $this->getNativeData();
 		$pst = $wgParser->preSaveTransform( $text, $title, $user, $popts );
 
-		return new CssContent( $pst );
+		return new static( $pst );
 	}
 
 	/**
@@ -67,7 +68,7 @@ class CssContent extends TextContent {
 	protected function getHtml() {
 		$html = "";
 		$html .= "<pre class=\"mw-code mw-css\" dir=\"ltr\">\n";
-		$html .= $this->getHighlightHtml();
+		$html .= htmlspecialchars( $this->getNativeData() );
 		$html .= "\n</pre>\n";
 
 		return $html;

@@ -29,12 +29,25 @@
  */
 class SpecialCreateAccount extends SpecialRedirectToSpecial {
 	function __construct() {
-		parent::__construct( 'CreateAccount', 'Userlogin', 'signup', array( 'returnto', 'returntoquery', 'uselang' ) );
+		parent::__construct(
+			'CreateAccount',
+			'Userlogin',
+			'signup',
+			array( 'returnto', 'returntoquery', 'uselang' )
+		);
 	}
 
 	// No reason to hide this link on Special:Specialpages
 	public function isListed() {
 		return true;
+	}
+
+	public function isRestricted() {
+		return !User::groupHasPermission( '*', 'createaccount' );
+	}
+
+	public function userCanExecute( User $user ) {
+		return $user->isAllowed( 'createaccount' );
 	}
 
 	protected function getGroupName() {

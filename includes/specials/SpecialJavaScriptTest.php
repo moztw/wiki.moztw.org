@@ -25,9 +25,8 @@
  * @ingroup SpecialPage
  */
 class SpecialJavaScriptTest extends SpecialPage {
-
 	/**
-	* @var array Supported frameworks.
+	 * @var array Supported frameworks.
 	 */
 	private static $frameworks = array(
 		'qunit',
@@ -44,7 +43,7 @@ class SpecialJavaScriptTest extends SpecialPage {
 		$out->disallowUserJs();
 
 		if ( $par === null ) {
-		// No framework specified
+			// No framework specified
 			$out->setStatusCode( 404 );
 			$out->setPageTitle( $this->msg( 'javascripttest' ) );
 			$out->addHTML(
@@ -102,11 +101,11 @@ class SpecialJavaScriptTest extends SpecialPage {
 
 		$method = 'view' . ucfirst( $framework );
 		$this->$method();
-			$out->setPageTitle( $this->msg(
-				'javascripttest-title',
-				// Messages: javascripttest-qunit-name
-				$this->msg( "javascripttest-$framework-name" )->plain()
-			) );
+		$out->setPageTitle( $this->msg(
+			'javascripttest-title',
+			// Messages: javascripttest-qunit-name
+			$this->msg( "javascripttest-$framework-name" )->plain()
+		) );
 	}
 
 	/**
@@ -150,15 +149,12 @@ class SpecialJavaScriptTest extends SpecialPage {
 	 * Rendered by OutputPage and Skin.
 	 */
 	private function viewQUnit() {
-		global $wgJavaScriptTestConfig;
-
 		$out = $this->getOutput();
-		$testConfig = $wgJavaScriptTestConfig;
 
 		$modules = $out->getResourceLoader()->getTestModuleNames( 'qunit' );
 
 		$summary = $this->msg( 'javascripttest-qunit-intro' )
-			->params( $wgJavaScriptTestConfig['qunit']['documentation'] )
+			->params( 'https://www.mediawiki.org/wiki/Manual:JavaScript_unit_testing' )
 			->parseAsBlock();
 
 		$baseHtml = <<<HTML
@@ -166,13 +162,6 @@ class SpecialJavaScriptTest extends SpecialPage {
 <div id="qunit"></div>
 </div>
 HTML;
-
-		// Used in ./tests/qunit/data/testrunner.js, see also documentation of
-		// $wgJavaScriptTestConfig in DefaultSettings.php
-		$out->addJsConfigVars(
-			'QUnitTestSwarmInjectJSPath',
-			$testConfig['qunit']['testswarm-injectjs']
-		);
 
 		$out->addHtml( $this->wrapSummaryHtml( $summary ) . $baseHtml );
 
@@ -203,7 +192,6 @@ HTML;
 	 */
 	private function exportQUnit() {
 		$out = $this->getOutput();
-
 		$out->disable();
 
 		$rl = $out->getResourceLoader();
@@ -254,9 +242,13 @@ HTML;
 			'debug' => ResourceLoader::inDebugMode() ? 'true' : 'false',
 		) );
 
-		$styles = $out->makeResourceLoaderLink( 'jquery.qunit', ResourceLoaderModule::TYPE_STYLES, false );
+		$styles = $out->makeResourceLoaderLink(
+			'jquery.qunit', ResourceLoaderModule::TYPE_STYLES, false
+		);
 		// Use 'raw' since this is a plain HTML page without ResourceLoader
-		$scripts = $out->makeResourceLoaderLink( 'jquery.qunit', ResourceLoaderModule::TYPE_SCRIPTS, false, array( 'raw' => 'true' ) );
+		$scripts = $out->makeResourceLoaderLink(
+			'jquery.qunit', ResourceLoaderModule::TYPE_SCRIPTS, false, array( 'raw' => 'true' )
+		);
 
 		$head = trim( $styles['html'] . $scripts['html'] );
 		$html = <<<HTML
@@ -269,6 +261,15 @@ HTML;
 
 		header( 'Content-Type: text/html; charset=utf-8' );
 		echo $html;
+	}
+
+	/**
+	 * Return an array of subpages that this special page will accept.
+	 *
+	 * @return string[] subpages
+	 */
+	public function getSubpagesForPrefixSearch() {
+		return self::$frameworks;
 	}
 
 	protected function getGroupName() {

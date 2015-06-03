@@ -1,8 +1,7 @@
 <?php
 /** Thai (ไทย)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -103,6 +102,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'บทความที่ถูกแก้ไขมากที่สุด' ),
 	'Movepage'                  => array( 'เปลี่ยนทาง' ),
 	'Mycontributions'           => array( 'เรื่องที่ฉันเขียน' ),
+	'MyLanguage'                => array( 'ภาษาของฉัน' ),
 	'Mypage'                    => array( 'หน้าของฉัน' ),
 	'Mytalk'                    => array( 'หน้าพูดคุยของฉัน' ),
 	'Myuploads'                 => array( 'ไฟล์ที่อัปโหลดของฉัน' ),
@@ -191,6 +191,4 @@ $dateFormats = array(
 	'ISO 8601 date' => 'xnY-xnm-xnd',
 	'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
 );
-
-$linkTrail = '/^([a-z]+)(.*)$/sD';
 

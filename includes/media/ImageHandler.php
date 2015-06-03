@@ -57,7 +57,7 @@ abstract class ImageHandler extends MediaHandler {
 		} elseif ( isset( $params['width'] ) ) {
 			$width = $params['width'];
 		} else {
-			throw new MWException( 'No width specified to ' . __METHOD__ );
+			throw new MediaTransformInvalidParametersException( 'No width specified to ' . __METHOD__ );
 		}
 
 		# Removed for ProofreadPage
@@ -245,11 +245,11 @@ abstract class ImageHandler extends MediaHandler {
 		if ( $pages === false || $pages <= 1 ) {
 			$msg = wfMessage( 'file-info-size' )->numParams( $file->getWidth(),
 				$file->getHeight() )->params( $size,
-					$file->getMimeType() )->parse();
+					'<span class="mime-type">' . $file->getMimeType() . '</span>' )->parse();
 		} else {
 			$msg = wfMessage( 'file-info-size-pages' )->numParams( $file->getWidth(),
 				$file->getHeight() )->params( $size,
-					$file->getMimeType() )->numParams( $pages )->parse();
+					'<span class="mime-type">' . $file->getMimeType() . '</span>' )->numParams( $pages )->parse();
 		}
 
 		return $msg;
@@ -268,5 +268,21 @@ abstract class ImageHandler extends MediaHandler {
 			return wfMessage( 'widthheight' )
 				->numParams( $file->getWidth(), $file->getHeight() )->text();
 		}
+	}
+
+	public function sanitizeParamsForBucketing( $params ) {
+		$params = parent::sanitizeParamsForBucketing( $params );
+
+		// We unset the height parameters in order to let normaliseParams recalculate them
+		// Otherwise there might be a height discrepancy
+		if ( isset( $params['height'] ) ) {
+			unset( $params['height'] );
+		}
+
+		if ( isset( $params['physicalHeight'] ) ) {
+			unset( $params['physicalHeight'] );
+		}
+
+		return $params;
 	}
 }

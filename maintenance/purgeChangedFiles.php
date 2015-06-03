@@ -2,7 +2,6 @@
 /**
  * Scan the logging table and purge affected files within a timeframe.
  *
- * @section LICENSE
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -177,7 +176,6 @@ class PurgeChangedFiles extends Maintenance {
 							// Sanity check to avoid data loss
 							$repo->getBackend()->delete( array( 'src' => $file->getPath() ) );
 							$this->verbose( "Deleted orphan file: {$file->getPath()}.\n" );
-
 						} else {
 							$this->error( "File was not deleted: {$file->getPath()}.\n" );
 						}
@@ -185,7 +183,6 @@ class PurgeChangedFiles extends Maintenance {
 
 					// Purge items from fileachive table (rows are likely here)
 					$this->purgeFromArchiveTable( $repo, $file );
-
 				} elseif ( $logType === 'move' ) {
 					// Purge the target file as well
 
@@ -232,7 +229,6 @@ class PurgeChangedFiles extends Maintenance {
 					// Sanity check to avoid data loss
 					$repo->getBackend()->delete( array( 'src' => $ofile->getPath() ) );
 					$this->output( "Deleted orphan file: {$ofile->getPath()}.\n" );
-
 				} else {
 					$this->error( "File was not deleted: {$ofile->getPath()}.\n" );
 				}
@@ -244,6 +240,7 @@ class PurgeChangedFiles extends Maintenance {
 	protected function getDeletedPath( LocalRepo $repo, LocalFile $file ) {
 		$hash = $repo->getFileSha1( $file->getPath() );
 		$key = "{$hash}.{$file->getExtension()}";
+
 		return $repo->getDeletedHashPath( $key ) . $key;
 	}
 
@@ -257,7 +254,6 @@ class PurgeChangedFiles extends Maintenance {
 			$this->output( $msg );
 		}
 	}
-
 }
 
 $maintClass = "PurgeChangedFiles";

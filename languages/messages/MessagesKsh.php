@@ -1,8 +1,7 @@
 <?php
 /** Colognian (Ripoarisch)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -105,6 +104,9 @@ $namespaceAliases = array(
 $separatorTransformTable = array( ',' => "\xc2\xa0", '.' => ',' );
 $linkTrail = '/^([äöüėëĳßəğåůæœça-z]+)(.*)$/sDu';
 
+// Remove German aliases
+$namespaceGenderAliases = array();
+
 $specialPageAliases = array(
 	'Activeusers'               => array( 'Aktive', 'AktiveMetmaacher', 'Aktive_Metmaacher', 'AktiveMedmaacher', 'Aktive_Medmaacher' ),
 	'Allmessages'               => array( 'MediaWiki-Appachtemang' ),
@@ -123,7 +125,7 @@ $specialPageAliases = array(
 	'Deadendpages'              => array( 'Sigge_ohne_Links_dren' ),
 	'DeletedContributions'      => array( 'Fotjeschmeße' ),
 	'DoubleRedirects'           => array( 'Ömleitunge_op_Ömleitunge' ),
-	'Emailuser'                 => array( 'Email', 'E-mail' ),
+	'Emailuser'                 => array( 'E-mail' ),
 	'Export'                    => array( 'Expocht' ),
 	'Fewestrevisions'           => array( 'Winnig_beärbeit', 'Winnish_beärbeidt', 'Winnich_bearbeit' ),
 	'FileDuplicateSearch'       => array( 'Dubbel_Dateie' ),
@@ -207,6 +209,6 @@ $magicWords = array(
 );
 
 $imageFiles = array(
-    'button-italic'   => 'ksh/button_S_italic.png',
+	'button-italic'   => 'ksh/button_italic.png',
 );
 

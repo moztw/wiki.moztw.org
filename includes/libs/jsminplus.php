@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile File external to MediaWiki. Ignore coding conventions checks.
 /**
  * JSMinPlus version 1.4
  *
@@ -1016,7 +1017,7 @@ class JSParser
 
 			case KEYWORD_CATCH:
 			case KEYWORD_FINALLY:
-				throw $this->t->newSyntaxError($tt + ' without preceding try');
+				throw $this->t->newSyntaxError($tt . ' without preceding try');
 
 			case KEYWORD_THROW:
 				$n = new JSNode($this->t);

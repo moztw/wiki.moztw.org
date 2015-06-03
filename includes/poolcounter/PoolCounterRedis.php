@@ -45,7 +45,7 @@
  * Also this should be on a server plenty of RAM for the working set to avoid evictions.
  * Evictions could temporarily allow wait queues to double in size or temporarily cause
  * pools to appear as full when they are not. Using volatile-ttl and bumping memory-samples
- * and redis.conf can be helpful otherwise.
+ * in redis.conf can be helpful otherwise.
  *
  * @ingroup Redis
  * @since 1.23
@@ -59,24 +59,24 @@ class PoolCounterRedis extends PoolCounter {
 	protected $serversByLabel;
 	/** @var string SHA-1 of the key */
 	protected $keySha1;
-	/** @var integer TTL for locks to expire (work should finish in this time) */
+	/** @var int TTL for locks to expire (work should finish in this time) */
 	protected $lockTTL;
 
 	/** @var RedisConnRef */
 	protected $conn;
 	/** @var string Pool slot value */
 	protected $slot;
-	/** @var integer AWAKE_* constant */
+	/** @var int AWAKE_* constant */
 	protected $onRelease;
 	/** @var string Unique string to identify this process */
 	protected $session;
-	/** @var integer UNIX timestamp */
+	/** @var int UNIX timestamp */
 	protected $slotTime;
 
 	const AWAKE_ONE = 1; // wake-up if when a slot can be taken from an existing process
 	const AWAKE_ALL = 2; // wake-up if an existing process finishes and wake up such others
 
-	/** @var Array List of active PoolCounterRedis objects in this script */
+	/** @var array List of active PoolCounterRedis objects in this script */
 	protected static $active = null;
 
 	function __construct( $conf, $type, $key ) {
@@ -90,7 +90,7 @@ class PoolCounterRedis extends PoolCounter {
 
 		$this->keySha1 = sha1( $this->key );
 		$met = ini_get( 'max_execution_time' ); // usually 0 in CLI mode
-		$this->lockTTL = $met ? 2*$met : 3600;
+		$this->lockTTL = $met ? 2 * $met : 3600;
 
 		if ( self::$active === null ) {
 			self::$active = array();
@@ -121,19 +121,26 @@ class PoolCounterRedis extends PoolCounter {
 	}
 
 	function acquireForMe() {
-		$section = new ProfileSection( __METHOD__ );
+
+		$status = $this->precheckAcquire();
+		if ( !$status->isGood() ) {
+			return $status;
+		}
 
 		return $this->waitForSlotOrNotif( self::AWAKE_ONE );
 	}
 
 	function acquireForAnyone() {
-		$section = new ProfileSection( __METHOD__ );
+
+		$status = $this->precheckAcquire();
+		if ( !$status->isGood() ) {
+			return $status;
+		}
 
 		return $this->waitForSlotOrNotif( self::AWAKE_ALL );
 	}
 
 	function release() {
-		$section = new ProfileSection( __METHOD__ );
 
 		if ( $this->slot === null ) {
 			return Status::newGood( PoolCounter::NOT_LOCKED ); // not locked
@@ -154,8 +161,12 @@ class PoolCounterRedis extends PoolCounter {
 		if rSlot ~= 'w' and redis.call('exists',kSlotsNextRelease) == 1 then
 			if 1*redis.call('zScore',kSlotsNextRelease,rSlot) ~= (rSlotTime + rExpiry) then
 				-- Slot lock expired and was released already
-			elseif redis.call('lLen',kSlots) >= (1*rMaxWorkers - 1) then
-				-- Clear list to save space; it will re-init as needed
+			elseif redis.call('lLen',kSlots) >= 1*rMaxWorkers then
+				-- Slots somehow got out of sync; reset the list for sanity
+				redis.call('del',kSlots,kSlotsNextRelease)
+			elseif redis.call('lLen',kSlots) == (1*rMaxWorkers - 1) and redis.call('zCard',kWaiting) == 0 then
+				-- Slot list will be made full; clear it to save space (it re-inits as needed)
+				-- since nothing is waiting on being unblocked by a push to the list
 				redis.call('del',kSlots,kSlotsNextRelease)
 			else
 				-- Add slot back to pool and update the "next release" time
@@ -202,6 +213,8 @@ LUA;
 		$this->slotTime = null;
 		$this->onRelease = null;
 		unset( self::$active[$this->session] );
+
+		$this->onRelease();
 
 		return Status::newGood( PoolCounter::RELEASED );
 	}
@@ -261,6 +274,8 @@ LUA;
 			$this->onRelease = $doWakeup;
 			self::$active[$this->session] = $this;
 		}
+
+		$this->onAcquire();
 
 		return Status::newGood( $slot === 'w' ? PoolCounter::DONE : PoolCounter::LOCKED );
 	}
@@ -406,7 +421,8 @@ LUA;
 				if ( $poolCounter->slot !== null ) {
 					$poolCounter->release();
 				}
-			} catch ( Exception $e ) {}
+			} catch ( Exception $e ) {
+			}
 		}
 	}
 }

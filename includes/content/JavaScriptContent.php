@@ -34,9 +34,10 @@ class JavaScriptContent extends TextContent {
 
 	/**
 	 * @param string $text JavaScript code.
+	 * @param string $modelId the content model name
 	 */
-	public function __construct( $text ) {
-		parent::__construct( $text, CONTENT_MODEL_JAVASCRIPT );
+	public function __construct( $text, $modelId = CONTENT_MODEL_JAVASCRIPT ) {
+		parent::__construct( $text, $modelId );
 	}
 
 	/**
@@ -57,7 +58,7 @@ class JavaScriptContent extends TextContent {
 		$text = $this->getNativeData();
 		$pst = $wgParser->preSaveTransform( $text, $title, $user, $popts );
 
-		return new JavaScriptContent( $pst );
+		return new static( $pst );
 	}
 
 	/**
@@ -66,7 +67,7 @@ class JavaScriptContent extends TextContent {
 	protected function getHtml() {
 		$html = "";
 		$html .= "<pre class=\"mw-code mw-js\" dir=\"ltr\">\n";
-		$html .= $this->getHighlightHtml();
+		$html .= htmlspecialchars( $this->getNativeData() );
 		$html .= "\n</pre>\n";
 
 		return $html;

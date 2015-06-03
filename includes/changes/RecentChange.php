@@ -92,7 +92,7 @@ class RecentChange {
 	# Factory methods
 
 	/**
-	 * @param $row
+	 * @param mixed $row
 	 * @return RecentChange
 	 */
 	public static function newFromRow( $row ) {
@@ -103,25 +103,67 @@ class RecentChange {
 	}
 
 	/**
-	 * No uses left in Gerrit on 2013-11-19.
-	 * @deprecated in 1.22
-	 * @param $row
-	 * @return RecentChange
+	 * Parsing text to RC_* constants
+	 * @since 1.24
+	 * @param string|array $type
+	 * @throws MWException
+	 * @return int|array RC_TYPE
 	 */
-	public static function newFromCurRow( $row ) {
-		wfDeprecated( __METHOD__, '1.22' );
-		$rc = new RecentChange;
-		$rc->loadFromCurRow( $row );
-		$rc->notificationtimestamp = false;
-		$rc->numberofWatchingusers = false;
+	public static function parseToRCType( $type ) {
+		if ( is_array( $type ) ) {
+			$retval = array();
+			foreach ( $type as $t ) {
+				$retval[] = RecentChange::parseToRCType( $t );
+			}
 
-		return $rc;
+			return $retval;
+		}
+
+		switch ( $type ) {
+			case 'edit':
+				return RC_EDIT;
+			case 'new':
+				return RC_NEW;
+			case 'log':
+				return RC_LOG;
+			case 'external':
+				return RC_EXTERNAL;
+			default:
+				throw new MWException( "Unknown type '$type'" );
+		}
+	}
+
+	/**
+	 * Parsing RC_* constants to human-readable test
+	 * @since 1.24
+	 * @param int $rcType
+	 * @return string $type
+	 */
+	public static function parseFromRCType( $rcType ) {
+		switch ( $rcType ) {
+			case RC_EDIT:
+				$type = 'edit';
+				break;
+			case RC_NEW:
+				$type = 'new';
+				break;
+			case RC_LOG:
+				$type = 'log';
+				break;
+			case RC_EXTERNAL:
+				$type = 'external';
+				break;
+			default:
+				$type = "$rcType";
+		}
+
+		return $type;
 	}
 
 	/**
 	 * Obtain the recent change with a given rc_id value
 	 *
-	 * @param int $rcid rc_id value to retrieve
+	 * @param int $rcid The rc_id value to retrieve
 	 * @return RecentChange
 	 */
 	public static function newFromId( $rcid ) {
@@ -131,9 +173,9 @@ class RecentChange {
 	/**
 	 * Find the first recent change matching some specific conditions
 	 *
-	 * @param array $conds of conditions
-	 * @param $fname Mixed: override the method name in profiling/logs
-	 * @param $options Array Query options
+	 * @param array $conds Array of conditions
+	 * @param mixed $fname Override the method name in profiling/logs
+	 * @param array $options Query options
 	 * @return RecentChange
 	 */
 	public static function newFromConds( $conds, $fname = __METHOD__, $options = array() ) {
@@ -183,21 +225,20 @@ class RecentChange {
 	# Accessors
 
 	/**
-	 * @param $attribs array
+	 * @param array $attribs
 	 */
 	public function setAttribs( $attribs ) {
 		$this->mAttribs = $attribs;
 	}
 
 	/**
-	 * @param $extra array
+	 * @param array $extra
 	 */
 	public function setExtra( $extra ) {
 		$this->mExtra = $extra;
 	}
 
 	/**
-	 *
 	 * @return Title
 	 */
 	public function &getTitle() {
@@ -216,7 +257,7 @@ class RecentChange {
 	public function getPerformer() {
 		if ( $this->mPerformer === false ) {
 			if ( $this->mAttribs['rc_user'] ) {
-				$this->mPerformer = User::newFromID( $this->mAttribs['rc_user'] );
+				$this->mPerformer = User::newFromId( $this->mAttribs['rc_user'] );
 			} else {
 				$this->mPerformer = User::newFromName( $this->mAttribs['rc_user_text'], false );
 			}
@@ -227,7 +268,7 @@ class RecentChange {
 
 	/**
 	 * Writes the data in this object to the database
-	 * @param $noudp bool
+	 * @param bool $noudp
 	 */
 	public function save( $noudp = false ) {
 		global $wgPutIPinRC, $wgUseEnotif, $wgShowUpdatedMarker, $wgContLang;
@@ -242,7 +283,7 @@ class RecentChange {
 		}
 
 		# If our database is strict about IP addresses, use NULL instead of an empty string
-		if ( $dbw->strictIPs() and $this->mAttribs['rc_ip'] == '' ) {
+		if ( $dbw->strictIPs() && $this->mAttribs['rc_ip'] == '' ) {
 			unset( $this->mAttribs['rc_ip'] );
 		}
 
@@ -257,7 +298,7 @@ class RecentChange {
 		$this->mAttribs['rc_id'] = $dbw->nextSequenceValue( 'recentchanges_rc_id_seq' );
 
 		## If we are using foreign keys, an entry of 0 for the page_id will fail, so use NULL
-		if ( $dbw->cascadingDeletes() and $this->mAttribs['rc_cur_id'] == 0 ) {
+		if ( $dbw->cascadingDeletes() && $this->mAttribs['rc_cur_id'] == 0 ) {
 			unset( $this->mAttribs['rc_cur_id'] );
 		}
 
@@ -268,7 +309,7 @@ class RecentChange {
 		$this->mAttribs['rc_id'] = $dbw->insertId();
 
 		# Notify extensions
-		wfRunHooks( 'RecentChange_save', array( &$this ) );
+		Hooks::run( 'RecentChange_save', array( &$this ) );
 
 		# Notify external application via UDP
 		if ( !$noudp ) {
@@ -280,7 +321,7 @@ class RecentChange {
 			$editor = $this->getPerformer();
 			$title = $this->getTitle();
 
-			if ( wfRunHooks( 'AbortEmailNotification', array( $editor, $title ) ) ) {
+			if ( Hooks::run( 'AbortEmailNotification', array( $editor, $title, $this ) ) ) {
 				# @todo FIXME: This would be better as an extension hook
 				$enotif = new EmailNotification();
 				$enotif->notifyOnPageChange( $editor, $title,
@@ -294,46 +335,18 @@ class RecentChange {
 	}
 
 	/**
-	 * @deprecated since 1.22, use notifyRCFeeds instead.
-	 */
-	public function notifyRC2UDP() {
-		wfDeprecated( __METHOD__, '1.22' );
-		$this->notifyRCFeeds();
-	}
-
-	/**
-	 * Send some text to UDP.
-	 * @deprecated since 1.22
-	 */
-	public static function sendToUDP( $line, $address = '', $prefix = '', $port = '' ) {
-		global $wgRC2UDPAddress, $wgRC2UDPInterwikiPrefix, $wgRC2UDPPort, $wgRC2UDPPrefix;
-
-		wfDeprecated( __METHOD__, '1.22' );
-
-		# Assume default for standard RC case
-		$address = $address ? $address : $wgRC2UDPAddress;
-		$prefix = $prefix ? $prefix : $wgRC2UDPPrefix;
-		$port = $port ? $port : $wgRC2UDPPort;
-
-		$engine = new UDPRCFeedEngine();
-		$feed = array(
-			'uri' => "udp://$address:$port/$prefix",
-			'formatter' => 'IRCColourfulRCFeedFormatter',
-			'add_interwiki_prefix' => $wgRC2UDPInterwikiPrefix,
-		);
-
-		$engine->send( $feed, $line );
-	}
-
-	/**
 	 * Notify all the feeds about the change.
+	 * @param array $feeds Optional feeds to send to, defaults to $wgRCFeeds
 	 */
-	public function notifyRCFeeds() {
+	public function notifyRCFeeds( array $feeds = null ) {
 		global $wgRCFeeds;
+		if ( $feeds === null ) {
+			$feeds = $wgRCFeeds;
+		}
 
 		$performer = $this->getPerformer();
 
-		foreach ( $wgRCFeeds as $feed ) {
+		foreach ( $feeds as $feed ) {
 			$feed += array(
 				'omit_bots' => false,
 				'omit_anon' => false,
@@ -362,7 +375,7 @@ class RecentChange {
 			}
 
 			/** @var $formatter RCFeedFormatter */
-			$formatter = new $feed['formatter']();
+			$formatter = is_object( $feed['formatter'] ) ? $feed['formatter'] : new $feed['formatter']();
 			$line = $formatter->getLine( $feed, $this, $actionComment );
 
 			$engine->send( $feed, $line );
@@ -392,20 +405,11 @@ class RecentChange {
 	}
 
 	/**
-	 * @deprecated since 1.22, moved to IRCColourfulRCFeedFormatter
-	 */
-	public static function cleanupForIRC( $text ) {
-		wfDeprecated( __METHOD__, '1.22' );
-
-		return IRCColourfulRCFeedFormatter::cleanupForIRC( $text );
-	}
-
-	/**
 	 * Mark a given change as patrolled
 	 *
-	 * @param $change Mixed: RecentChange or corresponding rc_id
-	 * @param $auto Boolean: for automatic patrol
-	 * @return Array See doMarkPatrolled(), or null if $change is not an existing rc_id
+	 * @param RecentChange|int $change RecentChange or corresponding rc_id
+	 * @param bool $auto For automatic patrol
+	 * @return array See doMarkPatrolled(), or null if $change is not an existing rc_id
 	 */
 	public static function markPatrolled( $change, $auto = false ) {
 		global $wgUser;
@@ -426,9 +430,9 @@ class RecentChange {
 	 *
 	 * NOTE: Can also return 'rcpatroldisabled', 'hookaborted' and
 	 * 'markedaspatrollederror-noautopatrol' as errors
-	 * @param $user User object doing the action
-	 * @param $auto Boolean: for automatic patrol
-	 * @return array of permissions errors, see Title::getUserPermissionsErrors()
+	 * @param User $user User object doing the action
+	 * @param bool $auto For automatic patrol
+	 * @return array Array of permissions errors, see Title::getUserPermissionsErrors()
 	 */
 	public function doMarkPatrolled( User $user, $auto = false ) {
 		global $wgUseRCPatrol, $wgUseNPPatrol;
@@ -441,12 +445,12 @@ class RecentChange {
 		// Automatic patrol needs "autopatrol", ordinary patrol needs "patrol"
 		$right = $auto ? 'autopatrol' : 'patrol';
 		$errors = array_merge( $errors, $this->getTitle()->getUserPermissionsErrors( $right, $user ) );
-		if ( !wfRunHooks( 'MarkPatrolled', array( $this->getAttribute( 'rc_id' ), &$user, false ) ) ) {
+		if ( !Hooks::run( 'MarkPatrolled', array( $this->getAttribute( 'rc_id' ), &$user, false ) ) ) {
 			$errors[] = array( 'hookaborted' );
 		}
 		// Users without the 'autopatrol' right can't patrol their
 		// own revisions
-		if ( $user->getName() == $this->getAttribute( 'rc_user_text' )
+		if ( $user->getName() === $this->getAttribute( 'rc_user_text' )
 			&& !$user->isAllowed( 'autopatrol' )
 		) {
 			$errors[] = array( 'markedaspatrollederror-noautopatrol' );
@@ -462,14 +466,14 @@ class RecentChange {
 		$this->reallyMarkPatrolled();
 		// Log this patrol event
 		PatrolLog::record( $this, $auto, $user );
-		wfRunHooks( 'MarkPatrolledComplete', array( $this->getAttribute( 'rc_id' ), &$user, false ) );
+		Hooks::run( 'MarkPatrolledComplete', array( $this->getAttribute( 'rc_id' ), &$user, false ) );
 
 		return array();
 	}
 
 	/**
 	 * Mark this RecentChange patrolled, without error checking
-	 * @return Integer: number of affected rows
+	 * @return int Number of affected rows
 	 */
 	public function reallyMarkPatrolled() {
 		$dbw = wfGetDB( DB_MASTER );
@@ -493,19 +497,19 @@ class RecentChange {
 	/**
 	 * Makes an entry in the database corresponding to an edit
 	 *
-	 * @param $timestamp
-	 * @param $title Title
-	 * @param $minor
-	 * @param $user User
-	 * @param $comment
-	 * @param $oldId
-	 * @param $lastTimestamp
-	 * @param $bot
-	 * @param $ip string
-	 * @param $oldSize int
-	 * @param $newSize int
-	 * @param $newId int
-	 * @param $patrol int
+	 * @param string $timestamp
+	 * @param Title $title
+	 * @param bool $minor
+	 * @param User $user
+	 * @param string $comment
+	 * @param int $oldId
+	 * @param string $lastTimestamp
+	 * @param bool $bot
+	 * @param string $ip
+	 * @param int $oldSize
+	 * @param int $newSize
+	 * @param int $newId
+	 * @param int $patrol
 	 * @return RecentChange
 	 */
 	public static function notifyEdit( $timestamp, &$title, $minor, &$user, $comment, $oldId,
@@ -555,16 +559,16 @@ class RecentChange {
 	 * Makes an entry in the database corresponding to page creation
 	 * Note: the title object must be loaded with the new id using resetArticleID()
 	 *
-	 * @param $timestamp
-	 * @param $title Title
-	 * @param $minor
-	 * @param $user User
-	 * @param $comment
-	 * @param $bot
-	 * @param $ip string
-	 * @param $size int
-	 * @param $newId int
-	 * @param $patrol int
+	 * @param string $timestamp
+	 * @param Title $title
+	 * @param bool $minor
+	 * @param User $user
+	 * @param string $comment
+	 * @param bool $bot
+	 * @param string $ip
+	 * @param int $size
+	 * @param int $newId
+	 * @param int $patrol
 	 * @return RecentChange
 	 */
 	public static function notifyNew( $timestamp, &$title, $minor, &$user, $comment, $bot,
@@ -611,18 +615,18 @@ class RecentChange {
 	}
 
 	/**
-	 * @param $timestamp
-	 * @param $title
-	 * @param $user
-	 * @param $actionComment
-	 * @param $ip string
-	 * @param $type
-	 * @param $action
-	 * @param $target
-	 * @param $logComment
-	 * @param $params
-	 * @param $newId int
-	 * @param $actionCommentIRC string
+	 * @param string $timestamp
+	 * @param Title $title
+	 * @param User $user
+	 * @param string $actionComment
+	 * @param string $ip
+	 * @param string $type
+	 * @param string $action
+	 * @param Title $target
+	 * @param string $logComment
+	 * @param string $params
+	 * @param int $newId
+	 * @param string $actionCommentIRC
 	 * @return bool
 	 */
 	public static function notifyLog( $timestamp, &$title, &$user, $actionComment, $ip, $type,
@@ -642,18 +646,18 @@ class RecentChange {
 	}
 
 	/**
-	 * @param $timestamp
-	 * @param $title Title
-	 * @param $user User
-	 * @param $actionComment
-	 * @param $ip string
-	 * @param $type
-	 * @param $action
-	 * @param $target Title
-	 * @param $logComment
-	 * @param $params
-	 * @param $newId int
-	 * @param $actionCommentIRC string
+	 * @param string $timestamp
+	 * @param Title $title
+	 * @param User $user
+	 * @param string $actionComment
+	 * @param string $ip
+	 * @param string $type
+	 * @param string $action
+	 * @param Title $target
+	 * @param string $logComment
+	 * @param string $params
+	 * @param int $newId
+	 * @param string $actionCommentIRC
 	 * @return RecentChange
 	 */
 	public static function newLogEntry( $timestamp, &$title, &$user, $actionComment, $ip,
@@ -724,48 +728,12 @@ class RecentChange {
 	/**
 	 * Initialises the members of this object from a mysql row object
 	 *
-	 * @param $row
+	 * @param mixed $row
 	 */
 	public function loadFromRow( $row ) {
 		$this->mAttribs = get_object_vars( $row );
 		$this->mAttribs['rc_timestamp'] = wfTimestamp( TS_MW, $this->mAttribs['rc_timestamp'] );
 		$this->mAttribs['rc_deleted'] = $row->rc_deleted; // MUST be set
-	}
-
-	/**
-	 * Makes a pseudo-RC entry from a cur row
-	 *
-	 * @deprecated in 1.22
-	 * @param $row
-	 */
-	public function loadFromCurRow( $row ) {
-		wfDeprecated( __METHOD__, '1.22' );
-		$this->mAttribs = array(
-			'rc_timestamp' => wfTimestamp( TS_MW, $row->rev_timestamp ),
-			'rc_user' => $row->rev_user,
-			'rc_user_text' => $row->rev_user_text,
-			'rc_namespace' => $row->page_namespace,
-			'rc_title' => $row->page_title,
-			'rc_comment' => $row->rev_comment,
-			'rc_minor' => $row->rev_minor_edit ? 1 : 0,
-			'rc_type' => $row->page_is_new ? RC_NEW : RC_EDIT,
-			'rc_source' => $row->page_is_new ? self::SRC_NEW : self::SRC_EDIT,
-			'rc_cur_id' => $row->page_id,
-			'rc_this_oldid' => $row->rev_id,
-			'rc_last_oldid' => isset( $row->rc_last_oldid ) ? $row->rc_last_oldid : 0,
-			'rc_bot' => 0,
-			'rc_ip' => '',
-			'rc_id' => $row->rc_id,
-			'rc_patrolled' => $row->rc_patrolled,
-			'rc_new' => $row->page_is_new, # obsolete
-			'rc_old_len' => $row->rc_old_len,
-			'rc_new_len' => $row->rc_new_len,
-			'rc_params' => isset( $row->rc_params ) ? $row->rc_params : '',
-			'rc_log_type' => isset( $row->rc_log_type ) ? $row->rc_log_type : null,
-			'rc_log_action' => isset( $row->rc_log_action ) ? $row->rc_log_action : null,
-			'rc_logid' => isset( $row->rc_logid ) ? $row->rc_logid : 0,
-			'rc_deleted' => $row->rc_deleted // MUST be set
-		);
 	}
 
 	/**
@@ -788,7 +756,7 @@ class RecentChange {
 	/**
 	 * Gets the end part of the diff URL associated with this object
 	 * Blank if no diff link should be displayed
-	 * @param $forceCur
+	 * @param bool $forceCur
 	 * @return string
 	 */
 	public function diffLinkTrail( $forceCur ) {
@@ -810,8 +778,8 @@ class RecentChange {
 	/**
 	 * Returns the change size (HTML).
 	 * The lengths can be given optionally.
-	 * @param $old int
-	 * @param $new int
+	 * @param int $old
+	 * @param int $new
 	 * @return string
 	 */
 	public function getCharacterDifference( $old = 0, $new = 0 ) {
@@ -826,29 +794,6 @@ class RecentChange {
 		}
 
 		return ChangesList::showCharacterDifference( $old, $new );
-	}
-
-	/**
-	 * Purge expired changes from the recentchanges table
-	 * @since 1.22
-	 */
-	public static function purgeExpiredChanges() {
-		if ( wfReadOnly() ) {
-			return;
-		}
-
-		$method = __METHOD__;
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->onTransactionIdle( function () use ( $dbw, $method ) {
-			global $wgRCMaxAge;
-
-			$cutoff = $dbw->timestamp( time() - $wgRCMaxAge );
-			$dbw->delete(
-				'recentchanges',
-				array( 'rc_timestamp < ' . $dbw->addQuotes( $cutoff ) ),
-				$method
-			);
-		} );
 	}
 
 	private static function checkIPAddress( $ip ) {
@@ -873,8 +818,8 @@ class RecentChange {
 	 * as the recentchanges table might not be cleared out regularly (so older entries might exist)
 	 * or rows which will be deleted soon shouldn't be included.
 	 *
-	 * @param $timestamp mixed MWTimestamp compatible timestamp
-	 * @param $tolerance integer Tolerance in seconds
+	 * @param mixed $timestamp MWTimestamp compatible timestamp
+	 * @param int $tolerance Tolerance in seconds
 	 * @return bool
 	 */
 	public static function isInRCLifespan( $timestamp, $tolerance = 0 ) {

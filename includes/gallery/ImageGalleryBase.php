@@ -28,25 +28,35 @@
  * @ingroup Media
  */
 abstract class ImageGalleryBase extends ContextSource {
-	/** @var array Gallery images */
-	public $mImages;
+	/**
+	 * @var array Gallery images
+	 */
+	protected $mImages;
 
-	/** @var bool Whether to show the filesize in bytes in categories */
-	public $mShowBytes;
+	/**
+	 * @var bool Whether to show the filesize in bytes in categories
+	 */
+	protected $mShowBytes;
 
-	/** @var bool Whether to show the filename. Default: true */
-	public $mShowFilename;
+	/**
+	 * @var bool Whether to show the filename. Default: true
+	 */
+	protected $mShowFilename;
 
-	/** @var string Gallery mode. Default: traditional */
-	public $mMode;
+	/**
+	 * @var string Gallery mode. Default: traditional
+	 */
+	protected $mMode;
 
-	/** @var bool|string Gallery caption. Default: false */
-	public $mCaption = false;
+	/**
+	 * @var bool|string Gallery caption. Default: false
+	 */
+	protected $mCaption = false;
 
 	/**
 	 * @var bool Hide blacklisted images?
 	 */
-	public $mHideBadImages;
+	protected $mHideBadImages;
 
 	/**
 	 * @var Parser Registered parser object for output callbacks
@@ -69,20 +79,26 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * Get a new image gallery. This is the method other callers
 	 * should use to get a gallery.
 	 *
-	 * @param string|bool $mode Mode to use. False to use the default.
+	 * @param string|bool $mode Mode to use. False to use the default
+	 * @param IContextSource|null $context
+	 * @return ImageGalleryBase
 	 * @throws MWException
 	 */
-	static function factory( $mode = false ) {
-		global $wgGalleryOptions, $wgContLang;
+	static function factory( $mode = false, IContextSource $context = null ) {
+		global $wgContLang;
 		self::loadModes();
+		if ( !$context ) {
+			$context = RequestContext::getMainAndWarn( __METHOD__ );
+		}
 		if ( !$mode ) {
-			$mode = $wgGalleryOptions['mode'];
+			$galleryOpions = $context->getConfig()->get( 'GalleryOptions' );
+			$mode = $galleryOpions['mode'];
 		}
 
 		$mode = $wgContLang->lc( $mode );
 
 		if ( isset( self::$modeMapping[$mode] ) ) {
-			return new self::$modeMapping[$mode]( $mode );
+			return new self::$modeMapping[$mode]( $mode, $context );
 		} else {
 			throw new MWException( "No gallery class registered for mode $mode" );
 		}
@@ -98,7 +114,7 @@ abstract class ImageGalleryBase extends ContextSource {
 				'packed-overlay' => 'PackedOverlayImageGallery',
 			);
 			// Allow extensions to make a new gallery format.
-			wfRunHooks( 'GalleryGetModes', self::$modeMapping );
+			Hooks::run( 'GalleryGetModes', array( &self::$modeMapping ) );
 		}
 	}
 
@@ -107,18 +123,24 @@ abstract class ImageGalleryBase extends ContextSource {
 	 *
 	 * You should not call this directly, but instead use
 	 * ImageGalleryBase::factory().
+	 * @param string $mode
+	 * @param IContextSource|null $context
 	 */
-	function __construct( $mode = 'traditional' ) {
-		global $wgGalleryOptions;
+	function __construct( $mode = 'traditional', IContextSource $context = null ) {
+		if ( $context ) {
+			$this->setContext( $context );
+		}
+
+		$galleryOptions = $this->getConfig()->get( 'GalleryOptions' );
 		$this->mImages = array();
-		$this->mShowBytes = $wgGalleryOptions['showBytes'];
+		$this->mShowBytes = $galleryOptions['showBytes'];
 		$this->mShowFilename = true;
 		$this->mParser = false;
 		$this->mHideBadImages = false;
-		$this->mPerRow = $wgGalleryOptions['imagesPerRow'];
-		$this->mWidths = $wgGalleryOptions['imageWidth'];
-		$this->mHeights = $wgGalleryOptions['imageHeight'];
-		$this->mCaptionLength = $wgGalleryOptions['captionLength'];
+		$this->mPerRow = $galleryOptions['imagesPerRow'];
+		$this->mWidths = $galleryOptions['imageWidth'];
+		$this->mHeights = $galleryOptions['imageHeight'];
+		$this->mCaptionLength = $galleryOptions['captionLength'];
 		$this->mMode = $mode;
 	}
 
@@ -130,7 +152,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * @note This also triggers using the page's target
 	 *  language instead of the user language.
 	 *
-	 * @param $parser Parser
+	 * @param Parser $parser
 	 */
 	function setParser( $parser ) {
 		$this->mParser = $parser;
@@ -138,6 +160,7 @@ abstract class ImageGalleryBase extends ContextSource {
 
 	/**
 	 * Set bad image flag
+	 * @param bool $flag
 	 */
 	function setHideBadImages( $flag = true ) {
 		$this->mHideBadImages = $flag;
@@ -200,20 +223,9 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * to allow extensions to add additional parameters to
 	 * <gallery> parser tag.
 	 *
-	 * @param array $options Attributes of gallery tag.
+	 * @param array $options Attributes of gallery tag
 	 */
 	public function setAdditionalOptions( $options ) {
-	}
-
-	/**
-	 * Instruct the class to use a specific skin for rendering
-	 *
-	 * @param Skin $skin
-	 * @deprecated since 1.18 Not used anymore
-	 */
-	function useSkin( $skin ) {
-		wfDeprecated( __METHOD__, '1.18' );
-		/* no op */
 	}
 
 	/**
@@ -254,6 +266,14 @@ abstract class ImageGalleryBase extends ContextSource {
 	}
 
 	/**
+	 * Returns the list of images this gallery contains
+	 * @return array
+	 */
+	public function getImages() {
+		return $this->mImages;
+	}
+
+	/**
 	 * isEmpty() returns true if the gallery contains no images
 	 * @return bool
 	 */
@@ -265,7 +285,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * Enable/Disable showing of the file size of an image in the gallery.
 	 * Enabled by default.
 	 *
-	 * @param bool $f Set to false to disable.
+	 * @param bool $f Set to false to disable
 	 */
 	function setShowBytes( $f ) {
 		$this->mShowBytes = (bool)$f;
@@ -275,7 +295,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * Enable/Disable showing of the filename of an image in the gallery.
 	 * Enabled by default.
 	 *
-	 * @param bool $f Set to false to disable.
+	 * @param bool $f Set to false to disable
 	 */
 	function setShowFilename( $f ) {
 		$this->mShowFilename = (bool)$f;

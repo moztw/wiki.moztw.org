@@ -86,7 +86,7 @@ class SvgHandler extends ImageHandler {
 	 * this list.
 	 *
 	 * @param File $file
-	 * @return Array of language codes, or empty if no language switching supported.
+	 * @return array Array of language codes, or empty if no language switching supported.
 	 */
 	public function getAvailableLanguages( File $file ) {
 		$metadata = $file->getMetadata();
@@ -107,7 +107,8 @@ class SvgHandler extends ImageHandler {
 	/**
 	 * What language to render file in if none selected.
 	 *
-	 * @return String language code.
+	 * @param File $file
+	 * @return string Language code.
 	 */
 	public function getDefaultRenderLanguage( File $file ) {
 		return 'en';
@@ -115,8 +116,10 @@ class SvgHandler extends ImageHandler {
 
 	/**
 	 * We do not support making animated svg thumbnails
+	 * @param File $file
+	 * @return bool
 	 */
-	function canAnimateThumb( $file ) {
+	function canAnimateThumbnail( $file ) {
 		return false;
 	}
 
@@ -185,7 +188,40 @@ class SvgHandler extends ImageHandler {
 		}
 
 		$srcPath = $image->getLocalRefPath();
-		$status = $this->rasterize( $srcPath, $dstPath, $physicalWidth, $physicalHeight, $lang );
+		if ( $srcPath === false ) { // Failed to get local copy
+			wfDebugLog( 'thumbnail',
+				sprintf( 'Thumbnail failed on %s: could not get local copy of "%s"',
+					wfHostname(), $image->getName() ) );
+
+			return new MediaTransformError( 'thumbnail_error',
+				$params['width'], $params['height'],
+				wfMessage( 'filemissing' )->text()
+			);
+		}
+
+		// Make a temp dir with a symlink to the local copy in it.
+		// This plays well with rsvg-convert policy for external entities.
+		// https://git.gnome.org/browse/librsvg/commit/?id=f01aded72c38f0e18bc7ff67dee800e380251c8e
+		$tmpDir = wfTempDir() . '/svg_' . wfRandomString( 24 );
+		$lnPath = "$tmpDir/" . basename( $srcPath );
+		$ok = mkdir( $tmpDir, 0771 ) && symlink( $srcPath, $lnPath );
+		$cleaner = new ScopedCallback( function () use ( $tmpDir, $lnPath ) {
+			wfSuppressWarnings();
+			unlink( $lnPath );
+			rmdir( $tmpDir );
+			wfRestoreWarnings();
+		} );
+		if ( !$ok ) {
+			wfDebugLog( 'thumbnail',
+				sprintf( 'Thumbnail failed on %s: could not link %s to %s',
+					wfHostname(), $lnPath, $srcPath ) );
+			return new MediaTransformError( 'thumbnail_error',
+				$params['width'], $params['height'],
+				wfMessage( 'thumbnail-temp-create' )->text()
+			);
+		}
+
+		$status = $this->rasterize( $lnPath, $dstPath, $physicalWidth, $physicalHeight, $lang );
 		if ( $status === true ) {
 			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
 		} else {
@@ -236,10 +272,8 @@ class SvgHandler extends ImageHandler {
 					$env['LANG'] = $lang;
 				}
 
-				wfProfileIn( 'rsvg' );
 				wfDebug( __METHOD__ . ": $cmd\n" );
 				$err = wfShellExecWithStderr( $cmd, $retval, $env );
-				wfProfileOut( 'rsvg' );
 			}
 		}
 		$removed = $this->removeBadFile( $dstPath, $retval );
@@ -328,7 +362,7 @@ class SvgHandler extends ImageHandler {
 		$metadata = array( 'version' => self::SVG_METADATA_VERSION );
 		try {
 			$metadata += SVGMetadataExtractor::getMetadata( $filename );
-		} catch ( MWException $e ) { // @todo SVG specific exceptions
+		} catch ( Exception $e ) { // @todo SVG specific exceptions
 			// File not found, broken, etc.
 			$metadata['error'] = array(
 				'message' => $e->getMessage(),
@@ -376,9 +410,10 @@ class SvgHandler extends ImageHandler {
 
 	/**
 	 * @param File $file
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return array|bool
 	 */
-	function formatMetadata( $file ) {
+	function formatMetadata( $file, $context = false ) {
 		$result = array(
 			'visible' => array(),
 			'collapsed' => array()
@@ -446,13 +481,13 @@ class SvgHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param array $params name=>value pairs of parameters
+	 * @param array $params Name=>value pairs of parameters
 	 * @return string Filename to use
 	 */
 	function makeParamString( $params ) {
 		$lang = '';
 		if ( isset( $params['lang'] ) && $params['lang'] !== 'en' ) {
-			$params['lang'] = mb_strtolower( $params['lang'] );
+			$params['lang'] = strtolower( $params['lang'] );
 			$lang = "lang{$params['lang']}-";
 		}
 		if ( !isset( $params['width'] ) ) {

@@ -44,13 +44,14 @@ class FixDoubleRedirects extends Maintenance {
 	public function execute() {
 		$async = $this->getOption( 'async', false );
 		$dryrun = $this->getOption( 'dry-run', false );
-		$title = $this->getOption( 'title' );
 
-		if ( isset( $title ) ) {
-			$title = Title::newFromText( $title );
+		if ( $this->hasOption( 'title' ) ) {
+			$title = Title::newFromText( $this->getOption( 'title' ) );
 			if ( !$title || !$title->isRedirect() ) {
 				$this->error( $title->getPrefixedText() . " is not a redirect!\n", true );
 			}
+		} else {
+			$title = null;
 		}
 
 		$dbr = wfGetDB( DB_SLAVE );
@@ -75,7 +76,7 @@ class FixDoubleRedirects extends Maintenance {
 			'pb.page_is_redirect' => 1,
 		);
 
-		if ( isset( $title ) ) {
+		if ( $title != null ) {
 			$conds['pb.page_namespace'] = $title->getNamespace();
 			$conds['pb.page_title'] = $title->getDBkey();
 		}
@@ -85,6 +86,7 @@ class FixDoubleRedirects extends Maintenance {
 
 		if ( !$res->numRows() ) {
 			$this->output( "No double redirects found.\n" );
+
 			return;
 		}
 
@@ -94,7 +96,6 @@ class FixDoubleRedirects extends Maintenance {
 		foreach ( $res as $row ) {
 			$titleA = Title::makeTitle( $row->pa_namespace, $row->pa_title );
 			$titleB = Title::makeTitle( $row->pb_namespace, $row->pb_title );
-			RequestContext::getMain()->setTitle( $titleA );
 
 			$processedTitles .= "* [[$titleA]]\n";
 
@@ -106,7 +107,8 @@ class FixDoubleRedirects extends Maintenance {
 			if ( !$async ) {
 				$success = ( $dryrun ? true : $job->run() );
 				if ( !$success ) {
-					$this->error( "Error fixing " . $titleA->getPrefixedText() . ": " . $job->getLastError() . "\n" );
+					$this->error( "Error fixing " . $titleA->getPrefixedText()
+						. ": " . $job->getLastError() . "\n" );
 				}
 			} else {
 				$jobs[] = $job;

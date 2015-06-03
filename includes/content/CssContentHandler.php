@@ -27,7 +27,7 @@
  * @since 1.21
  * @ingroup Content
  */
-class CssContentHandler extends TextContentHandler {
+class CssContentHandler extends CodeContentHandler {
 
 	/**
 	 * @param string $modelId
@@ -36,55 +36,7 @@ class CssContentHandler extends TextContentHandler {
 		parent::__construct( $modelId, array( CONTENT_FORMAT_CSS ) );
 	}
 
-	/**
-	 * @param string $text
-	 * @param string $format
-	 *
-	 * @return CssContent
-	 *
-	 * @see ContentHandler::unserializeContent()
-	 */
-	public function unserializeContent( $text, $format = null ) {
-		$this->checkFormat( $format );
-
-		return new CssContent( $text );
+	protected function getContentClass() {
+		return 'CssContent';
 	}
-
-	/**
-	 * @return CssContent A new CssContent object with empty text.
-	 *
-	 * @see ContentHandler::makeEmptyContent()
-	 */
-	public function makeEmptyContent() {
-		return new CssContent( '' );
-	}
-
-	/**
-	 * Returns the english language, because CSS is english, and should be handled as such.
-	 *
-	 * @param Title $title
-	 * @param Content $content
-	 *
-	 * @return Language wfGetLangObj( 'en' )
-	 *
-	 * @see ContentHandler::getPageLanguage()
-	 */
-	public function getPageLanguage( Title $title, Content $content = null ) {
-		return wfGetLangObj( 'en' );
-	}
-
-	/**
-	 * Returns the english language, because CSS is english, and should be handled as such.
-	 *
-	 * @param Title $title
-	 * @param Content $content
-	 *
-	 * @return Language wfGetLangObj( 'en' )
-	 *
-	 * @see ContentHandler::getPageViewLanguage()
-	 */
-	public function getPageViewLanguage( Title $title, Content $content = null ) {
-		return wfGetLangObj( 'en' );
-	}
-
 }

@@ -1,8 +1,7 @@
 <?php
 /** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -51,7 +50,6 @@ $fallback8bitEncoding = 'windows-1256';
 $namespaceNames = array(
 	NS_MEDIA            => 'تاسپا',
 	NS_SPECIAL          => 'ارنايى',
-	NS_MAIN             => '',
 	NS_TALK             => 'تالقىلاۋ',
 	NS_USER             => 'قاتىسۋشى',
 	NS_USER_TALK        => 'قاتىسۋشى_تالقىلاۋى',
@@ -107,8 +105,8 @@ $namespaceAliases = array(
 
 	# Aliases to renamed kk-arab namespaces
 	'مەدياۋيكي'        => NS_MEDIAWIKI,
-	'مەدياۋيكي_تالقىلاۋى'  => NS_MEDIAWIKI_TALK ,
-	'ٷلگٸ'        => NS_TEMPLATE ,
+	'مەدياۋيكي_تالقىلاۋى'  => NS_MEDIAWIKI_TALK,
+	'ٷلگٸ'        => NS_TEMPLATE,
 	'ٷلگٸ_تالقىلاۋى'    => NS_TEMPLATE_TALK,
 	'ٴۇلگٴى'              => NS_TEMPLATE,
 	'ٴۇلگٴى_تالقىلاۋى'    => NS_TEMPLATE_TALK,

@@ -40,7 +40,7 @@ class MWException extends Exception {
 	 * Whether to log this exception in the exception debug log.
 	 *
 	 * @since 1.23
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isLoggable() {
 		return true;
@@ -66,9 +66,9 @@ class MWException extends Exception {
 	/**
 	 * Run hook to allow extensions to modify the text of the exception
 	 *
-	 * @param string $name class name of the exception
-	 * @param array $args arguments to pass to the callback functions
-	 * @return string|null string to output or null if any hook has been called
+	 * @param string $name Class name of the exception
+	 * @param array $args Arguments to pass to the callback functions
+	 * @return string|null String to output or null if any hook has been called
 	 */
 	public function runHooks( $name, $args = array() ) {
 		global $wgExceptionHooks;
@@ -107,20 +107,22 @@ class MWException extends Exception {
 	/**
 	 * Get a message from i18n
 	 *
-	 * @param string $key message name
-	 * @param string $fallback default message if the message cache can't be
+	 * @param string $key Message name
+	 * @param string $fallback Default message if the message cache can't be
 	 *                  called by the exception
 	 * The function also has other parameters that are arguments for the message
-	 * @return string message with arguments replaced
+	 * @return string Message with arguments replaced
 	 */
 	public function msg( $key, $fallback /*[, params...] */ ) {
 		$args = array_slice( func_get_args(), 2 );
 
 		if ( $this->useMessageCache() ) {
-			return wfMessage( $key, $args )->text();
-		} else {
-			return wfMsgReplaceArgs( $fallback, $args );
+			try {
+				return wfMessage( $key, $args )->text();
+			} catch ( Exception $e ) {
+			}
 		}
+		return wfMsgReplaceArgs( $fallback, $args );
 	}
 
 	/**
@@ -128,20 +130,28 @@ class MWException extends Exception {
 	 * backtrace to the error, otherwise show a message to ask to set it to true
 	 * to show that information.
 	 *
-	 * @return string html to output
+	 * @return string Html to output
 	 */
 	public function getHTML() {
 		global $wgShowExceptionDetails;
 
 		if ( $wgShowExceptionDetails ) {
 			return '<p>' . nl2br( htmlspecialchars( MWExceptionHandler::getLogMessage( $this ) ) ) .
-			'</p><p>Backtrace:</p><p>' . nl2br( htmlspecialchars( MWExceptionHandler::getRedactedTraceAsString( $this ) ) ) .
+			'</p><p>Backtrace:</p><p>' .
+			nl2br( htmlspecialchars( MWExceptionHandler::getRedactedTraceAsString( $this ) ) ) .
 			"</p>\n";
 		} else {
+			$logId = MWExceptionHandler::getLogId( $this );
+			$type = get_class( $this );
 			return "<div class=\"errorbox\">" .
-			'[' . MWExceptionHandler::getLogId( $this ) . '] ' .
-			gmdate( 'Y-m-d H:i:s' ) .
-			": Fatal exception of type " . get_class( $this ) . "</div>\n" .
+			'[' . $logId . '] ' .
+			gmdate( 'Y-m-d H:i:s' ) . ": " .
+			$this->msg( "internalerror-fatal-exception",
+				"Fatal exception of type $1",
+				$type,
+				$logId,
+				MWExceptionHandler::getURL( $this )
+			) . "</div>\n" .
 			"<!-- Set \$wgShowExceptionDetails = true; " .
 			"at the bottom of LocalSettings.php to show detailed " .
 			"debugging information. -->";
@@ -177,31 +187,6 @@ class MWException extends Exception {
 	}
 
 	/**
-	 * Get a the ID for this error.
-	 *
-	 * @since 1.20
-	 * @deprecated since 1.22 Use MWExceptionHandler::getLogId instead.
-	 * @return string
-	 */
-	public function getLogId() {
-		wfDeprecated( __METHOD__, '1.22' );
-		return MWExceptionHandler::getLogId( $this );
-	}
-
-	/**
-	 * Return the requested URL and point to file and line number from which the
-	 * exception occurred
-	 *
-	 * @since 1.8
-	 * @deprecated since 1.22 Use MWExceptionHandler::getLogMessage instead.
-	 * @return string
-	 */
-	public function getLogMessage() {
-		wfDeprecated( __METHOD__, '1.22' );
-		return MWExceptionHandler::getLogMessage( $this );
-	}
-
-	/**
 	 * Output the exception report using HTML.
 	 */
 	public function reportHTML() {
@@ -218,11 +203,13 @@ class MWException extends Exception {
 
 			$wgOut->output();
 		} else {
-			header( 'Content-Type: text/html; charset=utf-8' );
+			self::header( 'Content-Type: text/html; charset=utf-8' );
 			echo "<!DOCTYPE html>\n" .
 				'<html><head>' .
 				// Mimick OutputPage::setPageTitle behaviour
-				'<title>' . htmlspecialchars( $this->msg( 'pagetitle', "$1 - $wgSitename", $this->getPageTitle() ) ) . '</title>' .
+				'<title>' .
+				htmlspecialchars( $this->msg( 'pagetitle', "$1 - $wgSitename", $this->getPageTitle() ) ) .
+				'</title>' .
 				'<style>body { font-family: sans-serif; margin: 0; padding: 0.5em 2em; }</style>' .
 				"</head><body>\n";
 
@@ -244,18 +231,16 @@ class MWException extends Exception {
 	public function report() {
 		global $wgMimeType;
 
-		MWExceptionHandler::logException( $this );
-
 		if ( defined( 'MW_API' ) ) {
 			// Unhandled API exception, we can't be sure that format printer is alive
-			header( 'MediaWiki-API-Error: internal_api_error_' . get_class( $this ) );
+			self::header( 'MediaWiki-API-Error: internal_api_error_' . get_class( $this ) );
 			wfHttpError( 500, 'Internal Server Error', $this->getText() );
 		} elseif ( self::isCommandLine() ) {
 			MWExceptionHandler::printError( $this->getText() );
 		} else {
-			header( 'HTTP/1.1 500 MediaWiki exception' );
-			header( 'Status: 500 MediaWiki exception', true );
-			header( "Content-Type: $wgMimeType; charset=utf-8", true );
+			self::header( 'HTTP/1.1 500 MediaWiki exception' );
+			self::header( 'Status: 500 MediaWiki exception' );
+			self::header( "Content-Type: $wgMimeType; charset=utf-8" );
 
 			$this->reportHTML();
 		}
@@ -269,5 +254,16 @@ class MWException extends Exception {
 	 */
 	public static function isCommandLine() {
 		return !empty( $GLOBALS['wgCommandLineMode'] );
+	}
+
+	/**
+	 * Send a header, if we haven't already sent them. We shouldn't,
+	 * but sometimes we might in a weird case like Export
+	 * @param string $header
+	 */
+	private static function header( $header ) {
+		if ( !headers_sent() ) {
+			header( $header );
+		}
 	}
 }

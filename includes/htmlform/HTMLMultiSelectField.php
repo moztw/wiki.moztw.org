@@ -47,6 +47,7 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 			} else {
 				$thisAttribs = array( 'id' => "{$this->mID}-$info", 'value' => $info );
 
+				// @todo: Make this use checkLabel for consistency purposes
 				$checkbox = Xml::check(
 					$this->mName . '[]',
 					in_array( $info, $value, true ),
@@ -57,6 +58,14 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 					array( 'for' => "{$this->mID}-$info" ),
 					$label
 				);
+
+				if ( $this->mParent->getConfig()->get( 'UseMediaWikiUIEverywhere' ) ) {
+					$checkbox = Html::rawElement(
+						'div',
+						array( 'class' => 'mw-ui-checkbox' ),
+						$checkbox
+					);
+				}
 
 				$html .= ' ' . Html::rawElement(
 					'div',
@@ -70,9 +79,9 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 	}
 
 	/**
-	 * @param $request WebRequest
+	 * @param WebRequest $request
 	 *
-	 * @return String
+	 * @return string
 	 */
 	function loadDataFromRequest( $request ) {
 		if ( $this->mParent->getMethod() == 'post' ) {

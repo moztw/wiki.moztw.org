@@ -96,9 +96,6 @@ class ExternalStoreDB extends ExternalStoreMedium {
 		if ( !$id ) {
 			throw new MWException( __METHOD__ . ': no insert ID' );
 		}
-		if ( $dbw->getFlag( DBO_TRX ) ) {
-			$dbw->commit( __METHOD__ );
-		}
 
 		return "DB://$cluster/$id";
 	}
@@ -106,8 +103,8 @@ class ExternalStoreDB extends ExternalStoreMedium {
 	/**
 	 * Get a LoadBalancer for the specified cluster
 	 *
-	 * @param string $cluster cluster name
-	 * @return LoadBalancer object
+	 * @param string $cluster Cluster name
+	 * @return LoadBalancer
 	 */
 	function getLoadBalancer( $cluster ) {
 		$wiki = isset( $this->params['wiki'] ) ? $this->params['wiki'] : false;
@@ -118,8 +115,8 @@ class ExternalStoreDB extends ExternalStoreMedium {
 	/**
 	 * Get a slave database connection for the specified cluster
 	 *
-	 * @param string $cluster cluster name
-	 * @return DatabaseBase object
+	 * @param string $cluster Cluster name
+	 * @return DatabaseBase
 	 */
 	function getSlave( $cluster ) {
 		global $wgDefaultExternalStore;
@@ -134,27 +131,33 @@ class ExternalStoreDB extends ExternalStoreMedium {
 			wfDebug( "writable external store\n" );
 		}
 
-		return $lb->getConnection( DB_SLAVE, array(), $wiki );
+		$db = $lb->getConnection( DB_SLAVE, array(), $wiki );
+		$db->clearFlag( DBO_TRX ); // sanity
+
+		return $db;
 	}
 
 	/**
 	 * Get a master database connection for the specified cluster
 	 *
-	 * @param string $cluster cluster name
-	 * @return DatabaseBase object
+	 * @param string $cluster Cluster name
+	 * @return DatabaseBase
 	 */
 	function getMaster( $cluster ) {
 		$wiki = isset( $this->params['wiki'] ) ? $this->params['wiki'] : false;
 		$lb = $this->getLoadBalancer( $cluster );
 
-		return $lb->getConnection( DB_MASTER, array(), $wiki );
+		$db = $lb->getConnection( DB_MASTER, array(), $wiki );
+		$db->clearFlag( DBO_TRX ); // sanity
+
+		return $db;
 	}
 
 	/**
 	 * Get the 'blobs' table name for this database
 	 *
-	 * @param $db DatabaseBase
-	 * @return String: table name ('blobs' by default)
+	 * @param DatabaseBase $db
+	 * @return string Table name ('blobs' by default)
 	 */
 	function getTable( $db ) {
 		$table = $db->getLBInfo( 'blobs table' );
@@ -169,9 +172,9 @@ class ExternalStoreDB extends ExternalStoreMedium {
 	 * Fetch a blob item out of the database; a cache of the last-loaded
 	 * blob will be kept so that multiple loads out of a multi-item blob
 	 * can avoid redundant database access and decompression.
-	 * @param $cluster
-	 * @param $id
-	 * @param $itemID
+	 * @param string $cluster
+	 * @param string $id
+	 * @param string $itemID
 	 * @return mixed
 	 * @private
 	 */
@@ -282,6 +285,10 @@ class ExternalStoreDB extends ExternalStoreMedium {
 		}
 	}
 
+	/**
+	 * @param string $url
+	 * @return array
+	 */
 	protected function parseURL( $url ) {
 		$path = explode( '/', $url );
 

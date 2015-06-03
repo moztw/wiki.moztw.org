@@ -1,8 +1,8 @@
 {
-    "@metadata": {
-        "authors": [
-            "Huslåke"
-        ]
-    },
-    "poem-desc": "Tilføje <code>&lt;poem&gt;</code> tag før digt formåter"
+	"@metadata": {
+		"authors": [
+			"Huslåke"
+		]
+	},
+	"poem-desc": "Tilføje <code>&lt;poem&gt;</code> tag før digt formåter"
 }

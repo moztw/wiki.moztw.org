@@ -128,15 +128,21 @@ class HtmlFormatter {
 	}
 
 	/**
-	 * Removes content we've chosen to remove
+	 * Removes content we've chosen to remove.  The text of the removed elements can be
+	 * extracted with the getText method.
+	 * @return array Array of removed DOMElements
 	 */
 	public function filterContent() {
-		wfProfileIn( __METHOD__ );
 		$removals = $this->parseItemsToRemove();
 
-		if ( !$removals ) {
-			wfProfileOut( __METHOD__ );
-			return;
+		// Bail out early if nothing to do
+		if ( array_reduce( $removals,
+			function ( $carry, $item ) {
+				return $carry && !$item;
+			},
+			true
+		) ) {
+			return array();
 		}
 
 		$doc = $this->getDoc();
@@ -156,8 +162,7 @@ class HtmlFormatter {
 				}
 			}
 		}
-
-		$this->removeElements( $domElemsToRemove );
+		$removed = $this->removeElements( $domElemsToRemove );
 
 		// Elements with named IDs
 		$domElemsToRemove = array();
@@ -167,11 +172,11 @@ class HtmlFormatter {
 				$domElemsToRemove[] = $itemToRemoveNode;
 			}
 		}
-		$this->removeElements( $domElemsToRemove );
+		$removed = array_merge( $removed, $this->removeElements( $domElemsToRemove ) );
 
 		// CSS Classes
 		$domElemsToRemove = array();
-		$xpath = new DOMXpath( $doc );
+		$xpath = new DOMXPath( $doc );
 		foreach ( $removals['CLASS'] as $classToRemove ) {
 			$elements = $xpath->query( '//*[contains(@class, "' . $classToRemove . '")]' );
 
@@ -183,7 +188,7 @@ class HtmlFormatter {
 				}
 			}
 		}
-		$this->removeElements( $domElemsToRemove );
+		$removed = array_merge( $removed, $this->removeElements( $domElemsToRemove ) );
 
 		// Tags with CSS Classes
 		foreach ( $removals['TAG_CLASS'] as $classToRemove ) {
@@ -192,16 +197,16 @@ class HtmlFormatter {
 			$elements = $xpath->query(
 				'//' . $parts[0] . '[@class="' . $parts[1] . '"]'
 			);
-
-			$this->removeElements( $elements );
+			$removed = array_merge( $removed, $this->removeElements( $elements ) );
 		}
 
-		wfProfileOut( __METHOD__ );
+		return $removed;
 	}
 
 	/**
 	 * Removes a list of elelments from DOMDocument
 	 * @param array|DOMNodeList $elements
+	 * @return array Array of removed elements
 	 */
 	private function removeElements( $elements ) {
 		$list = $elements;
@@ -217,6 +222,7 @@ class HtmlFormatter {
 				$element->parentNode->removeChild( $element );
 			}
 		}
+		return $list;
 	}
 
 	/**
@@ -226,9 +232,8 @@ class HtmlFormatter {
 	 * @return string
 	 */
 	private function fixLibXML( $html ) {
-		wfProfileIn( __METHOD__ );
 		static $replacements;
-		if ( ! $replacements ) {
+		if ( !$replacements ) {
 			// We don't include rules like '&#34;' => '&amp;quot;' because entities had already been
 			// normalized by libxml. Using this function with input not sanitized by libxml is UNSAFE!
 			$replacements = new ReplacementArray( array(
@@ -240,18 +245,20 @@ class HtmlFormatter {
 		}
 		$html = $replacements->replace( $html );
 		$html = mb_convert_encoding( $html, 'UTF-8', 'HTML-ENTITIES' );
-		wfProfileOut( __METHOD__ );
 		return $html;
 	}
 
 	/**
-	 * Performs final transformations and returns resulting HTML
+	 * Performs final transformations and returns resulting HTML.  Note that if you want to call this
+	 * both without an element and with an element you should call it without an element first.  If you
+	 * specify the $element in the method it'll change the underlying dom and you won't be able to get
+	 * it back.
 	 *
-	 * @param DOMElement|string|null $element ID of element to get HTML from or false to get it from the whole tree
+	 * @param DOMElement|string|null $element ID of element to get HTML from or
+	 *   false to get it from the whole tree
 	 * @return string Processed HTML
 	 */
 	public function getText( $element = null ) {
-		wfProfileIn( __METHOD__ );
 
 		if ( $this->doc ) {
 			if ( $element !== null && !( $element instanceof DOMElement ) ) {
@@ -269,18 +276,19 @@ class HtmlFormatter {
 				$body->appendChild( $element );
 			}
 			$html = $this->doc->saveHTML();
+
 			$html = $this->fixLibXml( $html );
+			if ( wfIsWindows() ) {
+				// Cleanup for CRLF misprocessing of unknown origin on Windows.
+				//
+				// If this error continues in the future, please track it down in the
+				// XML code paths if possible and fix there.
+				$html = str_replace( '&#13;', '', $html );
+			}
 		} else {
 			$html = $this->html;
 		}
-		if ( wfIsWindows() ) {
-			// Appears to be cleanup for CRLF misprocessing of unknown origin
-			// when running server on Windows platform.
-			//
-			// If this error continues in the future, please track it down in the
-			// XML code paths if possible and fix there.
-			$html = str_replace( '&#13;', '', $html );
-		}
+		// Remove stuff added by wrapHTML()
 		$html = preg_replace( '/<!--.*?-->|^.*?<body>|<\/body>.*$/s', '', $html );
 		$html = $this->onHtmlReady( $html );
 
@@ -289,15 +297,19 @@ class HtmlFormatter {
 			$html = preg_replace( "#</?($elements)\\b[^>]*>#is", '', $html );
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $html;
 	}
 
 	/**
+	 * Helper function for parseItemsToRemove(). This function extracts the selector type
+	 * and the raw name of a selector from a CSS-style selector string and assigns those
+	 * values to parameters passed by reference. For example, if given '#toc' as the
+	 * $selector parameter, it will assign 'ID' as the $type and 'toc' as the $rawName.
 	 * @param string $selector CSS selector to parse
-	 * @param string $type
-	 * @param string $rawName
+	 * @param string $type The type of selector (ID, CLASS, TAG_CLASS, or TAG)
+	 * @param string $rawName The raw name of the selector
 	 * @return bool Whether the selector was successfully recognised
+	 * @throws MWException
 	 */
 	protected function parseSelector( $selector, &$type, &$rawName ) {
 		if ( strpos( $selector, '.' ) === 0 ) {
@@ -320,11 +332,11 @@ class HtmlFormatter {
 	}
 
 	/**
-	 * Transforms CSS selectors into an internal representation suitable for processing
+	 * Transforms CSS-style selectors into an internal representation suitable for
+	 * processing by filterContent()
 	 * @return array
 	 */
 	protected function parseItemsToRemove() {
-		wfProfileIn( __METHOD__ );
 		$removals = array(
 			'ID' => array(),
 			'TAG' => array(),
@@ -346,7 +358,6 @@ class HtmlFormatter {
 			$removals['TAG'][] = 'video';
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $removals;
 	}
 }

@@ -117,12 +117,13 @@
 		var parser = new mw.jqueryMsg.parser( options );
 
 		return function ( args ) {
-			var key = args[0],
+			var fallback,
+				key = args[0],
 				argsArray = $.isArray( args[1] ) ? args[1] : slice.call( args, 1 );
 			try {
 				return parser.parse( key, argsArray );
 			} catch ( e ) {
-				var fallback = parser.settings.messages.get( key );
+				fallback = parser.settings.messages.get( key );
 				mw.log.warn( 'mediawiki.jqueryMsg: ' + key + ': ' + e.message );
 				return $( '<span>' ).text( fallback );
 			}
@@ -135,7 +136,7 @@
 	 * Returns a function suitable for use as a global, to construct strings from the message key (and optional replacements).
 	 * e.g.
 	 *
-	 *       window.gM = mediaWiki.parser.getMessageFunction( options );
+	 *       window.gM = mediaWiki.jqueryMsg.getMessageFunction( options );
 	 *       $( 'p#headline' ).html( gM( 'hello-user', username ) );
 	 *
 	 * Like the old gM() function this returns only strings, so it destroys any bindings. If you want to preserve bindings use the
@@ -177,7 +178,7 @@
 	 * the current selector. Bindings to passed-in jquery elements are preserved. Functions become click handlers for [$1 linktext] links.
 	 * e.g.
 	 *
-	 *        $.fn.msg = mediaWiki.parser.getJqueryPlugin( options );
+	 *        $.fn.msg = mediaWiki.jqueryMsg.getPlugin( options );
 	 *        var userlink = $( '<a>' ).click( function () { alert( "hello!!" ) } );
 	 *        $( 'p#headline' ).msg( 'hello-user', userlink );
 	 *
@@ -266,7 +267,8 @@
 		 * @return {string|Array} string of '[key]' if message missing, simple string if possible, array of arrays if needs parsing
 		 */
 		getAst: function ( key ) {
-			var cacheKey = [key, this.settings.onlyCurlyBraceTransform].join( ':' ), wikiText;
+			var wikiText,
+				cacheKey = [key, this.settings.onlyCurlyBraceTransform].join( ':' );
 
 			if ( this.astCache[ cacheKey ] === undefined ) {
 				wikiText = this.settings.messages.get( key );
@@ -289,7 +291,7 @@
 		 * @return {Mixed} abstract syntax tree
 		 */
 		wikiTextToAst: function ( input ) {
-			var pos, settings = this.settings, concat = Array.prototype.concat,
+			var pos,
 				regularLiteral, regularLiteralWithoutBar, regularLiteralWithoutSpace, regularLiteralWithSquareBrackets,
 				doubleQuote, singleQuote, backslash, anyCharacter, asciiAlphabetLiteral,
 				escapedOrLiteralWithoutSpace, escapedOrLiteralWithoutBar, escapedOrRegularLiteral,
@@ -297,7 +299,9 @@
 				htmlAttributeEquals, openHtmlStartTag, optionalForwardSlash, openHtmlEndTag, closeHtmlTag,
 				openExtlink, closeExtlink, wikilinkPage, wikilinkContents, openWikilink, closeWikilink, templateName, pipe, colon,
 				templateContents, openTemplate, closeTemplate,
-				nonWhitespaceExpression, paramExpression, expression, curlyBraceTransformExpression, result;
+				nonWhitespaceExpression, paramExpression, expression, curlyBraceTransformExpression, result,
+				settings = this.settings,
+				concat = Array.prototype.concat;
 
 			// Indicates current position in input as we parse through it.
 			// Shared among all parsing functions below.
@@ -319,7 +323,7 @@
 					for ( i = 0; i < ps.length; i++ ) {
 						result = ps[i]();
 						if ( result !== null ) {
-							 return result;
+							return result;
 						}
 					}
 					return null;
@@ -403,8 +407,8 @@
 				return function () {
 					var result = null;
 					if ( input.substr( pos, len ) === s ) {
-						 result = s;
-						 pos += len;
+						result = s;
+						pos += len;
 					}
 					return result;
 				};
@@ -421,7 +425,7 @@
 			 */
 			function makeRegexParser( regex ) {
 				return function () {
-					var matches = input.substr( pos ).match( regex );
+					var matches = input.slice( pos ).match( regex );
 					if ( matches === null ) {
 						return null;
 					}
@@ -668,7 +672,7 @@
 				for ( i = 0, len = attributes.length; i < len; i += 2 ) {
 					attributeName = attributes[i];
 					if ( $.inArray( attributeName, settings.allowedHtmlCommonAttributes ) === -1 &&
-					     $.inArray( attributeName, settings.allowedHtmlAttributesByElement[startTagName] || [] ) === -1 ) {
+						$.inArray( attributeName, settings.allowedHtmlAttributesByElement[startTagName] || [] ) === -1 ) {
 						return false;
 					}
 				}
@@ -685,10 +689,10 @@
 			// Subset of allowed HTML markup.
 			// Most elements and many attributes allowed on the server are not supported yet.
 			function html() {
-				var result = null, parsedOpenTagResult, parsedHtmlContents,
-					parsedCloseTagResult, wrappedAttributes, attributes,
-					startTagName, endTagName, startOpenTagPos, startCloseTagPos,
-					endOpenTagPos, endCloseTagPos;
+				var parsedOpenTagResult, parsedHtmlContents, parsedCloseTagResult,
+					wrappedAttributes, attributes, startTagName, endTagName, startOpenTagPos,
+					startCloseTagPos, endOpenTagPos, endCloseTagPos,
+					result = null;
 
 				// Break into three sequence calls.  That should allow accurate reconstruction of the original HTML, and requiring an exact tag name match.
 				// 1. open through closeHtmlTag
@@ -723,7 +727,7 @@
 
 				if ( parsedCloseTagResult === null ) {
 					// Closing tag failed.  Return the start tag and contents.
-					return [ 'CONCAT', input.substring( startOpenTagPos, endOpenTagPos ) ]
+					return [ 'CONCAT', input.slice( startOpenTagPos, endOpenTagPos ) ]
 						.concat( parsedHtmlContents );
 				}
 
@@ -747,8 +751,8 @@
 					// parsed HTML link.
 					//
 					// Concatenate everything from the tag, flattening the contents.
-					result = [ 'CONCAT', input.substring( startOpenTagPos, endOpenTagPos ) ]
-						.concat( parsedHtmlContents, input.substring( startCloseTagPos, endCloseTagPos ) );
+					result = [ 'CONCAT', input.slice( startOpenTagPos, endOpenTagPos ) ]
+						.concat( parsedHtmlContents, input.slice( startCloseTagPos, endCloseTagPos ) );
 				}
 
 				return result;
@@ -1014,16 +1018,11 @@
 			page = nodes[0];
 			url = mw.util.getUrl( page );
 
-			// [[Some Page]] or [[Namespace:Some Page]]
 			if ( nodes.length === 1 ) {
+				// [[Some Page]] or [[Namespace:Some Page]]
 				anchor = page;
-			}
-
-			/*
-			 * [[Some Page|anchor text]] or
-			 * [[Namespace:Some Page|anchor]
-			 */
-			else {
+			} else {
+				// [[Some Page|anchor text]] or [[Namespace:Some Page|anchor]]
 				anchor = nodes[1];
 			}
 
@@ -1085,7 +1084,11 @@
 			} else {
 				$el = $( '<a>' );
 				if ( typeof arg === 'function' ) {
-					$el.click( arg ).attr( 'href', '#' );
+					$el.attr( 'href', '#' )
+					.click( function ( e ) {
+						e.preventDefault();
+					} )
+					.click( arg );
 				} else {
 					$el.attr( 'href', arg.toString() );
 				}
@@ -1124,10 +1127,42 @@
 		 * @return {string} selected pluralized form according to current language
 		 */
 		plural: function ( nodes ) {
-			var forms, count;
+			var forms, firstChild, firstChildText, explicitPluralFormNumber, formIndex, form, count,
+				explicitPluralForms = {};
+
 			count = parseFloat( this.language.convertNumber( nodes[0], true ) );
 			forms = nodes.slice( 1 );
-			return forms.length ? this.language.convertPlural( count, forms ) : '';
+			for ( formIndex = 0; formIndex < forms.length; formIndex++ ) {
+				form = forms[formIndex];
+
+				if ( form.jquery && form.hasClass( 'mediaWiki_htmlEmitter' ) ) {
+					// This is a nested node, may be an explicit plural form like 5=[$2 linktext]
+					firstChild = form.contents().get( 0 );
+					if ( firstChild && firstChild.nodeType === Node.TEXT_NODE ) {
+						firstChildText = firstChild.textContent;
+						if ( /^\d+=/.test( firstChildText ) ) {
+							explicitPluralFormNumber = parseInt( firstChildText.split( /=/ )[0], 10 );
+							// Use the digit part as key and rest of first text node and
+							// rest of child nodes as value.
+							firstChild.textContent = firstChildText.slice( firstChildText.indexOf( '=' ) + 1 );
+							explicitPluralForms[explicitPluralFormNumber] = form;
+							forms[formIndex] = undefined;
+						}
+					}
+				} else if ( /^\d+=/.test( form ) ) {
+					// Simple explicit plural forms like 12=a dozen
+					explicitPluralFormNumber = parseInt( form.split( /=/ )[0], 10 );
+					explicitPluralForms[explicitPluralFormNumber] = form.slice( form.indexOf( '=' ) + 1 );
+					forms[formIndex] = undefined;
+				}
+			}
+
+			// Remove explicit plural forms from the forms. They were set undefined in the above loop.
+			forms = $.map( forms, function ( form ) {
+				return form;
+			} );
+
+			return this.language.convertPlural( count, forms, explicitPluralForms );
 		},
 
 		/**

@@ -27,14 +27,15 @@
  */
 class CoreTagHooks {
 	/**
-	 * @param $parser Parser
+	 * @param Parser $parser
 	 * @return void
 	 */
-	static function register( $parser ) {
+	public static function register( $parser ) {
 		global $wgRawHtml;
 		$parser->setHook( 'pre', array( __CLASS__, 'pre' ) );
 		$parser->setHook( 'nowiki', array( __CLASS__, 'nowiki' ) );
 		$parser->setHook( 'gallery', array( __CLASS__, 'gallery' ) );
+		$parser->setHook( 'indicator', array( __CLASS__, 'indicator' ) );
 		if ( $wgRawHtml ) {
 			$parser->setHook( 'html', array( __CLASS__, 'html' ) );
 		}
@@ -50,7 +51,7 @@ class CoreTagHooks {
 	 * @param Parser $parser
 	 * @return string HTML
 	 */
-	static function pre( $text, $attribs, $parser ) {
+	public static function pre( $text, $attribs, $parser ) {
 		// Backwards-compatibility hack
 		$content = StringUtils::delimiterReplace( '<nowiki>', '</nowiki>', '$1', $text, 'i' );
 
@@ -69,13 +70,13 @@ class CoreTagHooks {
 	 *
 	 * Uses undocumented extended tag hook return values, introduced in r61913.
 	 *
-	 * @param $content string
-	 * @param $attributes array
-	 * @param $parser Parser
+	 * @param string $content
+	 * @param array $attributes
+	 * @param Parser $parser
 	 * @throws MWException
 	 * @return array
 	 */
-	static function html( $content, $attributes, $parser ) {
+	public static function html( $content, $attributes, $parser ) {
 		global $wgRawHtml;
 		if ( $wgRawHtml ) {
 			return array( $content, 'markerType' => 'nowiki' );
@@ -91,12 +92,12 @@ class CoreTagHooks {
 	 *
 	 * Uses undocumented extended tag hook return values, introduced in r61913.
 	 *
-	 * @param $content string
-	 * @param $attributes array
-	 * @param $parser Parser
+	 * @param string $content
+	 * @param array $attributes
+	 * @param Parser $parser
 	 * @return array
 	 */
-	static function nowiki( $content, $attributes, $parser ) {
+	public static function nowiki( $content, $attributes, $parser ) {
 		$content = strtr( $content, array( '-{' => '-&#123;', '}-' => '&#125;-' ) );
 		return array( Xml::escapeTagsOnly( $content ), 'markerType' => 'nowiki' );
 	}
@@ -116,7 +117,33 @@ class CoreTagHooks {
 	 * @param Parser $parser
 	 * @return string HTML
 	 */
-	static function gallery( $content, $attributes, $parser ) {
+	public static function gallery( $content, $attributes, $parser ) {
 		return $parser->renderImageGallery( $content, $attributes );
+	}
+
+	/**
+	 * XML-style tag for page status indicators: icons (or short text snippets) usually displayed in
+	 * the top-right corner of the page, outside of the main content.
+	 *
+	 * @param string $content
+	 * @param array $attributes
+	 * @param Parser $parser
+	 * @param PPFrame $frame
+	 * @return string
+	 * @since 1.25
+	 */
+	public static function indicator( $content, array $attributes, Parser $parser, PPFrame $frame ) {
+		if ( !isset( $attributes['name'] ) || trim( $attributes['name'] ) === '' ) {
+			return '<span class="error">' .
+				wfMessage( 'invalid-indicator-name' )->inContentLanguage()->parse() .
+				'</span>';
+		}
+
+		$parser->getOutput()->setIndicator(
+			trim( $attributes['name'] ),
+			Parser::stripOuterParagraph( $parser->recursiveTagParseFully( $content, $frame ) )
+		);
+
+		return '';
 	}
 }

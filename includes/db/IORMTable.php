@@ -94,7 +94,7 @@ interface IORMTable {
 	public function getSummaryFields();
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as DBDataObject. Field names get prefixed.
 	 *
 	 * @see DatabaseBase::select()
@@ -107,13 +107,13 @@ interface IORMTable {
 	 * @param string|null $functionName
 	 *
 	 * @return ORMResult The result set
-	 * @throws DBQueryError if the query failed (even if the database was in ignoreErrors mode)
+	 * @throws DBQueryError If the query failed (even if the database was in ignoreErrors mode)
 	 */
 	public function select( $fields = null, array $conditions = array(),
 		array $options = array(), $functionName = null );
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as DBDataObject. Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -123,7 +123,7 @@ interface IORMTable {
 	 * @param array $options
 	 * @param string|null $functionName
 	 *
-	 * @return array of self
+	 * @return array Array of self
 	 */
 	public function selectObjects( $fields = null, array $conditions = array(),
 		array $options = array(), $functionName = null );
@@ -139,13 +139,13 @@ interface IORMTable {
 	 * @param null|string $functionName
 	 *
 	 * @return ResultWrapper
-	 * @throws DBQueryError if the query failed (even if the database was in ignoreErrors mode)
+	 * @throws DBQueryError If the query failed (even if the database was in ignoreErrors mode)
 	 */
 	public function rawSelect( $fields = null, array $conditions = array(),
 		array $options = array(), $functionName = null );
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as associative arrays.
 	 * Provided field names get prefixed.
 	 * Returned field names will not have a prefix.
@@ -161,16 +161,16 @@ interface IORMTable {
 	 * @param array|string|null $fields
 	 * @param array $conditions
 	 * @param array $options
-	 * @param boolean $collapse Set to false to always return each result row as associative array.
+	 * @param bool $collapse Set to false to always return each result row as associative array.
 	 * @param string|null $functionName
 	 *
-	 * @return array of array
+	 * @return array Array of array
 	 */
 	public function selectFields( $fields = null, array $conditions = array(),
 		array $options = array(), $collapse = true, $functionName = null );
 
 	/**
-	 * Selects the the specified fields of the first matching record.
+	 * Selects the specified fields of the first matching record.
 	 * Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -186,7 +186,7 @@ interface IORMTable {
 		array $options = array(), $functionName = null );
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions. Field names do NOT get prefixed.
 	 *
 	 * @since 1.20
@@ -202,7 +202,7 @@ interface IORMTable {
 		array $options = array(), $functionName = null );
 
 	/**
-	 * Selects the the specified fields of the first record matching the provided
+	 * Selects the specified fields of the first record matching the provided
 	 * conditions and returns it as an associative array, or false when nothing matches.
 	 * This method makes use of selectFields and expects the same parameters and
 	 * returns the same results (if there are any, if there are none, this method returns false).
@@ -213,7 +213,7 @@ interface IORMTable {
 	 * @param array|string|null $fields
 	 * @param array $conditions
 	 * @param array $options
-	 * @param boolean $collapse Set to false to always return each result row as associative array.
+	 * @param bool $collapse Set to false to always return each result row as associative array.
 	 * @param string|null $functionName
 	 *
 	 * @return mixed|array|bool False on failure
@@ -229,7 +229,7 @@ interface IORMTable {
 	 *
 	 * @param array $conditions
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function has( array $conditions = array() );
 
@@ -238,7 +238,7 @@ interface IORMTable {
 	 *
 	 * @since 1.21
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function exists();
 
@@ -254,7 +254,7 @@ interface IORMTable {
 	 * @param array $conditions
 	 * @param array $options
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function count( array $conditions = array(), array $options = array() );
 
@@ -266,7 +266,7 @@ interface IORMTable {
 	 * @param array $conditions
 	 * @param string|null $functionName
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function delete( array $conditions, $functionName = null );
 
@@ -275,8 +275,8 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @param boolean $requireParams
-	 * @param boolean $setDefaults
+	 * @param bool $requireParams
+	 * @param bool $setDefaults
 	 *
 	 * @return array
 	 */
@@ -298,14 +298,14 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @return integer DB_ enum
+	 * @return int DB_ enum
 	 */
 	public function getReadDb();
 
 	/**
 	 * Set the database type to use for read operations.
 	 *
-	 * @param integer $db
+	 * @param int $db
 	 *
 	 * @since 1.20
 	 */
@@ -316,7 +316,7 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @return String|bool The target wiki, in a form that LBFactory
+	 * @return string|bool The target wiki, in a form that LBFactory
 	 *   understands (or false if the local wiki is used)
 	 */
 	public function getTargetWiki();
@@ -372,7 +372,7 @@ interface IORMTable {
 	 *
 	 * @see LoadBalancer::reuseConnection
 	 *
-	 * @param DatabaseBase $db the database
+	 * @param DatabaseBase $db The database
 	 *
 	 * @since 1.20
 	 */
@@ -388,7 +388,7 @@ interface IORMTable {
 	 * @param array $values
 	 * @param array $conditions
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function update( array $values, array $conditions = array() );
 
@@ -421,7 +421,7 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @param array|string $fields
+	 * @param array $fields
 	 *
 	 * @return array
 	 */
@@ -442,10 +442,11 @@ interface IORMTable {
 	 * Takes an array of field names with prefix and returns the unprefixed equivalent.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, will be removed
 	 *
-	 * @param array $fieldNames
+	 * @param string[] $fieldNames
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function unprefixFieldNames( array $fieldNames );
 
@@ -453,6 +454,7 @@ interface IORMTable {
 	 * Takes a field name with prefix and returns the unprefixed equivalent.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, will be removed
 	 *
 	 * @param string $fieldName
 	 *
@@ -490,7 +492,7 @@ interface IORMTable {
 	 * @since 1.20
 	 *
 	 * @param array $data
-	 * @param boolean $loadDefaults
+	 * @param bool $loadDefaults
 	 *
 	 * @return IORMRow
 	 */
@@ -512,7 +514,7 @@ interface IORMTable {
 	 *
 	 * @param string $name
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function canHaveField( $name );
 }

@@ -29,16 +29,16 @@
  * URLs, and how links are encoded in a given output format.
  *
  * @see https://www.mediawiki.org/wiki/Requests_for_comment/TitleValue
+ * @since 1.23
  */
 interface PageLinkRenderer {
-
 	/**
 	 * Returns the URL for the given page.
 	 *
 	 * @todo expand this to cover the functionality of Linker::linkUrl
 	 *
 	 * @param TitleValue $page The link's target
-	 * @param array $params any additional URL parameters.
+	 * @param array $params Any additional URL parameters.
 	 *
 	 * @return string
 	 */
@@ -65,5 +65,4 @@ interface PageLinkRenderer {
 	 * @return string
 	 */
 	public function renderWikitextLink( TitleValue $page, $text = null );
-
 }

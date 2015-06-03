@@ -8,7 +8,7 @@
 	/**
 	 * @class mw.Title
 	 *
-	 * Parse titles into an object struture. Note that when using the constructor
+	 * Parse titles into an object structure. Note that when using the constructor
 	 * directly, passing invalid titles will result in an exception. Use #newFromText to use the
 	 * logic directly and get null for invalid titles which is easier to work with.
 	 *
@@ -58,6 +58,34 @@
 	NS_SPECIAL = -1,
 
 	/**
+	 * @private
+	 * @static
+	 * @property NS_MEDIA
+	 */
+	NS_MEDIA = -2,
+
+	/**
+	 * @private
+	 * @static
+	 * @property NS_FILE
+	 */
+	NS_FILE = 6,
+
+	/**
+	 * @private
+	 * @static
+	 * @property FILENAME_MAX_BYTES
+	 */
+	FILENAME_MAX_BYTES = 240,
+
+	/**
+	 * @private
+	 * @static
+	 * @property TITLE_MAX_BYTES
+	 */
+	TITLE_MAX_BYTES = 255,
+
+	/**
 	 * Get the namespace id from a namespace name (either from the localized, canonical or alias
 	 * name).
 	 *
@@ -91,7 +119,7 @@
 
 	rSplit = /^(.+?)_*:_*(.*)$/,
 
-	// See Title.php#getTitleInvalidRegex
+	// See MediaWikiTitleCodec.php#getTitleInvalidRegex
 	rInvalid = new RegExp(
 		'[^' + mw.config.get( 'wgLegalTitleChars' ) + ']' +
 		// URL percent encoding sequences interfere with the ability
@@ -102,6 +130,85 @@
 		'|&#[0-9]+;' +
 		'|&#x[0-9A-Fa-f]+;'
 	),
+
+	// From MediaWikiTitleCodec.php#L225 @26fcab1f18c568a41
+	// "Clean up whitespace" in function MediaWikiTitleCodec::splitTitleString()
+	rWhitespace = /[ _\u0009\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\s]+/g,
+
+	/**
+	 * Slightly modified from Flinfo. Credit goes to Lupo and Flominator.
+	 * @private
+	 * @static
+	 * @property sanitationRules
+	 */
+	sanitationRules = [
+		// "signature"
+		{
+			pattern: /~{3}/g,
+			replace: '',
+			generalRule: true
+		},
+		// Space, underscore, tab, NBSP and other unusual spaces
+		{
+			pattern: rWhitespace,
+			replace: ' ',
+			generalRule: true
+		},
+		// unicode bidi override characters: Implicit, Embeds, Overrides
+		{
+			pattern: /[\u200E\u200F\u202A-\u202E]/g,
+			replace: '',
+			generalRule: true
+		},
+		// control characters
+		{
+			pattern: /[\x00-\x1f\x7f]/g,
+			replace: '',
+			generalRule: true
+		},
+		// URL encoding (possibly)
+		{
+			pattern: /%([0-9A-Fa-f]{2})/g,
+			replace: '% $1',
+			generalRule: true
+		},
+		// HTML-character-entities
+		{
+			pattern: /&(([A-Za-z0-9\x80-\xff]+|#[0-9]+|#x[0-9A-Fa-f]+);)/g,
+			replace: '& $1',
+			generalRule: true
+		},
+		// slash, colon (not supported by file systems like NTFS/Windows, Mac OS 9 [:], ext4 [/])
+		{
+			pattern: /[:\/#]/g,
+			replace: '-',
+			fileRule: true
+		},
+		// brackets, greater than
+		{
+			pattern: /[\]\}>]/g,
+			replace: ')',
+			generalRule: true
+		},
+		// brackets, lower than
+		{
+			pattern: /[\[\{<]/g,
+			replace: '(',
+			generalRule: true
+		},
+		// everything that wasn't covered yet
+		{
+			pattern: new RegExp( rInvalid.source, 'g' ),
+			replace: '-',
+			generalRule: true
+		},
+		// directory structures
+		{
+			pattern: /^(\.|\.\.|\.\/.*|\.\.\/.*|.*\/\.\/.*|.*\/\.\.\/.*|.*\/\.|.*\/\.\.)$/g,
+			replace: '',
+			generalRule: true
+		}
+	],
 
 	/**
 	 * Internal helper for #constructor and #newFromtext.
@@ -132,7 +239,7 @@
 			namespace = NS_MAIN;
 			title = title
 				// Strip colon
-				.substr( 1 )
+				.slice( 1 )
 				// Trim underscores
 				.replace( rUnderscoreTrim, '' );
 		}
@@ -167,14 +274,14 @@
 		} else {
 			fragment = title
 				// Get segment starting after the hash
-				.substr( i + 1 )
+				.slice( i + 1 )
 				// Convert to text
 				// NB: Must not be trimmed ("Example#_foo" is not the same as "Example#foo")
 				.replace( /_/g, ' ' );
 
 			title = title
 				// Strip hash
-				.substr( 0, i )
+				.slice( 0, i )
 				// Trim underscores, again (strips "_" from "bar" in "Foo_bar_#quux")
 				.replace( rUnderscoreTrim, '' );
 		}
@@ -192,8 +299,8 @@
 				title.indexOf( '../' ) === 0 ||
 				title.indexOf( '/./' ) !== -1 ||
 				title.indexOf( '/../' ) !== -1 ||
-				title.substr( title.length - 2 ) === '/.' ||
-				title.substr( title.length - 3 ) === '/..'
+				title.slice( -2 ) === '/.' ||
+				title.slice( -3 ) === '/..'
 			)
 		) {
 			return false;
@@ -204,11 +311,11 @@
 			return false;
 		}
 
-		// Disallow titles exceeding the 255 byte size limit (size of underlying database field)
+		// Disallow titles exceeding the TITLE_MAX_BYTES byte size limit (size of underlying database field)
 		// Except for special pages, e.g. [[Special:Block/Long name]]
 		// Note: The PHP implementation also asserts that even in NS_SPECIAL, the title should
 		// be less than 512 bytes.
-		if ( namespace !== NS_SPECIAL && $.byteLength( title ) > 255 ) {
+		if ( namespace !== NS_SPECIAL && $.byteLength( title ) > TITLE_MAX_BYTES ) {
 			return false;
 		}
 
@@ -229,8 +336,8 @@
 			// Extensions are the non-empty segment after the last dot
 			ext = null;
 		} else {
-			ext = title.substr( i + 1 );
-			title = title.substr( 0, i );
+			ext = title.slice( i + 1 );
+			title = title.slice( 0, i );
 		}
 
 		return {
@@ -258,6 +365,75 @@
 		}
 	},
 
+	/**
+	 * Sanitizes a string based on a rule set and a filter
+	 *
+	 * @private
+	 * @static
+	 * @method sanitize
+	 * @param {string} s
+	 * @param {Array} filter
+	 * @return {string}
+	 */
+	sanitize = function ( s, filter ) {
+		var i, ruleLength, rule, m, filterLength,
+			rules = sanitationRules;
+
+		for ( i = 0, ruleLength = rules.length; i < ruleLength; ++i ) {
+			rule = rules[i];
+			for ( m = 0, filterLength = filter.length; m < filterLength; ++m ) {
+				if ( rule[filter[m]] ) {
+					s = s.replace( rule.pattern, rule.replace );
+				}
+			}
+		}
+		return s;
+	},
+
+	/**
+	 * Cuts a string to a specific byte length, assuming UTF-8
+	 * or less, if the last character is a multi-byte one
+	 *
+	 * @private
+	 * @static
+	 * @method trimToByteLength
+	 * @param {string} s
+	 * @param {number} length
+	 * @return {string}
+	 */
+	trimToByteLength = function ( s, length ) {
+		var byteLength, chopOffChars, chopOffBytes;
+
+		// bytelength is always greater or equal to the length in characters
+		s = s.substr( 0, length );
+		while ( ( byteLength = $.byteLength( s ) ) > length ) {
+			// Calculate how many characters can be safely removed
+			// First, we need to know how many bytes the string exceeds the threshold
+			chopOffBytes = byteLength - length;
+			// A character in UTF-8 is at most 4 bytes
+			// One character must be removed in any case because the
+			// string is too long
+			chopOffChars = Math.max( 1, Math.floor( chopOffBytes / 4 ) );
+			s = s.substr( 0, s.length - chopOffChars );
+		}
+		return s;
+	},
+
+	/**
+	 * Cuts a file name to a specific byte length
+	 *
+	 * @private
+	 * @static
+	 * @method trimFileNameToByteLength
+	 * @param {string} name without extension
+	 * @param {string} extension file extension
+	 * @return {string} The full name, including extension
+	 */
+	trimFileNameToByteLength = function ( name, extension ) {
+		// There is a special byte limit for file names and ... remember the dot
+		return trimToByteLength( name, FILENAME_MAX_BYTES - extension.length - 1 ) + '.' + extension;
+	},
+
 	// Polyfill for ES5 Object.create
 	createObject = Object.create || ( function () {
 		return function ( o ) {
@@ -276,7 +452,6 @@
 	 * Constructor for Title objects with a null return instead of an exception for invalid titles.
 	 *
 	 * @static
-	 * @method
 	 * @param {string} title
 	 * @param {number} [namespace=NS_MAIN] Default namespace
 	 * @return {mw.Title|null} A valid Title object or null if the title is invalid
@@ -294,6 +469,160 @@
 		t.fragment = parsed.fragment;
 
 		return t;
+	};
+
+	/**
+	 * Constructor for Title objects from user input altering that input to
+	 * produce a title that MediaWiki will accept as legal
+	 *
+	 * @static
+	 * @param {string} title
+	 * @param {number} [defaultNamespace=NS_MAIN]
+	 *  If given, will used as default namespace for the given title.
+	 * @param {Object} [options] additional options
+	 * @param {string} [options.fileExtension='']
+	 *  If the title is about to be created for the Media or File namespace,
+	 *  ensures the resulting Title has the correct extension. Useful, for example
+	 *  on systems that predict the type by content-sniffing, not by file extension.
+	 *  If different from empty string, `forUploading` is assumed.
+	 * @param {boolean} [options.forUploading=true]
+	 *  Makes sure that a file is uploadable under the title returned.
+	 *  There are pages in the file namespace under which file upload is impossible.
+	 *  Automatically assumed if the title is created in the Media namespace.
+	 * @return {mw.Title|null} A valid Title object or null if the input cannot be turned into a valid title
+	 */
+	Title.newFromUserInput = function ( title, defaultNamespace, options ) {
+		var namespace, m, id, ext, parts, normalizeExtension;
+
+		// defaultNamespace is optional; check whether options moves up
+		if ( arguments.length < 3 && $.type( defaultNamespace ) === 'object' ) {
+			options = defaultNamespace;
+			defaultNamespace = undefined;
+		}
+
+		// merge options into defaults
+		options = $.extend( {
+			fileExtension: '',
+			forUploading: true
+		}, options );
+
+		normalizeExtension = function ( extension ) {
+			// Remove only trailing space (that is removed by MW anyway)
+			extension = extension.toLowerCase().replace( /\s*$/, '' );
+			return extension;
+		};
+
+		namespace = defaultNamespace === undefined ? NS_MAIN : defaultNamespace;
+
+		// Normalise whitespace and remove duplicates
+		title = $.trim( title.replace( rWhitespace, ' ' ) );
+
+		// Process initial colon
+		if ( title !== '' && title.charAt( 0 ) === ':' ) {
+			// Initial colon means main namespace instead of specified default
+			namespace = NS_MAIN;
+			title = title
+				// Strip colon
+				.substr( 1 )
+				// Trim underscores
+				.replace( rUnderscoreTrim, '' );
+		}
+
+		// Process namespace prefix (if any)
+		m = title.match( rSplit );
+		if ( m ) {
+			id = getNsIdByName( m[1] );
+			if ( id !== false ) {
+				// Ordinary namespace
+				namespace = id;
+				title = m[2];
+			}
+		}
+
+		if ( namespace === NS_MEDIA
+			|| ( ( options.forUploading || options.fileExtension ) && ( namespace === NS_FILE ) )
+		) {
+
+			title = sanitize( title, [ 'generalRule', 'fileRule' ] );
+
+			// Operate on the file extension
+			// Although it is possible having spaces between the name and the ".ext" this isn't nice for
+			// operating systems hiding file extensions -> strip them later on
+			parts = title.split( '.' );
+
+			if ( parts.length > 1 ) {
+
+				// Get the last part, which is supposed to be the file extension
+				ext = parts.pop();
+
+				// Does the supplied file name carry the desired file extension?
+				if ( options.fileExtension
+					&& normalizeExtension( ext ) !== normalizeExtension( options.fileExtension )
+				) {
+
+					// No, push back, whatever there was after the dot
+					parts.push( ext );
+
+					// And add the desired file extension later
+					ext = options.fileExtension;
+				}
+
+				// Remove whitespace of the name part (that W/O extension)
+				title = $.trim( parts.join( '.' ) );
+
+				// Cut, if too long and append file extension
+				title = trimFileNameToByteLength( title, ext );
+
+			} else {
+
+				// Missing file extension
+				title = $.trim( parts.join( '.' ) );
+
+				if ( options.fileExtension ) {
+
+					// Cut, if too long and append the desired file extension
+					title = trimFileNameToByteLength( title, options.fileExtension );
+
+				} else {
+
+					// Name has no file extension and a fallback wasn't provided either
+					return null;
+				}
+			}
+		} else {
+
+			title = sanitize( title, [ 'generalRule' ] );
+
+			// Cut titles exceeding the TITLE_MAX_BYTES byte size limit
+			// (size of underlying database field)
+			if ( namespace !== NS_SPECIAL ) {
+				title = trimToByteLength( title, TITLE_MAX_BYTES );
+			}
+		}
+
+		// Any remaining initial :s are illegal.
+		title = title.replace( /^\:+/, '' );
+
+		return Title.newFromText( title, namespace );
+	};
+
+	/**
+	 * Sanitizes a file name as supplied by the user, originating in the user's file system
+	 * so it is most likely a valid MediaWiki title and file name after processing.
+	 * Returns null on fatal errors.
+	 *
+	 * @static
+	 * @param {string} uncleanName The unclean file name including file extension but
+	 *   without namespace
+	 * @param {string} [fileExtension] the desired file extension
+	 * @return {mw.Title|null} A valid Title object or null if the title is invalid
+	 */
+	Title.newFromFileName = function ( uncleanName, fileExtension ) {
+
+		return Title.newFromUserInput( 'File:' + uncleanName, {
+			fileExtension: fileExtension,
+			forUploading: true
+		} );
 	};
 
 	/**
@@ -402,7 +731,10 @@
 		set: function ( titles, state ) {
 			titles = $.isArray( titles ) ? titles : [titles];
 			state = state === undefined ? true : !!state;
-			var pages = this.pages, i, len = titles.length;
+			var i,
+				pages = this.pages,
+				len = titles.length;
+
 			for ( i = 0; i < len; i++ ) {
 				pages[ titles[i] ] = state;
 			}
@@ -533,6 +865,28 @@
 		 */
 		getPrefixedText: function () {
 			return text( this.getPrefixedDb() );
+		},
+
+		/**
+		 * Get the page name relative to a namespace
+		 *
+		 * Example:
+		 *
+		 * - "Foo:Bar" relative to the Foo namespace becomes "Bar".
+		 * - "Bar" relative to any non-main namespace becomes ":Bar".
+		 * - "Foo:Bar" relative to any namespace other than Foo stays "Foo:Bar".
+		 *
+		 * @param {number} namespace The namespace to be relative to
+		 * @return {string}
+		 */
+		getRelativeText: function ( namespace ) {
+			if ( this.getNamespaceId() === namespace ) {
+				return this.getMainText();
+			} else if ( this.getNamespaceId() === NS_MAIN ) {
+				return ':' + this.getPrefixedText();
+			} else {
+				return this.getPrefixedText();
+			}
 		},
 
 		/**

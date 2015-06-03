@@ -36,20 +36,81 @@ class GenerateJsonI18n extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Build JSON messages files from a PHP messages file";
-		$this->addArg( 'phpfile', 'PHP file defining a $messages array', true );
-		$this->addArg( 'jsondir', 'Directory to write JSON files to. ' .
-			'Required unless <phpfile> exists and --shim-only is specified', false );
+
+		$this->addArg( 'phpfile', 'PHP file defining a $messages array', false );
+		$this->addArg( 'jsondir', 'Directory to write JSON files to', false );
 		$this->addOption( 'langcode', 'Language code; only needed for converting core i18n files',
 			false, true );
+		$this->addOption( 'extension', 'Perform default conversion on an extension',
+			false, true );
 		$this->addOption( 'shim-only', 'Only create or update the backward-compatibility shim' );
+		$this->addOption( 'supplementary', 'Find supplementary i18n files in subdirs and convert those',
+			false, false );
 	}
 
 	public function execute() {
+		global $IP;
+
 		$phpfile = $this->getArg( 0 );
 		$jsondir = $this->getArg( 1 );
+		$extension = $this->getOption( 'extension' );
+		$convertSupplementaryI18nFiles = $this->hasOption( 'supplementary' );
+
+		if ( $extension ) {
+			if ( $phpfile ) {
+				$this->error( "The phpfile is already specified, conflicts with --extension.\n", 1 );
+			}
+			$phpfile = "$IP/extensions/$extension/$extension.i18n.php";
+		}
+
+		if ( !$phpfile ) {
+			$this->error( "I'm here for an argument!\n" );
+			$this->maybeHelp( true );
+			// dies.
+		}
+
+		if ( $convertSupplementaryI18nFiles ) {
+			if ( is_readable( $phpfile ) ) {
+				$this->transformI18nFile( $phpfile, $jsondir );
+			} else {
+				// This is non-fatal because we might want to continue searching for
+				// i18n files in subdirs even if the extension does not include a
+				// primary i18n.php.
+				$this->error( "Warning: no primary i18n file was found." );
+			}
+			$this->output( "Searching for supplementary i18n files...\n" );
+			$dir_iterator = new RecursiveDirectoryIterator( dirname( $phpfile ) );
+			$iterator = new RecursiveIteratorIterator(
+				$dir_iterator, RecursiveIteratorIterator::LEAVES_ONLY );
+			foreach ( $iterator as $path => $fileObject ) {
+				if ( fnmatch( "*.i18n.php", $fileObject->getFilename() ) ) {
+					$this->output( "Converting $path.\n" );
+					$this->transformI18nFile( $path );
+				}
+			}
+		} else {
+			// Just convert the primary i18n file.
+			$this->transformI18nFile( $phpfile, $jsondir );
+		}
+	}
+
+	public function transformI18nFile( $phpfile, $jsondir = null ) {
+		if ( !$jsondir ) {
+			// Assume the json directory should be in the same directory as the
+			// .i18n.php file.
+			$jsondir = dirname( $phpfile ) . "/i18n";
+		}
+		if ( !is_dir( $jsondir ) ) {
+			$this->output( "Creating directory $jsondir.\n" );
+			$success = mkdir( $jsondir );
+			if ( !$success ) {
+				$this->error( "Could not create directory $jsondir\n", 1 );
+			}
+		}
 
 		if ( $this->hasOption( 'shim-only' ) ) {
 			$this->shimOnly( $phpfile, $jsondir );
+
 			return;
 		}
 
@@ -184,6 +245,7 @@ PHP;
 		$jsondir = str_replace( '\\', '/', $jsondir );
 		$shim = str_replace( '{{OUT}}', $jsondir, $shim );
 		$shim = str_replace( '{{FUNC}}', 'wfJsonI18nShim' . wfRandomString( 16 ), $shim );
+
 		return $shim;
 	}
 
@@ -211,11 +273,12 @@ PHP;
 	/**
 	 * Get an array of author names from a documentation comment containing @author declarations.
 	 * @param string $comment Documentation comment
-	 * @return Array of author names (strings)
+	 * @return array Array of author names (strings)
 	 */
 	protected function getAuthorsFromComment( $comment ) {
 		$matches = null;
 		preg_match_all( '/@author (.*?)$/m', $comment, $matches );
+
 		return $matches && $matches[1] ? $matches[1] : array();
 	}
 }

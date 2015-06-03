@@ -13,6 +13,7 @@
 class HTMLSelectAndOtherField extends HTMLSelectField {
 	function __construct( $params ) {
 		if ( array_key_exists( 'other', $params ) ) {
+			// Do nothing
 		} elseif ( array_key_exists( 'other-message', $params ) ) {
 			$params['other'] = wfMessage( $params['other-message'] )->plain();
 		} else {
@@ -22,11 +23,12 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
 		parent::__construct( $params );
 
 		if ( $this->getOptions() === null ) {
-			# Sulk
+			// Sulk
 			throw new MWException( 'HTMLSelectAndOtherField called without any options' );
 		}
 		if ( !in_array( 'other', $this->mOptions, true ) ) {
-			$this->mOptions[$params['other']] = 'other';
+			// Have 'other' always as first element
+			$this->mOptions = array( $params['other'] => 'other' ) + $this->mOptions;
 		}
 		$this->mFlatOptions = self::flattenOptions( $this->getOptions() );
 
@@ -38,10 +40,12 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
 		$textAttribs = array(
 			'id' => $this->mID . '-other',
 			'size' => $this->getSize(),
+			'class' => array( 'mw-htmlform-select-and-other-field' ),
+			'data-id-select' => $this->mID,
 		);
 
 		if ( $this->mClass !== '' ) {
-			$textAttribs['class'] = $this->mClass;
+			$textAttribs['class'][] = $this->mClass;
 		}
 
 		$allowedParams = array(
@@ -49,7 +53,8 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
 			'autofocus',
 			'multiple',
 			'disabled',
-			'tabindex'
+			'tabindex',
+			'maxlength', // gets dynamic with javascript, see mediawiki.htmlform.js
 		);
 
 		$textAttribs += $this->getAttributes( $allowedParams );
@@ -60,9 +65,9 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
 	}
 
 	/**
-	 * @param $request WebRequest
+	 * @param WebRequest $request
 	 *
-	 * @return Array("<overall message>","<select value>","<text field value>")
+	 * @return array("<overall message>","<select value>","<text field value>")
 	 */
 	function loadDataFromRequest( $request ) {
 		if ( $request->getCheck( $this->mName ) ) {
@@ -70,6 +75,7 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
 			$list = $request->getText( $this->mName );
 			$text = $request->getText( $this->mName . '-other' );
 
+			// Should be built the same as in mediawiki.htmlform.js
 			if ( $list == 'other' ) {
 				$final = $text;
 			} elseif ( !in_array( $list, $this->mFlatOptions, true ) ) {

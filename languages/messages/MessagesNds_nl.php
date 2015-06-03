@@ -1,8 +1,7 @@
 <?php
 /** Low Saxon (Netherlands) (Nedersaksies)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -71,10 +70,9 @@ $dateFormats = array(
 );
 
 $bookstoreList = array(
-        'Koninklijke Bibliotheek' => 'http://opc4.kb.nl/DB=1/SET=5/TTL=1/CMD?ACT=SRCH&IKT=1007&SRT=RLV&TRM=$1'
+	'Koninklijke Bibliotheek' => 'http://opc4.kb.nl/DB=1/SET=5/TTL=1/CMD?ACT=SRCH&IKT=1007&SRT=RLV&TRM=$1'
 );
 
-#!!# Translation <b>HLEERSTE:</b> is used more than once for <a href="#mw-sp-magic-lcfirst">lcfirst</a> and <a href="#mw-sp-magic-ucfirst">ucfirst</a>.
 $magicWords = array(
 	'redirect'                  => array( '0', '#DEURVERWIEZING', '#DUURVERWIEZING', '#DOORVERWIJZING', '#REDIRECT' ),
 	'notoc'                     => array( '0', '__GIENONDERWARPEN__', '__GEENINHOUD__', '__NOTOC__' ),
@@ -110,7 +108,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'ANTALGEBRUKERS', 'AANTALGEBRUIKERS', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'ANTALAKTIEVEGEBRUKERS', 'AANTALACTIEVEGEBRUIKERS', 'ACTIEVEGEBRUIKERS', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'ANTALBEWARKINGEN', 'AANTALBEWERKINGEN', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'ANTALKERENBEKEKEN', 'AANTALKERENBEKEKEN', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'ZIEDNAAM', 'PAGINANAAM', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'ZIEDNAAME', 'PAGINANAAME', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'NAAMRUUMTE', 'NAAMRUIMTE', 'NAMESPACE' ),
@@ -272,6 +269,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Meeste_bewarkingen' ),
 	'Movepage'                  => array( 'Zied_herneumen' ),
 	'Mycontributions'           => array( 'Mien_biedragen' ),
+	'MyLanguage'                => array( 'Mien_taal' ),
 	'Mypage'                    => array( 'Mien_gebrukerszied' ),
 	'Mytalk'                    => array( 'Mien_overleg' ),
 	'Myuploads'                 => array( 'Mien_in-elaojen_bestaanden' ),

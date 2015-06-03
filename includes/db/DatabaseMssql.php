@@ -228,7 +228,7 @@ class DatabaseMssql extends DatabaseBase {
 
 				if ( $success ) {
 					$this->mAffectedRows = 0;
-					return true;
+					return $stmt;
 				}
 			}
 		}
@@ -340,6 +340,7 @@ class DatabaseMssql extends DatabaseBase {
 	}
 
 	/**
+	 * @param array $err
 	 * @return string
 	 */
 	private function formatError( $err ) {
@@ -379,6 +380,9 @@ class DatabaseMssql extends DatabaseBase {
 	 *   (optional) (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
 	 * @return mixed Database result resource (feed to Database::fetchObject
 	 *   or whatever), or false on failure
+	 * @throws DBQueryError
+	 * @throws DBUnexpectedError
+	 * @throws Exception
 	 */
 	public function select( $table, $vars, $conds = '', $fname = __METHOD__,
 		$options = array(), $join_conds = array()
@@ -414,10 +418,8 @@ class DatabaseMssql extends DatabaseBase {
 			}
 			$this->mScrollableCursor = true;
 			$this->mPrepareStatements = true;
-
 			return $ret;
 		}
-
 		return $this->query( $sql, $fname );
 	}
 
@@ -516,7 +518,7 @@ class DatabaseMssql extends DatabaseBase {
 			$row = $this->fetchRow( $res );
 
 			if ( isset( $row['EstimateRows'] ) ) {
-				$rows = $row['EstimateRows'];
+				$rows = (int)$row['EstimateRows'];
 			}
 		}
 
@@ -575,8 +577,8 @@ class DatabaseMssql extends DatabaseBase {
 	 * @param array $arrToInsert
 	 * @param string $fname
 	 * @param array $options
-	 * @throws DBQueryError
 	 * @return bool
+	 * @throws Exception
 	 */
 	public function insert( $table, $arrToInsert, $fname = __METHOD__, $options = array() ) {
 		# No rows to insert, easy just return now
@@ -613,6 +615,13 @@ class DatabaseMssql extends DatabaseBase {
 		// Determine binary/varbinary fields so we can encode data as a hex string like 0xABCDEF
 		$binaryColumns = $this->getBinaryColumns( $table );
 
+		// INSERT IGNORE is not supported by SQL Server
+		// remove IGNORE from options list and set ignore flag to true
+		if ( in_array( 'IGNORE', $options ) ) {
+			$options = array_diff( $options, array( 'IGNORE' ) );
+			$this->mIgnoreDupKeyErrors = true;
+		}
+
 		foreach ( $arrToInsert as $a ) {
 			// start out with empty identity column, this is so we can return
 			// it as a result of the insert logic
@@ -643,14 +652,6 @@ class DatabaseMssql extends DatabaseBase {
 			}
 
 			$keys = array_keys( $a );
-
-			// INSERT IGNORE is not supported by SQL Server
-			// remove IGNORE from options list and set ignore flag to true
-			$ignoreClause = false;
-			if ( in_array( 'IGNORE', $options ) ) {
-				$options = array_diff( $options, array( 'IGNORE' ) );
-				$this->mIgnoreDupKeyErrors = true;
-			}
 
 			// Build the actual query
 			$sql = $sqlPre . 'INSERT ' . implode( ' ', $options ) .
@@ -690,15 +691,16 @@ class DatabaseMssql extends DatabaseBase {
 				throw $e;
 			}
 			$this->mScrollableCursor = true;
-			$this->mIgnoreDupKeyErrors = false;
 
 			if ( !is_null( $identity ) ) {
 				// then we want to get the identity column value we were assigned and save it off
 				$row = $ret->fetchObject();
-				$this->mInsertId = $row->$identity;
+				if ( is_object( $row ) ) {
+					$this->mInsertId = $row->$identity;
+				}
 			}
 		}
-
+		$this->mIgnoreDupKeyErrors = false;
 		return $ret;
 	}
 
@@ -714,8 +716,8 @@ class DatabaseMssql extends DatabaseBase {
 	 * @param string $fname
 	 * @param array $insertOptions
 	 * @param array $selectOptions
-	 * @throws DBQueryError
 	 * @return null|ResultWrapper
+	 * @throws Exception
 	 */
 	public function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = __METHOD__,
 		$insertOptions = array(), $selectOptions = array()
@@ -743,7 +745,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * UPDATE wrapper. Takes a condition array and a SET array.
 	 *
-	 * @param string $table name of the table to UPDATE. This will be passed through
+	 * @param string $table Name of the table to UPDATE. This will be passed through
 	 *                DatabaseBase::tableName().
 	 *
 	 * @param array $values An array of values to SET. For each array element,
@@ -762,6 +764,9 @@ class DatabaseMssql extends DatabaseBase {
 	 *                   - IGNORE: Ignore unique key conflicts
 	 *                   - LOW_PRIORITY: MySQL-specific, see MySQL manual.
 	 * @return bool
+	 * @throws DBUnexpectedError
+	 * @throws Exception
+	 * @throws MWException
 	 */
 	function update( $table, $values, $conds, $fname = __METHOD__, $options = array() ) {
 		$table = $this->tableName( $table );
@@ -787,7 +792,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Makes an encoded list of strings from an array
-	 * @param array $a containing the data
+	 * @param array $a Containing the data
 	 * @param int $mode Constant
 	 *      - LIST_COMMA:          comma separated, no field names
 	 *      - LIST_AND:            ANDed WHERE clause (without the WHERE). See
@@ -807,64 +812,27 @@ class DatabaseMssql extends DatabaseBase {
 				'DatabaseBase::makeList called with incorrect parameters' );
 		}
 
-		$first = true;
-		$list = '';
+		if ( $mode != LIST_NAMES ) {
+			// In MS SQL, values need to be specially encoded when they are
+			// inserted into binary fields. Perform this necessary encoding
+			// for the specified set of columns.
+			foreach ( array_keys( $a ) as $field ) {
+				if ( !isset( $binaryColumns[$field] ) ) {
+					continue;
+				}
 
-		foreach ( $a as $field => $value ) {
-			if ( $mode != LIST_NAMES && isset( $binaryColumns[$field] ) ) {
-				if ( is_array( $value ) ) {
-					foreach ( $value as &$v ) {
+				if ( is_array( $a[$field] ) ) {
+					foreach ( $a[$field] as &$v ) {
 						$v = new MssqlBlob( $v );
 					}
+					unset( $v );
 				} else {
-					$value = new MssqlBlob( $value );
+					$a[$field] = new MssqlBlob( $a[$field] );
 				}
-			}
-
-			if ( !$first ) {
-				if ( $mode == LIST_AND ) {
-					$list .= ' AND ';
-				} elseif ( $mode == LIST_OR ) {
-					$list .= ' OR ';
-				} else {
-					$list .= ',';
-				}
-			} else {
-				$first = false;
-			}
-
-			if ( ( $mode == LIST_AND || $mode == LIST_OR ) && is_numeric( $field ) ) {
-				$list .= "($value)";
-			} elseif ( ( $mode == LIST_SET ) && is_numeric( $field ) ) {
-				$list .= "$value";
-			} elseif ( ( $mode == LIST_AND || $mode == LIST_OR ) && is_array( $value ) ) {
-				if ( count( $value ) == 0 ) {
-					throw new MWException( __METHOD__ . ": empty input for field $field" );
-				} elseif ( count( $value ) == 1 ) {
-					// Special-case single values, as IN isn't terribly efficient
-					// Don't necessarily assume the single key is 0; we don't
-					// enforce linear numeric ordering on other arrays here.
-					$value = array_values( $value );
-					$list .= $field . " = " . $this->addQuotes( $value[0] );
-				} else {
-					$list .= $field . " IN (" . $this->makeList( $value ) . ") ";
-				}
-			} elseif ( $value === null ) {
-				if ( $mode == LIST_AND || $mode == LIST_OR ) {
-					$list .= "$field IS ";
-				} elseif ( $mode == LIST_SET ) {
-					$list .= "$field = ";
-				}
-				$list .= 'NULL';
-			} else {
-				if ( $mode == LIST_AND || $mode == LIST_OR || $mode == LIST_SET ) {
-					$list .= "$field = ";
-				}
-				$list .= $mode == LIST_NAMES ? $value : $this->addQuotes( $value );
 			}
 		}
 
-		return $list;
+		return parent::makeList( $a, $mode );
 	}
 
 	/**
@@ -894,6 +862,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * @param int $limit The SQL limit
 	 * @param bool|int $offset The SQL offset (default false)
 	 * @return array|string
+	 * @throws DBUnexpectedError
 	 */
 	public function limitResult( $sql, $limit, $offset = false ) {
 		if ( $offset === false || $offset == 0 ) {
@@ -920,7 +889,7 @@ class DatabaseMssql extends DatabaseBase {
 			}
 			if ( !$s2 ) {
 				// no ORDER BY
-				$overOrder = 'ORDER BY 1';
+				$overOrder = 'ORDER BY (SELECT 1)';
 			} else {
 				if ( !isset( $orderby[2] ) || !$orderby[2] ) {
 					// don't need to strip it out if we're using a FOR XML clause
@@ -954,12 +923,8 @@ class DatabaseMssql extends DatabaseBase {
 		// Matches: LIMIT {[offset,] row_count | row_count OFFSET offset}
 		$pattern = '/\bLIMIT\s+((([0-9]+)\s*,\s*)?([0-9]+)(\s+OFFSET\s+([0-9]+))?)/i';
 		if ( preg_match( $pattern, $sql, $matches ) ) {
-			// row_count = $matches[4]
 			$row_count = $matches[4];
-			// offset = $matches[3] OR $matches[6]
-			$offset = $matches[3] or
-			$offset = $matches[6] or
-			$offset = false;
+			$offset = $matches[3] ?: $matches[6] ?: false;
 
 			// strip the matching LIMIT clause out
 			$sql = str_replace( $matches[0], '', $sql );
@@ -1002,6 +967,11 @@ class DatabaseMssql extends DatabaseBase {
 			// remote database
 			wfDebug( "Attempting to call tableExists on a remote table" );
 			return false;
+		}
+
+		if ( $schema === false ) {
+			global $wgDBmwschema;
+			$schema = $wgDBmwschema;
 		}
 
 		$res = $this->query( "SELECT 1 FROM INFORMATION_SCHEMA.TABLES
@@ -1063,6 +1033,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Begin a transaction, committing any previously open transaction
+	 * @param string $fname
 	 */
 	protected function doBegin( $fname = __METHOD__ ) {
 		sqlsrv_begin_transaction( $this->mConn );
@@ -1071,6 +1042,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * End a transaction
+	 * @param string $fname
 	 */
 	protected function doCommit( $fname = __METHOD__ ) {
 		sqlsrv_commit( $this->mConn );
@@ -1080,6 +1052,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * Rollback a transaction.
 	 * No-op on non-transactional databases.
+	 * @param string $fname
 	 */
 	protected function doRollback( $fname = __METHOD__ ) {
 		sqlsrv_rollback( $this->mConn );
@@ -1121,7 +1094,7 @@ class DatabaseMssql extends DatabaseBase {
 	}
 
 	/**
-	 * @param string $s
+	 * @param string|Blob $s
 	 * @return string
 	 */
 	public function addQuotes( $s ) {
@@ -1172,7 +1145,7 @@ class DatabaseMssql extends DatabaseBase {
 	}
 
 	/**
-	 * @param array $options an associative array of options to be turned into
+	 * @param array $options An associative array of options to be turned into
 	 *   an SQL query, valid keys are listed in the function.
 	 * @return array
 	 */
@@ -1234,7 +1207,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * @param string $field Field name
 	 * @param string|array $conds Conditions
 	 * @param string|array $join_conds Join conditions
-	 * @return String SQL text
+	 * @return string SQL text
 	 * @since 1.23
 	 */
 	public function buildGroupConcatField( $delim, $table, $field, $conds = '',
@@ -1295,9 +1268,6 @@ class DatabaseMssql extends DatabaseBase {
 			: array();
 	}
 
-	/**
-	 * @void
-	 */
 	private function populateColumnCaches() {
 		$res = $this->select( 'INFORMATION_SCHEMA.COLUMNS', '*',
 			array(
@@ -1344,7 +1314,7 @@ class DatabaseMssql extends DatabaseBase {
 			// Used internally, we want the schema split off from the table name and returned
 			// as a list with 3 elements (database, schema, table)
 			$table = explode( '.', $table );
-			if ( count( $table ) == 2 ) {
+			while ( count( $table ) < 3 ) {
 				array_unshift( $table, false );
 			}
 		}

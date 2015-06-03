@@ -12,7 +12,8 @@ class HTMLSelectOrOtherField extends HTMLTextField {
 				isset( $params['other'] )
 					? $params['other']
 					: wfMessage( 'htmlform-selectorother-other' )->text();
-			$this->mOptions[$msg] = 'other';
+			// Have 'other' always as first element
+			$this->mOptions = array( $msg => 'other' ) + $this->mOptions;
 		}
 
 	}
@@ -62,9 +63,9 @@ class HTMLSelectOrOtherField extends HTMLTextField {
 	}
 
 	/**
-	 * @param $request WebRequest
+	 * @param WebRequest $request
 	 *
-	 * @return String
+	 * @return string
 	 */
 	function loadDataFromRequest( $request ) {
 		if ( $request->getCheck( $this->mName ) ) {

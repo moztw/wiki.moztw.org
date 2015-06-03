@@ -1,8 +1,7 @@
 <?php
 /** Serbian (Latin script) (srpski (latinica)‎)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -195,11 +194,11 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'BROJKORISNIKA', 'BROJ_KORISNIKA', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'BROJAKTIVNIHKORISNIKA', 'BROJ_AKTIVNIH_KORISNIKA', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'BROJIZMENA', 'BROJ_IZMENA', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'BROJPREGLEDA', 'BROJ_PREGLEDA', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'IMESTRANICE', 'IME_STRANICE', 'STRANICA', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'IMENASTRANICA', 'IMENA_STRANICA', 'STRANICE', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'IMENSKIPROSTOR', 'IMENSKI_PROSTOR', 'NAMESPACE' ),
 	'namespacee'                => array( '1', 'IMENSKIPROSTORI', 'IMENSKI_PROSTORI', 'NAMESPACEE' ),
+	'namespacenumber'           => array( '1', 'BROJIMENSKOGPROSTORA', 'NAMESPACENUMBER' ),
 	'talkspace'                 => array( '1', 'RAZGOVOR', 'TALKSPACE' ),
 	'talkspacee'                => array( '1', 'RAZGOVORI', 'TALKSPACEE' ),
 	'subjectspace'              => array( '1', 'IMENSKIPROSTORČLANKA', 'IMENSKI_PROSTOR_ČLANKA', 'SUBJECTSPACE', 'ARTICLESPACE' ),

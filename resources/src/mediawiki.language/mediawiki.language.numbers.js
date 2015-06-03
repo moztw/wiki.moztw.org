@@ -34,7 +34,7 @@
 	}
 
 	/**
-	 * Efficiently replicate a string `n` times.
+	 * Replicate a string 'n' times.
 	 *
 	 * @private
 	 * @param {string} str The string to replicate
@@ -47,9 +47,8 @@
 		}
 
 		var buf = [];
-		while (num) {
+		while ( num-- ) {
 			buf.push( str );
-			str += str;
 		}
 		return buf.join( '' );
 	}
@@ -103,7 +102,7 @@
 
 			// Truncate fractional
 			if ( maxPlaces < fractional.length ) {
-				valueParts[1] = fractional.substr( 0, maxPlaces );
+				valueParts[1] = fractional.slice( 0, maxPlaces );
 			}
 		} else {
 			if ( valueParts[1] ) {
@@ -125,7 +124,7 @@
 
 			// Truncate whole
 			if ( patternDigits.indexOf( '#' ) === -1 ) {
-				valueParts[0] = valueParts[0].substr( valueParts[0].length - padLength );
+				valueParts[0] = valueParts[0].slice( valueParts[0].length - padLength );
 			}
 		}
 
@@ -134,7 +133,7 @@
 
 		if ( index !== -1 ) {
 			groupSize = patternParts[0].length - index - 1;
-			remainder = patternParts[0].substr( 0, index );
+			remainder = patternParts[0].slice( 0, index );
 			index = remainder.lastIndexOf( ',' );
 			if ( index !== -1 ) {
 				groupSize2 = remainder.length - index - 1;
@@ -142,13 +141,13 @@
 		}
 
 		for ( whole = valueParts[0]; whole; ) {
-			off = whole.length - groupSize;
-
-			pieces.push( ( off > 0 ) ? whole.substr( off ) : whole );
+			off = groupSize ? whole.length - groupSize : 0;
+			pieces.push( ( off > 0 ) ? whole.slice( off ) : whole );
 			whole = ( off > 0 ) ? whole.slice( 0, off ) : '';
 
 			if ( groupSize2 ) {
 				groupSize = groupSize2;
+				groupSize2 = null;
 			}
 		}
 		valueParts[0] = pieces.reverse().join( options.group );
@@ -188,8 +187,12 @@
 					tmp[ transformTable[ i ] ] = i;
 				}
 				transformTable = tmp;
-				numberString = num + '';
+				numberString = String( num );
 			} else {
+				// Ignore transform table if wgTranslateNumerals is false
+				if ( !mw.config.get( 'wgTranslateNumerals' ) ) {
+					transformTable = [];
+				}
 				numberString = mw.language.commafy( num, pattern );
 			}
 

@@ -34,37 +34,30 @@ class SearchPostgres extends SearchDatabase {
 	 * Currently searches a page's current title (page.page_title) and
 	 * latest revision article text (pagecontent.old_text)
 	 *
-	 * @param string $term raw search term
-	 * @return PostgresSearchResultSet
+	 * @param string $term Raw search term
+	 * @return SqlSearchResultSet
 	 */
 	function searchTitle( $term ) {
 		$q = $this->searchQuery( $term, 'titlevector', 'page_title' );
 		$olderror = error_reporting( E_ERROR );
-		$resultSet = $this->db->resultObject( $this->db->query( $q, 'SearchPostgres', true ) );
+		$resultSet = $this->db->query( $q, 'SearchPostgres', true );
 		error_reporting( $olderror );
-		if ( !$resultSet ) {
-			// Needed for "Query requires full scan, GIN doesn't support it"
-			return new SearchResultTooMany();
-		}
-		return new PostgresSearchResultSet( $resultSet, $this->searchTerms );
+		return new SqlSearchResultSet( $resultSet, $this->searchTerms );
 	}
 
 	function searchText( $term ) {
 		$q = $this->searchQuery( $term, 'textvector', 'old_text' );
 		$olderror = error_reporting( E_ERROR );
-		$resultSet = $this->db->resultObject( $this->db->query( $q, 'SearchPostgres', true ) );
+		$resultSet = $this->db->query( $q, 'SearchPostgres', true );
 		error_reporting( $olderror );
-		if ( !$resultSet ) {
-			return new SearchResultTooMany();
-		}
-		return new PostgresSearchResultSet( $resultSet, $this->searchTerms );
+		return new SqlSearchResultSet( $resultSet, $this->searchTerms );
 	}
 
 	/**
 	 * Transform the user's search string into a better form for tsearch2
 	 * Returns an SQL fragment consisting of quoted text to search for.
 	 *
-	 * @param $term string
+	 * @param string $term
 	 *
 	 * @return string
 	 */
@@ -92,7 +85,7 @@ class SearchPostgres extends SearchDatabase {
 				if ( strtolower( $terms[2] ) === 'and' ) {
 					$searchstring .= ' & ';
 				}
-				elseif ( strtolower( $terms[2] ) === 'or' or $terms[2] === '|' ) {
+				elseif ( strtolower( $terms[2] ) === 'or' || $terms[2] === '|' ) {
 					$searchstring .= ' | ';
 				}
 				elseif ( strtolower( $terms[2] ) === 'not' ) {
@@ -130,9 +123,9 @@ class SearchPostgres extends SearchDatabase {
 
 	/**
 	 * Construct the full SQL query to do the search.
-	 * @param $term String
-	 * @param $fulltext String
-	 * @param $colname
+	 * @param string $term
+	 * @param string $fulltext
+	 * @param string $colname
 	 * @return string
 	 */
 	function searchQuery( $term, $fulltext, $colname ) {
@@ -149,6 +142,7 @@ class SearchPostgres extends SearchDatabase {
 		$top = $res->fetchRow();
 		$top = $top[0];
 
+		$this->searchTerms = array();
 		if ( $top === "" ) { ## e.g. if only stopwords are used XXX return something better
 			$query = "SELECT page_id, page_namespace, page_title, 0 AS score " .
 				"FROM page p, revision r, pagecontent c WHERE p.page_latest = r.rev_id " .
@@ -191,7 +185,7 @@ class SearchPostgres extends SearchDatabase {
 
 	function update( $pageid, $title, $text ) {
 		## We don't want to index older revisions
-		$sql = "UPDATE pagecontent SET textvector = NULL WHERE old_id IN " .
+		$sql = "UPDATE pagecontent SET textvector = NULL WHERE textvector IS NOT NULL and old_id IN " .
 				"(SELECT rev_text_id FROM revision WHERE rev_page = " . intval( $pageid ) .
 				" ORDER BY rev_text_id DESC OFFSET 1)";
 		$this->db->query( $sql );
@@ -202,36 +196,4 @@ class SearchPostgres extends SearchDatabase {
 		return true;
 	}
 
-} ## end of the SearchPostgres class
-
-/**
- * @ingroup Search
- */
-class PostgresSearchResult extends SearchResult {
-	function __construct( $row ) {
-		parent::__construct( $row );
-		$this->score = $row->score;
-	}
-
-	function getScore() {
-		return $this->score;
-	}
-}
-
-/**
- * @ingroup Search
- */
-class PostgresSearchResultSet extends SqlSearchResultSet {
-	function __construct( $resultSet, $terms ) {
-		parent::__construct( $resultSet, $terms );
-	}
-
-	function next() {
-		$row = $this->mResultSet->fetchObject();
-		if ( $row === false ) {
-			return false;
-		} else {
-			return new PostgresSearchResult( $row );
-		}
-	}
 }

@@ -1,17 +1,8 @@
 /**
- * Utility to stack stuff in an overlay fixed on the bottom of the page.
- *
- * Usage:
- * <code>
- *     var hovzer = $.getFootHovzer();
- *     hovzer.$.append( $myCollection );
- *     hovzer.update();
- * </code>
- *
- * @author Timo Tijhof, 2012
+ * @class jQuery.plugin.footHovzer
  */
 ( function ( $ ) {
-	var $hovzer, footHovzer, prevHeight, newHeight;
+	var $hovzer, footHovzer, $spacer;
 
 	function getHovzer() {
 		if ( $hovzer === undefined ) {
@@ -20,26 +11,56 @@
 		return $hovzer;
 	}
 
-	footHovzer = {
-		update: function () {
-			var $body;
-
-			$body = $( 'body' );
-			if ( prevHeight === undefined ) {
-				prevHeight = getHovzer().outerHeight( /*includeMargin=*/true );
-				$body.css( 'paddingBottom', '+=' + prevHeight + 'px' );
-			} else {
-				newHeight = getHovzer().outerHeight( true );
-				$body.css( 'paddingBottom', ( parseFloat( $body.css( 'paddingBottom' ) ) - prevHeight ) + newHeight );
-
-				prevHeight = newHeight;
-			}
-		}
-	};
-
+	/**
+	 * Utility to stack stuff in an overlay fixed on the bottom of the page.
+	 *
+	 * Usage:
+	 *
+	 *     var hovzer = $.getFootHovzer();
+	 *     hovzer.$.append( $myCollection );
+	 *     hovzer.update();
+	 *
+	 * @static
+	 * @inheritable
+	 * @return {jQuery.footHovzer}
+	 */
 	$.getFootHovzer = function () {
 		footHovzer.$ = getHovzer();
 		return footHovzer;
 	};
+
+	/**
+	 * @private
+	 * @class jQuery.footHovzer
+	 */
+	footHovzer = {
+
+		/**
+		 * @property {jQuery} $ The stack container
+		 */
+
+		/**
+		 * Update dimensions of stack to account for changes in the subtree.
+		 */
+		update: function () {
+			var $body;
+
+			$body = $( 'body' );
+
+			if ( $spacer === undefined ) {
+				$spacer = $( '<div>' ).attr( 'id', 'jquery-foot-hovzer-spacer' );
+				$spacer.appendTo( $body );
+			}
+			// Ensure CSS is applied by browser before using .outerHeight()
+			setTimeout( function () {
+				$spacer.css( 'height', getHovzer().outerHeight( /* includeMargin = */ true ) );
+			}, 0 );
+		}
+	};
+
+	/**
+	 * @class jQuery
+	 * @mixins jQuery.plugin.footHovzer
+	 */
 
 }( jQuery ) );

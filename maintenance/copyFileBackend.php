@@ -35,7 +35,7 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class CopyFileBackend extends Maintenance {
-	/** @var Array|null (path sha1 => stat) Pre-computed dst stat entries from listings */
+	/** @var array|null (path sha1 => stat) Pre-computed dst stat entries from listings */
 	protected $statCache = null;
 
 	public function __construct() {
@@ -373,6 +373,7 @@ class CopyFileBackend extends Maintenance {
 			$same = ( $src->getFileSha1Base36( array( 'src' => $sPath, 'latest' => 1 ) )
 				=== $dst->getFileSha1Base36( array( 'src' => $dPath, 'latest' => 1 ) ) );
 		}
+
 		return $same;
 	}
 }

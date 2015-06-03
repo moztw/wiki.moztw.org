@@ -1,8 +1,7 @@
 <?php
 /** Norwegian Bokmål (norsk bokmål)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -101,6 +100,7 @@ $dateFormats = array(
 $specialPageAliases = array(
 	'Activeusers'               => array( 'Aktive_brukere' ),
 	'Allmessages'               => array( 'Alle_systembeskjeder' ),
+	'AllMyUploads'              => array( 'Alle_mine_opplastinger' ),
 	'Allpages'                  => array( 'Alle_sider' ),
 	'Ancientpages'              => array( 'Gamle_sider' ),
 	'Badtitle'                  => array( 'Ugyldig_tittel' ),
@@ -127,6 +127,7 @@ $specialPageAliases = array(
 	'Filepath'                  => array( 'Filsti' ),
 	'Import'                    => array( 'Importer' ),
 	'Invalidateemail'           => array( 'Ugyldiggjøre_e-post' ),
+	'JavaScriptTest'            => array( 'Javascript-test' ),
 	'BlockList'                 => array( 'Blokkeringsliste', 'IP-blokkeringsliste' ),
 	'LinkSearch'                => array( 'Lenkesøk' ),
 	'Listadmins'                => array( 'Administratorliste', 'Administratorer' ),
@@ -143,17 +144,20 @@ $specialPageAliases = array(
 	'MIMEsearch'                => array( 'MIME-søk' ),
 	'Mostcategories'            => array( 'Flest_kategorier' ),
 	'Mostimages'                => array( 'Mest_lenkede_filer', 'Flest_filer', 'Flest_bilder' ),
+	'Mostinterwikis'            => array( 'Flest_interrwikilenker' ),
 	'Mostlinked'                => array( 'Mest_lenkede_sider', 'Mest_lenket' ),
 	'Mostlinkedcategories'      => array( 'Mest_lenkede_kategorier', 'Mest_brukte_kategorier' ),
 	'Mostlinkedtemplates'       => array( 'Mest_lenkede_maler', 'Mest_brukte_maler' ),
 	'Mostrevisions'             => array( 'Flest_revisjoner' ),
 	'Movepage'                  => array( 'Flytt_side' ),
 	'Mycontributions'           => array( 'Mine_bidrag' ),
+	'MyLanguage'                => array( 'Mitt_språk' ),
 	'Mypage'                    => array( 'Min_side' ),
 	'Mytalk'                    => array( 'Min_diskusjon' ),
 	'Myuploads'                 => array( 'Mine_opplastinger' ),
 	'Newimages'                 => array( 'Nye_filer', 'Nye_bilder' ),
 	'Newpages'                  => array( 'Nye_sider' ),
+	'PagesWithProp'             => array( 'Sider_med_egenskap' ),
 	'PasswordReset'             => array( 'Nullstill_passord' ),
 	'PermanentLink'             => array( 'Permanent_lenke' ),
 	'Popularpages'              => array( 'Populære_sider' ),
@@ -166,6 +170,7 @@ $specialPageAliases = array(
 	'Randomredirect'            => array( 'Tilfeldig_omdirigering' ),
 	'Recentchanges'             => array( 'Siste_endringer' ),
 	'Recentchangeslinked'       => array( 'Relaterte_endringer' ),
+	'Redirect'                  => array( 'Omdirigering' ),
 	'Revisiondelete'            => array( 'Revisjonssletting' ),
 	'Search'                    => array( 'Søk' ),
 	'Shortpages'                => array( 'Korte_sider' ),
@@ -232,7 +237,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'ANTALLBRUKERE', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'ANTALLAKTIVEBRUKERE', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'ANTALLREDIGERINGER', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'ANTALLVISNINGER', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'SIDENAVN', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'SIDENAVNE', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'NAVNEROM', 'NAMESPACE' ),

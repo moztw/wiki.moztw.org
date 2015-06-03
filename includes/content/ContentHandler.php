@@ -201,7 +201,7 @@ abstract class ContentHandler {
 		$model = MWNamespace::getNamespaceContentModel( $ns );
 
 		// Hook can determine default model
-		if ( !wfRunHooks( 'ContentHandlerDefaultModelFor', array( $title, &$model ) ) ) {
+		if ( !Hooks::run( 'ContentHandlerDefaultModelFor', array( $title, &$model ) ) ) {
 			if ( !is_null( $model ) ) {
 				return $model;
 			}
@@ -214,7 +214,7 @@ abstract class ContentHandler {
 		}
 
 		// Hook can force JS/CSS
-		wfRunHooks( 'TitleIsCssOrJsPage', array( $title, &$isCssOrJsPage ) );
+		Hooks::run( 'TitleIsCssOrJsPage', array( $title, &$isCssOrJsPage ), '1.25' );
 
 		// Is this a .css subpage of a user page?
 		$isJsCssSubpage = NS_USER == $ns
@@ -229,7 +229,7 @@ abstract class ContentHandler {
 		$isWikitext = $isWikitext && !$isCssOrJsPage && !$isJsCssSubpage;
 
 		// Hook can override $isWikitext
-		wfRunHooks( 'TitleIsWikitextPage', array( $title, &$isWikitext ) );
+		Hooks::run( 'TitleIsWikitextPage', array( $title, &$isWikitext ), '1.25' );
 
 		if ( !$isWikitext ) {
 			switch ( $ext ) {
@@ -318,7 +318,7 @@ abstract class ContentHandler {
 		if ( empty( $wgContentHandlers[$modelId] ) ) {
 			$handler = null;
 
-			wfRunHooks( 'ContentHandlerForModelID', array( $modelId, &$handler ) );
+			Hooks::run( 'ContentHandlerForModelID', array( $modelId, &$handler ) );
 
 			if ( $handler === null ) {
 				throw new MWException( "No handler for model '$modelId' registered in \$wgContentHandlers" );
@@ -431,6 +431,20 @@ abstract class ContentHandler {
 	abstract public function serializeContent( Content $content, $format = null );
 
 	/**
+	 * Applies transformations on export (returns the blob unchanged per default).
+	 * Subclasses may override this to perform transformations such as conversion
+	 * of legacy formats or filtering of internal meta-data.
+	 *
+	 * @param string $blob The blob to be exported
+	 * @param string|null $format The blob's serialization format
+	 *
+	 * @return string
+	 */
+	public function exportTransform( $blob, $format = null ) {
+		return $blob;
+	}
+
+	/**
 	 * Unserializes a Content object of the type supported by this ContentHandler.
 	 *
 	 * @since 1.21
@@ -441,6 +455,21 @@ abstract class ContentHandler {
 	 * @return Content The Content object created by deserializing $blob
 	 */
 	abstract public function unserializeContent( $blob, $format = null );
+
+	/**
+	 * Apply import transformation (per default, returns $blob unchanged).
+	 * This gives subclasses an opportunity to transform data blobs on import.
+	 *
+	 * @since 1.24
+	 *
+	 * @param string $blob
+	 * @param string|null $format
+	 *
+	 * @return string
+	 */
+	public function importTransform( $blob, $format = null ) {
+		return $blob;
+	}
 
 	/**
 	 * Creates an empty Content object of the type supported by this
@@ -454,7 +483,7 @@ abstract class ContentHandler {
 
 	/**
 	 * Creates a new Content object that acts as a redirect to the given page,
-	 * or null of redirects are not supported by this content model.
+	 * or null if redirects are not supported by this content model.
 	 *
 	 * This default implementation always returns null. Subclasses supporting redirects
 	 * must override this method.
@@ -597,8 +626,15 @@ abstract class ContentHandler {
 	public function createDifferenceEngine( IContextSource $context, $old = 0, $new = 0,
 		$rcid = 0, //FIXME: Deprecated, no longer used
 		$refreshCache = false, $unhide = false ) {
-		$diffEngineClass = $this->getDiffEngineClass();
 
+		// hook: get difference engine
+		$differenceEngine = null;
+		if ( !wfRunHooks( 'GetDifferenceEngine',
+			array( $context, $old, $new, $refreshCache, $unhide, &$differenceEngine )
+		) ) {
+			return $differenceEngine;
+		}
+		$diffEngineClass = $this->getDiffEngineClass();
 		return new $diffEngineClass( $context, $old, $new, $rcid, $refreshCache, $unhide );
 	}
 
@@ -631,7 +667,7 @@ abstract class ContentHandler {
 			$pageLang = wfGetLangObj( $lang );
 		}
 
-		wfRunHooks( 'PageContentLanguage', array( $title, &$pageLang, $wgLang ) );
+		Hooks::run( 'PageContentLanguage', array( $title, &$pageLang, $wgLang ) );
 
 		return wfGetLangObj( $pageLang );
 	}
@@ -680,7 +716,7 @@ abstract class ContentHandler {
 	 * typically based on the namespace or some other aspect of the title, such as a special suffix
 	 * (e.g. ".svg" for SVG content).
 	 *
-	 * @note: this calls the ContentHandlerCanBeUsedOn hook which may be used to override which
+	 * @note this calls the ContentHandlerCanBeUsedOn hook which may be used to override which
 	 * content model can be used where.
 	 *
 	 * @param Title $title The page's title.
@@ -690,7 +726,7 @@ abstract class ContentHandler {
 	public function canBeUsedOn( Title $title ) {
 		$ok = true;
 
-		wfRunHooks( 'ContentModelCanBeUsedOn', array( $this->getModelID(), $title, &$ok ) );
+		Hooks::run( 'ContentModelCanBeUsedOn', array( $this->getModelID(), $title, &$ok ) );
 
 		return $ok;
 	}
@@ -714,9 +750,9 @@ abstract class ContentHandler {
 	 *
 	 * @since 1.21
 	 *
-	 * @param Content|string $oldContent The page's previous content.
-	 * @param Content|string $myContent One of the page's conflicting contents.
-	 * @param Content|string $yourContent One of the page's conflicting contents.
+	 * @param Content $oldContent The page's previous content.
+	 * @param Content $myContent One of the page's conflicting contents.
+	 * @param Content $yourContent One of the page's conflicting contents.
 	 *
 	 * @return Content|bool Always false.
 	 */
@@ -792,6 +828,11 @@ abstract class ContentHandler {
 				->inContentLanguage()->text();
 		}
 
+		// New blank article auto-summary
+		if ( $flags & EDIT_NEW && $newContent->isEmpty() ) {
+			return wfMessage( 'autosumm-newblank' )->inContentLanguage()->text();
+		}
+
 		// If we reach this point, there's no applicable auto-summary for our
 		// case, so our auto-summary is empty.
 		return '';
@@ -808,7 +849,7 @@ abstract class ContentHandler {
 	 * @return mixed String containing deletion reason or empty string, or
 	 *    boolean false if no revision occurred
 	 *
-	 * @XXX &$hasHistory is extremely ugly, it's here because
+	 * @todo &$hasHistory is extremely ugly, it's here because
 	 * WikiPage::getAutoDeleteReason() and Article::generateReason()
 	 * have it / want it.
 	 */
@@ -1117,7 +1158,7 @@ abstract class ContentHandler {
 		}
 
 		// call the hook functions
-		$ok = wfRunHooks( $event, $args );
+		$ok = Hooks::run( $event, $args );
 
 		// see if the hook changed the text
 		foreach ( $contentTexts as $k => $orig ) {

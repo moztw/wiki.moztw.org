@@ -1,8 +1,7 @@
 <?php
 /** буряад (буряад)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -56,6 +55,7 @@ $specialPageAliases = array(
 	'ComparePages'              => array( 'Хуудаһа_харисуулха' ),
 	'Confirmemail'              => array( 'Сахим_хаяг_баталха' ),
 	'CreateAccount'             => array( 'Данса_үүсхэхэ' ),
+	'MyLanguage'                => array( 'Минии_хэлэн' ),
 	'Mypage'                    => array( 'Минии_хуудаһан' ),
 	'Mytalk'                    => array( 'Минии_хэлэлсэл' ),
 	'Myuploads'                 => array( 'Минии_ашаалһан_зүйл' ),

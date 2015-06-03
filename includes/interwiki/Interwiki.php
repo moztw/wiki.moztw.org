@@ -19,6 +19,8 @@
  *
  * @file
  */
+use \Cdb\Exception as CdbException;
+use \Cdb\Reader as CdbReader;
 
 /**
  * The interwiki class
@@ -45,7 +47,7 @@ class Interwiki {
 	 */
 	protected $mWikiID;
 
-	/** @var bool whether the wiki is in this project */
+	/** @var bool Whether the wiki is in this project */
 	protected $mLocal;
 
 	/** @var bool Whether interwiki transclusions are allowed */
@@ -118,7 +120,7 @@ class Interwiki {
 	 * @note More logic is explained in DefaultSettings.
 	 *
 	 * @param string $prefix Interwiki prefix
-	 * @return Interwiki object
+	 * @return Interwiki
 	 */
 	protected static function getInterwikiCached( $prefix ) {
 		$value = self::getInterwikiCacheEntry( $prefix );
@@ -192,7 +194,7 @@ class Interwiki {
 		global $wgMemc, $wgInterwikiExpiry;
 
 		$iwData = array();
-		if ( !wfRunHooks( 'InterwikiLoadPrefix', array( $prefix, &$iwData ) ) ) {
+		if ( !Hooks::run( 'InterwikiLoadPrefix', array( $prefix, &$iwData ) ) ) {
 			return Interwiki::loadFromArray( $iwData );
 		}
 

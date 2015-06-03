@@ -28,14 +28,13 @@ require_once __DIR__ . '/LanguageZh_hans.php';
  * @ingroup Language
  */
 class ZhConverter extends LanguageConverter {
-
 	/**
-	 * @param $langobj Language
-	 * @param $maincode string
-	 * @param $variants array
-	 * @param $variantfallbacks array
-	 * @param $flags array
-	 * @param $manualLevel array
+	 * @param Language $langobj
+	 * @param string $maincode
+	 * @param array $variants
+	 * @param array $variantfallbacks
+	 * @param array $flags
+	 * @param array $manualLevel
 	 */
 	function __construct( $langobj, $maincode,
 								$variants = array(),
@@ -68,28 +67,40 @@ class ZhConverter extends LanguageConverter {
 		$this->mTables = array(
 			'zh-hans' => new ReplacementArray( $zh2Hans ),
 			'zh-hant' => new ReplacementArray( $zh2Hant ),
-			'zh-cn' => new ReplacementArray( array_merge( $zh2Hans, $zh2CN ) ),
-			'zh-hk' => new ReplacementArray( array_merge( $zh2Hant, $zh2HK ) ),
-			'zh-mo' => new ReplacementArray( array_merge( $zh2Hant, $zh2HK ) ),
-			'zh-my' => new ReplacementArray( array_merge( $zh2Hans, $zh2SG ) ),
-			'zh-sg' => new ReplacementArray( array_merge( $zh2Hans, $zh2SG ) ),
-			'zh-tw' => new ReplacementArray( array_merge( $zh2Hant, $zh2TW ) ),
+			'zh-cn' => new ReplacementArray( $zh2CN ),
+			'zh-hk' => new ReplacementArray( $zh2HK ),
+			'zh-mo' => new ReplacementArray( $zh2HK ),
+			'zh-my' => new ReplacementArray( $zh2CN ),
+			'zh-sg' => new ReplacementArray( $zh2CN ),
+			'zh-tw' => new ReplacementArray( $zh2TW ),
 			'zh' => new ReplacementArray
 		);
 	}
 
 	function postLoadTables() {
-		$this->mTables['zh-cn']->merge( $this->mTables['zh-hans'] );
-		$this->mTables['zh-hk']->merge( $this->mTables['zh-hant'] );
-		$this->mTables['zh-mo']->merge( $this->mTables['zh-hant'] );
-		$this->mTables['zh-my']->merge( $this->mTables['zh-hans'] );
-		$this->mTables['zh-sg']->merge( $this->mTables['zh-hans'] );
-		$this->mTables['zh-tw']->merge( $this->mTables['zh-hant'] );
+		$this->mTables['zh-cn']->setArray(
+			$this->mTables['zh-cn']->getArray() + $this->mTables['zh-hans']->getArray()
+		);
+		$this->mTables['zh-hk']->setArray(
+			$this->mTables['zh-hk']->getArray() + $this->mTables['zh-hant']->getArray()
+		);
+		$this->mTables['zh-mo']->setArray(
+			$this->mTables['zh-mo']->getArray() + $this->mTables['zh-hant']->getArray()
+		);
+		$this->mTables['zh-my']->setArray(
+			$this->mTables['zh-my']->getArray() + $this->mTables['zh-hans']->getArray()
+		);
+		$this->mTables['zh-sg']->setArray(
+			$this->mTables['zh-sg']->getArray() + $this->mTables['zh-hans']->getArray()
+		);
+		$this->mTables['zh-tw']->setArray(
+			$this->mTables['zh-tw']->getArray() + $this->mTables['zh-hant']->getArray()
+		);
 	}
 
 	/**
-	 * @param $key string
-	 * @return String
+	 * @param string $key
+	 * @return string
 	 */
 	function convertCategoryKey( $key ) {
 		return $this->autoConvert( $key, 'zh' );
@@ -103,12 +114,22 @@ class ZhConverter extends LanguageConverter {
  * @ingroup Language
  */
 class LanguageZh extends LanguageZh_hans {
-
 	function __construct() {
 		global $wgHooks;
+
 		parent::__construct();
 
-		$variants = array( 'zh', 'zh-hans', 'zh-hant', 'zh-cn', 'zh-hk', 'zh-mo', 'zh-my', 'zh-sg', 'zh-tw' );
+		$variants = array(
+			'zh',
+			'zh-hans',
+			'zh-hant',
+			'zh-cn',
+			'zh-hk',
+			'zh-mo',
+			'zh-my',
+			'zh-sg',
+			'zh-tw'
+		);
 
 		$variantfallbacks = array(
 			'zh' => array( 'zh-hans', 'zh-hant', 'zh-cn', 'zh-tw', 'zh-hk', 'zh-sg', 'zh-mo', 'zh-my' ),
@@ -138,7 +159,7 @@ class LanguageZh extends LanguageZh_hans {
 	/**
 	 * this should give much better diff info
 	 *
-	 * @param $text string
+	 * @param string $text
 	 * @return string
 	 */
 	function segmentForDiff( $text ) {
@@ -146,7 +167,7 @@ class LanguageZh extends LanguageZh_hans {
 	}
 
 	/**
-	 * @param $text string
+	 * @param string $text
 	 * @return string
 	 */
 	function unsegmentForDiff( $text ) {
@@ -156,12 +177,11 @@ class LanguageZh extends LanguageZh_hans {
 	/**
 	 * auto convert to zh-hans and normalize special characters.
 	 *
-	 * @param $string String
-	 * @param $autoVariant String, default to 'zh-hans'
-	 * @return String
+	 * @param string $string
+	 * @param string $autoVariant Defaults to 'zh-hans'
+	 * @return string
 	 */
 	function normalizeForSearch( $string, $autoVariant = 'zh-hans' ) {
-		wfProfileIn( __METHOD__ );
 
 		// always convert to zh-hans before indexing. it should be
 		// better to use zh-hans for search, since conversion from
@@ -170,13 +190,12 @@ class LanguageZh extends LanguageZh_hans {
 		$s = $this->mConverter->autoConvert( $string, $autoVariant );
 		// LanguageZh_hans::normalizeForSearch
 		$s = parent::normalizeForSearch( $s );
-		wfProfileOut( __METHOD__ );
 		return $s;
 
 	}
 
 	/**
-	 * @param $termsArray array
+	 * @param array $termsArray
 	 * @return array
 	 */
 	function convertForSearchResult( $termsArray ) {
@@ -187,4 +206,3 @@ class LanguageZh extends LanguageZh_hans {
 		return $ret;
 	}
 }
-

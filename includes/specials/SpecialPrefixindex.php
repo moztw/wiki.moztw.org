@@ -26,7 +26,7 @@
  *
  * @ingroup SpecialPage
  */
-class SpecialPrefixindex extends SpecialAllpages {
+class SpecialPrefixindex extends SpecialAllPages {
 
 	/**
 	 * Whether to remove the searched prefix from the displayed link. Useful
@@ -47,7 +47,7 @@ class SpecialPrefixindex extends SpecialAllpages {
 
 	/**
 	 * Entry point : initialise variables and call subfunctions.
-	 * @param string $par becomes "FOO" when called like Special:Prefixindex/FOO (default null)
+	 * @param string $par Becomes "FOO" when called like Special:Prefixindex/FOO (default null)
 	 */
 	function execute( $par ) {
 		global $wgContLang;
@@ -76,7 +76,7 @@ class SpecialPrefixindex extends SpecialAllpages {
 		);
 
 		$showme = '';
-		if ( isset( $par ) ) {
+		if ( $par !== null ) {
 			$showme = $par;
 		} elseif ( $prefix != '' ) {
 			$showme = $prefix;
@@ -96,15 +96,16 @@ class SpecialPrefixindex extends SpecialAllpages {
 
 	/**
 	 * HTML for the top form
-	 * @param $namespace Integer: a namespace constant (default NS_MAIN).
-	 * @param string $from dbKey we are starting listing at.
+	 * @param int $namespace A namespace constant (default NS_MAIN).
+	 * @param string $from DbKey we are starting listing at.
 	 * @return string
 	 */
 	protected function namespacePrefixForm( $namespace = NS_MAIN, $from = '' ) {
-		global $wgScript;
-
 		$out = Xml::openElement( 'div', array( 'class' => 'namespaceoptions' ) );
-		$out .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
+		$out .= Xml::openElement(
+			'form',
+			array( 'method' => 'get', 'action' => $this->getConfig()->get( 'Script' ) )
+		);
 		$out .= Html::hidden( 'title', $this->getPageTitle()->getPrefixedText() );
 		$out .= Xml::openElement( 'fieldset' );
 		$out .= Xml::element( 'legend', null, $this->msg( 'allpages' )->text() );
@@ -153,9 +154,9 @@ class SpecialPrefixindex extends SpecialAllpages {
 	}
 
 	/**
-	 * @param $namespace Integer, default NS_MAIN
-	 * @param $prefix String
-	 * @param string $from list all pages from this name (default FALSE)
+	 * @param int $namespace Default NS_MAIN
+	 * @param string $prefix
+	 * @param string $from List all pages from this name (default false)
 	 */
 	protected function showPrefixChunk( $namespace = NS_MAIN, $prefix, $from = null ) {
 		global $wgContLang;
@@ -167,6 +168,7 @@ class SpecialPrefixindex extends SpecialAllpages {
 		$fromList = $this->getNamespaceKeyAndText( $namespace, $from );
 		$prefixList = $this->getNamespaceKeyAndText( $namespace, $prefix );
 		$namespaces = $wgContLang->getNamespaces();
+		$res = null;
 
 		if ( !$prefixList || !$fromList ) {
 			$out = $this->msg( 'allpagesbadtitle' )->parseAsBlock();
@@ -261,9 +263,7 @@ class SpecialPrefixindex extends SpecialAllpages {
 				'</td>
 				<td id="mw-prefixindex-nav-form" class="mw-prefixindex-nav">';
 
-			if ( isset( $res ) && $res && ( $n == $this->maxPerPage ) &&
-				( $s = $res->fetchObject() )
-			) {
+			if ( $res && ( $n == $this->maxPerPage ) && ( $s = $res->fetchObject() ) ) {
 				$query = array(
 					'from' => $s->page_title,
 					'prefix' => $prefix,

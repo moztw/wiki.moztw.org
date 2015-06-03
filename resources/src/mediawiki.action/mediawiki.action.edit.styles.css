@@ -1,4 +1,4 @@
-/**
+/*!
  * Styles for elements of the editing form.
  */
 
@@ -6,14 +6,6 @@
 #wpTextbox1 {
 	margin: 0;
 	display: block;
-}
-
-.editOptions {
-	background-color: #F0F0F0;
-	border: 1px solid silver;
-	border-top: none;
-	padding: 1em 1em 1.5em 1em;
-	margin-bottom: 2em;
 }
 
 /* Adjustments to edit form elements */

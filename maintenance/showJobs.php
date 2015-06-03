@@ -38,13 +38,19 @@ class ShowJobs extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "Show number of jobs waiting in master database";
 		$this->addOption( 'group', 'Show number of jobs per job type' );
-		$this->addOption( 'list', 'Show a complete list of all jobs in a machine-readable format, instead of statistics' );
+		$this->addOption( 'list',
+			'Show a list of all jobs in a machine-readable format, instead of statistics' );
+		$this->addOption( 'type', 'Only show/count jobs of a given type', false, true );
 	}
 
 	public function execute() {
+		$filterType = $this->getOption( 'type', '' );
 		$group = JobQueueGroup::singleton();
 		if ( $this->hasOption( 'list' ) ) {
 			foreach ( $group->getQueueTypes() as $type ) {
+				if ( $filterType != '' && $type != $filterType ) {
+					continue;
+				}
 				$queue = $group->get( $type );
 				foreach ( $queue->getAllQueuedJobs() as $job ) {
 					$this->output( $job->toString() . " status=unclaimed\n" );
@@ -52,16 +58,22 @@ class ShowJobs extends Maintenance {
 				foreach ( $queue->getAllDelayedJobs() as $job ) {
 					$this->output( $job->toString() . " status=delayed\n" );
 				}
+				foreach ( $queue->getAllAbandonedJobs() as $job ) {
+					$this->output( $job->toString() . " status=abandoned\n" );
+				}
 			}
 		} elseif ( $this->hasOption( 'group' ) ) {
 			foreach ( $group->getQueueTypes() as $type ) {
+				if ( $filterType != '' && $type != $filterType ) {
+					continue;
+				}
 				$queue = $group->get( $type );
 				$delayed = $queue->getDelayedCount();
 				$pending = $queue->getSize();
 				$claimed = $queue->getAcquiredCount();
 				$abandoned = $queue->getAbandonedCount();
 				$active = max( 0, $claimed - $abandoned );
-				if ( ( $pending + $claimed + $delayed ) > 0 ) {
+				if ( ( $pending + $claimed + $delayed + $abandoned ) > 0 ) {
 					$this->output(
 						"{$type}: $pending queued; " .
 						"$claimed claimed ($active active, $abandoned abandoned); " .
@@ -72,6 +84,9 @@ class ShowJobs extends Maintenance {
 		} else {
 			$count = 0;
 			foreach ( $group->getQueueTypes() as $type ) {
+				if ( $filterType != '' && $type != $filterType ) {
+					continue;
+				}
 				$count += $group->get( $type )->getSize();
 			}
 			$this->output( "$count\n" );

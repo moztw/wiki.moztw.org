@@ -189,9 +189,9 @@ class JobQueueDB extends JobQueue {
 	/**
 	 * @see JobQueue::doBatchPush()
 	 * @param array $jobs
-	 * @param $flags
+	 * @param int $flags
 	 * @throws DBError|Exception
-	 * @return bool
+	 * @return void
 	 */
 	protected function doBatchPush( array $jobs, $flags ) {
 		$dbw = $this->getMasterDB();
@@ -203,8 +203,6 @@ class JobQueueDB extends JobQueue {
 				$that->doBatchPushInternal( $dbw, $jobs, $flags, $method );
 			}
 		);
-
-		return true;
 	}
 
 	/**
@@ -215,15 +213,15 @@ class JobQueueDB extends JobQueue {
 	 * @param int $flags
 	 * @param string $method
 	 * @throws DBError
-	 * @return bool
+	 * @return void
 	 */
 	public function doBatchPushInternal( IDatabase $dbw, array $jobs, $flags, $method ) {
 		if ( !count( $jobs ) ) {
-			return true;
+			return;
 		}
 
 		$rowSet = array(); // (sha1 => job) map for jobs that are de-duplicated
-		$rowList = array(); // list of jobs for jobs that are are not de-duplicated
+		$rowList = array(); // list of jobs for jobs that are not de-duplicated
 		foreach ( $jobs as $job ) {
 			$row = $this->insertFields( $job );
 			if ( $job->ignoreDuplicates() ) {
@@ -277,7 +275,7 @@ class JobQueueDB extends JobQueue {
 
 		$this->cache->set( $this->getCacheKey( 'empty' ), 'false', JobQueueDB::CACHE_TTL_LONG );
 
-		return true;
+		return;
 	}
 
 	/**
@@ -338,7 +336,7 @@ class JobQueueDB extends JobQueue {
 	 * Reserve a row with a single UPDATE without holding row locks over RTTs...
 	 *
 	 * @param string $uuid 32 char hex string
-	 * @param $rand integer Random unsigned integer (31 bits)
+	 * @param int $rand Random unsigned integer (31 bits)
 	 * @param bool $gte Search for job_random >= $random (otherwise job_random <= $random)
 	 * @return stdClass|bool Row|false
 	 */
@@ -558,7 +556,7 @@ class JobQueueDB extends JobQueue {
 	 * @return void
 	 */
 	protected function doWaitForBackups() {
-		wfWaitForSlaves();
+		wfWaitForSlaves( false, $this->wiki, $this->cluster ?: false );
 	}
 
 	/**
@@ -688,7 +686,9 @@ class JobQueueDB extends JobQueue {
 					$affected = $dbw->affectedRows();
 					$count += $affected;
 					JobQueue::incrStats( 'job-recycle', $this->type, $affected, $this->wiki );
+					// The tasks recycled jobs or release delayed jobs into the queue
 					$this->cache->set( $this->getCacheKey( 'empty' ), 'false', self::CACHE_TTL_LONG );
+					$this->aggr->notifyQueueNonEmpty( $this->wiki, $this->type );
 				}
 			}
 
@@ -774,7 +774,7 @@ class JobQueueDB extends JobQueue {
 	}
 
 	/**
-	 * @param $index integer (DB_SLAVE/DB_MASTER)
+	 * @param int $index (DB_SLAVE/DB_MASTER)
 	 * @return DBConnRef
 	 */
 	protected function getDB( $index ) {
@@ -786,7 +786,7 @@ class JobQueueDB extends JobQueue {
 	}
 
 	/**
-	 * @param $property
+	 * @param string $property
 	 * @return string
 	 */
 	private function getCacheKey( $property ) {
@@ -797,7 +797,7 @@ class JobQueueDB extends JobQueue {
 	}
 
 	/**
-	 * @param $params
+	 * @param array|bool $params
 	 * @return string
 	 */
 	protected static function makeBlob( $params ) {
@@ -809,7 +809,7 @@ class JobQueueDB extends JobQueue {
 	}
 
 	/**
-	 * @param $blob
+	 * @param string $blob
 	 * @return bool|mixed
 	 */
 	protected static function extractBlob( $blob ) {

@@ -1,8 +1,7 @@
 <?php
 /** Russian (русский)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -151,6 +150,7 @@ $specialPageAliases = array(
 	'CreateAccount'             => array( 'Создать_учётную_запись', 'Создать_пользователя', 'Зарегистрироваться' ),
 	'Deadendpages'              => array( 'Тупиковые_страницы' ),
 	'DeletedContributions'      => array( 'Удалённый_вклад' ),
+	'Diff'                      => array( 'Изменения' ),
 	'DoubleRedirects'           => array( 'Двойные_перенаправления' ),
 	'EditWatchlist'             => array( 'Править_список_наблюдения' ),
 	'Emailuser'                 => array( 'Письмо_участнику', 'Отправить_письмо' ),
@@ -169,6 +169,7 @@ $specialPageAliases = array(
 	'Listfiles'                 => array( 'Список_файлов', 'Список_изображений' ),
 	'Listgrouprights'           => array( 'Права_групп_участников', 'Список_прав_групп' ),
 	'Listredirects'             => array( 'Список_перенаправлений' ),
+	'ListDuplicatedFiles'       => array( 'Список_файлов-дубликатов' ),
 	'Listusers'                 => array( 'Список_участников' ),
 	'Lockdb'                    => array( 'Заблокировать_БД', 'Заблокировать_базу_данных' ),
 	'Log'                       => array( 'Журналы', 'Журнал' ),
@@ -185,6 +186,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Наибольшее_количество_версий' ),
 	'Movepage'                  => array( 'Переименовать_страницу', 'Переименование', 'Переименовать' ),
 	'Mycontributions'           => array( 'Мой_вклад' ),
+	'MyLanguage'                => array( 'Мой_язык' ),
 	'Mypage'                    => array( 'Моя_страница' ),
 	'Mytalk'                    => array( 'Моё_обсуждение' ),
 	'Myuploads'                 => array( 'Мои_загрузки' ),
@@ -267,7 +269,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'КОЛИЧЕСТВО_УЧАСТНИКОВ', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'КОЛИЧЕСТВО_АКТИВНЫХ_УЧАСТНИКОВ', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'КОЛИЧЕСТВО_ПРАВОК', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'КОЛИЧЕСТВО_ПРОСМОТРОВ', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'НАЗВАНИЕ_СТРАНИЦЫ', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'НАЗВАНИЕ_СТРАНИЦЫ_2', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ПРОСТРАНСТВО_ИМЁН', 'NAMESPACE' ),
@@ -434,9 +435,9 @@ $fallback8bitEncoding = 'windows-1251';
 $linkPrefixExtension = false;
 
 $imageFiles = array(
-	'button-bold'   => 'cyrl/button_bold.png',
-	'button-italic' => 'cyrl/button_italic.png',
-	'button-link'   => 'cyrl/button_link.png',
+	'button-bold'   => 'ru/button_bold.png',
+	'button-italic' => 'ru/button_italic.png',
+	'button-link'   => 'ru/button_link.png',
 );
 
 $linkTrail = '/^([a-zабвгдеёжзийклмнопрстуфхцчшщъыьэюя]+)(.*)$/sDu';

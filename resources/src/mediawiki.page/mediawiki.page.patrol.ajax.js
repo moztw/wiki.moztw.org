@@ -1,4 +1,4 @@
-/**
+/*!
  * Animate patrol links to use asynchronous API requests to
  * patrol pages, rather than navigating to a different URI.
  *
@@ -30,9 +30,8 @@
 			rcid = mw.util.getParamValue( 'rcid', href );
 			apiRequest = new mw.Api();
 
-			apiRequest.post( {
+			apiRequest.postWithToken( 'patrol', {
 				action: 'patrol',
-				token: mw.user.tokens.get( 'patrolToken' ),
 				rcid: rcid
 			} )
 			.done( function ( data ) {

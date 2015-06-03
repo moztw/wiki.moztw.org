@@ -23,7 +23,7 @@
 class RedisBagOStuff extends BagOStuff {
 	/** @var RedisConnectionPool */
 	protected $redisPool;
-	/** @var Array List of server names */
+	/** @var array List of server names */
 	protected $servers;
 	/** @var bool */
 	protected $automaticFailover;
@@ -53,8 +53,10 @@ class RedisBagOStuff extends BagOStuff {
 	 *     consistent hashing algorithm). True by default. This has the
 	 *     potential to create consistency issues if a server is slow enough to
 	 *     flap, for example if it is in swap death.
+	 * @param array $params
 	 */
 	function __construct( $params ) {
+		parent::__construct( $params );
 		$redisConf = array( 'serializer' => 'none' ); // manage that in this class
 		foreach ( array( 'connectTimeout', 'persistent', 'password' ) as $opt ) {
 			if ( isset( $params[$opt] ) ) {
@@ -72,7 +74,6 @@ class RedisBagOStuff extends BagOStuff {
 	}
 
 	public function get( $key, &$casToken = null ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -92,7 +93,6 @@ class RedisBagOStuff extends BagOStuff {
 	}
 
 	public function set( $key, $value, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -115,8 +115,7 @@ class RedisBagOStuff extends BagOStuff {
 		return $result;
 	}
 
-	public function cas( $casToken, $key, $value, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
+	protected function cas( $casToken, $key, $value, $expiry = 0 ) {
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -149,8 +148,7 @@ class RedisBagOStuff extends BagOStuff {
 		return $result;
 	}
 
-	public function delete( $key, $time = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
+	public function delete( $key ) {
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -170,7 +168,6 @@ class RedisBagOStuff extends BagOStuff {
 	}
 
 	public function getMulti( array $keys ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		$batches = array();
 		$conns = array();
@@ -210,8 +207,59 @@ class RedisBagOStuff extends BagOStuff {
 		return $result;
 	}
 
+	/**
+	 * @param array $data
+	 * @param int $expiry
+	 * @return bool
+	 */
+	public function setMulti( array $data, $expiry = 0 ) {
+
+		$batches = array();
+		$conns = array();
+		foreach ( $data as $key => $value ) {
+			list( $server, $conn ) = $this->getConnection( $key );
+			if ( !$conn ) {
+				continue;
+			}
+			$conns[$server] = $conn;
+			$batches[$server][] = $key;
+		}
+
+		$expiry = $this->convertToRelative( $expiry );
+		$result = true;
+		foreach ( $batches as $server => $batchKeys ) {
+			$conn = $conns[$server];
+			try {
+				$conn->multi( Redis::PIPELINE );
+				foreach ( $batchKeys as $key ) {
+					if ( $expiry ) {
+						$conn->setex( $key, $expiry, $this->serialize( $data[$key] ) );
+					} else {
+						$conn->set( $key, $this->serialize( $data[$key] ) );
+					}
+				}
+				$batchResult = $conn->exec();
+				if ( $batchResult === false ) {
+					$this->debug( "setMulti request to $server failed" );
+					continue;
+				}
+				foreach ( $batchResult as $value ) {
+					if ( $value === false ) {
+						$result = false;
+					}
+				}
+			} catch ( RedisException $e ) {
+				$this->handleException( $server, $conn, $e );
+				$result = false;
+			}
+		}
+
+		return $result;
+	}
+
+
+
 	public function add( $key, $value, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -244,9 +292,11 @@ class RedisBagOStuff extends BagOStuff {
 	 * command. But we are constrained by the memcached-like interface to
 	 * return null in that case. Once the key exists, further increments are
 	 * atomic.
+	 * @param string $key Key to increase
+	 * @param int $value Value to add to $key (Default 1)
+	 * @return int|bool New value or false on failure
 	 */
 	public function incr( $key, $value = 1 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -256,7 +306,7 @@ class RedisBagOStuff extends BagOStuff {
 			return null;
 		}
 		try {
-			$result = $this->unserialize( $conn->incrBy( $key, $value ) );
+			$result = $conn->incrBy( $key, $value );
 		} catch ( RedisException $e ) {
 			$result = false;
 			$this->handleException( $conn, $e );
@@ -266,13 +316,22 @@ class RedisBagOStuff extends BagOStuff {
 		return $result;
 	}
 
+	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
+		if ( !is_callable( $callback ) ) {
+			throw new Exception( "Got invalid callback." );
+		}
+
+		return $this->mergeViaCas( $key, $callback, $exptime, $attempts );
+	}
+
 	/**
 	 * @param mixed $data
 	 * @return string
 	 */
 	protected function serialize( $data ) {
-		// Ignore digit strings and ints so INCR/DECR work
-		return ( is_int( $data ) || ctype_digit( $data ) ) ? $data : serialize( $data );
+		// Serialize anything but integers so INCR/DECR work
+		// Do not store integer-like strings as integers to avoid type confusion (bug 60563)
+		return is_int( $data ) ? $data : serialize( $data );
 	}
 
 	/**
@@ -280,13 +339,13 @@ class RedisBagOStuff extends BagOStuff {
 	 * @return mixed
 	 */
 	protected function unserialize( $data ) {
-		// Ignore digit strings and ints so INCR/DECR work
-		return ( is_int( $data ) || ctype_digit( $data ) ) ? $data : unserialize( $data );
+		return ctype_digit( $data ) ? intval( $data ) : unserialize( $data );
 	}
 
 	/**
 	 * Get a Redis object with a connection suitable for fetching the specified key
-	 * @return Array (server, RedisConnRef) or (false, false)
+	 * @param string $key
+	 * @return array (server, RedisConnRef) or (false, false)
 	 */
 	protected function getConnection( $key ) {
 		if ( count( $this->servers ) === 1 ) {
@@ -311,9 +370,10 @@ class RedisBagOStuff extends BagOStuff {
 
 	/**
 	 * Log a fatal error
+	 * @param string $msg
 	 */
 	protected function logError( $msg ) {
-		wfDebugLog( 'redis', "Redis error: $msg" );
+		$this->logger->error( "Redis error: $msg" );
 	}
 
 	/**
@@ -321,6 +381,8 @@ class RedisBagOStuff extends BagOStuff {
 	 * and protocol errors. Sometimes it also closes the connection, sometimes
 	 * not. The safest response for us is to explicitly destroy the connection
 	 * object and let it be reopened during the next request.
+	 * @param RedisConnRef $conn
+	 * @param Exception $e
 	 */
 	protected function handleException( RedisConnRef $conn, $e ) {
 		$this->setLastError( BagOStuff::ERR_UNEXPECTED );
@@ -329,6 +391,10 @@ class RedisBagOStuff extends BagOStuff {
 
 	/**
 	 * Send information about a single request to the debug log
+	 * @param string $method
+	 * @param string $key
+	 * @param string $server
+	 * @param bool $result
 	 */
 	public function logRequest( $method, $key, $server, $result ) {
 		$this->debug( "$method $key on $server: " .

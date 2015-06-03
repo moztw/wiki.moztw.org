@@ -27,7 +27,6 @@
  * @ingroup SpecialPage
  */
 class SpecialProtectedpages extends SpecialPage {
-
 	protected $IdLevel = 'level';
 	protected $IdType = 'type';
 
@@ -39,11 +38,6 @@ class SpecialProtectedpages extends SpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 		$this->getOutput()->addModuleStyles( 'mediawiki.special' );
-
-		// Purge expired entries on one in every 10 queries
-		if ( !mt_rand( 0, 10 ) ) {
-			Title::purgeExpiredRestrictions();
-		}
 
 		$request = $this->getRequest();
 		$type = $request->getVal( $this->IdType );
@@ -80,11 +74,7 @@ class SpecialProtectedpages extends SpecialPage {
 		) );
 
 		if ( $pager->getNumRows() ) {
-			$this->getOutput()->addHTML(
-				$pager->getNavigationBar() .
-					$pager->getBody() .
-					$pager->getNavigationBar()
-			);
+			$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
 		} else {
 			$this->getOutput()->addWikiMsg( 'protectedpagesempty' );
 		}
@@ -99,16 +89,14 @@ class SpecialProtectedpages extends SpecialPage {
 	 * @param bool $indefOnly Only indefinite protection
 	 * @param bool $cascadeOnly Only cascading protection
 	 * @param bool $noRedirect Don't show redirects
-	 * @return String: input form
+	 * @return string Input form
 	 */
 	protected function showOptions( $namespace, $type = 'edit', $level, $sizetype,
 		$size, $indefOnly, $cascadeOnly, $noRedirect
 	) {
-		global $wgScript;
-
 		$title = $this->getPageTitle();
 
-		return Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) ) .
+		return Xml::openElement( 'form', array( 'method' => 'get', 'action' => wfScript() ) ) .
 			Xml::openElement( 'fieldset' ) .
 			Xml::element( 'legend', array(), $this->msg( 'protectedpages' )->text() ) .
 			Html::hidden( 'title', $title->getPrefixedDBkey() ) . "\n" .
@@ -131,8 +119,8 @@ class SpecialProtectedpages extends SpecialPage {
 	 * Prepare the namespace filter drop-down; standard namespace
 	 * selector, sans the MediaWiki namespace
 	 *
-	 * @param $namespace Mixed: pre-select namespace
-	 * @return String
+	 * @param string|null $namespace Pre-select namespace
+	 * @return string
 	 */
 	protected function getNamespaceMenu( $namespace = null ) {
 		return Html::rawElement( 'span', array( 'style' => 'white-space: nowrap;' ),
@@ -220,7 +208,7 @@ class SpecialProtectedpages extends SpecialPage {
 
 	/**
 	 * Creates the input label of the restriction type
-	 * @param $pr_type string Protection type
+	 * @param string $pr_type Protection type
 	 * @return string Formatted HTML
 	 */
 	protected function getTypeMenu( $pr_type ) {
@@ -249,18 +237,16 @@ class SpecialProtectedpages extends SpecialPage {
 
 	/**
 	 * Creates the input label of the restriction level
-	 * @param $pr_level string Protection level
+	 * @param string $pr_level Protection level
 	 * @return string Formatted HTML
 	 */
 	protected function getLevelMenu( $pr_level ) {
-		global $wgRestrictionLevels;
-
 		// Temporary array
 		$m = array( $this->msg( 'restriction-level-all' )->text() => 0 );
 		$options = array();
 
 		// First pass to load the log names
-		foreach ( $wgRestrictionLevels as $type ) {
+		foreach ( $this->getConfig()->get( 'RestrictionLevels' ) as $type ) {
 			// Messages used can be 'restriction-level-sysop' and 'restriction-level-autoconfirmed'
 			if ( $type != '' && $type != '*' ) {
 				$text = $this->msg( "restriction-level-$type" )->text();
@@ -362,7 +348,7 @@ class ProtectedPagesPager extends TablePager {
 	/**
 	 * @param string $field
 	 * @param string $value
-	 * @return string
+	 * @return string HTML
 	 * @throws MWException
 	 */
 	function formatValue( $field, $value ) {
@@ -381,7 +367,8 @@ class ProtectedPagesPager extends TablePager {
 						$this->msg( 'protectedpages-unknown-timestamp' )->escaped()
 					);
 				} else {
-					$formatted = $this->getLanguage()->userTimeAndDate( $value, $this->getUser() );
+					$formatted = htmlspecialchars( $this->getLanguage()->userTimeAndDate(
+						$value, $this->getUser() ) );
 				}
 				break;
 
@@ -411,7 +398,8 @@ class ProtectedPagesPager extends TablePager {
 				break;
 
 			case 'pr_expiry':
-				$formatted = $this->getLanguage()->formatExpiry( $value, /* User preference timezone */true );
+				$formatted = htmlspecialchars( $this->getLanguage()->formatExpiry(
+					$value, /* User preference timezone */true ) );
 				$title = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
 				if ( $this->getUser()->isAllowed( 'protect' ) && $title ) {
 					$changeProtection = Linker::linkKnown(
@@ -438,7 +426,11 @@ class ProtectedPagesPager extends TablePager {
 					);
 				} else {
 					$username = UserCache::singleton()->getProp( $value, 'name' );
-					if ( LogEventsList::userCanBitfield( $row->log_deleted, LogPage::DELETED_USER, $this->getUser() ) ) {
+					if ( LogEventsList::userCanBitfield(
+						$row->log_deleted,
+						LogPage::DELETED_USER,
+						$this->getUser()
+					) ) {
 						if ( $username === false ) {
 							$formatted = htmlspecialchars( $value );
 						} else {
@@ -459,7 +451,7 @@ class ProtectedPagesPager extends TablePager {
 				// Messages: restriction-level-sysop, restriction-level-autoconfirmed
 				$params[] = $this->msg( 'restriction-level-' . $row->pr_level )->escaped();
 				if ( $row->pr_cascade ) {
-					$params[] = $this->msg( 'protect-summary-cascade' )->text();
+					$params[] = $this->msg( 'protect-summary-cascade' )->escaped();
 				}
 				$formatted = $this->getLanguage()->commaList( $params );
 				break;
@@ -473,7 +465,11 @@ class ProtectedPagesPager extends TablePager {
 						$this->msg( 'protectedpages-unknown-reason' )->escaped()
 					);
 				} else {
-					if ( LogEventsList::userCanBitfield( $row->log_deleted, LogPage::DELETED_COMMENT, $this->getUser() ) ) {
+					if ( LogEventsList::userCanBitfield(
+						$row->log_deleted,
+						LogPage::DELETED_COMMENT,
+						$this->getUser()
+					) ) {
 						$formatted = Linker::formatComment( $value !== null ? $value : '' );
 					} else {
 						$formatted = $this->msg( 'rev-deleted-comment' )->escaped();
@@ -494,7 +490,7 @@ class ProtectedPagesPager extends TablePager {
 	function getQueryInfo() {
 		$conds = $this->mConds;
 		$conds[] = 'pr_expiry > ' . $this->mDb->addQuotes( $this->mDb->timestamp() ) .
-			'OR pr_expiry IS NULL';
+			' OR pr_expiry IS NULL';
 		$conds[] = 'page_id=pr_page';
 		$conds[] = 'pr_type=' . $this->mDb->addQuotes( $this->type );
 
@@ -555,7 +551,7 @@ class ProtectedPagesPager extends TablePager {
 	}
 
 	public function getTableClass() {
-		return 'TablePager mw-protectedpages';
+		return parent::getTableClass() . ' mw-protectedpages';
 	}
 
 	function getIndexField() {

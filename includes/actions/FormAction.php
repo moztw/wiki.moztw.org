@@ -17,14 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  *
  * @file
- */
-
-/**
- * @defgroup Actions Action done on pages
+ * @ingroup Actions
  */
 
 /**
  * An action which shows a form and does something based on the input from the form
+ *
+ * @ingroup Actions
  */
 abstract class FormAction extends Action {
 
@@ -64,7 +63,7 @@ abstract class FormAction extends Action {
 		$this->fields = $this->getFormFields();
 
 		// Give hooks a chance to alter the form, adding extra fields or text etc
-		wfRunHooks( 'ActionModifyFormFields', array( $this->getName(), &$this->fields, $this->page ) );
+		Hooks::run( 'ActionModifyFormFields', array( $this->getName(), &$this->fields, $this->page ) );
 
 		$form = new HTMLForm( $this->fields, $this->getContext(), $this->getName() );
 		$form->setSubmitCallback( array( $this, 'onSubmit' ) );
@@ -82,7 +81,7 @@ abstract class FormAction extends Action {
 		$this->alterForm( $form );
 
 		// Give hooks a chance to alter the form, adding extra fields or text etc
-		wfRunHooks( 'ActionBeforeFormDisplay', array( $this->getName(), &$form, $this->page ) );
+		Hooks::run( 'ActionBeforeFormDisplay', array( $this->getName(), &$form, $this->page ) );
 
 		return $form;
 	}
@@ -119,50 +118,6 @@ abstract class FormAction extends Action {
 		$form = $this->getForm();
 		if ( $form->show() ) {
 			$this->onSuccess();
-		}
-	}
-
-	/**
-	 * @see Action::execute()
-	 *
-	 * @param array|null $data
-	 * @param bool $captureErrors
-	 * @throws ErrorPageError|Exception
-	 * @return bool
-	 */
-	public function execute( array $data = null, $captureErrors = true ) {
-		try {
-			// Set a new context so output doesn't leak.
-			$this->context = clone $this->getContext();
-
-			// This will throw exceptions if there's a problem
-			$this->checkCanExecute( $this->getUser() );
-
-			$fields = array();
-			foreach ( $this->fields as $key => $params ) {
-				if ( isset( $data[$key] ) ) {
-					$fields[$key] = $data[$key];
-				} elseif ( isset( $params['default'] ) ) {
-					$fields[$key] = $params['default'];
-				} else {
-					$fields[$key] = null;
-				}
-			}
-			$status = $this->onSubmit( $fields );
-			if ( $status === true ) {
-				// This might do permanent stuff
-				$this->onSuccess();
-				return true;
-			} else {
-				return false;
-			}
-		}
-		catch ( ErrorPageError $e ) {
-			if ( $captureErrors ) {
-				return false;
-			} else {
-				throw $e;
-			}
 		}
 	}
 }

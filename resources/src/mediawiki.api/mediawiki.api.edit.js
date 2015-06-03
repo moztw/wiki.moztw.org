@@ -3,7 +3,6 @@
  */
 ( function ( mw, $ ) {
 
-	var msg = 'Use of mediawiki.api callback params is deprecated. Use the Promise instead.';
 	$.extend( mw.Api.prototype, {
 
 		/**
@@ -12,58 +11,40 @@
 		 * cached token and start over.
 		 *
 		 * @param {Object} params API parameters
-		 * @param {Function} [ok] Success callback (deprecated)
-		 * @param {Function} [err] Error callback (deprecated)
 		 * @return {jQuery.Promise} See #post
 		 */
-		postWithEditToken: function ( params, ok, err ) {
-			if ( ok || err ) {
-				mw.track( 'mw.deprecate', 'api.cbParam' );
-				mw.log.warn( msg );
-			}
-			return this.postWithToken( 'edit', params ).done( ok ).fail( err );
+		postWithEditToken: function ( params ) {
+			return this.postWithToken( 'edit', params );
 		},
 
 		/**
-		 * Api helper to grab an edit token.
+		 * API helper to grab an edit token.
 		 *
-		 * @param {Function} [ok] Success callback (deprecated)
-		 * @param {Function} [err] Error callback (deprecated)
 		 * @return {jQuery.Promise}
 		 * @return {Function} return.done
 		 * @return {string} return.done.token Received token.
 		 */
-		getEditToken: function ( ok, err ) {
-			if ( ok || err ) {
-				mw.track( 'mw.deprecate', 'api.cbParam' );
-				mw.log.warn( msg );
-			}
-			return this.getToken( 'edit' ).done( ok ).fail( err );
+		getEditToken: function () {
+			return this.getToken( 'edit' );
 		},
 
 		/**
-		 * Create a new section of the page.
+		 * Post a new section to the page.
 		 * @see #postWithEditToken
 		 * @param {mw.Title|String} title Target page
 		 * @param {string} header
 		 * @param {string} message wikitext message
-		 * @param {Function} [ok] Success handler (deprecated)
-		 * @param {Function} [err] Error handler (deprecated)
+		 * @param {Object} [additionalParams] Additional API parameters, e.g. `{ redirect: true }`
 		 * @return {jQuery.Promise}
 		 */
-		newSection: function ( title, header, message, ok, err ) {
-			if ( ok || err ) {
-				mw.track( 'mw.deprecate', 'api.cbParam' );
-				mw.log.warn( msg );
-			}
-			return this.postWithEditToken( {
+		newSection: function ( title, header, message, additionalParams ) {
+			return this.postWithEditToken( $.extend( {
 				action: 'edit',
 				section: 'new',
-				format: 'json',
 				title: String( title ),
 				summary: header,
 				text: message
-			} ).done( ok ).fail( err );
+			}, additionalParams ) );
 		}
 	} );
 

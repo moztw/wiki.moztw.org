@@ -59,7 +59,7 @@ class FileDuplicateSearchPage extends QueryPage {
 	/**
 	 * Fetch dupes from all connected file repositories.
 	 *
-	 * @return array of File objects
+	 * @return array Array of File objects
 	 */
 	function getDupes() {
 		return RepoGroup::singleton()->findBySha1( $this->hash );
@@ -67,7 +67,7 @@ class FileDuplicateSearchPage extends QueryPage {
 
 	/**
 	 *
-	 * @param array $dupes of File objects
+	 * @param array $dupes Array of File objects
 	 */
 	function showList( $dupes ) {
 		$html = array();
@@ -96,12 +96,10 @@ class FileDuplicateSearchPage extends QueryPage {
 	}
 
 	function execute( $par ) {
-		global $wgScript;
-
 		$this->setHeaders();
 		$this->outputHeader();
 
-		$this->filename = isset( $par ) ? $par : $this->getRequest()->getText( 'filename' );
+		$this->filename = $par !== null ? $par : $this->getRequest()->getText( 'filename' );
 		$this->file = null;
 		$this->hash = '';
 		$title = Title::newFromText( $this->filename, NS_FILE );
@@ -112,25 +110,31 @@ class FileDuplicateSearchPage extends QueryPage {
 		$out = $this->getOutput();
 
 		# Create the input form
-		$out->addHTML(
-			Html::openElement(
-				'form',
-				array( 'id' => 'fileduplicatesearch', 'method' => 'get', 'action' => $wgScript )
-			) . "\n" .
-				Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) . "\n" .
-				Html::openElement( 'fieldset' ) . "\n" .
-				Html::element( 'legend', null, $this->msg( 'fileduplicatesearch-legend' )->text() ) . "\n" .
-				Xml::inputLabel(
-					$this->msg( 'fileduplicatesearch-filename' )->text(),
-					'filename',
-					'filename',
-					50,
-					$this->filename
-				) . "\n" .
-				Xml::submitButton( $this->msg( 'fileduplicatesearch-submit' )->text() ) . "\n" .
-				Html::closeElement( 'fieldset' ) . "\n" .
-				Html::closeElement( 'form' )
+		$formFields = array(
+			'filename' => array(
+				'type' => 'text',
+				'name' => 'filename',
+				'label-message' => 'fileduplicatesearch-filename',
+				'id' => 'filename',
+				'size' => 50,
+				'value' => $this->filename,
+				'cssclass' => 'mw-ui-input-inline'
+			),
 		);
+		$hiddenFields = array(
+			'title' => $this->getPageTitle()->getPrefixedDBKey(),
+		);
+		$htmlForm = HTMLForm::factory( 'inline', $formFields, $this->getContext() );
+		$htmlForm->addHiddenFields( $hiddenFields );
+		$htmlForm->setAction( wfScript() );
+		$htmlForm->setMethod( 'get' );
+		$htmlForm->setSubmitProgressive();
+		$htmlForm->setSubmitTextMsg( $this->msg( 'fileduplicatesearch-submit' ) );
+		$htmlForm->setWrapperLegendMsg( 'fileduplicatesearch-legend' );
+
+		// The form should be visible always, even if it was submitted (e.g. to perform another action).
+		// To bypass the callback validation of HTMLForm, use prepareForm() and displayForm().
+		$htmlForm->prepareForm()->displayForm( false );
 
 		if ( $this->file ) {
 			$this->hash = $this->file->getSha1();
@@ -198,7 +202,7 @@ class FileDuplicateSearchPage extends QueryPage {
 	 *
 	 * @param Skin $skin
 	 * @param File $result
-	 * @return string
+	 * @return string HTML
 	 */
 	function formatResult( $skin, $result ) {
 		global $wgContLang;
@@ -206,15 +210,14 @@ class FileDuplicateSearchPage extends QueryPage {
 		$nt = $result->getTitle();
 		$text = $wgContLang->convert( $nt->getText() );
 		$plink = Linker::link(
-			Title::newFromText( $nt->getPrefixedText() ),
-			$text
+			$nt,
+			htmlspecialchars( $text )
 		);
 
 		$userText = $result->getUser( 'text' );
 		if ( $result->isLocal() ) {
 			$userId = $result->getUser( 'id' );
 			$user = Linker::userLink( $userId, $userText );
-			$user .= $this->getContext()->msg( 'word-separator' )->plain();
 			$user .= '<span style="white-space: nowrap;">';
 			$user .= Linker::userToolLinks( $userId, $userText );
 			$user .= '</span>';
@@ -222,7 +225,8 @@ class FileDuplicateSearchPage extends QueryPage {
 			$user = htmlspecialchars( $userText );
 		}
 
-		$time = $this->getLanguage()->userTimeAndDate( $result->getTimestamp(), $this->getUser() );
+		$time = htmlspecialchars( $this->getLanguage()->userTimeAndDate(
+			$result->getTimestamp(), $this->getUser() ) );
 
 		return "$plink . . $user . . $time";
 	}

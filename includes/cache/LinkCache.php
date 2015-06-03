@@ -78,7 +78,7 @@ class LinkCache {
 	/**
 	 * General accessor to get/set whether SELECT FOR UPDATE should be used
 	 *
-	 * @param $update
+	 * @param bool $update
 	 * @return bool
 	 */
 	public function forUpdate( $update = null ) {
@@ -86,8 +86,8 @@ class LinkCache {
 	}
 
 	/**
-	 * @param $title
-	 * @return array|int
+	 * @param string $title
+	 * @return int
 	 */
 	public function getGoodLinkID( $title ) {
 		if ( array_key_exists( $title, $this->mGoodLinks ) ) {
@@ -100,9 +100,9 @@ class LinkCache {
 	/**
 	 * Get a field of a title object from cache.
 	 * If this link is not good, it will return NULL.
-	 * @param $title Title
+	 * @param Title $title
 	 * @param string $field ('length','redirect','revision','model')
-	 * @return mixed
+	 * @return string|null
 	 */
 	public function getGoodLinkFieldObj( $title, $field ) {
 		$dbkey = $title->getPrefixedDBkey();
@@ -114,7 +114,7 @@ class LinkCache {
 	}
 
 	/**
-	 * @param $title
+	 * @param string $title
 	 * @return bool
 	 */
 	public function isBadLink( $title ) {
@@ -129,10 +129,10 @@ class LinkCache {
 	 * @param int $len Text's length
 	 * @param int $redir Whether the page is a redirect
 	 * @param int $revision Latest revision's ID
-	 * @param int $model Latest revision's content model ID
+	 * @param string|null $model Latest revision's content model ID
 	 */
 	public function addGoodLinkObj( $id, $title, $len = -1, $redir = null,
-		$revision = 0, $model = 0
+		$revision = 0, $model = null
 	) {
 		$dbkey = $title->getPrefixedDBkey();
 		$this->mGoodLinks[$dbkey] = (int)$id;
@@ -140,15 +140,15 @@ class LinkCache {
 			'length' => (int)$len,
 			'redirect' => (int)$redir,
 			'revision' => (int)$revision,
-			'model' => (int)$model
+			'model' => $model ? (string)$model : null,
 		);
 	}
 
 	/**
 	 * Same as above with better interface.
 	 * @since 1.19
-	 * @param $title Title
-	 * @param $row object which has the fields page_id, page_is_redirect,
+	 * @param Title $title
+	 * @param stdClass $row Object which has the fields page_id, page_is_redirect,
 	 *  page_latest and page_content_model
 	 */
 	public function addGoodLinkObjFromRow( $title, $row ) {
@@ -163,7 +163,7 @@ class LinkCache {
 	}
 
 	/**
-	 * @param $title Title
+	 * @param Title $title
 	 */
 	public function addBadLinkObj( $title ) {
 		$dbkey = $title->getPrefixedDBkey();
@@ -177,7 +177,7 @@ class LinkCache {
 	}
 
 	/**
-	 * @param $title Title
+	 * @param Title $title
 	 */
 	public function clearLink( $title ) {
 		$dbkey = $title->getPrefixedDBkey();
@@ -197,8 +197,8 @@ class LinkCache {
 	/**
 	 * Add a title to the link cache, return the page_id or zero if non-existent
 	 *
-	 * @param string $title title to add
-	 * @return Integer
+	 * @param string $title Title to add
+	 * @return int
 	 */
 	public function addLink( $title ) {
 		$nt = Title::newFromDBkey( $title );
@@ -212,29 +212,24 @@ class LinkCache {
 	/**
 	 * Add a title to the link cache, return the page_id or zero if non-existent
 	 *
-	 * @param $nt Title object to add
-	 * @return Integer
+	 * @param Title $nt Title object to add
+	 * @return int
 	 */
 	public function addLinkObj( $nt ) {
-		global $wgAntiLockFlags, $wgContentHandlerUseDB;
-
-		wfProfileIn( __METHOD__ );
+		global $wgContentHandlerUseDB;
 
 		$key = $nt->getPrefixedDBkey();
 		if ( $this->isBadLink( $key ) || $nt->isExternal() ) {
-			wfProfileOut( __METHOD__ );
 
 			return 0;
 		}
 		$id = $this->getGoodLinkID( $key );
 		if ( $id != 0 ) {
-			wfProfileOut( __METHOD__ );
 
 			return $id;
 		}
 
 		if ( $key === '' ) {
-			wfProfileOut( __METHOD__ );
 
 			return 0;
 		}
@@ -242,14 +237,8 @@ class LinkCache {
 		# Some fields heavily used for linking...
 		if ( $this->mForUpdate ) {
 			$db = wfGetDB( DB_MASTER );
-			if ( !( $wgAntiLockFlags & ALF_NO_LINK_LOCK ) ) {
-				$options = array( 'FOR UPDATE' );
-			} else {
-				$options = array();
-			}
 		} else {
 			$db = wfGetDB( DB_SLAVE );
-			$options = array();
 		}
 
 		$f = array( 'page_id', 'page_len', 'page_is_redirect', 'page_latest' );
@@ -259,7 +248,7 @@ class LinkCache {
 
 		$s = $db->selectRow( 'page', $f,
 			array( 'page_namespace' => $nt->getNamespace(), 'page_title' => $nt->getDBkey() ),
-			__METHOD__, $options );
+			__METHOD__ );
 		# Set fields...
 		if ( $s !== false ) {
 			$this->addGoodLinkObjFromRow( $nt, $s );
@@ -268,8 +257,6 @@ class LinkCache {
 			$this->addBadLinkObj( $nt );
 			$id = 0;
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		return $id;
 	}

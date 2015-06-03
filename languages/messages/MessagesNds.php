@@ -1,8 +1,7 @@
 <?php
 /** Low German (Plattdüütsch)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -97,7 +96,6 @@ $bookstoreList = array(
 $namespaceNames = array(
 	NS_MEDIA          => 'Media',
 	NS_SPECIAL        => 'Spezial',
-	NS_MAIN           => '',
 	NS_TALK           => 'Diskuschoon',
 	NS_USER           => 'Bruker',
 	NS_USER_TALK      => 'Bruker_Diskuschoon',
@@ -131,6 +129,9 @@ $dateFormats = array(
 	'ymd date' => 'Y M j.',
 	'ymd both' => 'H:i, Y M j.',
 );
+
+// Remove German aliases
+$namespaceGenderAliases = array();
 
 $specialPageAliases = array(
 	'Allmessages'               => array( 'Systemnarichten' ),

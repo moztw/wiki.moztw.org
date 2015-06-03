@@ -1,8 +1,9 @@
 {
-    "@metadata": {
-        "authors": [
-            "Iltever"
-        ]
-    },
-    "gadgets": "Гаджетле"
+	"@metadata": {
+		"authors": [
+			"Iltever"
+		]
+	},
+	"gadgets": "Гаджетле",
+	"gadgets-export-download": "Эндир"
 }

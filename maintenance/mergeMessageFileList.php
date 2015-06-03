@@ -43,7 +43,12 @@ class MergeMessageFileList extends Maintenance {
 
 	function __construct() {
 		parent::__construct();
-		$this->addOption( 'list-file', 'A file containing a list of extension setup files, one per line.', false, true );
+		$this->addOption(
+			'list-file',
+			'A file containing a list of extension setup files, one per line.',
+			false,
+			true
+		);
 		$this->addOption( 'extensions-dir', 'Path where extensions can be found.', false, true );
 		$this->addOption( 'output', 'Send output to this file (omit for stdout)', false, true );
 		$this->mDescription = 'Merge $wgExtensionMessagesFiles and $wgMessagesDirs from ' .
@@ -51,7 +56,10 @@ class MergeMessageFileList extends Maintenance {
 	}
 
 	public function execute() {
-		global $mmfl, $wgExtensionEntryPointListFiles;
+		// @codingStandardsIgnoreStart Ignore error: Global variable "$mmfl" is lacking 'wg' prefix
+		global $mmfl;
+		// @codingStandardsIgnoreEnd
+		global $wgExtensionEntryPointListFiles;
 
 		if ( !count( $wgExtensionEntryPointListFiles )
 			&& !$this->hasOption( 'list-file' )
@@ -77,12 +85,24 @@ class MergeMessageFileList extends Maintenance {
 				if ( $extname == '.' || $extname == '..' || !is_dir( "$extdir/$extname" ) ) {
 					continue;
 				}
-				$extfile = "{$extdir}/{$extname}/{$extname}.php";
-				if ( file_exists( $extfile ) ) {
-					$mmfl['setupFiles'][] = $extfile;
-				} else {
+				$possibilities = array(
+					"$extdir/$extname/extension.json",
+					"$extdir/$extname/skin.json",
+					"$extdir/$extname/$extname.php"
+				);
+				$found = false;
+				foreach ( $possibilities as $extfile ) {
+					if ( file_exists( $extfile ) ) {
+						$mmfl['setupFiles'][] = $extfile;
+						$found = true;
+						break;
+					}
+				}
+
+				if ( !$found ) {
 					$this->hasError = true;
-					$this->error( "Extension {$extname} in {$extdir} lacks expected {$extname}.php" );
+					$this->error( "Extension {$extname} in {$extdir} lacks expected entry point: " .
+						"extension.json, skin.json, or {$extname}.php." );
 				}
 			}
 		}
@@ -117,6 +137,7 @@ class MergeMessageFileList extends Maintenance {
 		if ( $fileLines === false ) {
 			$this->hasError = true;
 			$this->error( "Unable to open list file $fileName." );
+
 			return $files;
 		}
 		# Strip comments, discard empty lines, and trim leading and trailing
@@ -134,12 +155,14 @@ class MergeMessageFileList extends Maintenance {
 				}
 			}
 		}
+
 		return $files;
 	}
 }
 
 require_once RUN_MAINTENANCE_IF_MAIN;
 
+$queue = array();
 foreach ( $mmfl['setupFiles'] as $fileName ) {
 	if ( strval( $fileName ) === '' ) {
 		continue;
@@ -147,12 +170,24 @@ foreach ( $mmfl['setupFiles'] as $fileName ) {
 	if ( empty( $mmfl['quiet'] ) ) {
 		fwrite( STDERR, "Loading data from $fileName\n" );
 	}
-	// Include the extension to update $wgExtensionMessagesFiles
-	if ( !( include_once $fileName ) ) {
-		fwrite( STDERR, "Unable to read $fileName\n" );
-		exit( 1 );
+	// Using extension.json or skin.json
+	if ( substr( $fileName, -strlen( '.json' ) ) === '.json' ) {
+		$queue[$fileName] = 1;
+	} else {
+		require_once $fileName;
 	}
 }
+
+if ( $queue ) {
+	$registry = new ExtensionRegistry();
+	$data = $registry->readFromQueue( $queue );
+	foreach ( array( 'wgExtensionMessagesFiles', 'wgMessagesDirs' ) as $var ) {
+		if ( isset( $data['globals'][$var] ) ) {
+			$GLOBALS[$var] = array_merge( $data['globals'][$var], $GLOBALS[$var] );
+		}
+	}
+}
+
 fwrite( STDERR, "\n" );
 $s =
 	"<" . "?php\n" .

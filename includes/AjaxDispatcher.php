@@ -48,14 +48,19 @@ class AjaxDispatcher {
 	private $args;
 
 	/**
+	 * @var Config
+	 */
+	private $config;
+
+	/**
 	 * Load up our object with user supplied data
 	 */
-	function __construct() {
-		wfProfileIn( __METHOD__ );
+	function __construct( Config $config ) {
+		$this->config = $config;
 
 		$this->mode = "";
 
-		if ( ! empty( $_GET["rs"] ) ) {
+		if ( !empty( $_GET["rs"] ) ) {
 			$this->mode = "get";
 		}
 
@@ -66,7 +71,7 @@ class AjaxDispatcher {
 		switch ( $this->mode ) {
 			case 'get':
 				$this->func_name = isset( $_GET["rs"] ) ? $_GET["rs"] : '';
-				if ( ! empty( $_GET["rsargs"] ) ) {
+				if ( !empty( $_GET["rsargs"] ) ) {
 					$this->args = $_GET["rsargs"];
 				} else {
 					$this->args = array();
@@ -74,20 +79,18 @@ class AjaxDispatcher {
 				break;
 			case 'post':
 				$this->func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : '';
-				if ( ! empty( $_POST["rsargs"] ) ) {
+				if ( !empty( $_POST["rsargs"] ) ) {
 					$this->args = $_POST["rsargs"];
 				} else {
 					$this->args = array();
 				}
 				break;
 			default:
-				wfProfileOut( __METHOD__ );
 				return;
 				# Or we could throw an exception:
 				# throw new MWException( __METHOD__ . ' called without any data (mode empty).' );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -95,32 +98,28 @@ class AjaxDispatcher {
 	 * BEWARE! Data are passed as they have been supplied by the user,
 	 * they should be carefully handled in the function processing the
 	 * request.
+	 *
+	 * @param User $user
 	 */
-	function performAction() {
-		global $wgAjaxExportList, $wgUser;
-
+	function performAction( User $user ) {
 		if ( empty( $this->mode ) ) {
 			return;
 		}
 
-		wfProfileIn( __METHOD__ );
-
-		if ( ! in_array( $this->func_name, $wgAjaxExportList ) ) {
+		if ( !in_array( $this->func_name, $this->config->get( 'AjaxExportList' ) ) ) {
 			wfDebug( __METHOD__ . ' Bad Request for unknown function ' . $this->func_name . "\n" );
-
 			wfHttpError(
 				400,
 				'Bad Request',
 				"unknown function " . $this->func_name
 			);
-		} elseif ( !User::isEveryoneAllowed( 'read' ) && !$wgUser->isAllowed( 'read' ) ) {
+		} elseif ( !User::isEveryoneAllowed( 'read' ) && !$user->isAllowed( 'read' ) ) {
 			wfHttpError(
 				403,
 				'Forbidden',
 				'You are not allowed to view pages.' );
 		} else {
 			wfDebug( __METHOD__ . ' dispatching ' . $this->func_name . "\n" );
-
 			try {
 				$result = call_user_func_array( $this->func_name, $this->args );
 
@@ -155,6 +154,5 @@ class AjaxDispatcher {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 }

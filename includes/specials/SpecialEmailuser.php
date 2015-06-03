@@ -113,7 +113,8 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 		// error out if sending user cannot do this
 		$error = self::getPermissionsError(
 			$this->getUser(),
-			$this->getRequest()->getVal( 'wpEditToken' )
+			$this->getRequest()->getVal( 'wpEditToken' ),
+			$this->getConfig()
 		);
 
 		switch ( $error ) {
@@ -159,7 +160,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 		$form->setWrapperLegendMsg( 'email-legend' );
 		$form->loadData();
 
-		if ( !wfRunHooks( 'EmailUserForm', array( &$form ) ) ) {
+		if ( !Hooks::run( 'EmailUserForm', array( &$form ) ) ) {
 			return;
 		}
 
@@ -175,8 +176,8 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	/**
 	 * Validate target User
 	 *
-	 * @param string $target target user name
-	 * @return User object on success or a string on error
+	 * @param string $target Target user name
+	 * @return User User object on success or a string on error
 	 */
 	public static function getTarget( $target ) {
 		if ( $target == '' ) {
@@ -206,14 +207,17 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	/**
 	 * Check whether a user is allowed to send email
 	 *
-	 * @param $user User object
-	 * @param string $editToken edit token
-	 * @return null on success or string on error
+	 * @param User $user
+	 * @param string $editToken Edit token
+	 * @param Config $config optional for backwards compatibility
+	 * @return string|null Null on success or string on error
 	 */
-	public static function getPermissionsError( $user, $editToken ) {
-		global $wgEnableEmail, $wgEnableUserEmail;
-
-		if ( !$wgEnableEmail || !$wgEnableUserEmail ) {
+	public static function getPermissionsError( $user, $editToken, Config $config = null ) {
+		if ( $config === null ) {
+			wfDebug( __METHOD__ . ' called without a Config instance passed to it' );
+			$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+		}
+		if ( !$config->get( 'EnableEmail' ) || !$config->get( 'EnableUserEmail' ) ) {
 			return 'usermaildisabled';
 		}
 
@@ -239,8 +243,8 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 
 		$hookErr = false;
 
-		wfRunHooks( 'UserCanSendEmail', array( &$user, &$hookErr ) );
-		wfRunHooks( 'EmailUserPermissionsErrors', array( $user, $editToken, &$hookErr ) );
+		Hooks::run( 'UserCanSendEmail', array( &$user, &$hookErr ) );
+		Hooks::run( 'EmailUserPermissionsErrors', array( $user, $editToken, &$hookErr ) );
 
 		if ( $hookErr ) {
 			return $hookErr;
@@ -252,14 +256,13 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	/**
 	 * Form to ask for target user name.
 	 *
-	 * @param string $name user name submitted.
-	 * @return String: form asking for user name.
+	 * @param string $name User name submitted.
+	 * @return string Form asking for user name.
 	 */
 	protected function userForm( $name ) {
-		global $wgScript;
 		$string = Xml::openElement(
 			'form',
-			array( 'method' => 'get', 'action' => $wgScript, 'id' => 'askusername' )
+			array( 'method' => 'get', 'action' => wfScript(), 'id' => 'askusername' )
 		) .
 			Html::hidden( 'title', $this->getPageTitle()->getPrefixedText() ) .
 			Xml::openElement( 'fieldset' ) .
@@ -283,8 +286,8 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 * Submit callback for an HTMLForm object, will simply call submit().
 	 *
 	 * @since 1.20
-	 * @param $data array
-	 * @param $form HTMLForm object
+	 * @param array $data
+	 * @param HTMLForm $form
 	 * @return Status|string|bool
 	 */
 	public static function uiSubmit( array $data, HTMLForm $form ) {
@@ -298,11 +301,11 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 *
 	 * @param array $data
 	 * @param IContextSource $context
-	 * @return Mixed: Status object, or potentially a String on error
+	 * @return Status|string|bool Status object, or potentially a String on error
 	 * or maybe even true on success if anything uses the EmailUser hook.
 	 */
 	public static function submit( array $data, IContextSource $context ) {
-		global $wgUserEmailUseReplyTo;
+		$config = $context->getConfig();
 
 		$target = self::getTarget( $data['Target'] );
 		if ( !$target instanceof User ) {
@@ -310,8 +313,8 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			return $context->msg( $target . 'text' )->parseAsBlock();
 		}
 
-		$to = new MailAddress( $target );
-		$from = new MailAddress( $context->getUser() );
+		$to = MailAddress::newFromUser( $target );
+		$from = MailAddress::newFromUser( $context->getUser() );
 		$subject = $data['Subject'];
 		$text = $data['Text'];
 
@@ -321,20 +324,18 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			$from->name, $to->name )->inContentLanguage()->text();
 
 		$error = '';
-		if ( !wfRunHooks( 'EmailUser', array( &$to, &$from, &$subject, &$text, &$error ) ) ) {
+		if ( !Hooks::run( 'EmailUser', array( &$to, &$from, &$subject, &$text, &$error ) ) ) {
 			return $error;
 		}
 
-		if ( $wgUserEmailUseReplyTo ) {
+		if ( $config->get( 'UserEmailUseReplyTo' ) ) {
 			// Put the generic wiki autogenerated address in the From:
 			// header and reserve the user for Reply-To.
 			//
 			// This is a bit ugly, but will serve to differentiate
 			// wiki-borne mails from direct mails and protects against
 			// SPF and bounce problems with some mailers (see below).
-			global $wgPasswordSender;
-
-			$mailFrom = new MailAddress( $wgPasswordSender,
+			$mailFrom = new MailAddress( $config->get( 'PasswordSender' ),
 				wfMessage( 'emailsender' )->inContentLanguage()->text() );
 			$replyTo = $from;
 		} else {
@@ -366,12 +367,12 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			if ( $data['CCMe'] && $to != $from ) {
 				$cc_subject = $context->msg( 'emailccsubject' )->rawParams(
 					$target->getName(), $subject )->text();
-				wfRunHooks( 'EmailUserCC', array( &$from, &$from, &$cc_subject, &$text ) );
+				Hooks::run( 'EmailUserCC', array( &$from, &$from, &$cc_subject, &$text ) );
 				$ccStatus = UserMailer::send( $from, $from, $cc_subject, $text );
 				$status->merge( $ccStatus );
 			}
 
-			wfRunHooks( 'EmailUserComplete', array( $to, $from, $subject, $text ) );
+			Hooks::run( 'EmailUserComplete', array( $to, $from, $subject, $text ) );
 
 			return $status;
 		}

@@ -1,4 +1,4 @@
-/**
+/*!
  * JavaScript for Special:Search
  */
 ( function ( mw, $ ) {
@@ -39,13 +39,18 @@
 				var parts = $( this ).attr( 'href' ).split( 'search=' ),
 					lastpart = '',
 					prefix = 'search=';
-				if ( parts.length > 1 && parts[1].indexOf( '&' ) >= 0 ) {
-					lastpart = parts[1].substring( parts[1].indexOf( '&' ) );
+				if ( parts.length > 1 && parts[1].indexOf( '&' ) !== -1 ) {
+					lastpart = parts[1].slice( parts[1].indexOf( '&' ) );
 				} else {
 					prefix = '&search=';
 				}
 				this.href = parts[0] + prefix + encodeURIComponent( searchterm ) + lastpart;
 			} );
+		} ).trigger( 'change' );
+
+		// When saving settings, use the proper request method (POST instead of GET).
+		$( '#mw-search-powersearch-remember' ).change( function () {
+			this.form.method = this.checked ? 'post' : 'get';
 		} ).trigger( 'change' );
 
 	} );

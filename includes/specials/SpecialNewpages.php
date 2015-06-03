@@ -27,15 +27,12 @@
  * @ingroup SpecialPage
  */
 class SpecialNewpages extends IncludableSpecialPage {
-	// Stored objects
-
 	/**
 	 * @var FormOptions
 	 */
 	protected $opts;
 	protected $customFilters;
 
-	// Some internal settings
 	protected $showNavigation = false;
 
 	public function __construct() {
@@ -43,8 +40,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function setup( $par ) {
-		global $wgEnableNewpagesUserFilter;
-
 		// Options
 		$opts = new FormOptions();
 		$this->opts = $opts; // bind
@@ -61,7 +56,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$opts->add( 'invert', false );
 
 		$this->customFilters = array();
-		wfRunHooks( 'SpecialNewPagesFilters', array( $this, &$this->customFilters ) );
+		Hooks::run( 'SpecialNewPagesFilters', array( $this, &$this->customFilters ) );
 		foreach ( $this->customFilters as $key => $params ) {
 			$opts->add( $key, $params['default'] );
 		}
@@ -74,9 +69,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		// Validate
 		$opts->validateIntBounds( 'limit', 0, 5000 );
-		if ( !$wgEnableNewpagesUserFilter ) {
-			$opts->setValue( 'username', '' );
-		}
 	}
 
 	protected function parseParams( $par ) {
@@ -124,8 +116,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	/**
 	 * Show a form for filtering namespace and username
 	 *
-	 * @param $par String
-	 * @return String
+	 * @param string $par
 	 */
 	public function execute( $par ) {
 		$out = $this->getOutput();
@@ -135,6 +126,8 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		$this->showNavigation = !$this->including(); // Maybe changed in setup
 		$this->setup( $par );
+
+		$this->addHelpLink( 'Help:New pages' );
 
 		if ( !$this->including() ) {
 			// Settings
@@ -207,7 +200,8 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function form() {
-		global $wgEnableNewpagesUserFilter, $wgScript;
+		$out = $this->getOutput();
+		$out->addModules( 'mediawiki.userSuggest' );
 
 		// Consume values
 		$this->opts->consumeValue( 'offset' ); // don't carry offset, DWIW
@@ -227,73 +221,62 @@ class SpecialNewpages extends IncludableSpecialPage {
 		}
 		$hidden = implode( "\n", $hidden );
 
-		$tagFilter = ChangeTags::buildTagFilterSelector( $tagFilterVal );
-		if ( $tagFilter ) {
-			list( $tagFilterLabel, $tagFilterSelector ) = $tagFilter;
-		}
+		$form = array(
+			'namespace' => array(
+				'type' => 'namespaceselect',
+				'name' => 'namespace',
+				'label-message' => 'namespace',
+				'default' => $namespace,
+			),
+			'nsinvert' => array(
+				'type' => 'check',
+				'name' => 'invert',
+				'label-message' => 'invert',
+				'default' => $nsinvert,
+				'tooltip' => $this->msg( 'tooltip-invert' )->text(),
+			),
+			'tagFilter' => array(
+				'type' => 'tagfilter',
+				'name' => 'tagfilter',
+				'label-raw' => $this->msg( 'tag-filter' )->parse(),
+				'default' => $tagFilterVal,
+			),
+			'username' => array(
+				'type' => 'text',
+				'name' => 'username',
+				'label-message' => 'newpages-username',
+				'default' => $userText,
+				'id' => 'mw-np-username',
+				'size' => 30,
+				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
+			),
+		);
 
-		$form = Xml::openElement( 'form', array( 'action' => $wgScript ) ) .
-			Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
-			Xml::fieldset( $this->msg( 'newpages' )->text() ) .
-			Xml::openElement( 'table', array( 'id' => 'mw-newpages-table' ) ) .
-			'<tr>
-				<td class="mw-label">' .
-			Xml::label( $this->msg( 'namespace' )->text(), 'namespace' ) .
-			'</td>
-			<td class="mw-input">' .
-			Html::namespaceSelector(
-				array(
-					'selected' => $namespace,
-					'all' => 'all',
-				), array(
-					'name' => 'namespace',
-					'id' => 'namespace',
-					'class' => 'namespaceselector',
-				)
-			) . '&#160;' .
-			Xml::checkLabel(
-				$this->msg( 'invert' )->text(),
-				'invert',
-				'nsinvert',
-				$nsinvert,
-				array( 'title' => $this->msg( 'tooltip-invert' )->text() )
+		$htmlForm = new HTMLForm( $form, $this->getContext() );
+
+		$htmlForm->setSubmitText( $this->msg( 'allpagessubmit' )->text() );
+		$htmlForm->setSubmitProgressive();
+		// The form should be visible on each request (inclusive requests with submitted forms), so
+		// return always false here.
+		$htmlForm->setSubmitCallback(
+			function () {
+				return false;
+			}
+		);
+		$htmlForm->setMethod( 'get' );
+
+		$out->addHtml( Xml::fieldset( $this->msg( 'newpages' )->text() ) );
+
+		$htmlForm->show();
+
+		$out->addHtml(
+			Html::rawElement(
+				'div',
+				null,
+				$this->filterLinks()
 			) .
-			'</td>
-			</tr>' . ( $tagFilter ? (
-			'<tr>
-				<td class="mw-label">' .
-				$tagFilterLabel .
-				'</td>
-				<td class="mw-input">' .
-				$tagFilterSelector .
-				'</td>
-			</tr>' ) : '' ) .
-			( $wgEnableNewpagesUserFilter ?
-				'<tr>
-				<td class="mw-label">' .
-					Xml::label( $this->msg( 'newpages-username' )->text(), 'mw-np-username' ) .
-					'</td>
-				<td class="mw-input">' .
-					Xml::input( 'username', 30, $userText, array( 'id' => 'mw-np-username' ) ) .
-					'</td>
-			</tr>' : '' ) .
-			'<tr> <td></td>
-				<td class="mw-submit">' .
-			Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) .
-			'</td>
-		</tr>' .
-			'<tr>
-				<td></td>
-				<td class="mw-input">' .
-			$this->filterLinks() .
-			'</td>
-			</tr>' .
-			Xml::closeElement( 'table' ) .
-			Xml::closeElement( 'fieldset' ) .
-			$hidden .
-			Xml::closeElement( 'form' );
-
-		$this->getOutput()->addHTML( $form );
+			Xml::closeElement( 'fieldset' )
+		);
 	}
 
 	/**
@@ -301,7 +284,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	 * size, user links, and a comment
 	 *
 	 * @param object $result Result row
-	 * @return String
+	 * @return string
 	 */
 	public function formatRow( $result ) {
 		$title = Title::newFromRow( $result );
@@ -352,12 +335,12 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$hist = Html::rawElement( 'span', array( 'class' => 'mw-newpages-history' ),
 			$this->msg( 'parentheses' )->rawParams( $histLink )->escaped() );
 
-		$length = Html::element(
+		$length = Html::rawElement(
 			'span',
 			array( 'class' => 'mw-newpages-length' ),
-			$this->msg( 'brackets' )->params( $this->msg( 'nbytes' )
-				->numParams( $result->length )->text()
-			)
+			$this->msg( 'brackets' )->rawParams(
+				$this->msg( 'nbytes' )->numParams( $result->length )->escaped()
+			)->escaped()
 		);
 
 		$ulink = Linker::revUserTools( $rev );
@@ -394,14 +377,15 @@ class SpecialNewpages extends IncludableSpecialPage {
 			$oldTitleText = $this->msg( 'rc-old-title' )->params( $oldTitleText )->escaped();
 		}
 
-		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} {$dm}{$ulink} {$comment} {$tagDisplay} {$oldTitleText}</li>\n";
+		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} "
+			. "{$dm}{$ulink} {$comment} {$tagDisplay} {$oldTitleText}</li>\n";
 	}
 
 	/**
 	 * Should a specific result row provide "patrollable" links?
 	 *
 	 * @param object $result Result row
-	 * @return Boolean
+	 * @return bool
 	 */
 	protected function patrollable( $result ) {
 		return ( $this->getUser()->useNPPatrol() && !$result->rc_patrolled );
@@ -410,24 +394,23 @@ class SpecialNewpages extends IncludableSpecialPage {
 	/**
 	 * Output a subscription feed listing recent edits to this page.
 	 *
-	 * @param $type String
+	 * @param string $type
 	 */
 	protected function feed( $type ) {
-		global $wgFeed, $wgFeedClasses, $wgFeedLimit;
-
-		if ( !$wgFeed ) {
+		if ( !$this->getConfig()->get( 'Feed' ) ) {
 			$this->getOutput()->addWikiMsg( 'feed-unavailable' );
 
 			return;
 		}
 
-		if ( !isset( $wgFeedClasses[$type] ) ) {
+		$feedClasses = $this->getConfig()->get( 'FeedClasses' );
+		if ( !isset( $feedClasses[$type] ) ) {
 			$this->getOutput()->addWikiMsg( 'feed-invalid' );
 
 			return;
 		}
 
-		$feed = new $wgFeedClasses[$type](
+		$feed = new $feedClasses[$type](
 			$this->feedTitle(),
 			$this->msg( 'tagline' )->text(),
 			$this->getPageTitle()->getFullURL()
@@ -435,7 +418,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		$pager = new NewPagesPager( $this, $this->opts );
 		$limit = $this->opts->getValue( 'limit' );
-		$pager->mLimit = min( $limit, $wgFeedLimit );
+		$pager->mLimit = min( $limit, $this->getConfig()->get( 'FeedLimit' ) );
 
 		$feed->outHeader();
 		if ( $pager->getNumRows() > 0 ) {
@@ -447,10 +430,11 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function feedTitle() {
-		global $wgLanguageCode, $wgSitename;
 		$desc = $this->getDescription();
+		$code = $this->getConfig()->get( 'LanguageCode' );
+		$sitename = $this->getConfig()->get( 'Sitename' );
 
-		return "$wgSitename - $desc [$wgLanguageCode]";
+		return "$sitename - $desc [$code]";
 	}
 
 	protected function feedItem( $row ) {
@@ -514,7 +498,6 @@ class NewPagesPager extends ReverseChronologicalPager {
 	}
 
 	function getQueryInfo() {
-		global $wgEnableNewpagesUserFilter;
 		$conds = array();
 		$conds['rc_new'] = 1;
 
@@ -534,8 +517,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 			}
 		}
 
-		# $wgEnableNewpagesUserFilter - temp WMF hack
-		if ( $wgEnableNewpagesUserFilter && $user ) {
+		if ( $user ) {
 			$conds['rc_user_text'] = $user->getText();
 			$rcIndexes = 'rc_user_text';
 		} elseif ( User::groupHasPermission( '*', 'createpage' ) &&
@@ -568,7 +550,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 		);
 		$join_conds = array( 'page' => array( 'INNER JOIN', 'page_id=rc_cur_id' ) );
 
-		wfRunHooks( 'SpecialNewpagesConditions',
+		Hooks::run( 'SpecialNewpagesConditions',
 			array( &$this, $this->opts, &$conds, &$tables, &$fields, &$join_conds ) );
 
 		$options = array();

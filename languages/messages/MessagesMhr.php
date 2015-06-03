@@ -1,8 +1,7 @@
 <?php
 /** Eastern Mari (олык марий)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -69,7 +68,7 @@ $namespaceGenderAliases = array();
 
 $specialPageAliases = array(
 	'Blankpage'                 => array( 'Пуста_лаштык' ),
-	'BrokenRedirects'           => array( 'Кӱрылтшӧ__вес_вере_колтымаш-влак' ),
+	'BrokenRedirects'           => array( 'Кӱрылтшӧ_вес_вере_колтымаш-влак' ),
 	'Categories'                => array( 'Категорий-влак' ),
 	'ComparePages'              => array( 'Лаштык-влакым_тергымаш' ),
 	'Emailuser'                 => array( 'Пайдаланышылан_серышым_колташ' ),

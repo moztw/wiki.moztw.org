@@ -1,8 +1,9 @@
 <?php
 /**
  * MediaWiki installer overrides.
- * Modify this file if you are a packager who needs to modify the behavior of the MediaWiki installer.
- * Altering it is preferred over changing anything in /includes.
+ * Modify this file if you are a packager who needs to modify the behavior of
+ * the MediaWiki installer. Altering it is preferred over changing anything in
+ * /includes.
  *
  * Note: this file doesn't gets included from a global scope, don't use globals directly.
  *
@@ -37,7 +38,7 @@ Then add the following to the bottom of this file:
 class MyLocalSettingsGenerator extends LocalSettingsGenerator {
 	function getText() {
 		// Modify an existing setting
-		$this->values['wgResourceLoaderMaxQueryLength'] = 512;
+		$this->values['wgDefaultSkin'] = 'vector';
 		// add a new setting
 		$ls = parent::getText();
 		return $ls . "\n\$wgUseTex = true;\n";

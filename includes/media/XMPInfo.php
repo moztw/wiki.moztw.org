@@ -34,7 +34,7 @@ class XMPInfo {
 		if ( !self::$ranHooks ) {
 			// This is for if someone makes a custom metadata extension.
 			// For example, a medical wiki might want to decode DICOM xmp properties.
-			wfRunHooks( 'XMPGetInfo', array( &self::$items ) );
+			Hooks::run( 'XMPGetInfo', array( &self::$items ) );
 			self::$ranHooks = true; // Only want to do this once.
 		}
 
@@ -726,7 +726,7 @@ class XMPInfo {
 				'mode' => XMPReader::MODE_SEQ,
 				'validate' => 'validateDate',
 			),
-			/* Do not extract dc:format, as we've got better ways to determine mimetype */
+			/* Do not extract dc:format, as we've got better ways to determine MIME type */
 			'identifier' => array(
 				'map_group' => 'deprecated',
 				'map_name' => 'Identifier',

@@ -61,6 +61,7 @@ class MWCryptRand {
 
 	/**
 	 * Initialize an initial random state based off of whatever we can find
+	 * @return string
 	 */
 	protected function initialRandomState() {
 		// $_SERVER contains a variety of unstable user and system specific information
@@ -134,12 +135,10 @@ class MWCryptRand {
 		// It's mostly worthless but throw the wiki's id into the data for a little more variance
 		$state .= wfWikiID();
 
-		// If we have a secret key or proxy key set then throw it into the state as well
-		global $wgSecretKey, $wgProxyKey;
+		// If we have a secret key set then throw it into the state as well
+		global $wgSecretKey;
 		if ( $wgSecretKey ) {
 			$state .= $wgSecretKey;
-		} elseif ( $wgProxyKey ) {
-			$state .= $wgProxyKey;
 		}
 
 		return $state;
@@ -149,7 +148,7 @@ class MWCryptRand {
 	 * Randomly hash data while mixing in clock drift data for randomness
 	 *
 	 * @param string $data The data to randomly hash.
-	 * @return String The hashed bytes
+	 * @return string The hashed bytes
 	 * @author Tim Starling
 	 */
 	protected function driftHash( $data ) {
@@ -216,7 +215,7 @@ class MWCryptRand {
 	/**
 	 * Decide on the best acceptable hash algorithm we have available for hash()
 	 * @throws MWException
-	 * @return String A hash algorithm
+	 * @return string A hash algorithm
 	 */
 	protected function hashAlgo() {
 		if ( !is_null( $this->algo ) ) {
@@ -261,8 +260,8 @@ class MWCryptRand {
 	 * Generate an acceptably unstable one-way-hash of some text
 	 * making use of the best hash algorithm that we have available.
 	 *
-	 * @param $data string
-	 * @return String A raw hash of the data
+	 * @param string $data
+	 * @return string A raw hash of the data
 	 */
 	protected function hash( $data ) {
 		return hash( $this->hashAlgo(), $data, true );
@@ -272,9 +271,9 @@ class MWCryptRand {
 	 * Generate an acceptably unstable one-way-hmac of some text
 	 * making use of the best hash algorithm that we have available.
 	 *
-	 * @param $data string
-	 * @param $key string
-	 * @return String A raw hash of the data
+	 * @param string $data
+	 * @param string $key
+	 * @return string A raw hash of the data
 	 */
 	protected function hmac( $data, $key ) {
 		return hash_hmac( $this->hashAlgo(), $data, $key, true );
@@ -295,7 +294,6 @@ class MWCryptRand {
 	 * @see self::generate()
 	 */
 	public function realGenerate( $bytes, $forceStrong = false ) {
-		wfProfileIn( __METHOD__ );
 
 		wfDebug( __METHOD__ . ": Generating cryptographic random bytes for " .
 			wfGetAllCallers( 5 ) . "\n" );
@@ -315,7 +313,6 @@ class MWCryptRand {
 			// entropy so this is also preferable to just trying to read urandom because it may work
 			// on Windows systems as well.
 			if ( function_exists( 'mcrypt_create_iv' ) ) {
-				wfProfileIn( __METHOD__ . '-mcrypt' );
 				$rem = $bytes - strlen( $buffer );
 				$iv = mcrypt_create_iv( $rem, MCRYPT_DEV_URANDOM );
 				if ( $iv === false ) {
@@ -325,7 +322,6 @@ class MWCryptRand {
 					wfDebug( __METHOD__ . ": mcrypt_create_iv generated " . strlen( $iv ) .
 						" bytes of randomness.\n" );
 				}
-				wfProfileOut( __METHOD__ . '-mcrypt' );
 			}
 		}
 
@@ -338,7 +334,6 @@ class MWCryptRand {
 			if ( function_exists( 'openssl_random_pseudo_bytes' )
 				&& ( !wfIsWindows() || version_compare( PHP_VERSION, '5.3.4', '>=' ) )
 			) {
-				wfProfileIn( __METHOD__ . '-openssl' );
 				$rem = $bytes - strlen( $buffer );
 				$openssl_bytes = openssl_random_pseudo_bytes( $rem, $openssl_strong );
 				if ( $openssl_bytes === false ) {
@@ -354,7 +349,6 @@ class MWCryptRand {
 					// using it use it's say on whether the randomness is strong
 					$this->strong = !!$openssl_strong;
 				}
-				wfProfileOut( __METHOD__ . '-openssl' );
 			}
 		}
 
@@ -362,7 +356,6 @@ class MWCryptRand {
 		if ( strlen( $buffer ) < $bytes &&
 			( function_exists( 'stream_set_read_buffer' ) || $forceStrong )
 		) {
-			wfProfileIn( __METHOD__ . '-fopen-urandom' );
 			$rem = $bytes - strlen( $buffer );
 			if ( !function_exists( 'stream_set_read_buffer' ) && $forceStrong ) {
 				wfDebug( __METHOD__ . ": Was forced to read from /dev/urandom " .
@@ -401,7 +394,6 @@ class MWCryptRand {
 			} else {
 				wfDebug( __METHOD__ . ": /dev/urandom could not be opened.\n" );
 			}
-			wfProfileOut( __METHOD__ . '-fopen-urandom' );
 		}
 
 		// If we cannot use or generate enough data from a secure source
@@ -415,12 +407,10 @@ class MWCryptRand {
 				": Falling back to using a pseudo random state to generate randomness.\n" );
 		}
 		while ( strlen( $buffer ) < $bytes ) {
-			wfProfileIn( __METHOD__ . '-fallback' );
 			$buffer .= $this->hmac( $this->randomState(), mt_rand() );
 			// This code is never really cryptographically strong, if we use it
 			// at all, then set strong to false.
 			$this->strong = false;
-			wfProfileOut( __METHOD__ . '-fallback' );
 		}
 
 		// Once the buffer has been filled up with enough random data to fulfill
@@ -431,8 +421,6 @@ class MWCryptRand {
 
 		wfDebug( __METHOD__ . ": " . strlen( $buffer ) .
 			" bytes of randomness leftover in the buffer.\n" );
-
-		wfProfileOut( __METHOD__ );
 
 		return $generated;
 	}
@@ -489,11 +477,11 @@ class MWCryptRand {
 	 * You can use MWCryptRand::wasStrong() if you wish to know if the source used
 	 * was cryptographically strong.
 	 *
-	 * @param int $bytes the number of bytes of random data to generate
+	 * @param int $bytes The number of bytes of random data to generate
 	 * @param bool $forceStrong Pass true if you want generate to prefer cryptographically
 	 *                          strong sources of entropy even if reading from them may steal
 	 *                          more entropy from the system than optimal.
-	 * @return String Raw binary random data
+	 * @return string Raw binary random data
 	 */
 	public static function generate( $bytes, $forceStrong = false ) {
 		return self::singleton()->realGenerate( $bytes, $forceStrong );
@@ -505,11 +493,11 @@ class MWCryptRand {
 	 * You can use MWCryptRand::wasStrong() if you wish to know if the source used
 	 * was cryptographically strong.
 	 *
-	 * @param int $chars the number of hex chars of random data to generate
+	 * @param int $chars The number of hex chars of random data to generate
 	 * @param bool $forceStrong Pass true if you want generate to prefer cryptographically
 	 *                          strong sources of entropy even if reading from them may steal
 	 *                          more entropy from the system than optimal.
-	 * @return String Hexadecimal random data
+	 * @return string Hexadecimal random data
 	 */
 	public static function generateHex( $chars, $forceStrong = false ) {
 		return self::singleton()->realGenerateHex( $chars, $forceStrong );

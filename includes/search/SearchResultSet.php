@@ -30,7 +30,7 @@ class SearchResultSet {
 	 * the search terms as parsed by this engine in a text extract.
 	 * STUB
 	 *
-	 * @return Array
+	 * @return array
 	 */
 	function termMatches() {
 		return array();
@@ -41,16 +41,6 @@ class SearchResultSet {
 	}
 
 	/**
-	 * Return true if results are included in this result set.
-	 * STUB
-	 *
-	 * @return Boolean
-	 */
-	function hasResults() {
-		return false;
-	}
-
-	/**
 	 * Some search modes return a total hit count for the query
 	 * in the entire article database. This may include pages
 	 * in namespaces that would not be matched on the given
@@ -58,7 +48,7 @@ class SearchResultSet {
 	 *
 	 * Return null if no total hits number is supported.
 	 *
-	 * @return Integer
+	 * @return int
 	 */
 	function getTotalHits() {
 		return null;
@@ -68,21 +58,21 @@ class SearchResultSet {
 	 * Some search modes return a suggested alternate term if there are
 	 * no exact hits. Returns true if there is one on this set.
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	function hasSuggestion() {
 		return false;
 	}
 
 	/**
-	 * @return String: suggested query, null if none
+	 * @return string Suggested query, null if none
 	 */
 	function getSuggestionQuery() {
 		return null;
 	}
 
 	/**
-	 * @return String: HTML highlighted suggested query, '' if none
+	 * @return string HTML highlighted suggested query, '' if none
 	 */
 	function getSuggestionSnippet() {
 		return '';
@@ -100,7 +90,7 @@ class SearchResultSet {
 	/**
 	 * Check if there are results on other wikis
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	function hasInterwikiResults() {
 		return $this->getInterwikiResults() != null;
@@ -127,6 +117,7 @@ class SearchResultSet {
 	 * Did the search contain search syntax?  If so, Special:Search won't offer
 	 * the user a link to a create a page named by the search string because the
 	 * name would contain the search syntax.
+	 * @return bool
 	 */
 	public function searchContainedSyntax() {
 		return false;
@@ -138,45 +129,58 @@ class SearchResultSet {
  * @ingroup Search
  */
 class SqlSearchResultSet extends SearchResultSet {
+	protected $resultSet;
+	protected $terms;
+	protected $totalHits;
 
-	protected $mResultSet;
-
-	function __construct( $resultSet, $terms ) {
-		$this->mResultSet = $resultSet;
-		$this->mTerms = $terms;
+	function __construct( $resultSet, $terms, $total = null ) {
+		$this->resultSet = $resultSet;
+		$this->terms = $terms;
+		$this->totalHits = $total;
 	}
 
 	function termMatches() {
-		return $this->mTerms;
+		return $this->terms;
 	}
 
 	function numRows() {
-		if ( $this->mResultSet === false ) {
+		if ( $this->resultSet === false ) {
 			return false;
 		}
 
-		return $this->mResultSet->numRows();
+		return $this->resultSet->numRows();
 	}
 
 	function next() {
-		if ( $this->mResultSet === false ) {
+		if ( $this->resultSet === false ) {
 			return false;
 		}
 
-		$row = $this->mResultSet->fetchObject();
+		$row = $this->resultSet->fetchObject();
 		if ( $row === false ) {
 			return false;
 		}
 
-		return SearchResult::newFromRow( $row );
+		return SearchResult::newFromTitle(
+			Title::makeTitle( $row->page_namespace, $row->page_title )
+		);
 	}
 
 	function free() {
-		if ( $this->mResultSet === false ) {
+		if ( $this->resultSet === false ) {
 			return false;
 		}
 
-		$this->mResultSet->free();
+		$this->resultSet->free();
+	}
+
+	function getTotalHits() {
+		if ( !is_null( $this->totalHits ) ) {
+			return $this->totalHits;
+		} else {
+			// Special:Search expects a number here.
+			return $this->numRows();
+		}
 	}
 }
 
@@ -187,18 +191,14 @@ class SearchNearMatchResultSet extends SearchResultSet {
 	private $fetched = false;
 
 	/**
-	 * @param $match mixed Title if matched, else null
+	 * @param Title|null $match Title if matched, else null
 	 */
 	public function __construct( $match ) {
 		$this->result = $match;
 	}
 
-	public function hasResult() {
-		return (bool)$this->result;
-	}
-
 	public function numRows() {
-		return $this->hasResults() ? 1 : 0;
+		return $this->result ? 1 : 0;
 	}
 
 	public function next() {

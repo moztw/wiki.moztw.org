@@ -48,7 +48,7 @@ class AjaxResponse {
 
 	/**
 	 * Date for the HTTP header Last-modified
-	 * @var string|false $mLastModified
+	 * @var string|bool $mLastModified
 	 */
 	private $mLastModified;
 
@@ -71,11 +71,18 @@ class AjaxResponse {
 	private $mText;
 
 	/**
-	 * @param $text string|null
+	 * @var Config
 	 */
-	function __construct( $text = null ) {
+	private $mConfig;
+
+	/**
+	 * @param string|null $text
+	 * @param Config|null $config
+	 */
+	function __construct( $text = null, Config $config = null ) {
 		$this->mCacheDuration = null;
 		$this->mVary = null;
+		$this->mConfig = $config ?: ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
 
 		$this->mDisabled = false;
 		$this->mText = '';
@@ -90,7 +97,7 @@ class AjaxResponse {
 
 	/**
 	 * Set the number of seconds to get the response cached by a proxy
-	 * @param $duration int
+	 * @param int $duration
 	 */
 	function setCacheDuration( $duration ) {
 		$this->mCacheDuration = $duration;
@@ -98,7 +105,7 @@ class AjaxResponse {
 
 	/**
 	 * Set the HTTP Vary header
-	 * @param $vary string
+	 * @param string $vary
 	 */
 	function setVary( $vary ) {
 		$this->mVary = $vary;
@@ -106,7 +113,7 @@ class AjaxResponse {
 
 	/**
 	 * Set the HTTP response code
-	 * @param $code string
+	 * @param string $code
 	 */
 	function setResponseCode( $code ) {
 		$this->mResponseCode = $code;
@@ -114,7 +121,7 @@ class AjaxResponse {
 
 	/**
 	 * Set the HTTP header Content-Type
-	 * @param $type string
+	 * @param string $type
 	 */
 	function setContentType( $type ) {
 		$this->mContentType = $type;
@@ -129,10 +136,10 @@ class AjaxResponse {
 
 	/**
 	 * Add content to the response
-	 * @param $text string
+	 * @param string $text
 	 */
 	function addText( $text ) {
-		if ( ! $this->mDisabled && $text ) {
+		if ( !$this->mDisabled && $text ) {
 			$this->mText .= $text;
 		}
 	}
@@ -141,7 +148,7 @@ class AjaxResponse {
 	 * Output text
 	 */
 	function printText() {
-		if ( ! $this->mDisabled ) {
+		if ( !$this->mDisabled ) {
 			print $this->mText;
 		}
 	}
@@ -150,8 +157,6 @@ class AjaxResponse {
 	 * Construct the header and output it
 	 */
 	function sendHeaders() {
-		global $wgUseSquid, $wgUseESI;
-
 		if ( $this->mResponseCode ) {
 			$n = preg_replace( '/^ *(\d+)/', '\1', $this->mResponseCode );
 			header( "Status: " . $this->mResponseCode, true, (int)$n );
@@ -170,12 +175,12 @@ class AjaxResponse {
 			# and tell the client to always check with the squid. Otherwise,
 			# tell the client to use a cached copy, without a way to purge it.
 
-			if ( $wgUseSquid ) {
+			if ( $this->mConfig->get( 'UseSquid' ) ) {
 				# Expect explicit purge of the proxy cache, but require end user agents
 				# to revalidate against the proxy on each visit.
 				# Surrogate-Control controls our Squid, Cache-Control downstream caches
 
-				if ( $wgUseESI ) {
+				if ( $this->mConfig->get( 'UseESI' ) ) {
 					header( 'Surrogate-Control: max-age=' . $this->mCacheDuration . ', content="ESI/1.0"' );
 					header( 'Cache-Control: s-maxage=0, must-revalidate, max-age=0' );
 				} else {
@@ -206,7 +211,7 @@ class AjaxResponse {
 	 * possible. If successful, the AjaxResponse is disabled so that
 	 * any future call to AjaxResponse::printText() have no effect.
 	 *
-	 * @param $timestamp string
+	 * @param string $timestamp
 	 * @return bool Returns true if the response code was set to 304 Not Modified.
 	 */
 	function checkLastModified( $timestamp ) {
@@ -262,8 +267,8 @@ class AjaxResponse {
 	}
 
 	/**
-	 * @param $mckey string
-	 * @param $touched int
+	 * @param string $mckey
+	 * @param int $touched
 	 * @return bool
 	 */
 	function loadFromMemcached( $mckey, $touched ) {
@@ -290,8 +295,8 @@ class AjaxResponse {
 	}
 
 	/**
-	 * @param $mckey string
-	 * @param $expiry int
+	 * @param string $mckey
+	 * @param int $expiry
 	 * @return bool
 	 */
 	function storeInMemcached( $mckey, $expiry = 86400 ) {

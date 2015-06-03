@@ -67,7 +67,7 @@ class McTest extends Maintenance {
 		foreach ( $servers as $server ) {
 			$this->output(
 				str_pad( $server, $maxSrvLen ),
-				$server  # output channel
+				$server # output channel
 			);
 
 			$mcc = new MemCachedClientforWiki( array(
@@ -78,7 +78,7 @@ class McTest extends Maintenance {
 			$set = 0;
 			$incr = 0;
 			$get = 0;
-			$time_start = $this->microtime_float();
+			$time_start = microtime( true );
 			for ( $i = 1; $i <= $iterations; $i++ ) {
 				if ( $mcc->set( "test$i", $i ) ) {
 					$set++;
@@ -95,19 +95,10 @@ class McTest extends Maintenance {
 					$get++;
 				}
 			}
-			$exectime = $this->microtime_float() - $time_start;
+			$exectime = microtime( true ) - $time_start;
 
 			$this->output( " set: $set   incr: $incr   get: $get time: $exectime", $server );
 		}
-	}
-
-	/**
-	 * Return microtime() as a float
-	 * @return float
-	 */
-	private function microtime_float() {
-		list( $usec, $sec ) = explode( " ", microtime() );
-		return ( (float)$usec + (float)$sec );
 	}
 }
 

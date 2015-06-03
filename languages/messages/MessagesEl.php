@@ -1,8 +1,7 @@
 <?php
 /** Greek (Ελληνικά)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -10,28 +9,28 @@
  */
 
 /**
-  * Initial translation by Pasok Internet Volunteers
-  * http://forum.pasok.gr
-  * version 1.0 (initial release)
-  *
-  * The project for the translation of MediaWiki into Greek
-  * was undertaken by a group of ICT volunteers working under
-  * the auspices of the Greek political party PASOK.
-  *
-  * The idea behind this effort was  to provide an extensible,
-  * easy-to-use and non-intimidating tool for content development
-  * and project management, to be used throughout the administrative
-  * and political structure of PASOK by staff, volunteers, party members
-  * and elected officials (all of whom possess varying degrees of ICT skills).
-  *
-  * The PASOK ICT team and the volunteers who worked on this project are
-  * now returning the translated interface to the Open-Source Community
-  * with over 98% of the messages translated into user-friendly Greek.
-  *
-  * We hope that it will be used as a tool by other civil society organizations
-  * in Greece, and that it will enhance the collective creation and the dissemination
-  * of knowledge - an essential component of the democratic process.
-  */
+ * Initial translation by Pasok Internet Volunteers
+ * http://forum.pasok.gr
+ * version 1.0 (initial release)
+ *
+ * The project for the translation of MediaWiki into Greek
+ * was undertaken by a group of ICT volunteers working under
+ * the auspices of the Greek political party PASOK.
+ *
+ * The idea behind this effort was  to provide an extensible,
+ * easy-to-use and non-intimidating tool for content development
+ * and project management, to be used throughout the administrative
+ * and political structure of PASOK by staff, volunteers, party members
+ * and elected officials (all of whom possess varying degrees of ICT skills).
+ *
+ * The PASOK ICT team and the volunteers who worked on this project are
+ * now returning the translated interface to the Open-Source Community
+ * with over 98% of the messages translated into user-friendly Greek.
+ *
+ * We hope that it will be used as a tool by other civil society organizations
+ * in Greece, and that it will enhance the collective creation and the dissemination
+ * of knowledge - an essential component of the democratic process.
+ */
 
 $namespaceNames = array(
 	NS_MEDIA            => 'Μέσο',
@@ -62,6 +61,7 @@ $namespaceAliases = array(
 $specialPageAliases = array(
 	'Activeusers'               => array( 'ΕνεργοίΧρήστες' ),
 	'Allmessages'               => array( 'ΌλαΤαΜηνύματα' ),
+	'AllMyUploads'              => array( 'ΌλαΤαΑρχείαΜου' ),
 	'Allpages'                  => array( 'ΌλεςΟιΣελίδες' ),
 	'Ancientpages'              => array( 'ΑρχαίεςΣελίδες' ),
 	'Badtitle'                  => array( 'ΚακόςΤίτλος' ),
@@ -78,7 +78,9 @@ $specialPageAliases = array(
 	'CreateAccount'             => array( 'ΔημιουργίαΛογαριασμού' ),
 	'Deadendpages'              => array( 'ΑδιέξοδεςΣελίδες' ),
 	'DeletedContributions'      => array( 'ΔιαγραμμένεςΣυνεισφορές' ),
+	'Diff'                      => array( 'Διαφορά' ),
 	'DoubleRedirects'           => array( 'ΔιπλέςΑνακατευθύνσεις' ),
+	'EditWatchlist'             => array( 'ΕπεξεργασίαΛίσταςΠαρακολούθησης' ),
 	'Emailuser'                 => array( 'EmailΧρήστη' ),
 	'ExpandTemplates'           => array( 'ΕπέκτασηΠροτύπων' ),
 	'Export'                    => array( 'Εξαγωγή' ),
@@ -109,17 +111,19 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'ΠερισσότεροΕπεξεργασίες' ),
 	'Movepage'                  => array( 'ΜετακίνησηΣελίδας' ),
 	'Mycontributions'           => array( 'ΟιΣυνεισφορέςΜου' ),
+	'MyLanguage'                => array( 'ΗΓλώσσαΜου' ),
 	'Mypage'                    => array( 'ΗΣελίδαΜου' ),
 	'Mytalk'                    => array( 'ΗΣυζήτησήΜου' ),
-	'Myuploads'                 => array( 'ΟιΕπιφορτώσειςΜου' ),
+	'Myuploads'                 => array( 'ΤαΑρχείαΜου', 'ΤαΑνεβάσματάΜου', 'ΟιΕπιφορτώσειςΜου' ),
 	'Newimages'                 => array( 'ΝέαΑρχεία', 'ΝέεςΕικόνες' ),
 	'Newpages'                  => array( 'ΝέεςΣελίδες' ),
 	'Popularpages'              => array( 'ΔημοφιλείςΣελίδες' ),
 	'Preferences'               => array( 'Προτιμήσεις' ),
 	'Prefixindex'               => array( 'ΕυρετήριοΠροθεμάτων' ),
 	'Protectedpages'            => array( 'ΠροστατευμένεςΣελίδες' ),
-	'Protectedtitles'           => array( 'ΠροστετευμένοιΤίτλοι' ),
-	'Randompage'                => array( 'Τυχαία', 'ΤυχαίαΣελίδα' ),
+	'Protectedtitles'           => array( 'ΠροστατευμένοιΤίτλοι' ),
+	'Randompage'                => array( 'Τυχαία', 'ΤυχαίαΣελίδα', 'Τυχαίο' ),
+	'RandomInCategory'          => array( 'ΤυχαίαΣτηνΚατηγορία', 'ΤυχαίοΣτηνΚατηγορία' ),
 	'Randomredirect'            => array( 'ΤυχαίαΑνακατεύθυνση' ),
 	'Recentchanges'             => array( 'ΠρόσφατεςΑλλαγές' ),
 	'Recentchangeslinked'       => array( 'ΣυνδεδεμένεςΠρόσφατεςΑλλαγές', 'ΣχετικέςΑλλαγές' ),
@@ -130,6 +134,7 @@ $specialPageAliases = array(
 	'Specialpages'              => array( 'ΕιδικέςΣελίδες' ),
 	'Statistics'                => array( 'Στατιστικά' ),
 	'Tags'                      => array( 'Ετικέτες' ),
+	'TrackingCategories'        => array( 'ΚατηγορίεςΑνίχνευσης' ),
 	'Uncategorizedcategories'   => array( 'ΑκατηγοριοποίητεςΚατηγορίες' ),
 	'Uncategorizedimages'       => array( 'ΑκατηγοριοποίηταΑρχεία', 'ΑκατηγοριοποίητεςΕικόνες' ),
 	'Uncategorizedpages'        => array( 'ΑκατηγοριοποίητεςΣελίδες' ),
@@ -140,7 +145,7 @@ $specialPageAliases = array(
 	'Unusedimages'              => array( 'ΑχρησιμοποίηταΑρχεία' ),
 	'Unusedtemplates'           => array( 'ΜηΧρησιμοποιούμεναΠρότυπα' ),
 	'Unwatchedpages'            => array( 'ΜηΠαρακολουθούμενεςΣελίδες' ),
-	'Upload'                    => array( 'Επιφόρτωση' ),
+	'Upload'                    => array( 'Ανέβασμα', 'Επιφόρτωση' ),
 	'Userlogin'                 => array( 'ΣύνδεσηΧρήστη' ),
 	'Userlogout'                => array( 'ΑποσύνδεσηΧρήστη' ),
 	'Userrights'                => array( 'ΔικαιώματαΧρηστών' ),
@@ -189,7 +194,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'ΑΡΙΘΜΟΣΧΡΗΣΤΩΝ', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'ΕΝΕΡΓΟΙΧΡΗΣΤΕΣ', 'ΑΡΙΘΜΟΣΕΝΕΡΓΩΝΧΡΗΣΤΩΝ', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'ΑΡΙΘΜΟΣΕΠΕΞΕΡΓΑΣΙΩΝ', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'ΑΡΙΘΜΟΣΕΜΦΑΝΙΣΕΩΝ', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'ΟΝΟΜΑΣΕΛΙΔΑΣ', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'ΟΝΟΜΑΣΕΛΙΔΑΣΚ', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ΠΕΡΙΟΧΗ', 'NAMESPACE' ),

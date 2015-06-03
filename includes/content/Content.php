@@ -48,7 +48,7 @@ interface Content {
 	/**
 	 * @since 1.21
 	 *
-	 * @return string|false The wikitext to include when another page includes this
+	 * @return string|bool The wikitext to include when another page includes this
 	 * content, or false if the content is not includable in a wikitext page.
 	 *
 	 * @todo Allow native handling, bypassing wikitext representation, like
@@ -86,7 +86,7 @@ interface Content {
 	public function getNativeData();
 
 	/**
-	 * Returns the content's nominal size in bogo-bytes.
+	 * Returns the content's nominal size in "bogo-bytes".
 	 *
 	 * @return int
 	 */
@@ -292,6 +292,9 @@ interface Content {
 	 * Subclasses may implement this to determine the necessary updates more
 	 * efficiently, or make use of information about the old content.
 	 *
+	 * @note Implementations should call the SecondaryDataUpdates hook, like
+	 *   AbstractContent does.
+	 *
 	 * @param Title $title The context for determining the necessary updates
 	 * @param Content $old An optional Content object representing the
 	 *    previous content, i.e. the content being replaced by this Content
@@ -378,10 +381,9 @@ interface Content {
 	 *
 	 * @since 1.21
 	 *
-	 * @param string $sectionId The section's ID, given as a numeric string.
-	 *    The ID "0" retrieves the section before the first heading, "1" the
-	 *    text between the first heading (included) and the second heading
-	 *    (excluded), etc.
+	 * @param string|number $sectionId Section identifier as a number or string
+	 * (e.g. 0, 1 or 'T-1'). The ID "0" retrieves the section before the first heading, "1" the
+	 * text between the first heading (included) and the second heading (excluded), etc.
 	 *
 	 * @return Content|bool|null The section, or false if no such section
 	 *    exist, or null if sections are not supported.
@@ -394,13 +396,15 @@ interface Content {
 	 *
 	 * @since 1.21
 	 *
-	 * @param mixed $section Null/false or a section number (0, 1, 2, T1, T2...), or "new"
+	 * @param string|number|null|bool $sectionId Section identifier as a number or string
+	 * (e.g. 0, 1 or 'T-1'), null/false or an empty string for the whole page
+	 * or 'new' for a new section.
 	 * @param Content $with New content of the section
 	 * @param string $sectionTitle New section's subject, only if $section is 'new'
 	 *
 	 * @return string|null Complete article text, or null if error
 	 */
-	public function replaceSection( $section, Content $with, $sectionTitle = '' );
+	public function replaceSection( $sectionId, Content $with, $sectionTitle = '' );
 
 	/**
 	 * Returns a Content object with pre-save transformations applied (or this
@@ -460,7 +464,7 @@ interface Content {
 	 *
 	 * @param WikiPage $page The page to be saved.
 	 * @param int $flags Bitfield for use with EDIT_XXX constants, see WikiPage::doEditContent()
-	 * @param int $baseRevId The ID of the current revision
+	 * @param int $parentRevId The ID of the current revision
 	 * @param User $user
 	 *
 	 * @return Status A status object indicating whether the content was
@@ -469,7 +473,7 @@ interface Content {
 	 *
 	 * @see WikiPage::doEditContent()
 	 */
-	public function prepareSave( WikiPage $page, $flags, $baseRevId, User $user );
+	public function prepareSave( WikiPage $page, $flags, $parentRevId, User $user );
 
 	/**
 	 * Returns a list of updates to perform when this content is deleted.

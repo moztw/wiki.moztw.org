@@ -38,8 +38,6 @@
  * of memory.
  *
  * Introduced by r47317
- *
- * @internal documentation reviewed on 18 Mar 2011 by hashar
  */
 class BacklinkCache {
 	/** @var ProcessCacheLRU */
@@ -97,7 +95,7 @@ class BacklinkCache {
 	 * Currently, only one cache instance can exist; callers that
 	 * need multiple backlink cache objects should keep them in scope.
 	 *
-	 * @param Title $title : Title object to get a backlink cache for
+	 * @param Title $title Title object to get a backlink cache for
 	 * @return BacklinkCache
 	 */
 	public static function get( Title $title ) {
@@ -135,7 +133,7 @@ class BacklinkCache {
 	/**
 	 * Set the Database object to use
 	 *
-	 * @param $db DatabaseBase
+	 * @param DatabaseBase $db
 	 */
 	public function setDB( $db ) {
 		$this->db = $db;
@@ -144,7 +142,7 @@ class BacklinkCache {
 	/**
 	 * Get the slave connection to the database
 	 * When non existing, will initialize the connection.
-	 * @return DatabaseBase object
+	 * @return DatabaseBase
 	 */
 	protected function getDB() {
 		if ( !isset( $this->db ) ) {
@@ -168,15 +166,14 @@ class BacklinkCache {
 
 	/**
 	 * Get the backlinks for a given table. Cached in process memory only.
-	 * @param $table String
-	 * @param $startId Integer|false
-	 * @param $endId Integer|false
-	 * @param $max Integer|INF
-	 * @param $select string 'all' or 'ids'
+	 * @param string $table
+	 * @param int|bool $startId
+	 * @param int|bool $endId
+	 * @param int|INF $max
+	 * @param string $select 'all' or 'ids'
 	 * @return ResultWrapper
 	 */
 	protected function queryLinks( $table, $startId, $endId, $max, $select = 'all' ) {
-		wfProfileIn( __METHOD__ );
 
 		$fromField = $this->getPrefix( $table ) . '_from';
 
@@ -231,14 +228,12 @@ class BacklinkCache {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
-
 		return $res;
 	}
 
 	/**
 	 * Get the field name prefix for a given table
-	 * @param $table String
+	 * @param string $table
 	 * @throws MWException
 	 * @return null|string
 	 */
@@ -255,7 +250,7 @@ class BacklinkCache {
 			return $prefixes[$table];
 		} else {
 			$prefix = null;
-			wfRunHooks( 'BacklinkCacheGetPrefix', array( $table, &$prefix ) );
+			Hooks::run( 'BacklinkCacheGetPrefix', array( $table, &$prefix ) );
 			if ( $prefix ) {
 				return $prefix;
 			} else {
@@ -267,7 +262,7 @@ class BacklinkCache {
 	/**
 	 * Get the SQL condition array for selecting backlinks, with a join
 	 * on the page table.
-	 * @param $table String
+	 * @param string $table
 	 * @throws MWException
 	 * @return array|null
 	 */
@@ -303,7 +298,7 @@ class BacklinkCache {
 				break;
 			default:
 				$conds = null;
-				wfRunHooks( 'BacklinkCacheGetConditions', array( $table, $this->title, &$conds ) );
+				Hooks::run( 'BacklinkCacheGetConditions', array( $table, $this->title, &$conds ) );
 				if ( !$conds ) {
 					throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
 				}
@@ -314,7 +309,7 @@ class BacklinkCache {
 
 	/**
 	 * Check if there are any backlinks
-	 * @param $table String
+	 * @param string $table
 	 * @return bool
 	 */
 	public function hasLinks( $table ) {
@@ -323,9 +318,9 @@ class BacklinkCache {
 
 	/**
 	 * Get the approximate number of backlinks
-	 * @param $table String
-	 * @param $max integer|INF Only count up to this many backlinks
-	 * @return integer
+	 * @param string $table
+	 * @param int|INF $max Only count up to this many backlinks
+	 * @return int
 	 */
 	public function getNumLinks( $table, $max = INF ) {
 		global $wgMemc, $wgUpdateRowsPerJob;
@@ -372,9 +367,9 @@ class BacklinkCache {
 	 * Returns an array giving the start and end of each range. The first
 	 * batch has a start of false, and the last batch has an end of false.
 	 *
-	 * @param string $table the links table name
-	 * @param $batchSize Integer
-	 * @return Array
+	 * @param string $table The links table name
+	 * @param int $batchSize
+	 * @return array
 	 */
 	public function partition( $table, $batchSize ) {
 		global $wgMemc;
@@ -450,9 +445,9 @@ class BacklinkCache {
 
 	/**
 	 * Partition a DB result with backlinks in it into batches
-	 * @param $res ResultWrapper database result
-	 * @param $batchSize integer
-	 * @param $isComplete bool Whether $res includes all the backlinks
+	 * @param ResultWrapper $res Database result
+	 * @param int $batchSize
+	 * @param bool $isComplete Whether $res includes all the backlinks
 	 * @throws MWException
 	 * @return array
 	 */
@@ -489,5 +484,56 @@ class BacklinkCache {
 		}
 
 		return array( 'numRows' => $numRows, 'batches' => $batches );
+	}
+
+	/**
+	 * Get a Title iterator for cascade-protected template/file use backlinks
+	 *
+	 * @return TitleArray
+	 * @since 1.25
+	 */
+	public function getCascadeProtectedLinks() {
+		$dbr = $this->getDB();
+
+		// @todo: use UNION without breaking tests that use temp tables
+		$resSets = array();
+		$resSets[] = $dbr->select(
+			array( 'templatelinks', 'page_restrictions', 'page' ),
+			array( 'page_namespace', 'page_title', 'page_id' ),
+			array(
+				'tl_namespace' => $this->title->getNamespace(),
+				'tl_title' => $this->title->getDBkey(),
+				'tl_from = pr_page',
+				'pr_cascade' => 1,
+				'page_id = tl_from'
+			),
+			__METHOD__,
+			array( 'DISTINCT' )
+		);
+		if ( $this->title->getNamespace() == NS_FILE ) {
+			$resSets[] = $dbr->select(
+				array( 'imagelinks', 'page_restrictions', 'page' ),
+				array( 'page_namespace', 'page_title', 'page_id' ),
+				array(
+					'il_to' => $this->title->getDBkey(),
+					'il_from = pr_page',
+					'pr_cascade' => 1,
+					'page_id = il_from'
+				),
+				__METHOD__,
+				array( 'DISTINCT' )
+			);
+		}
+
+		// Combine and de-duplicate the results
+		$mergedRes = array();
+		foreach ( $resSets as $res ) {
+			foreach ( $res as $row ) {
+				$mergedRes[$row->page_id] = $row;
+			}
+		}
+
+		return TitleArray::newFromResult(
+			new FakeResultWrapper( array_values( $mergedRes ) ) );
 	}
 }

@@ -13,9 +13,12 @@ abstract class HTMLFormField {
 	protected $mLabel; # String label.  Set on construction
 	protected $mID;
 	protected $mClass = '';
+	protected $mVFormClass = '';
+	protected $mHelpClass = false;
 	protected $mDefault;
 	protected $mOptions = false;
 	protected $mOptionsLabelsNotFromMessage = false;
+	protected $mHideIf = null;
 
 	/**
 	 * @var bool If true will generate an empty div element with no label
@@ -33,7 +36,7 @@ abstract class HTMLFormField {
 	 * the input object itself.  It should not implement the surrounding
 	 * table cells/rows, or labels/help messages.
 	 *
-	 * @param string $value the value to set the input to; eg a default
+	 * @param string $value The value to set the input to; eg a default
 	 *     text for a text input.
 	 *
 	 * @return string Valid HTML.
@@ -48,7 +51,7 @@ abstract class HTMLFormField {
 	 *
 	 * Parameters are the same as wfMessage().
 	 *
-	 * @return Message object
+	 * @return Message
 	 */
 	function msg() {
 		$args = func_get_args();
@@ -62,17 +65,215 @@ abstract class HTMLFormField {
 		return call_user_func_array( $callback, $args );
 	}
 
+
+	/**
+	 * Fetch a field value from $alldata for the closest field matching a given
+	 * name.
+	 *
+	 * This is complex because it needs to handle array fields like the user
+	 * would expect. The general algorithm is to look for $name as a sibling
+	 * of $this, then a sibling of $this's parent, and so on. Keeping in mind
+	 * that $name itself might be referencing an array.
+	 *
+	 * @param array $alldata
+	 * @param string $name
+	 * @return string
+	 */
+	protected function getNearestFieldByName( $alldata, $name ) {
+		$tmp = $this->mName;
+		$thisKeys = array();
+		while ( preg_match( '/^(.+)\[([^\]]+)\]$/', $tmp, $m ) ) {
+			array_unshift( $thisKeys, $m[2] );
+			$tmp = $m[1];
+		}
+		if ( substr( $tmp, 0, 2 ) == 'wp' &&
+			!isset( $alldata[$tmp] ) &&
+			isset( $alldata[substr( $tmp, 2 )] )
+		) {
+			// Adjust for name mangling.
+			$tmp = substr( $tmp, 2 );
+		}
+		array_unshift( $thisKeys, $tmp );
+
+		$tmp = $name;
+		$nameKeys = array();
+		while ( preg_match( '/^(.+)\[([^\]]+)\]$/', $tmp, $m ) ) {
+			array_unshift( $nameKeys, $m[2] );
+			$tmp = $m[1];
+		}
+		array_unshift( $nameKeys, $tmp );
+
+		$testValue = '';
+		for ( $i = count( $thisKeys ) - 1; $i >= 0; $i-- ) {
+			$keys = array_merge( array_slice( $thisKeys, 0, $i ), $nameKeys );
+			$data = $alldata;
+			while ( $keys ) {
+				$key = array_shift( $keys );
+				if ( !is_array( $data ) || !isset( $data[$key] ) ) {
+					continue 2;
+				}
+				$data = $data[$key];
+			}
+			$testValue = (string)$data;
+			break;
+		}
+
+		return $testValue;
+	}
+
+	/**
+	 * Helper function for isHidden to handle recursive data structures.
+	 *
+	 * @param array $alldata
+	 * @param array $params
+	 * @return bool
+	 * @throws MWException
+	 */
+	protected function isHiddenRecurse( array $alldata, array $params ) {
+		$origParams = $params;
+		$op = array_shift( $params );
+
+		try {
+			switch ( $op ) {
+				case 'AND':
+					foreach ( $params as $i => $p ) {
+						if ( !is_array( $p ) ) {
+							throw new MWException(
+								"Expected array, found " . gettype( $p ) . " at index $i"
+							);
+						}
+						if ( !$this->isHiddenRecurse( $alldata, $p ) ) {
+							return false;
+						}
+					}
+					return true;
+
+				case 'OR':
+					foreach ( $params as $p ) {
+						if ( !is_array( $p ) ) {
+							throw new MWException(
+								"Expected array, found " . gettype( $p ) . " at index $i"
+							);
+						}
+						if ( $this->isHiddenRecurse( $alldata, $p ) ) {
+							return true;
+						}
+					}
+					return false;
+
+				case 'NAND':
+					foreach ( $params as $i => $p ) {
+						if ( !is_array( $p ) ) {
+							throw new MWException(
+								"Expected array, found " . gettype( $p ) . " at index $i"
+							);
+						}
+						if ( !$this->isHiddenRecurse( $alldata, $p ) ) {
+							return true;
+						}
+					}
+					return false;
+
+				case 'NOR':
+					foreach ( $params as $p ) {
+						if ( !is_array( $p ) ) {
+							throw new MWException(
+								"Expected array, found " . gettype( $p ) . " at index $i"
+							);
+						}
+						if ( $this->isHiddenRecurse( $alldata, $p ) ) {
+							return false;
+						}
+					}
+					return true;
+
+				case 'NOT':
+					if ( count( $params ) !== 1 ) {
+						throw new MWException( "NOT takes exactly one parameter" );
+					}
+					$p = $params[0];
+					if ( !is_array( $p ) ) {
+						throw new MWException(
+							"Expected array, found " . gettype( $p ) . " at index 0"
+						);
+					}
+					return !$this->isHiddenRecurse( $alldata, $p );
+
+				case '===':
+				case '!==':
+					if ( count( $params ) !== 2 ) {
+						throw new MWException( "$op takes exactly two parameters" );
+					}
+					list( $field, $value ) = $params;
+					if ( !is_string( $field ) || !is_string( $value ) ) {
+						throw new MWException( "Parameters for $op must be strings" );
+					}
+					$testValue = $this->getNearestFieldByName( $alldata, $field );
+					switch ( $op ) {
+						case '===':
+							return ( $value === $testValue );
+						case '!==':
+							return ( $value !== $testValue );
+					}
+
+				default:
+					throw new MWException( "Unknown operation" );
+			}
+		} catch ( Exception $ex ) {
+			throw new MWException(
+				"Invalid hide-if specification for $this->mName: " .
+				$ex->getMessage() . " in " . var_export( $origParams, true ),
+				0, $ex
+			);
+		}
+	}
+
+	/**
+	 * Test whether this field is supposed to be hidden, based on the values of
+	 * the other form fields.
+	 *
+	 * @since 1.23
+	 * @param array $alldata The data collected from the form
+	 * @return bool
+	 */
+	function isHidden( $alldata ) {
+		if ( !$this->mHideIf ) {
+			return false;
+		}
+
+		return $this->isHiddenRecurse( $alldata, $this->mHideIf );
+	}
+
+	/**
+	 * Override this function if the control can somehow trigger a form
+	 * submission that shouldn't actually submit the HTMLForm.
+	 *
+	 * @since 1.23
+	 * @param string|array $value The value the field was submitted with
+	 * @param array $alldata The data collected from the form
+	 *
+	 * @return bool True to cancel the submission
+	 */
+	function cancelSubmit( $value, $alldata ) {
+		return false;
+	}
+
 	/**
 	 * Override this function to add specific validation checks on the
 	 * field input.  Don't forget to call parent::validate() to ensure
 	 * that the user-defined callback mValidationCallback is still run
 	 *
-	 * @param string $value The value the field was submitted with
+	 * @param string|array $value The value the field was submitted with
 	 * @param array $alldata The data collected from the form
 	 *
-	 * @return Mixed Bool true on success, or String error to display.
+	 * @return bool|string True on success, or String error to display, or
+	 *   false to fail validation without displaying an error.
 	 */
 	function validate( $value, $alldata ) {
+		if ( $this->isHidden( $alldata ) ) {
+			return true;
+		}
+
 		if ( isset( $this->mParams['required'] )
 			&& $this->mParams['required'] !== false
 			&& $value === ''
@@ -123,7 +324,7 @@ abstract class HTMLFormField {
 	 * or the input's default value if it has not been set.
 	 *
 	 * @param WebRequest $request
-	 * @return String the value
+	 * @return string The value
 	 */
 	function loadDataFromRequest( $request ) {
 		if ( $request->getCheck( $this->mName ) ) {
@@ -144,6 +345,10 @@ abstract class HTMLFormField {
 	function __construct( $params ) {
 		$this->mParams = $params;
 
+		if ( isset( $params['parent'] ) && $params['parent'] instanceof HTMLForm ) {
+			$this->mParent = $params['parent'];
+		}
+
 		# Generate the label from a message, if possible
 		if ( isset( $params['label-message'] ) ) {
 			$msgInfo = $params['label-message'];
@@ -155,7 +360,7 @@ abstract class HTMLFormField {
 				$msgInfo = array();
 			}
 
-			$this->mLabel = wfMessage( $msg, $msgInfo )->parse();
+			$this->mLabel = $this->msg( $msg, $msgInfo )->parse();
 		} elseif ( isset( $params['label'] ) ) {
 			if ( $params['label'] === '&#160;' ) {
 				// Apparently some things set &nbsp directly and in an odd format
@@ -173,6 +378,7 @@ abstract class HTMLFormField {
 		}
 
 		$validName = Sanitizer::escapeId( $this->mName );
+		$validName = str_replace( array( '.5B', '.5D' ), array( '[', ']' ), $validName );
 		if ( $this->mName != $validName && !isset( $params['nodata'] ) ) {
 			throw new MWException( "Invalid name '{$this->mName}' passed to " . __METHOD__ );
 		}
@@ -198,6 +404,10 @@ abstract class HTMLFormField {
 			$this->mClass = $params['cssclass'];
 		}
 
+		if ( isset( $params['csshelpclass'] ) ) {
+			$this->mHelpClass = $params['csshelpclass'];
+		}
+
 		if ( isset( $params['validation-callback'] ) ) {
 			$this->mValidationCallback = $params['validation-callback'];
 		}
@@ -212,6 +422,10 @@ abstract class HTMLFormField {
 
 		if ( isset( $params['hidelabel'] ) ) {
 			$this->mShowEmptyLabels = false;
+		}
+
+		if ( isset( $params['hide-if'] ) ) {
+			$this->mHideIf = $params['hide-if'];
 		}
 	}
 
@@ -229,6 +443,8 @@ abstract class HTMLFormField {
 		$fieldType = get_class( $this );
 		$helptext = $this->getHelpTextHtmlTable( $this->getHelpText() );
 		$cellAttributes = array();
+		$rowAttributes = array();
+		$rowClasses = '';
 
 		if ( !empty( $this->mParams['vertical-label'] ) ) {
 			$cellAttributes['colspan'] = 2;
@@ -245,15 +461,25 @@ abstract class HTMLFormField {
 			$inputHtml . "\n$errors"
 		);
 
+		if ( $this->mHideIf ) {
+			$rowAttributes['data-hide-if'] = FormatJson::encode( $this->mHideIf );
+			$rowClasses .= ' mw-htmlform-hide-if';
+		}
+
 		if ( $verticalLabel ) {
-			$html = Html::rawElement( 'tr', array( 'class' => 'mw-htmlform-vertical-label' ), $label );
+			$html = Html::rawElement( 'tr',
+				$rowAttributes + array( 'class' => "mw-htmlform-vertical-label $rowClasses" ), $label );
 			$html .= Html::rawElement( 'tr',
-				array( 'class' => "mw-htmlform-field-$fieldType {$this->mClass} $errorClass" ),
+				$rowAttributes + array(
+					'class' => "mw-htmlform-field-$fieldType {$this->mClass} $errorClass $rowClasses"
+				),
 				$field );
 		} else {
 			$html =
 				Html::rawElement( 'tr',
-					array( 'class' => "mw-htmlform-field-$fieldType {$this->mClass} $errorClass" ),
+					$rowAttributes + array(
+						'class' => "mw-htmlform-field-$fieldType {$this->mClass} $errorClass $rowClasses"
+					),
 					$label . $field );
 		}
 
@@ -287,11 +513,16 @@ abstract class HTMLFormField {
 			array( 'class' => $outerDivClass ) + $cellAttributes,
 			$inputHtml . "\n$errors"
 		);
-		$divCssClasses = array( "mw-htmlform-field-$fieldType", $this->mClass, $errorClass );
-		if ( $this->mParent->isVForm() ) {
-			$divCssClasses[] = 'mw-ui-vform-div';
+		$divCssClasses = array( "mw-htmlform-field-$fieldType", $this->mClass, $this->mVFormClass, $errorClass );
+
+		$wrapperAttributes = array(
+			'class' => $divCssClasses,
+		);
+		if ( $this->mHideIf ) {
+			$wrapperAttributes['data-hide-if'] = FormatJson::encode( $this->mHideIf );
+			$wrapperAttributes['class'][] = ' mw-htmlform-hide-if';
 		}
-		$html = Html::rawElement( 'div', array( 'class' => $divCssClasses ), $label . $field );
+		$html = Html::rawElement( 'div', $wrapperAttributes, $label . $field );
 		$html .= $helptext;
 
 		return $html;
@@ -322,6 +553,41 @@ abstract class HTMLFormField {
 	}
 
 	/**
+	 * Get the complete field for the input, including help text,
+	 * labels, and whatever. Fall back from 'vform' to 'div' when not overridden.
+	 *
+	 * @since 1.25
+	 * @param string $value The value to set the input to.
+	 * @return string Complete HTML field.
+	 */
+	public function getVForm( $value ) {
+		// Ewwww
+		$this->mVFormClass = ' mw-ui-vform-field';
+		return $this->getDiv( $value );
+	}
+
+	/**
+	 * Get the complete field as an inline element.
+	 * @since 1.25
+	 * @param string $value The value to set the input to.
+	 * @return string Complete HTML inline element
+	 */
+	public function getInline( $value ) {
+		list( $errors, $errorClass ) = $this->getErrorsAndErrorClass( $value );
+		$inputHtml = $this->getInputHTML( $value );
+		$helptext = $this->getHelpTextHtmlDiv( $this->getHelpText() );
+		$cellAttributes = array();
+		$label = $this->getLabelHtml( $cellAttributes );
+
+		$html = "\n" . $errors .
+			$label . '&#160;' .
+			$inputHtml .
+			$helptext;
+
+		return $html;
+	}
+
+	/**
 	 * Generate help text HTML in table format
 	 * @since 1.20
 	 *
@@ -333,8 +599,18 @@ abstract class HTMLFormField {
 			return '';
 		}
 
-		$row = Html::rawElement( 'td', array( 'colspan' => 2, 'class' => 'htmlform-tip' ), $helptext );
-		$row = Html::rawElement( 'tr', array(), $row );
+		$rowAttributes = array();
+		if ( $this->mHideIf ) {
+			$rowAttributes['data-hide-if'] = FormatJson::encode( $this->mHideIf );
+			$rowAttributes['class'] = 'mw-htmlform-hide-if';
+		}
+
+		$tdClasses = array( 'htmlform-tip' );
+		if ( $this->mHelpClass !== false ) {
+			$tdClasses[] = $this->mHelpClass;
+		}
+		$row = Html::rawElement( 'td', array( 'colspan' => 2, 'class' => $tdClasses ), $helptext );
+		$row = Html::rawElement( 'tr', $rowAttributes, $row );
 
 		return $row;
 	}
@@ -345,14 +621,24 @@ abstract class HTMLFormField {
 	 *
 	 * @param string|null $helptext
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public function getHelpTextHtmlDiv( $helptext ) {
 		if ( is_null( $helptext ) ) {
 			return '';
 		}
 
-		$div = Html::rawElement( 'div', array( 'class' => 'htmlform-tip' ), $helptext );
+		$wrapperAttributes = array(
+			'class' => 'htmlform-tip',
+		);
+		if ( $this->mHelpClass !== false ) {
+			$wrapperAttributes['class'] .= " {$this->mHelpClass}";
+		}
+		if ( $this->mHideIf ) {
+			$wrapperAttributes['data-hide-if'] = FormatJson::encode( $this->mHideIf );
+			$wrapperAttributes['class'] .= ' mw-htmlform-hide-if';
+		}
+		$div = Html::rawElement( 'div', $wrapperAttributes, $helptext );
 
 		return $div;
 	}
@@ -362,7 +648,7 @@ abstract class HTMLFormField {
 	 * @since 1.20
 	 *
 	 * @param string|null $helptext
-	 * @return String
+	 * @return string
 	 */
 	public function getHelpTextHtmlRaw( $helptext ) {
 		return $this->getHelpTextHtmlDiv( $helptext );
@@ -411,9 +697,7 @@ abstract class HTMLFormField {
 	public function getErrorsAndErrorClass( $value ) {
 		$errors = $this->validate( $value, $this->mParent->mFieldData );
 
-		if ( $errors === true ||
-			( !$this->mParent->getRequest()->wasPosted() && $this->mParent->getMethod() === 'post' )
-		) {
+		if ( is_bool( $errors ) || !$this->mParent->wasSubmitted() ) {
 			$errors = '';
 			$errorClass = '';
 		} else {
@@ -596,8 +880,7 @@ abstract class HTMLFormField {
 	 * flatten an array of options to a single array, for instance,
 	 * a set of "<options>" inside "<optgroups>".
 	 *
-	 * @param array $options Associative Array with values either Strings
-	 *     or Arrays
+	 * @param array $options Associative Array with values either Strings or Arrays
 	 * @return array Flattened input
 	 */
 	public static function flattenOptions( $options ) {
@@ -617,7 +900,7 @@ abstract class HTMLFormField {
 	/**
 	 * Formats one or more errors as accepted by field validation-callback.
 	 *
-	 * @param string|Message|array $errors String|Message|Array of strings or Message instances
+	 * @param string|Message|array $errors Array of strings or Message instances
 	 * @return string HTML
 	 * @since 1.18
 	 */

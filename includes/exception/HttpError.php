@@ -18,6 +18,8 @@
  * @file
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * Show an error that looks like an HTTP server error.
  * Replacement for wfHttpError().
@@ -31,15 +33,28 @@ class HttpError extends MWException {
 	/**
 	 * Constructor
 	 *
-	 * @param $httpCode Integer: HTTP status code to send to the client
-	 * @param string|Message $content content of the message
-	 * @param string|Message $header content of the header (\<title\> and \<h1\>)
+	 * @param int $httpCode HTTP status code to send to the client
+	 * @param string|Message $content Content of the message
+	 * @param string|Message $header Content of the header (\<title\> and \<h1\>)
 	 */
 	public function __construct( $httpCode, $content, $header = null ) {
 		parent::__construct( $content );
 		$this->httpCode = (int)$httpCode;
 		$this->header = $header;
 		$this->content = $content;
+	}
+
+	/**
+	 * We don't want the default exception logging as we got our own logging set
+	 * up in self::report.
+	 *
+	 * @see MWException::isLoggable
+	 *
+	 * @since 1.24
+	 * @return bool
+	 */
+	public function isLoggable() {
+		return false;
 	}
 
 	/**
@@ -52,17 +67,42 @@ class HttpError extends MWException {
 	}
 
 	/**
-	 * Report the HTTP error.
+	 * Report and log the HTTP error.
 	 * Sends the appropriate HTTP status code and outputs an
 	 * HTML page with an error message.
 	 */
 	public function report() {
+		$this->doLog();
+
 		$httpMessage = HttpStatus::getMessage( $this->httpCode );
 
 		header( "Status: {$this->httpCode} {$httpMessage}", true, $this->httpCode );
 		header( 'Content-type: text/html; charset=utf-8' );
 
 		print $this->getHTML();
+	}
+
+	private function doLog() {
+		$logger = LoggerFactory::getInstance( 'HttpError' );
+		$content = $this->content;
+
+		if ( $content instanceof Message ) {
+			$content = $content->text();
+		}
+
+		$context = array(
+			'file' => $this->getFile(),
+			'line' => $this->getLine(),
+			'http_code' => $this->httpCode,
+		);
+
+		$logMsg = "$content ({http_code}) from {file}:{line}";
+
+		if ( $this->getStatusCode() < 500 ) {
+			$logger->info( $logMsg, $context );
+		} else {
+			$logger->error( $logMsg, $context );
+		}
 	}
 
 	/**

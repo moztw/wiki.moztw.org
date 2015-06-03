@@ -104,9 +104,10 @@ abstract class FileBackend {
 	/** @var FileJournal */
 	protected $fileJournal;
 
-	/** Flags for supported features */
-	const ATTR_HEADERS = 1;
-	const ATTR_METADATA = 2;
+	/** Bitfield flags for supported features */
+	const ATTR_HEADERS = 1; // files can be tagged with standard HTTP headers
+	const ATTR_METADATA = 2; // files can be stored with metadata key/values
+	const ATTR_UNICODE_PATHS = 4; // files can have Unicode paths (not just ASCII)
 
 	/**
 	 * Create a new backend instance from configuration.
@@ -134,19 +135,12 @@ abstract class FileBackend {
 	 */
 	public function __construct( array $config ) {
 		$this->name = $config['name'];
-		if ( !preg_match( '!^[a-zA-Z0-9-_]{1,255}$!', $this->name ) ) {
-			throw new FileBackendException( "Backend name `{$this->name}` is invalid." );
-		}
-		if ( !isset( $config['wikiId'] ) ) {
-			$config['wikiId'] = wfWikiID();
-			wfDeprecated( __METHOD__ . ' called without "wikiID".', '1.23' );
-		}
-		if ( isset( $config['lockManager'] ) && !is_object( $config['lockManager'] ) ) {
-			$config['lockManager'] =
-				LockManagerGroup::singleton( $config['wikiId'] )->get( $config['lockManager'] );
-			wfDeprecated( __METHOD__ . ' called with non-object "lockManager".', '1.23' );
-		}
 		$this->wikiId = $config['wikiId']; // e.g. "my_wiki-en_"
+		if ( !preg_match( '!^[a-zA-Z0-9-_]{1,255}$!', $this->name ) ) {
+			throw new FileBackendException( "Backend name '{$this->name}' is invalid." );
+		} elseif ( !is_string( $this->wikiId ) ) {
+			throw new FileBackendException( "Backend wiki ID not provided for '{$this->name}'." );
+		}
 		$this->lockManager = isset( $config['lockManager'] )
 			? $config['lockManager']
 			: new NullLockManager( array() );
@@ -207,17 +201,17 @@ abstract class FileBackend {
 	/**
 	 * Get the a bitfield of extra features supported by the backend medium
 	 *
-	 * @return integer Bitfield of FileBackend::ATTR_* flags
+	 * @return int Bitfield of FileBackend::ATTR_* flags
 	 * @since 1.23
 	 */
 	public function getFeatures() {
-		return 0;
+		return self::ATTR_UNICODE_PATHS;
 	}
 
 	/**
 	 * Check if the backend medium supports a field of extra features
 	 *
-	 * @return integer Bitfield of FileBackend::ATTR_* flags
+	 * @param int $bitfield Bitfield of FileBackend::ATTR_* flags
 	 * @return bool
 	 * @since 1.23
 	 */
@@ -941,7 +935,7 @@ abstract class FileBackend {
 	 * $params include:
 	 *   - src    : source storage path
 	 *   - latest : use the latest available data
-	 * @return Array|bool Returns false on failure
+	 * @return array|bool Returns false on failure
 	 * @since 1.23
 	 */
 	abstract public function getFileXAttributes( array $params );
@@ -1128,7 +1122,7 @@ abstract class FileBackend {
 	 * @param array $params Parameters include:
 	 *   - dir     : storage directory
 	 *   - topOnly : only return direct child dirs of the directory
-	 * @return Traversable|Array|null Returns null on failure
+	 * @return Traversable|array|null Returns null on failure
 	 * @since 1.20
 	 */
 	abstract public function getDirectoryList( array $params );
@@ -1143,7 +1137,7 @@ abstract class FileBackend {
 	 *
 	 * @param array $params Parameters include:
 	 *   - dir : storage directory
-	 * @return Traversable|Array|null Returns null on failure
+	 * @return Traversable|array|null Returns null on failure
 	 * @since 1.20
 	 */
 	final public function getTopDirectoryList( array $params ) {
@@ -1166,7 +1160,7 @@ abstract class FileBackend {
 	 *   - dir        : storage directory
 	 *   - topOnly    : only return direct child files of the directory (since 1.20)
 	 *   - adviseStat : set to true if stat requests will be made on the files (since 1.22)
-	 * @return Traversable|Array|null Returns null on failure
+	 * @return Traversable|array|null Returns null on failure
 	 */
 	abstract public function getFileList( array $params );
 
@@ -1181,7 +1175,7 @@ abstract class FileBackend {
 	 * @param array $params Parameters include:
 	 *   - dir        : storage directory
 	 *   - adviseStat : set to true if stat requests will be made on the files (since 1.22)
-	 * @return Traversable|Array|null Returns null on failure
+	 * @return Traversable|array|null Returns null on failure
 	 * @since 1.20
 	 */
 	final public function getTopFileList( array $params ) {
@@ -1210,17 +1204,19 @@ abstract class FileBackend {
 
 	/**
 	 * Preload file stat information (concurrently if possible) into in-process cache.
+	 *
 	 * This should be used when stat calls will be made on a known list of a many files.
+	 * This does not make use of the persistent file stat cache.
 	 *
 	 * @see FileBackend::getFileStat()
 	 *
 	 * @param array $params Parameters include:
 	 *   - srcs        : list of source storage paths
 	 *   - latest      : use the latest available data
+	 * @return bool All requests proceeded without I/O errors (since 1.24)
 	 * @since 1.23
 	 */
-	public function preloadFileStat( array $params ) {
-	}
+	abstract public function preloadFileStat( array $params );
 
 	/**
 	 * Lock the files at the given storage paths in the backend.
@@ -1230,12 +1226,13 @@ abstract class FileBackend {
 	 *
 	 * @param array $paths Storage paths
 	 * @param int $type LockManager::LOCK_* constant
+	 * @param int $timeout Timeout in seconds (0 means non-blocking) (since 1.24)
 	 * @return Status
 	 */
-	final public function lockFiles( array $paths, $type ) {
+	final public function lockFiles( array $paths, $type, $timeout = 0 ) {
 		$paths = array_map( 'FileBackend::normalizeStoragePath', $paths );
 
-		return $this->lockManager->lock( $paths, $type );
+		return $this->lockManager->lock( $paths, $type, $timeout );
 	}
 
 	/**
@@ -1264,9 +1261,10 @@ abstract class FileBackend {
 	 * @param array $paths List of storage paths or map of lock types to path lists
 	 * @param int|string $type LockManager::LOCK_* constant or "mixed"
 	 * @param Status $status Status to update on lock/unlock
+	 * @param int $timeout Timeout in seconds (0 means non-blocking) (since 1.24)
 	 * @return ScopedLock|null Returns null on failure
 	 */
-	final public function getScopedFileLocks( array $paths, $type, Status $status ) {
+	final public function getScopedFileLocks( array $paths, $type, Status $status, $timeout = 0 ) {
 		if ( $type === 'mixed' ) {
 			foreach ( $paths as &$typePaths ) {
 				$typePaths = array_map( 'FileBackend::normalizeStoragePath', $typePaths );
@@ -1275,7 +1273,7 @@ abstract class FileBackend {
 			$paths = array_map( 'FileBackend::normalizeStoragePath', $paths );
 		}
 
-		return ScopedLock::factory( $this->lockManager, $paths, $type, $status );
+		return ScopedLock::factory( $this->lockManager, $paths, $type, $status, $timeout );
 	}
 
 	/**
@@ -1402,12 +1400,20 @@ abstract class FileBackend {
 	 * Get the final extension from a storage or FS path
 	 *
 	 * @param string $path
+	 * @param string $case One of (rawcase, uppercase, lowercase) (since 1.24)
 	 * @return string
 	 */
-	final public static function extensionFromPath( $path ) {
+	final public static function extensionFromPath( $path, $case = 'lowercase' ) {
 		$i = strrpos( $path, '.' );
+		$ext = $i ? substr( $path, $i + 1 ) : '';
 
-		return strtolower( $i ? substr( $path, $i + 1 ) : '' );
+		if ( $case === 'lowercase' ) {
+			$ext = strtolower( $ext );
+		} elseif ( $case === 'uppercase' ) {
+			$ext = strtoupper( $ext );
+		}
+
+		return $ext;
 	}
 
 	/**
@@ -1487,7 +1493,7 @@ abstract class FileBackend {
  * @ingroup FileBackend
  * @since 1.23
  */
-class FileBackendException extends MWException {
+class FileBackendException extends Exception {
 }
 
 /**

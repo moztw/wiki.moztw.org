@@ -1,8 +1,7 @@
 <?php
 /** Literary Chinese (文言)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -28,6 +27,7 @@ $specialPageAliases = array(
 	'Booksources'               => array( '書海' ),
 	'BrokenRedirects'           => array( '斷渡' ),
 	'Categories'                => array( '類' ),
+	'ChangeEmail'               => array( '易郵' ),
 	'ChangePassword'            => array( '易符節' ),
 	'ComparePages'              => array( '較頁' ),
 	'Confirmemail'              => array( '核郵驛' ),
@@ -35,6 +35,7 @@ $specialPageAliases = array(
 	'CreateAccount'             => array( '增簿' ),
 	'Deadendpages'              => array( '此無路也' ),
 	'DeletedContributions'      => array( '已刪之積' ),
+	'Diff'                      => array( '異' ),
 	'DoubleRedirects'           => array( '窮渡' ),
 	'EditWatchlist'             => array( '治哨站' ),
 	'Emailuser'                 => array( '遺書' ),
@@ -64,6 +65,8 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( '屢審' ),
 	'Movepage'                  => array( '遷' ),
 	'Mycontributions'           => array( '吾績' ),
+	'Mypage'                    => array( '吾頁' ),
+	'Mytalk'                    => array( '吾書房' ),
 	'Newimages'                 => array( '新圖之廊' ),
 	'Newpages'                  => array( '新灶' ),
 	'Preferences'               => array( '簿註' ),
@@ -127,12 +130,10 @@ $defaultDateFormat = 'zh';
  * overridden.
  */
 $dateFormats = array(
-        'zh time' => 'H時i分',
-        'zh date' => 'Y年n月j日 （l）',
-        'zh both' => 'Y年n月j日 （D） H時i分',
+	'zh time' => 'H時i分',
+	'zh date' => 'Y年n月j日 （l）',
+	'zh both' => 'Y年n月j日 （D） H時i分',
 );
-
-$linkTrail = '/^([a-z]+)(.*)$/sD';
 
 $digitTransformTable = array(
 	'0' => '〇',

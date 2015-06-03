@@ -82,7 +82,9 @@ class MoveBatch extends Maintenance {
 
 		# Setup complete, now start
 		$dbw = wfGetDB( DB_MASTER );
+		// @codingStandardsIgnoreStart Ignore avoid function calls in a FOR loop test part warning
 		for ( $linenum = 1; !feof( $file ); $linenum++ ) {
+			// @codingStandardsIgnoreEnd
 			$line = fgets( $file );
 			if ( $line === false ) {
 				break;
@@ -101,10 +103,10 @@ class MoveBatch extends Maintenance {
 
 			$this->output( $source->getPrefixedText() . ' --> ' . $dest->getPrefixedText() );
 			$dbw->begin( __METHOD__ );
-			$err = $source->moveTo( $dest, false, $reason, !$noredirects );
-			if ( $err !== true ) {
-				$msg = array_shift( $err[0] );
-				$this->output( "\nFAILED: " . wfMessage( $msg, $err[0] )->text() );
+			$mp = new MovePage( $source, $dest );
+			$status = $mp->move( $wgUser, $reason, !$noredirects );
+			if ( !$status->isOK() ) {
+				$this->output( "\nFAILED: " . $status->getWikiText() );
 			}
 			$dbw->commit( __METHOD__ );
 			$this->output( "\n" );

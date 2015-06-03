@@ -56,7 +56,9 @@ class RandomPage extends SpecialPage {
 	public function execute( $par ) {
 		global $wgContLang;
 
-		if ( $par ) {
+		if ( is_string( $par ) ) {
+			// Testing for stringiness since we want to catch
+			// the empty string to mean main namespace only.
 			$this->setNamespace( $wgContLang->getNsIndex( $par ) );
 		}
 
@@ -80,7 +82,7 @@ class RandomPage extends SpecialPage {
 	/**
 	 * Get a comma-delimited list of namespaces we don't have
 	 * any pages in
-	 * @return String
+	 * @return string
 	 */
 	private function getNsList() {
 		global $wgContLang;
@@ -98,13 +100,13 @@ class RandomPage extends SpecialPage {
 
 	/**
 	 * Choose a random title.
-	 * @return Title object (or null if nothing to choose from)
+	 * @return Title|null Title object (or null if nothing to choose from)
 	 */
 	public function getRandomTitle() {
 		$randstr = wfRandom();
 		$title = null;
 
-		if ( !wfRunHooks(
+		if ( !Hooks::run(
 			'SpecialRandomGetRandomTitle',
 			array( &$randstr, &$this->isRedir, &$this->namespaces, &$this->extra, &$title )
 		) ) {

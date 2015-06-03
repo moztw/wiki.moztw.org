@@ -60,7 +60,9 @@ class TableDiffFormatter extends DiffFormatter {
 	 * @return string
 	 */
 	protected function blockHeader( $xbeg, $xlen, $ybeg, $ylen ) {
-		$r = '<tr><td colspan="2" class="diff-lineno"><!--LINE ' . $xbeg . "--></td>\n" .
+		// '<!--LINE \d+ -->' get replaced by a localised line number
+		// in DifferenceEngine::localiseLineNumbers
+		$r = '<tr><td colspan="2" class="diff-lineno" id="L' . $xbeg . '" ><!--LINE ' . $xbeg . "--></td>\n" .
 			'<td colspan="2" class="diff-lineno"><!--LINE ' . $ybeg . "--></td></tr>\n";
 
 		return $r;
@@ -188,7 +190,6 @@ class TableDiffFormatter extends DiffFormatter {
 	 * @param string[] $closing
 	 */
 	protected function changed( $orig, $closing ) {
-		wfProfileIn( __METHOD__ );
 
 		$diff = new WordLevelDiff( $orig, $closing );
 		$del = $diff->orig();
@@ -206,7 +207,6 @@ class TableDiffFormatter extends DiffFormatter {
 			echo '<tr>' . $this->emptyLine() .
 				$this->addedLine( $line ) . "</tr>\n";
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 }

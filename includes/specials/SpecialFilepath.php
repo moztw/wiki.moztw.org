@@ -2,7 +2,6 @@
 /**
  * Implements Special:Filepath
  *
- * @section LICENSE
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,7 +36,12 @@ class SpecialFilepath extends RedirectSpecialPage {
 	function getRedirect( $par ) {
 		$file = $par ?: $this->getRequest()->getText( 'file' );
 
-		return SpecialPage::getSafeTitleFor( 'Redirect', 'file/' . $file );
+		if ( $file ) {
+			$argument = "file/$file";
+		} else {
+			$argument = 'file';
+		}
+		return SpecialPage::getSafeTitleFor( 'Redirect', $argument );
 	}
 
 	protected function getGroupName() {

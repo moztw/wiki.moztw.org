@@ -1,8 +1,7 @@
 <?php
 /** Polish (polski)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -179,6 +178,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Najwięcej_edycji', 'Najczęściej_edytowane' ),
 	'Movepage'                  => array( 'Przenieś' ),
 	'Mycontributions'           => array( 'Mój_wkład' ),
+	'MyLanguage'                => array( 'Mój_język' ),
 	'Mypage'                    => array( 'Moja_strona' ),
 	'Mytalk'                    => array( 'Moja_dyskusja' ),
 	'Myuploads'                 => array( 'Moje_pliki' ),
@@ -293,8 +293,8 @@ $magicWords = array(
 	'localdow'                  => array( '1', 'DZIEŃTYGODNIANR', 'LOCALDOW' ),
 	'plural'                    => array( '0', 'MNOGA:', 'PLURAL:' ),
 	'fullurl'                   => array( '0', 'PEŁNYURL', 'FULLURL:' ),
-	'lcfirst'                   => array( '0', 'ZMAŁEJ:', 'LCFIRST:' ),
-	'ucfirst'                   => array( '0', 'ZWIELKIEJ:', 'ZDUŻEJ:', 'UCFIRST:' ),
+	'lcfirst'                   => array( '0', 'ZMAŁEJ:', 'ODMAŁEJ:', 'LCFIRST:' ),
+	'ucfirst'                   => array( '0', 'ZWIELKIEJ:', 'ZDUŻEJ:', 'ODWIELKIEJ:', 'ODDUŻEJ:', 'UCFIRST:' ),
 	'lc'                        => array( '0', 'MAŁE:', 'LC:' ),
 	'uc'                        => array( '0', 'WIELKIE:', 'DUŻE:', 'UC:' ),
 	'displaytitle'              => array( '1', 'WYŚWIETLANYTYTUŁ', 'DISPLAYTITLE' ),
@@ -305,7 +305,7 @@ $magicWords = array(
 	'padleft'                   => array( '0', 'DOLEWEJ', 'PADLEFT' ),
 	'padright'                  => array( '0', 'DOPRAWEJ', 'PADRIGHT' ),
 	'special'                   => array( '0', 'specjalna', 'special' ),
-	'defaultsort'               => array( '1', 'DOMYŚLNIESORTUJ', 'DEFAULTSORT:', 'DEFAULTSORTKEY:', 'DEFAULTCATEGORYSORT:' ),
+	'defaultsort'               => array( '1', 'SORTUJ', 'DOMYŚLNIESORTUJ', 'DEFAULTSORT:', 'DEFAULTSORTKEY:', 'DEFAULTCATEGORYSORT:' ),
 	'filepath'                  => array( '0', 'ŚCIEŻKAPLIKU', 'FILEPATH:' ),
 	'hiddencat'                 => array( '1', '__KATEGORIAUKRYTA__', '__HIDDENCAT__' ),
 	'pagesincategory'           => array( '1', 'STRONYWKATEGORII', 'PAGESINCATEGORY', 'PAGESINCAT' ),
@@ -315,5 +315,7 @@ $magicWords = array(
 	'protectionlevel'           => array( '1', '__POZIOMZABEZPIECZEŃ__', 'PROTECTIONLEVEL' ),
 	'url_path'                  => array( '0', 'ŚCIEŻKA', 'PATH' ),
 	'url_query'                 => array( '0', 'ZAPYTANIE', 'QUERY' ),
+	'pagesincategory_pages'     => array( '0', 'strony', 'pages' ),
+	'pagesincategory_files'     => array( '0', 'pliki', 'files' ),
 );
 

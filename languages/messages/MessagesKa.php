@@ -1,8 +1,7 @@
 <?php
 /** Georgian (ქართული)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -74,6 +73,7 @@ $specialPageAliases = array(
 	'Longpages'                 => array( 'გრძელი_გვერდები' ),
 	'Movepage'                  => array( 'გვერდის_გადატანა' ),
 	'Mycontributions'           => array( 'ჩემი_წვლილი' ),
+	'MyLanguage'                => array( 'ჩემი_ენა' ),
 	'Mypage'                    => array( 'ჩემი_გვერდი' ),
 	'Mytalk'                    => array( 'ჩენი_განხილვა' ),
 	'Myuploads'                 => array( 'ჩემი_ატვირთვები' ),

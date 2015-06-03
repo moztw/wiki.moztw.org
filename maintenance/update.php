@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Run all updaters.
@@ -25,11 +26,6 @@
  * @ingroup Maintenance
  */
 
-if ( !function_exists( 'version_compare' ) || ( version_compare( phpversion(), '5.3.2' ) < 0 ) ) {
-	require dirname( __FILE__ ) . '/../includes/PHPVersionError.php';
-	wfPHPVersionError( 'cli' );
-}
-
 $wgUseMasterForMaintenance = true;
 require_once __DIR__ . '/Maintenance.php';
 
@@ -47,13 +43,23 @@ class UpdateMediaWiki extends Maintenance {
 		$this->addOption( 'doshared', 'Also update shared tables' );
 		$this->addOption( 'nopurge', 'Do not purge the objectcache table after updates' );
 		$this->addOption( 'noschema', 'Only do the updates that are not done during schema updates' );
-		$this->addOption( 'schema', 'Output SQL to do the schema updates instead of doing them.  Works even when $wgAllowSchemaUpdates is false', false, true );
+		$this->addOption(
+			'schema',
+			'Output SQL to do the schema updates instead of doing them. Works '
+				. 'even when $wgAllowSchemaUpdates is false',
+			false,
+			true
+		);
 		$this->addOption( 'force', 'Override when $wgAllowSchemaUpdates disables this script' );
+		$this->addOption(
+			'skip-external-dependencies',
+			'Skips checking whether external dependencies are up to date, mostly for developers'
+		);
 	}
 
 	function getDbType() {
 		/* If we used the class constant PHP4 would give a parser error here */
-		return 2 /* Maintenance::DB_ADMIN */;
+		return 2; /* Maintenance::DB_ADMIN */
 	}
 
 	function compatChecks() {
@@ -85,7 +91,11 @@ class UpdateMediaWiki extends Maintenance {
 	function execute() {
 		global $wgVersion, $wgLang, $wgAllowSchemaUpdates;
 
-		if ( !$wgAllowSchemaUpdates && !( $this->hasOption( 'force' ) || $this->hasOption( 'schema' ) || $this->hasOption( 'noschema' ) ) ) {
+		if ( !$wgAllowSchemaUpdates
+			&& !( $this->hasOption( 'force' )
+				|| $this->hasOption( 'schema' )
+				|| $this->hasOption( 'noschema' ) )
+		) {
 			$this->error( "Do not run update.php on this wiki. If you're seeing this you should\n"
 				. "probably ask for some help in performing your schema updates or use\n"
 				. "the --noschema and --schema options to get an SQL file for someone\n"
@@ -120,18 +130,29 @@ class UpdateMediaWiki extends Maintenance {
 			wfCountdown( 5 );
 		}
 
+		// Check external dependencies are up to date
+		if ( !$this->hasOption( 'skip-external-dependencies' ) ) {
+			$composerLockUpToDate = $this->runChild( 'CheckComposerLockUpToDate' );
+			$composerLockUpToDate->execute();
+		} else {
+			$this->output(
+				"Skipping checking whether external dependencies are up to date, proceed at your own risk\n"
+			);
+		}
+
 		# Attempt to connect to the database as a privileged user
 		# This will vomit up an error if there are permissions problems
 		$db = wfGetDB( DB_MASTER );
 
 		$this->output( "Going to run database updates for " . wfWikiID() . "\n" );
 		if ( $db->getType() === 'sqlite' ) {
-			$this->output( "Using SQLite file: '{$db->mDatabaseFile}'\n" );
+			$this->output( "Using SQLite file: '{$db->getDbFilePath()}'\n" );
 		}
 		$this->output( "Depending on the size of your database this may take a while!\n" );
 
 		if ( !$this->hasOption( 'quick' ) ) {
-			$this->output( "Abort with control-c in the next five seconds (skip this countdown with --quick) ... " );
+			$this->output( "Abort with control-c in the next five seconds "
+				. "(skip this countdown with --quick) ... " );
 			wfCountDown( 5 );
 		}
 
@@ -166,11 +187,12 @@ class UpdateMediaWiki extends Maintenance {
 			}
 		}
 
+		$updater->setFileAccess();
 		if ( !$this->hasOption( 'nopurge' ) ) {
 			$updater->purgeCache();
 		}
-		$time2 = new MWTimestamp();
 
+		$time2 = new MWTimestamp();
 		$timeDiff = $time2->diff( $time1 );
 		$this->output( "\nDone in " . $timeDiff->format( "%i:%S" ) . ".\n" );
 	}

@@ -27,15 +27,35 @@
  * @ingroup SpecialPage
  */
 class MovePageForm extends UnlistedSpecialPage {
-	/**
-	 * Objects
-	 * @var Title
-	 */
-	var $oldTitle, $newTitle;
-	// Text input
-	var $reason;
+	/** @var Title */
+	protected $oldTitle;
+
+	/** @var Title */
+	protected $newTitle;
+
+
+	/** @var string Text input */
+	protected $reason;
+
 	// Checks
-	var $moveTalk, $deleteAndMove, $moveSubpages, $fixRedirects, $leaveRedirect, $moveOverShared;
+
+	/** @var bool */
+	protected $moveTalk;
+
+	/** @var bool */
+	protected $deleteAndMove;
+
+	/** @var bool */
+	protected $moveSubpages;
+
+	/** @var bool */
+	protected $fixRedirects;
+
+	/** @var bool */
+	protected $leaveRedirect;
+
+	/** @var bool */
+	protected $moveOverShared;
 
 	private $watch = false;
 
@@ -106,12 +126,12 @@ class MovePageForm extends UnlistedSpecialPage {
 	/**
 	 * Show the form
 	 *
-	 * @param array $err error messages. Each item is an error message.
+	 * @param array $err Error messages. Each item is an error message.
 	 *    It may either be a string message name or array message name and
 	 *    parameters, like the second argument to OutputPage::wrapWikiMsg().
 	 */
 	function showForm( $err ) {
-		global $wgContLang, $wgFixDoubleRedirects, $wgMaximumMovedPages;
+		global $wgContLang;
 
 		$this->getSkin()->setRelevantTitle( $this->oldTitle );
 
@@ -120,6 +140,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'move-page', $this->oldTitle->getPrefixedText() ) );
 		$out->addModules( 'mediawiki.special.movePage' );
+		$this->addHelpLink( 'Help:Moving a page' );
 
 		$newTitle = $this->newTitle;
 
@@ -145,17 +166,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			$out->addWikiMsg( 'delete_and_move_text', $newTitle->getPrefixedText() );
 			$movepagebtn = $this->msg( 'delete_and_move' )->text();
 			$submitVar = 'wpDeleteAndMove';
-			$confirm = "
-				<tr>
-					<td></td>
-					<td class='mw-input'>" .
-				Xml::checkLabel(
-					$this->msg( 'delete_and_move_confirm' )->text(),
-					'wpConfirm',
-					'wpConfirm'
-				) .
-				"</td>
-				</tr>";
+			$confirm = true;
 			$err = array();
 		} else {
 			if ( $this->oldTitle->getNamespace() == NS_USER && !$this->oldTitle->isSubpage() ) {
@@ -163,9 +174,14 @@ class MovePageForm extends UnlistedSpecialPage {
 					"<div class=\"error mw-moveuserpage-warning\">\n$1\n</div>",
 					'moveuserpage-warning'
 				);
+			} elseif ( $this->oldTitle->getNamespace() == NS_CATEGORY ) {
+				$out->wrapWikiMsg(
+					"<div class=\"error mw-movecategorypage-warning\">\n$1\n</div>",
+					'movecategorypage-warning'
+				);
 			}
 
-			$out->addWikiMsg( $wgFixDoubleRedirects ?
+			$out->addWikiMsg( $this->getConfig()->get( 'FixDoubleRedirects' ) ?
 				'movepagetext' :
 				'movepagetext-noredirectfixer'
 			);
@@ -196,7 +212,7 @@ class MovePageForm extends UnlistedSpecialPage {
 				|| ( $oldTitleTalkSubpages && $canMoveSubpage ) );
 
 		$dbr = wfGetDB( DB_SLAVE );
-		if ( $wgFixDoubleRedirects ) {
+		if ( $this->getConfig()->get( 'FixDoubleRedirects' ) ) {
 			$hasRedirects = $dbr->selectField( 'redirect', '1',
 				array(
 					'rd_namespace' => $this->oldTitle->getNamespace(),
@@ -285,12 +301,15 @@ class MovePageForm extends UnlistedSpecialPage {
 					'id' => 'movepage'
 				)
 			) .
-				Xml::openElement( 'fieldset' ) .
-				Xml::element( 'legend', null, $this->msg( 'move-page-legend' )->text() ) .
-				Xml::openElement( 'table', array( 'id' => 'mw-movepage-table' ) ) .
-				"<tr>
+			Xml::openElement( 'fieldset' ) .
+			Xml::element( 'legend', null, $this->msg( 'move-page-legend' )->text() ) .
+			Xml::openElement( 'table', array( 'id' => 'mw-movepage-table' ) )
+		);
+
+		$out->addHTML(
+			"<tr>
 				<td class='mw-label'>" .
-				$this->msg( 'movearticle' )->escaped() .
+					$this->msg( 'movearticle' )->escaped() .
 				"</td>
 				<td class='mw-input'>
 					<strong>{$oldTitleLink}</strong>
@@ -298,32 +317,32 @@ class MovePageForm extends UnlistedSpecialPage {
 			</tr>
 			<tr>
 				<td class='mw-label'>" .
-				Xml::label( $this->msg( 'newtitle' )->text(), 'wpNewTitleMain' ) .
+					Xml::label( $this->msg( 'newtitle' )->text(), 'wpNewTitleMain' ) .
 				"</td>
 				<td class='mw-input'>" .
-				Html::namespaceSelector(
-					array(
-						'selected' => $newTitle->getNamespace(),
-						'exclude' => $immovableNamespaces
-					),
-					array( 'name' => 'wpNewTitleNs', 'id' => 'wpNewTitleNs' )
-				) .
-				Xml::input(
-					'wpNewTitleMain',
-					60,
-					$wgContLang->recodeForEdit( $newTitle->getText() ),
-					array(
-						'type' => 'text',
-						'id' => 'wpNewTitleMain',
-						'maxlength' => 255
-					)
-				) .
-				Html::hidden( 'wpOldTitle', $this->oldTitle->getPrefixedText() ) .
+					Html::namespaceSelector(
+						array(
+							'selected' => $newTitle->getNamespace(),
+							'exclude' => $immovableNamespaces
+						),
+						array( 'name' => 'wpNewTitleNs', 'id' => 'wpNewTitleNs' )
+					) .
+					Xml::input(
+						'wpNewTitleMain',
+						60,
+						$wgContLang->recodeForEdit( $newTitle->getText() ),
+						array(
+							'type' => 'text',
+							'id' => 'wpNewTitleMain',
+							'maxlength' => 255
+						)
+					) .
+					Html::hidden( 'wpOldTitle', $this->oldTitle->getPrefixedText() ) .
 				"</td>
 			</tr>
 			<tr>
 				<td class='mw-label'>" .
-				Xml::label( $this->msg( 'movereason' )->text(), 'wpReason' ) .
+					Xml::label( $this->msg( 'movereason' )->text(), 'wpReason' ) .
 				"</td>
 				<td class='mw-input'>" .
 					Xml::input( 'wpReason', 60, $this->reason, array(
@@ -340,12 +359,12 @@ class MovePageForm extends UnlistedSpecialPage {
 				<tr>
 					<td></td>
 					<td class='mw-input'>" .
-					Xml::checkLabel(
-						$this->msg( 'movetalk' )->text(),
-						'wpMovetalk',
-						'wpMovetalk',
-						$this->moveTalk
-					) .
+						Xml::checkLabel(
+							$this->msg( 'movetalk' )->text(),
+							'wpMovetalk',
+							'wpMovetalk',
+							$this->moveTalk
+						) .
 					"</td>
 				</tr>"
 			);
@@ -364,14 +383,14 @@ class MovePageForm extends UnlistedSpecialPage {
 			$out->addHTML( "
 				<tr>
 					<td></td>
-					<td class='mw-input' >" .
-					Xml::checkLabel(
-						$this->msg( 'move-leave-redirect' )->text(),
-						'wpLeaveRedirect',
-						'wpLeaveRedirect',
-						$isChecked,
-						$options
-					) .
+					<td class='mw-input'>" .
+						Xml::checkLabel(
+							$this->msg( 'move-leave-redirect' )->text(),
+							'wpLeaveRedirect',
+							'wpLeaveRedirect',
+							$isChecked,
+							$options
+						) .
 					"</td>
 				</tr>"
 			);
@@ -381,37 +400,40 @@ class MovePageForm extends UnlistedSpecialPage {
 			$out->addHTML( "
 				<tr>
 					<td></td>
-					<td class='mw-input' >" .
-					Xml::checkLabel(
-						$this->msg( 'fix-double-redirects' )->text(),
-						'wpFixRedirects',
-						'wpFixRedirects',
-						$this->fixRedirects
-					) .
+					<td class='mw-input'>" .
+						Xml::checkLabel(
+							$this->msg( 'fix-double-redirects' )->text(),
+							'wpFixRedirects',
+							'wpFixRedirects',
+							$this->fixRedirects
+						) .
 					"</td>
 				</tr>"
 			);
 		}
 
 		if ( $canMoveSubpage ) {
+			$maximumMovedPages = $this->getConfig()->get( 'MaximumMovedPages' );
 			$out->addHTML( "
 				<tr>
 					<td></td>
-					<td class=\"mw-input\">" .
-					Xml::check(
-						'wpMovesubpages',
-						# Don't check the box if we only have talk subpages to
-						# move and we aren't moving the talk page.
-						$this->moveSubpages && ( $this->oldTitle->hasSubpages() || $this->moveTalk ),
-						array( 'id' => 'wpMovesubpages' )
-					) . '&#160;' .
-					Xml::tags( 'label', array( 'for' => 'wpMovesubpages' ),
-						$this->msg(
-							( $this->oldTitle->hasSubpages()
-								? 'move-subpages'
-								: 'move-talk-subpages' )
-						)->numParams( $wgMaximumMovedPages )->params( $wgMaximumMovedPages )->parse()
-					) .
+					<td class='mw-input'>" .
+						Xml::check(
+							'wpMovesubpages',
+							# Don't check the box if we only have talk subpages to
+							# move and we aren't moving the talk page.
+							$this->moveSubpages && ( $this->oldTitle->hasSubpages() || $this->moveTalk ),
+							array( 'id' => 'wpMovesubpages' )
+						) . '&#160;' .
+						Xml::tags(
+							'label',
+							array( 'for' => 'wpMovesubpages' ),
+							$this->msg(
+								( $this->oldTitle->hasSubpages()
+									? 'move-subpages'
+									: 'move-talk-subpages' )
+							)->numParams( $maximumMovedPages )->params( $maximumMovedPages )->parse()
+						) .
 					"</td>
 				</tr>"
 			);
@@ -422,32 +444,50 @@ class MovePageForm extends UnlistedSpecialPage {
 		# Don't allow watching if user is not logged in
 		if ( $user->isLoggedIn() ) {
 			$out->addHTML( "
-			<tr>
-				<td></td>
-				<td class='mw-input'>" .
-				Xml::checkLabel(
-					$this->msg( 'move-watch' )->text(),
-					'wpWatch',
-					'watch',
-					$watchChecked
-				) .
-				"</td>
-			</tr>" );
+				<tr>
+					<td></td>
+					<td class='mw-input'>" .
+						Xml::checkLabel(
+							$this->msg( 'move-watch' )->text(),
+							'wpWatch',
+							'watch',
+							$watchChecked
+						) .
+					"</td>
+				</tr>"
+			);
+		}
+
+		if ( $confirm ) {
+			$out->addHTML( "
+				<tr>
+					<td></td>
+					<td class='mw-input'>" .
+						Xml::checkLabel(
+							$this->msg( 'delete_and_move_confirm' )->text(),
+							'wpConfirm',
+							'wpConfirm'
+						) .
+					"</td>
+				</tr>"
+			);
 		}
 
 		$out->addHTML( "
-				{$confirm}
 			<tr>
-				<td>&#160;</td>
+				<td></td>
 				<td class='mw-submit'>" .
-				Xml::submitButton( $movepagebtn, array( 'name' => $submitVar ) ) .
+					Xml::submitButton( $movepagebtn, array( 'name' => $submitVar ) ) .
 				"</td>
-			</tr>" .
-				Xml::closeElement( 'table' ) .
-				Html::hidden( 'wpEditToken', $user->getEditToken() ) .
-				Xml::closeElement( 'fieldset' ) .
-				Xml::closeElement( 'form' ) .
-				"\n"
+			</tr>"
+		);
+
+		$out->addHTML(
+			Xml::closeElement( 'table' ) .
+			Html::hidden( 'wpEditToken', $user->getEditToken() ) .
+			Xml::closeElement( 'fieldset' ) .
+			Xml::closeElement( 'form' ) .
+			"\n"
 		);
 
 		$this->showLogFragment( $this->oldTitle );
@@ -455,8 +495,6 @@ class MovePageForm extends UnlistedSpecialPage {
 	}
 
 	function doSubmit() {
-		global $wgMaximumMovedPages, $wgFixDoubleRedirects;
-
 		$user = $this->getUser();
 
 		if ( $user->pingLimiter( 'move' ) ) {
@@ -499,8 +537,9 @@ class MovePageForm extends UnlistedSpecialPage {
 			// Delete an associated image if there is
 			if ( $nt->getNamespace() == NS_FILE ) {
 				$file = wfLocalFile( $nt );
+				$file->load( File::READ_LATEST );
 				if ( $file->exists() ) {
-					$file->delete( $reason, false );
+					$file->delete( $reason, false, $user );
 				}
 			}
 
@@ -525,14 +564,26 @@ class MovePageForm extends UnlistedSpecialPage {
 		}
 
 		# Do the actual move.
-		$error = $ot->moveTo( $nt, true, $this->reason, $createRedirect );
-		if ( $error !== true ) {
-			$this->showForm( $error );
-
+		$mp = new MovePage( $ot, $nt );
+		$valid = $mp->isValidMove();
+		if ( !$valid->isOK() ) {
+			$this->showForm( $valid->getErrorsArray() );
 			return;
 		}
 
-		if ( $wgFixDoubleRedirects && $this->fixRedirects ) {
+		$permStatus = $mp->checkPermissions( $user, $this->reason );
+		if ( !$permStatus->isOK() ) {
+			$this->showForm( $permStatus->getErrorsArray() );
+			return;
+		}
+
+		$status = $mp->move( $user, $this->reason, $createRedirect );
+		if ( !$status->isOK() ) {
+			$this->showForm( $status->getErrorsArray() );
+			return;
+		}
+
+		if ( $this->getConfig()->get( 'FixDoubleRedirects' ) && $this->fixRedirects ) {
 			DoubleRedirectJob::fixRedirects( 'move', $ot, $nt );
 		}
 
@@ -542,10 +593,14 @@ class MovePageForm extends UnlistedSpecialPage {
 		$oldLink = Linker::link(
 			$ot,
 			null,
-			array(),
+			array( 'id' => 'movepage-oldlink' ),
 			array( 'redirect' => 'no' )
 		);
-		$newLink = Linker::linkKnown( $nt );
+		$newLink = Linker::linkKnown(
+			$nt,
+			null,
+			array( 'id' => 'movepage-newlink' )
+		);
 		$oldText = $ot->getPrefixedText();
 		$newText = $nt->getPrefixedText();
 
@@ -564,7 +619,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			$newLink )->params( $oldText, $newText )->parseAsBlock() );
 		$out->addWikiMsg( $msgName );
 
-		wfRunHooks( 'SpecialMovepageAfterMove', array( &$this, &$ot, &$nt ) );
+		Hooks::run( 'SpecialMovepageAfterMove', array( &$this, &$ot, &$nt ) );
 
 		# Now we move extra pages we've been asked to move: subpages and talk
 		# pages.  First, if the old page or the new page is a talk page, we
@@ -645,7 +700,10 @@ class MovePageForm extends UnlistedSpecialPage {
 				$oldSubpage->getDBkey()
 			);
 
-			if ( $oldSubpage->isTalkPage() ) {
+			if ( $oldSubpage->isSubpage() && ( $ot->isTalkPage() xor $nt->isTalkPage() ) ) {
+				// Moving a subpage from a subject namespace to a talk namespace or vice-versa
+				$newNs = $nt->getNamespace();
+			} elseif ( $oldSubpage->isTalkPage() ) {
 				$newNs = $nt->getTalkPage()->getNamespace();
 			} else {
 				$newNs = $nt->getSubjectPage()->getNamespace();
@@ -680,17 +738,21 @@ class MovePageForm extends UnlistedSpecialPage {
 					);
 
 					$newLink = Linker::linkKnown( $newSubpage );
-					$extraOutput[] = $this->msg( 'movepage-page-moved' )->rawParams( $oldLink, $newLink )->escaped();
+					$extraOutput[] = $this->msg( 'movepage-page-moved' )
+						->rawParams( $oldLink, $newLink )->escaped();
 					++$count;
 
-					if ( $count >= $wgMaximumMovedPages ) {
-						$extraOutput[] = $this->msg( 'movepage-max-pages' )->numParams( $wgMaximumMovedPages )->escaped();
+					$maximumMovedPages = $this->getConfig()->get( 'MaximumMovedPages' );
+					if ( $count >= $maximumMovedPages ) {
+						$extraOutput[] = $this->msg( 'movepage-max-pages' )
+							->numParams( $maximumMovedPages )->escaped();
 						break;
 					}
 				} else {
 					$oldLink = Linker::linkKnown( $oldSubpage );
 					$newLink = Linker::link( $newSubpage );
-					$extraOutput[] = $this->msg( 'movepage-page-unmoved' )->rawParams( $oldLink, $newLink )->escaped();
+					$extraOutput[] = $this->msg( 'movepage-page-unmoved' )
+						->rawParams( $oldLink, $newLink )->escaped();
 				}
 			}
 		}

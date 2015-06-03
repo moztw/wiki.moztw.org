@@ -25,13 +25,21 @@
  */
 
 /**
+ * @deprecated since 1.24
  * @ingroup API
  */
 class ApiTokens extends ApiBase {
 
 	public function execute() {
+		$this->setWarning(
+			"action=tokens has been deprecated. Please use action=query&meta=tokens instead."
+		);
+		$this->logFeatureUsage( "action=tokens" );
+
 		$params = $this->extractRequestParams();
-		$res = array();
+		$res = array(
+			ApiResult::META_TYPE => 'assoc',
+		);
 
 		$types = $this->getTokenTypes();
 		foreach ( $params['type'] as $type ) {
@@ -48,8 +56,9 @@ class ApiTokens extends ApiBase {
 	}
 
 	private function getTokenTypes() {
-		// If we're in JSON callback mode, no tokens can be obtained
-		if ( !is_null( $this->getMain()->getRequest()->getVal( 'callback' ) ) ) {
+		// If we're in a mode that breaks the same-origin policy, no tokens can
+		// be obtained
+		if ( $this->lacksSameOriginSecurity() ) {
 			return array();
 		}
 
@@ -57,18 +66,20 @@ class ApiTokens extends ApiBase {
 		if ( $types ) {
 			return $types;
 		}
-		wfProfileIn( __METHOD__ );
 		$types = array( 'patrol' => array( 'ApiQueryRecentChanges', 'getPatrolToken' ) );
 		$names = array( 'edit', 'delete', 'protect', 'move', 'block', 'unblock',
 			'email', 'import', 'watch', 'options' );
 		foreach ( $names as $name ) {
 			$types[$name] = array( 'ApiQueryInfo', 'get' . ucfirst( $name ) . 'Token' );
 		}
-		wfRunHooks( 'ApiTokensGetTokenTypes', array( &$types ) );
+		Hooks::run( 'ApiTokensGetTokenTypes', array( &$types ) );
 		ksort( $types );
-		wfProfileOut( __METHOD__ );
 
 		return $types;
+	}
+
+	public function isDeprecated() {
+		return true;
 	}
 
 	public function getAllowedParams() {
@@ -81,30 +92,12 @@ class ApiTokens extends ApiBase {
 		);
 	}
 
-	public function getResultProperties() {
-		$props = array(
-			'' => array(),
-		);
-
-		self::addTokenProperties( $props, $this->getTokenTypes() );
-
-		return $props;
-	}
-
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'type' => 'Type of token(s) to request'
-		);
-	}
-
-	public function getDescription() {
-		return 'Gets tokens for data-modifying actions.';
-	}
-
-	protected function getExamples() {
-		return array(
-			'api.php?action=tokens' => 'Retrieve an edit token (the default)',
-			'api.php?action=tokens&type=email|move' => 'Retrieve an email token and a move token'
+			'action=tokens'
+				=> 'apihelp-tokens-example-edit',
+			'action=tokens&type=email|move'
+				=> 'apihelp-tokens-example-emailmove',
 		);
 	}
 }

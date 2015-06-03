@@ -250,6 +250,7 @@ class PostgresUpdater extends DatabaseUpdater {
 			array( 'addPgIndex', 'recentchanges', 'rc_timestamp_bot', '(rc_timestamp) WHERE rc_bot = 0' ),
 			array( 'addPgIndex', 'templatelinks', 'templatelinks_from', '(tl_from)' ),
 			array( 'addPgIndex', 'watchlist', 'wl_user', '(wl_user)' ),
+			array( 'addPgIndex', 'watchlist', 'wl_user_notificationtimestamp', '(wl_user, wl_notificationtimestamp)' ),
 			array( 'addPgIndex', 'logging', 'logging_user_type_time',
 				'(log_user, log_type, log_timestamp)' ),
 			array( 'addPgIndex', 'logging', 'logging_page_id_time', '(log_page,log_timestamp)' ),
@@ -383,8 +384,6 @@ class PostgresUpdater extends DatabaseUpdater {
 				'page(page_id) ON DELETE CASCADE' ),
 			array( 'changeFkeyDeferrable', 'protected_titles', 'pt_user',
 				'mwuser(user_id) ON DELETE SET NULL' ),
-			array( 'changeFkeyDeferrable', 'recentchanges', 'rc_cur_id',
-				'page(page_id) ON DELETE SET NULL' ),
 			array( 'changeFkeyDeferrable', 'recentchanges', 'rc_user',
 				'mwuser(user_id) ON DELETE SET NULL' ),
 			array( 'changeFkeyDeferrable', 'redirect', 'rd_from', 'page(page_id) ON DELETE CASCADE' ),
@@ -406,7 +405,23 @@ class PostgresUpdater extends DatabaseUpdater {
 			array( 'addPgField', 'recentchanges', 'rc_source', "TEXT NOT NULL DEFAULT ''" ),
 			array( 'addPgField', 'page', 'page_links_updated', "TIMESTAMPTZ NULL" ),
 			array( 'addPgField', 'mwuser', 'user_password_expires', 'TIMESTAMPTZ NULL' ),
-			array( 'changeFieldPurgeTable', 'l10n_cache', 'lc_value', 'bytea', "replace(lc_value,'\','\\\\')::bytea" ),
+			array( 'changeFieldPurgeTable', 'l10n_cache', 'lc_value', 'bytea',
+				"replace(lc_value,'\','\\\\')::bytea" ),
+
+			// 1.24
+			array( 'addPgField', 'page_props', 'pp_sortkey', 'float NULL' ),
+			array( 'addPgIndex', 'page_props', 'pp_propname_sortkey_page',
+					'( pp_propname, pp_sortkey, pp_page ) WHERE ( pp_sortkey IS NOT NULL )' ),
+			array( 'addPgField', 'page', 'page_lang', 'TEXT default NULL' ),
+			array( 'addPgField', 'pagelinks', 'pl_from_namespace', 'INTEGER NOT NULL DEFAULT 0' ),
+			array( 'addPgField', 'templatelinks', 'tl_from_namespace', 'INTEGER NOT NULL DEFAULT 0' ),
+			array( 'addPgField', 'imagelinks', 'il_from_namespace', 'INTEGER NOT NULL DEFAULT 0' ),
+
+			// 1.25
+			array( 'dropTable', 'hitcounter' ),
+			array( 'dropField', 'site_stats', 'ss_total_views', 'patch-drop-ss_total_views.sql' ),
+			array( 'dropField', 'page', 'page_counter', 'patch-drop-page_counter.sql' ),
+			array( 'dropFkey', 'recentchanges', 'rc_cur_id' )
 		);
 	}
 
@@ -686,7 +701,7 @@ END;
 			$this->output( "...column '$table.$field' is already of type '$newtype'\n" );
 		} else {
 			$this->output( "Purging data from cache table '$table'\n" );
-			$this->db->query("DELETE from $table" );
+			$this->db->query( "DELETE from $table" );
 			$this->output( "Changing column type of '$table.$field' from '{$fi->type()}' to '$newtype'\n" );
 			$sql = "ALTER TABLE $table ALTER $field TYPE $newtype";
 			if ( strlen( $default ) ) {
@@ -756,6 +771,24 @@ END;
 				$this->applyPatch( $type, true, "Creating index '$index' on table '$table'" );
 			}
 		}
+	}
+
+	protected function dropFkey( $table, $field ) {
+		$fi = $this->db->fieldInfo( $table, $field );
+		if ( is_null( $fi ) ) {
+			$this->output( "WARNING! Column '$table.$field' does not exist but it should! " .
+				"Please report this.\n" );
+			return;
+		}
+		$conname = $fi->conname();
+		if ( $fi->conname() ) {
+			$this->output( "Dropping foreign key constraint on '$table.$field'\n" );
+			$conclause = "CONSTRAINT \"$conname\"";
+			$command = "ALTER TABLE $table DROP CONSTRAINT $conname";
+			$this->db->query( $command );
+		} else {
+			$this->output( "...foreign key constraint on '$table.$field' already does not exist\n" );
+		};
 	}
 
 	protected function changeFkeyDeferrable( $table, $field, $clause ) {

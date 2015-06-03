@@ -50,13 +50,13 @@ class LogPager extends ReverseChronologicalPager {
 	 *
 	 * @param LogEventsList $list
 	 * @param string|array $types Log types to show
-	 * @param string $performer the user who made the log entries
-	 * @param string|Title $title the page title the log entries are for
-	 * @param string $pattern do a prefix search rather than an exact title match
-	 * @param array $conds extra conditions for the query
+	 * @param string $performer The user who made the log entries
+	 * @param string|Title $title The page title the log entries are for
+	 * @param string $pattern Do a prefix search rather than an exact title match
+	 * @param array $conds Extra conditions for the query
 	 * @param int|bool $year The year to start from. Default: false
 	 * @param int|bool $month The month to start from. Default: false
-	 * @param string $tagFilter tag
+	 * @param string $tagFilter Tag
 	 */
 	public function __construct( $list, $types = array(), $performer = '', $title = '', $pattern = '',
 		$conds = array(), $year = false, $month = false, $tagFilter = '' ) {
@@ -175,7 +175,7 @@ class LogPager extends ReverseChronologicalPager {
 		$user = $this->getUser();
 		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$this->mConds[] = $this->mDb->bitAnd( 'log_deleted', LogPage::DELETED_USER ) . ' = 0';
-		} elseif ( !$user->isAllowed( 'suppressrevision' ) ) {
+		} elseif ( !$user->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
 			$this->mConds[] = $this->mDb->bitAnd( 'log_deleted', LogPage::SUPPRESSED_USER ) .
 				' != ' . LogPage::SUPPRESSED_USER;
 		}
@@ -207,6 +207,18 @@ class LogPager extends ReverseChronologicalPager {
 		$ns = $title->getNamespace();
 		$db = $this->mDb;
 
+		$doUserRightsLogLike = false;
+		if ( $this->types == array( 'rights' ) ) {
+			global $wgUserrightsInterwikiDelimiter;
+			$parts = explode( $wgUserrightsInterwikiDelimiter, $title->getDBKey() );
+			if ( count( $parts ) == 2 ) {
+				list( $name, $database ) = array_map( 'trim', $parts );
+				if ( strstr( $database, '*' ) ) { // Search for wildcard in database name
+					$doUserRightsLogLike = true;
+				}
+			}
+		}
+
 		# Using the (log_namespace, log_title, log_timestamp) index with a
 		# range scan (LIKE) on the first two parts, instead of simple equality,
 		# makes it unusable for sorting.  Sorted retrieval using another index
@@ -218,12 +230,19 @@ class LogPager extends ReverseChronologicalPager {
 		# use the page_time index.  That should have no more than a few hundred
 		# log entries for even the busiest pages, so it can be safely scanned
 		# in full to satisfy an impossible condition on user or similar.
-		if ( $pattern && !$wgMiserMode ) {
-			$this->mConds['log_namespace'] = $ns;
-			$this->mConds[] = 'log_title ' . $db->buildLike( $title->getDBkey(), $db->anyString() );
+		$this->mConds['log_namespace'] = $ns;
+		if ( $doUserRightsLogLike ) {
+			$params = array( $name . $wgUserrightsInterwikiDelimiter );
+			foreach ( explode( '*', $database ) as $databasepart ) {
+				$params[] = $databasepart;
+				$params[] = $db->anyString();
+			}
+			array_pop( $params ); // Get rid of the last % we added.
+			$this->mConds[] = 'log_title' . $db->buildLike( $params );
+		} elseif ( $pattern && !$wgMiserMode ) {
+			$this->mConds[] = 'log_title' . $db->buildLike( $title->getDBkey(), $db->anyString() );
 			$this->pattern = $pattern;
 		} else {
-			$this->mConds['log_namespace'] = $ns;
 			$this->mConds['log_title'] = $title->getDBkey();
 		}
 		// Paranoia: avoid brute force searches (bug 17342)
@@ -289,7 +308,7 @@ class LogPager extends ReverseChronologicalPager {
 
 	/**
 	 * Checks if $this->mConds has $field matched to a *single* value
-	 * @param $field
+	 * @param string $field
 	 * @return bool
 	 */
 	protected function hasEqualsClause( $field ) {
@@ -304,7 +323,6 @@ class LogPager extends ReverseChronologicalPager {
 	}
 
 	public function getStartBody() {
-		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		if ( $this->getNumRows() > 0 ) {
 			$lb = new LinkBatch;
@@ -320,7 +338,6 @@ class LogPager extends ReverseChronologicalPager {
 			$lb->execute();
 			$this->mResult->seek( 0 );
 		}
-		wfProfileOut( __METHOD__ );
 
 		return '';
 	}

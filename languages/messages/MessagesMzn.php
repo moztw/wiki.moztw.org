@@ -1,8 +1,7 @@
 <?php
 /** Mazanderani (مازِرونی)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -27,7 +26,6 @@ $rtl = true;
 $namespaceNames = array(
 	NS_MEDIA            => 'مدیا',
 	NS_SPECIAL          => 'شا',
-	NS_MAIN             => '',
 	NS_TALK             => 'گپ',
 	NS_USER             => 'کارور',
 	NS_USER_TALK        => 'کارور_گپ',
@@ -108,7 +106,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'تعدادکارورون', 'تعدادکاربران', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'کارورون_فعال', 'کاربران_فعال', 'کاربران‌فعال', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'تعداددچی‌یه‌ئون', 'تعدادویرایش‌ها', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'تعدادبازدید', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'نام‌صفحه', 'نام_صفحه', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'نام‌صفحه‌کد', 'نام_صفحه_کد', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'فضای‌نام', 'فضای_نام', 'NAMESPACE' ),

@@ -71,7 +71,13 @@ class CloneDatabase {
 	 * Clone the table structure
 	 */
 	public function cloneTableStructure() {
+		global $wgSharedTables, $wgSharedDB;
 		foreach ( $this->tablesToClone as $tbl ) {
+			if ( $wgSharedDB && in_array( $tbl, $wgSharedTables, true ) ) {
+				// Shared tables don't work properly when cloning due to
+				// how prefixes are handled (bug 65654)
+				throw new MWException( "Cannot clone shared table $tbl." );
+			}
 			# Clean up from previous aborted run.  So that table escaping
 			# works correctly across DB engines, we need to change the pre-
 			# fix back and forth so tableName() works right.
@@ -85,6 +91,11 @@ class CloneDatabase {
 			if ( $this->dropCurrentTables
 				&& !in_array( $this->db->getType(), array( 'postgres', 'oracle' ) )
 			) {
+				if ( $oldTableName === $newTableName ) {
+					// Last ditch check to avoid data loss
+					throw new MWException( "Not dropping new table, as '$newTableName'"
+						. " is name of both the old and the new table." );
+				}
 				$this->db->dropTable( $tbl, __METHOD__ );
 				wfDebug( __METHOD__ . " dropping {$newTableName}\n" );
 				//Dropping the oldTable because the prefix was changed

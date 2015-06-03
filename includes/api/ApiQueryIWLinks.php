@@ -32,7 +32,7 @@
  */
 class ApiQueryIWLinks extends ApiQueryBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'iw' );
 	}
 
@@ -42,9 +42,17 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		}
 
 		$params = $this->extractRequestParams();
+		$prop = array_flip( (array)$params['prop'] );
 
 		if ( isset( $params['title'] ) && !isset( $params['prefix'] ) ) {
 			$this->dieUsageMsg( array( 'missingparam', 'prefix' ) );
+		}
+
+		// Handle deprecated param
+		$this->requireMaxOneParameter( $params, 'url', 'prop' );
+		if ( $params['url'] ) {
+			$this->logFeatureUsage( 'prop=iwlinks&iwurl' );
+			$prop = array( 'url' => 1 );
 		}
 
 		$this->addFields( array(
@@ -114,14 +122,14 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			}
 			$entry = array( 'prefix' => $row->iwl_prefix );
 
-			if ( $params['url'] ) {
+			if ( isset( $prop['url'] ) ) {
 				$title = Title::newFromText( "{$row->iwl_prefix}:{$row->iwl_title}" );
 				if ( $title ) {
 					$entry['url'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
 				}
 			}
 
-			ApiResult::setContent( $entry, $row->iwl_title );
+			ApiResult::setContentValue( $entry, 'title', $row->iwl_title );
 			$fit = $this->addPageSubItem( $row->iwl_from, $entry );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter(
@@ -139,15 +147,12 @@ class ApiQueryIWLinks extends ApiQueryBase {
 
 	public function getAllowedParams() {
 		return array(
-			'url' => false,
-			'limit' => array(
-				ApiBase::PARAM_DFLT => 10,
-				ApiBase::PARAM_TYPE => 'limit',
-				ApiBase::PARAM_MIN => 1,
-				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
-				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
+			'prop' => array(
+				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_TYPE => array(
+					'url',
+				)
 			),
-			'continue' => null,
 			'prefix' => null,
 			'title' => null,
 			'dir' => array(
@@ -157,47 +162,27 @@ class ApiQueryIWLinks extends ApiQueryBase {
 					'descending'
 				)
 			),
+			'limit' => array(
+				ApiBase::PARAM_DFLT => 10,
+				ApiBase::PARAM_TYPE => 'limit',
+				ApiBase::PARAM_MIN => 1,
+				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
+				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
+			),
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
+			'url' => array(
+				ApiBase::PARAM_DFLT => false,
+				ApiBase::PARAM_DEPRECATED => true,
+			),
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'url' => 'Whether to get the full URL',
-			'limit' => 'How many interwiki links to return',
-			'continue' => 'When more results are available, use this to continue',
-			'prefix' => 'Prefix for the interwiki',
-			'title' => "Interwiki link to search for. Must be used with {$this->getModulePrefix()}prefix",
-			'dir' => 'The direction in which to list',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'prefix' => 'string',
-				'url' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'*' => 'string'
-			)
-		);
-	}
-
-	public function getDescription() {
-		return 'Returns all interwiki links from the given page(s).';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'missingparam', 'prefix' ),
-		) );
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&prop=iwlinks&titles=Main%20Page'
-				=> 'Get interwiki links from the [[Main Page]]',
+			'action=query&prop=iwlinks&titles=Main%20Page'
+				=> 'apihelp-query+iwlinks-example-simple',
 		);
 	}
 

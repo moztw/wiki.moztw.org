@@ -111,7 +111,6 @@ CREATE TABLE /*_*/page (
    page_namespace INT          NOT NULL,
    page_title     NVARCHAR(255)  NOT NULL,
    page_restrictions NVARCHAR(255) NOT NULL,
-   page_counter BIGINT            NOT NULL DEFAULT 0,
    page_is_redirect BIT           NOT NULL DEFAULT 0,
    page_is_new BIT                NOT NULL DEFAULT 0,
    page_random real     NOT NULL DEFAULT RAND(),
@@ -119,7 +118,8 @@ CREATE TABLE /*_*/page (
    page_links_updated varchar(14) DEFAULT NULL,
    page_latest INT, -- FK inserted later
    page_len INT NOT NULL,
-   page_content_model nvarchar(32) default null
+   page_content_model nvarchar(32) default null,
+   page_lang VARBINARY(35) DEFAULT NULL
 );
 CREATE UNIQUE INDEX /*i*/name_title ON /*_*/page (page_namespace,page_title);
 CREATE INDEX /*i*/page_random ON /*_*/page (page_random);
@@ -298,8 +298,9 @@ CREATE TABLE /*_*/categorylinks (
   -- paginate the three categories separately.  This never has to be updated
   -- after the page is created, since none of these page types can be moved to
   -- any other.
+  cl_type varchar(10) NOT NULL default 'page',
   -- SQL server doesn't have enums, so we approximate with this
-  cl_type varchar(10) NOT NULL default 'page' CHECK (cl_type IN('page', 'subcat', 'file'))
+  CONSTRAINT cl_type_ckc CHECK (cl_type IN('page', 'subcat', 'file'))
 );
 
 CREATE UNIQUE INDEX /*i*/cl_from ON /*_*/categorylinks (cl_from,cl_to);
@@ -420,9 +421,6 @@ CREATE TABLE /*_*/site_stats (
   -- The single row should contain 1 here.
   ss_row_id int NOT NULL,
 
-  -- Total number of page views, if hit counters are enabled.
-  ss_total_views bigint default 0,
-
   -- Total number of edits performed.
   ss_total_edits bigint default 0,
 
@@ -448,18 +446,6 @@ CREATE TABLE /*_*/site_stats (
 
 -- Pointless index to assuage developer superstitions
 CREATE UNIQUE INDEX /*i*/ss_row_id ON /*_*/site_stats (ss_row_id);
-
-
---
--- Stores an ID for every time any article is visited;
--- depending on $wgHitcounterUpdateFreq, it is
--- periodically cleared and the page_counter column
--- in the page table updated for all the articles
--- that have been visited.)
---
-CREATE TABLE /*_*/hitcounter (
-  hc_id int NOT NULL
-);
 
 
 --
@@ -566,11 +552,11 @@ CREATE TABLE /*_*/image (
   img_bits int NOT NULL default 0,
 
   -- Media type as defined by the MEDIATYPE_xxx constants
-  img_media_type varchar(16) default null check (img_media_type in('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE')),
+  img_media_type varchar(16) default null,
 
   -- major part of a MIME media type as defined by IANA
   -- see http://www.iana.org/assignments/media-types/
-  img_major_mime varchar(16) not null default 'unknown' check (img_major_mime IN('unknown', 'application', 'audio', 'image', 'text', 'video', 'message', 'model', 'multipart')),
+  img_major_mime varchar(16) not null default 'unknown',
 
   -- minor part of a MIME media type as defined by IANA
   -- the minor parts are not required to adher to any standard
@@ -590,7 +576,10 @@ CREATE TABLE /*_*/image (
   img_timestamp nvarchar(14) NOT NULL default '',
 
   -- SHA-1 content hash in base-36
-  img_sha1 nvarchar(32) NOT NULL default ''
+  img_sha1 nvarchar(32) NOT NULL default '',
+
+  CONSTRAINT img_major_mime_ckc check (img_major_mime IN('unknown', 'application', 'audio', 'image', 'text', 'video', 'message', 'model', 'multipart', 'chemical')),
+  CONSTRAINT img_media_type_ckc check (img_media_type in('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE'))
 );
 
 CREATE INDEX /*i*/img_usertext_timestamp ON /*_*/image (img_user_text,img_timestamp);
@@ -628,11 +617,14 @@ CREATE TABLE /*_*/oldimage (
   oi_timestamp varchar(14) NOT NULL default '',
 
   oi_metadata nvarchar(max) NOT NULL,
-  oi_media_type varchar(16) default null check (oi_media_type IN('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE')),
-  oi_major_mime varchar(16) not null default 'unknown' check (oi_major_mime IN('unknown', 'application', 'audio', 'image', 'text', 'video', 'message', 'model', 'multipart')),
+  oi_media_type varchar(16) default null,
+  oi_major_mime varchar(16) not null default 'unknown',
   oi_minor_mime nvarchar(100) NOT NULL default 'unknown',
   oi_deleted tinyint NOT NULL default 0,
-  oi_sha1 nvarchar(32) NOT NULL default ''
+  oi_sha1 nvarchar(32) NOT NULL default '',
+
+  CONSTRAINT oi_major_mime_ckc check (oi_major_mime IN('unknown', 'application', 'audio', 'image', 'text', 'video', 'message', 'model', 'multipart', 'chemical')),
+  CONSTRAINT oi_media_type_ckc check (oi_media_type IN('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE'))
 );
 
 CREATE INDEX /*i*/oi_usertext_timestamp ON /*_*/oldimage (oi_user_text,oi_timestamp);
@@ -678,8 +670,8 @@ CREATE TABLE /*_*/filearchive (
   fa_height int default 0,
   fa_metadata nvarchar(max),
   fa_bits int default 0,
-  fa_media_type varchar(16) default null check (fa_media_type in('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE')),
-  fa_major_mime varchar(16) not null default 'unknown' check (fa_major_mime in('unknown', 'application', 'audio', 'image', 'text', 'video', 'message', 'model', 'multipart')),
+  fa_media_type varchar(16) default null,
+  fa_major_mime varchar(16) not null default 'unknown',
   fa_minor_mime nvarchar(100) default 'unknown',
   fa_description nvarchar(255),
   fa_user int default 0 REFERENCES /*_*/mwuser(user_id) ON DELETE SET NULL,
@@ -690,7 +682,10 @@ CREATE TABLE /*_*/filearchive (
   fa_deleted tinyint NOT NULL default 0,
 
   -- sha1 hash of file content
-  fa_sha1 nvarchar(32) NOT NULL default ''
+  fa_sha1 nvarchar(32) NOT NULL default '',
+
+  CONSTRAINT fa_major_mime_ckc check (fa_major_mime in('unknown', 'application', 'audio', 'image', 'text', 'video', 'message', 'model', 'multipart', 'chemical')),
+  CONSTRAINT fa_media_type_ckc check (fa_media_type in('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE'))
 );
 
 -- pick out by image name
@@ -736,21 +731,22 @@ CREATE TABLE /*_*/uploadstash (
   -- chunk counter starts at 0, current offset is stored in us_size
   us_chunk_inx int NULL,
 
-  -- Serialized file properties from File::getPropsFromPath
+  -- Serialized file properties from FSFile::getProps()
   us_props nvarchar(max),
 
   -- file size in bytes
   us_size int NOT NULL,
-  -- this hash comes from File::sha1Base36(), and is 31 characters
+  -- this hash comes from FSFile::getSha1Base36(), and is 31 characters
   us_sha1 nvarchar(31) NOT NULL,
   us_mime nvarchar(255),
   -- Media type as defined by the MEDIATYPE_xxx constants, should duplicate definition in the image table
-  us_media_type varchar(16) default null check (us_media_type in('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE')),
+  us_media_type varchar(16) default null,
   -- image-specific properties
   us_image_width int,
   us_image_height int,
-  us_image_bits smallint
+  us_image_bits smallint,
 
+  CONSTRAINT us_media_type_ckc check (us_media_type in('UNKNOWN', 'BITMAP', 'DRAWING', 'AUDIO', 'VIDEO', 'MULTIMEDIA', 'OFFICE', 'TEXT', 'EXECUTABLE', 'ARCHIVE'))
 );
 
 -- sometimes there's a delete for all of a user's stuff.

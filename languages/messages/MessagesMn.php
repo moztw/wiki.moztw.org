@@ -1,8 +1,7 @@
 <?php
 /** Mongolian (монгол)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -41,6 +40,10 @@ $namespaceNames = array(
 $namespaceAliases = array(
 	'Зураг' => NS_FILE,
 	'Зургийн_хэлэлцүүлэг' => NS_FILE_TALK,
+);
+
+$magicWords = array(
+	'redirect'                  => array( '0', '#ЧИГЛҮҮЛЭГ', '#REDIRECT' ),
 );
 
 $linkTrail = '/^([a-zабвгдеёжзийклмнопрстуфхцчшщъыьэюя“»]+)(.*)$/sDu';

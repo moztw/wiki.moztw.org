@@ -1,8 +1,7 @@
 <?php
 /** Tetum (tetun)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -51,7 +50,7 @@ $specialPageAliases = array(
 	'Listfiles'                 => array( 'Lista_imajen' ),
 	'Listusers'                 => array( 'Lista_uza-na\'in' ),
 	'Longpages'                 => array( 'Pájina_naruk' ),
-	'Movepage'                  => array( 'Book' ),
+	'Movepage'                  => array( 'Book_pájina', 'Book' ),
 	'Mypage'                    => array( 'Ha\'u-nia_pájina' ),
 	'Newimages'                 => array( 'Imajen_foun' ),
 	'Preferences'               => array( 'Preferénsia' ),

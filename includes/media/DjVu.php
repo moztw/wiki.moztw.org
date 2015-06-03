@@ -73,6 +73,11 @@ class DjVuHandler extends ImageHandler {
 	 * @return bool
 	 */
 	function validateParam( $name, $value ) {
+		if ( $name === 'page' && trim( $value ) !== (string)intval( $value ) ) {
+			// Extra junk on the end of page, probably actually a caption
+			// e.g. [[File:Foo.djvu|thumb|Page 3 of the document shows foo]]
+			return false;
+		}
 		if ( in_array( $name, array( 'width', 'height', 'page' ) ) ) {
 			if ( $value <= 0 ) {
 				return false;
@@ -183,7 +188,7 @@ class DjVuHandler extends ImageHandler {
 		if ( $image->getSize() >= 1e7 ) { // 10MB
 			$work = new PoolCounterWorkViaCallback( 'GetLocalFileCopy', sha1( $image->getName() ),
 				array(
-					'doWork' => function() use ( $image ) {
+					'doWork' => function () use ( $image ) {
 						return $image->getLocalRefPath();
 					}
 				)
@@ -216,11 +221,9 @@ class DjVuHandler extends ImageHandler {
 			$cmd .= " | {$wgDjvuPostProcessor}";
 		}
 		$cmd .= ' > ' . wfEscapeShellArg( $dstPath ) . ') 2>&1';
-		wfProfileIn( 'ddjvu' );
 		wfDebug( __METHOD__ . ": $cmd\n" );
 		$retval = '';
 		$err = wfShellExec( $cmd, $retval );
-		wfProfileOut( 'ddjvu' );
 
 		$removed = $this->removeBadFile( $dstPath, $retval );
 		if ( $retval != 0 || $removed ) {
@@ -260,7 +263,8 @@ class DjVuHandler extends ImageHandler {
 	 * Get metadata, unserializing it if neccessary.
 	 *
 	 * @param File $file The DjVu file in question
-	 * @return String XML metadata as a string.
+	 * @return string XML metadata as a string.
+	 * @throws MWException
 	 */
 	private function getUnserializedMetadata( File $file ) {
 		$metadata = $file->getMetadata();
@@ -273,7 +277,14 @@ class DjVuHandler extends ImageHandler {
 		$unser = unserialize( $metadata );
 		wfRestoreWarnings();
 		if ( is_array( $unser ) ) {
-			return $unser['xml'];
+			if ( isset( $unser['error'] ) ) {
+				return false;
+			} elseif ( isset( $unser['xml'] ) ) {
+				return $unser['xml'];
+			} else {
+				// Should never ever reach here.
+				throw new MWException( "Error unserializing DjVu metadata." );
+			}
 		}
 
 		// unserialize failed. Guess it wasn't really serialized after all,
@@ -300,7 +311,6 @@ class DjVuHandler extends ImageHandler {
 
 			return false;
 		}
-		wfProfileIn( __METHOD__ );
 
 		wfSuppressWarnings();
 		try {
@@ -326,7 +336,6 @@ class DjVuHandler extends ImageHandler {
 			wfDebug( "Bogus multipage XML metadata on '{$image->getName()}'\n" );
 		}
 		wfRestoreWarnings();
-		wfProfileOut( __METHOD__ );
 		if ( $gettext ) {
 			return $image->djvuTextTree;
 		} else {
@@ -359,7 +368,8 @@ class DjVuHandler extends ImageHandler {
 
 		$xml = $this->getDjVuImage( $image, $path )->retrieveMetaData();
 		if ( $xml === false ) {
-			return false;
+			// Special value so that we don't repetitively try and decode a broken file.
+			return serialize( array( 'error' => 'Error extracting metadata' ) );
 		} else {
 			return serialize( array( 'xml' => $xml ) );
 		}

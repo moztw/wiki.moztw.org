@@ -72,15 +72,15 @@ class ApiComparePages extends ApiBase {
 			);
 		}
 
-		ApiResult::setContent( $vals, $difftext );
+		ApiResult::setContentValue( $vals, 'body', $difftext );
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $vals );
 	}
 
 	/**
-	 * @param $revision int
-	 * @param $titleText string
-	 * @param $titleId int
+	 * @param int $revision
+	 * @param string $titleText
+	 * @param int $titleId
 	 * @return int
 	 */
 	private function revisionOrTitleOrId( $revision, $titleText, $titleId ) {
@@ -126,58 +126,10 @@ class ApiComparePages extends ApiBase {
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'fromtitle' => 'First title to compare',
-			'fromid' => 'First page ID to compare',
-			'fromrev' => 'First revision to compare',
-			'totitle' => 'Second title to compare',
-			'toid' => 'Second page ID to compare',
-			'torev' => 'Second revision to compare',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'fromtitle' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'fromrevid' => 'integer',
-				'totitle' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'torevid' => 'integer',
-				'*' => 'string'
-			)
-		);
-	}
-
-	public function getDescription() {
-		return array(
-			'Get the difference between 2 pages.',
-			'You must pass a revision number or a page title or a page ID id for each part (1 and 2).'
-		);
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'inputneeded', 'info' => 'A title or a revision is needed' ),
-			array( 'invalidtitle', 'title' ),
-			array( 'nosuchpageid', 'pageid' ),
-			array(
-				'code' => 'baddiff',
-				'info' => 'The diff cannot be retrieved. Maybe one or both ' .
-					'revisions do not exist or you do not have permission to view them.'
-			),
-		) );
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=compare&fromrev=1&torev=2' => 'Create a diff between revision 1 and 2',
+			'action=compare&fromrev=1&torev=2'
+				=> 'apihelp-compare-example-1',
 		);
 	}
 }

@@ -95,17 +95,12 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		} else {
 			$mysqli->options( MYSQLI_SET_CHARSET_NAME, 'binary' );
 		}
+		$mysqli->options( MYSQLI_OPT_CONNECT_TIMEOUT, 3 );
 
-		$numAttempts = 2;
-		for ( $i = 0; $i < $numAttempts; $i++ ) {
-			if ( $i > 1 ) {
-				usleep( 1000 );
-			}
-			if ( $mysqli->real_connect( $realServer, $this->mUser,
-				$this->mPassword, $this->mDBname, $port, $socket, $connFlags )
-			) {
-				return $mysqli;
-			}
+		if ( $mysqli->real_connect( $realServer, $this->mUser,
+			$this->mPassword, $this->mDBname, $port, $socket, $connFlags )
+		) {
+			return $mysqli;
 		}
 
 		return false;
@@ -171,13 +166,6 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	/**
-	 * @return string
-	 */
-	function getServerVersion() {
-		return $this->mConn->server_info;
-	}
-
-	/**
 	 * @param mysqli $res
 	 * @return bool
 	 */
@@ -236,11 +224,18 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	 */
 	protected function mysqlFetchField( $res, $n ) {
 		$field = $res->fetch_field_direct( $n );
+
+		// Add missing properties to result (using flags property)
+		// which will be part of function mysql-fetch-field for backward compatibility
 		$field->not_null = $field->flags & MYSQLI_NOT_NULL_FLAG;
 		$field->primary_key = $field->flags & MYSQLI_PRI_KEY_FLAG;
 		$field->unique_key = $field->flags & MYSQLI_UNIQUE_KEY_FLAG;
 		$field->multiple_key = $field->flags & MYSQLI_MULTIPLE_KEY_FLAG;
 		$field->binary = $field->flags & MYSQLI_BINARY_FLAG;
+		$field->numeric = $field->flags & MYSQLI_NUM_FLAG;
+		$field->blob = $field->flags & MYSQLI_BLOB_FLAG;
+		$field->unsigned = $field->flags & MYSQLI_UNSIGNED_FLAG;
+		$field->zerofill = $field->flags & MYSQLI_ZEROFILL_FLAG;
 
 		return $field;
 	}
@@ -305,6 +300,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	 * Give an id for the connection
 	 *
 	 * mysql driver used resource id, but mysqli objects cannot be cast to string.
+	 * @return string
 	 */
 	public function __toString() {
 		if ( $this->mConn instanceof Mysqli ) {

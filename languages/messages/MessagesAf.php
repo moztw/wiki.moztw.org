@@ -1,8 +1,7 @@
 <?php
 /** Afrikaans (Afrikaans)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -56,7 +55,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'AANTALGEBRUIKERS', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'AANTALAKTIEWEGEBRUIKERS', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'AANTALWYSIGINGS', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'AANTALKEERGESIEN', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'BLADSYNAAM', 'PAGENAME' ),
 	'namespace'                 => array( '1', 'NAAMSPASIE', 'NAMESPACE' ),
 	'talkspace'                 => array( '1', 'BESPREKINGSBLADSY', 'TALKSPACE' ),
@@ -97,14 +95,18 @@ $magicWords = array(
 $specialPageAliases = array(
 	'Activeusers'               => array( 'AktieweGebruikers' ),
 	'Allmessages'               => array( 'Stelselboodskappe', 'Alle_stelselboodskappe', 'Allestelselboodskappe', 'Boodskappe' ),
+	'AllMyUploads'              => array( 'AlMyOplaaie', 'AlMyLêers' ),
 	'Allpages'                  => array( 'Alle_bladsye', 'Allebladsye' ),
 	'Ancientpages'              => array( 'OuBladsye' ),
+	'Badtitle'                  => array( 'Slegtetitel' ),
 	'Blankpage'                 => array( 'SkoonBladsy' ),
 	'Block'                     => array( 'BlokIP' ),
 	'Booksources'               => array( 'Boekbronne' ),
 	'BrokenRedirects'           => array( 'Stukkende_aansture', 'Stukkendeaansture' ),
 	'Categories'                => array( 'Kategorieë' ),
+	'ChangeEmail'               => array( 'VeranderEpos' ),
 	'ChangePassword'            => array( 'HerstelWagwoord' ),
+	'ComparePages'              => array( 'VergelykBladsye' ),
 	'Confirmemail'              => array( 'Bevestig_e-posadres', 'Bevestige-posadres', 'Bevestig_eposadres', 'Bevestigeposadres' ),
 	'Contributions'             => array( 'Bydraes', 'Gebruikersbydraes' ),
 	'CreateAccount'             => array( 'SkepRekening', 'MaakGebruiker' ),
@@ -118,6 +120,7 @@ $specialPageAliases = array(
 	'Filepath'                  => array( 'Lêerpad' ),
 	'Import'                    => array( 'Importeer' ),
 	'Invalidateemail'           => array( 'OngeldigeEpos' ),
+	'JavaScriptTest'            => array( 'JavaScriptToets' ),
 	'BlockList'                 => array( 'IPBlokLys' ),
 	'LinkSearch'                => array( 'SkakelSoektog' ),
 	'Listadmins'                => array( 'LysAdministrateurs' ),
@@ -134,16 +137,20 @@ $specialPageAliases = array(
 	'MIMEsearch'                => array( 'MIME-soek', 'MIMEsoek', 'MIME_soek' ),
 	'Mostcategories'            => array( 'MeesteKategorieë' ),
 	'Mostimages'                => array( 'MeesteBeelde' ),
-	'Mostlinked'                => array( 'MeeteGeskakel' ),
+	'Mostinterwikis'            => array( 'MeesteInterwikis' ),
+	'Mostlinked'                => array( 'MeesteGeskakel' ),
 	'Mostlinkedcategories'      => array( 'MeesGeskakeldeKategorieë' ),
 	'Mostlinkedtemplates'       => array( 'MeesGeskakeldeSjablone' ),
 	'Mostrevisions'             => array( 'MeesteWysigings' ),
 	'Movepage'                  => array( 'Skuif_bladsy', 'Skuifbladsy' ),
 	'Mycontributions'           => array( 'Mybydrae' ),
+	'MyLanguage'                => array( 'MyTaal' ),
 	'Mypage'                    => array( 'MyBladsy' ),
 	'Mytalk'                    => array( 'Mybespreking', 'Mybesprekings' ),
+	'Myuploads'                 => array( 'MyOplaaie', 'MyLêers' ),
 	'Newimages'                 => array( 'Nuwe_beelde', 'Nuwebeelde', 'Nuwe_lêers', 'Nuwelêers' ),
 	'Newpages'                  => array( 'Nuwe_bladsye', 'Nuwebladsye' ),
+	'PasswordReset'             => array( 'WagwoordHerstel' ),
 	'Popularpages'              => array( 'PopulêreBladsye' ),
 	'Preferences'               => array( 'Voorkeure' ),
 	'Prefixindex'               => array( 'VoorvoegselIndeks' ),
@@ -153,6 +160,7 @@ $specialPageAliases = array(
 	'Randomredirect'            => array( 'Lukrake_aanstuur', 'Lukrakeaanstuur' ),
 	'Recentchanges'             => array( 'Onlangse_wysigings', 'Onlangsewysigings' ),
 	'Recentchangeslinked'       => array( 'OnlangseVeranderingsMetSkakels', 'VerwanteVeranderings' ),
+	'Redirect'                  => array( 'Aanstuur' ),
 	'Revisiondelete'            => array( 'WeergaweSkrap' ),
 	'Search'                    => array( 'Soek' ),
 	'Shortpages'                => array( 'KortBladsye' ),
@@ -177,7 +185,7 @@ $specialPageAliases = array(
 	'Version'                   => array( 'Weergawe' ),
 	'Wantedcategories'          => array( 'GesoekteKategorieë' ),
 	'Wantedfiles'               => array( 'GesoekteLêers' ),
-	'Wantedpages'               => array( 'GesoekdeBladsye', 'GebreekteSkakels' ),
+	'Wantedpages'               => array( 'GesoekteBladsye', 'GebreekteSkakels' ),
 	'Wantedtemplates'           => array( 'GesoekteSjablone' ),
 	'Watchlist'                 => array( 'Dophoulys' ),
 	'Whatlinkshere'             => array( 'Skakels_hierheen', 'Skakelshierheen' ),

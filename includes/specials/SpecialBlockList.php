@@ -27,8 +27,9 @@
  * @ingroup SpecialPage
  */
 class SpecialBlockList extends SpecialPage {
+	protected $target;
 
-	protected $target, $options;
+	protected $options;
 
 	function __construct() {
 		parent::__construct( 'BlockList' );
@@ -37,7 +38,7 @@ class SpecialBlockList extends SpecialPage {
 	/**
 	 * Main execution point
 	 *
-	 * @param string $par title fragment
+	 * @param string $par Title fragment
 	 */
 	public function execute( $par ) {
 		$this->setHeaders();
@@ -46,6 +47,7 @@ class SpecialBlockList extends SpecialPage {
 		$lang = $this->getLanguage();
 		$out->setPageTitle( $this->msg( 'ipblocklist' ) );
 		$out->addModuleStyles( 'mediawiki.special' );
+		$out->addModules( 'mediawiki.userSuggest' );
 
 		$request = $this->getRequest();
 		$par = $request->getVal( 'ip', $par );
@@ -67,10 +69,11 @@ class SpecialBlockList extends SpecialPage {
 		$fields = array(
 			'Target' => array(
 				'type' => 'text',
-				'label-message' => 'ipadressorusername',
+				'label-message' => 'ipaddressorusername',
 				'tabindex' => '1',
 				'size' => '45',
 				'default' => $this->target,
+				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 			),
 			'Options' => array(
 				'type' => 'multiselect',
@@ -83,7 +86,7 @@ class SpecialBlockList extends SpecialPage {
 				'flatlist' => true,
 			),
 			'Limit' => array(
-				'class' => 'HTMLBlockedUsersItemSelect',
+				'type' => 'limitselect',
 				'label-message' => 'table_pager_limit_label',
 				'options' => array(
 					$lang->formatNum( 20 ) => 20,
@@ -102,6 +105,7 @@ class SpecialBlockList extends SpecialPage {
 		$form->setMethod( 'get' );
 		$form->setWrapperLegendMsg( 'ipblocklist-legend' );
 		$form->setSubmitTextMsg( 'ipblocklist-submit' );
+		$form->setSubmitProgressive();
 		$form->prepareForm();
 
 		$form->displayForm( '' );
@@ -109,11 +113,6 @@ class SpecialBlockList extends SpecialPage {
 	}
 
 	function showList() {
-		# Purge expired entries on one in every 10 queries
-		if ( !mt_rand( 0, 10 ) ) {
-			Block::purgeExpired();
-		}
-
 		$conds = array();
 		# Is the user allowed to see hidden blocks?
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
@@ -166,7 +165,7 @@ class SpecialBlockList extends SpecialPage {
 
 		# Check for other blocks, i.e. global/tor blocks
 		$otherBlockLink = array();
-		wfRunHooks( 'OtherBlockLogLink', array( &$otherBlockLink, $this->target ) );
+		Hooks::run( 'OtherBlockLogLink', array( &$otherBlockLink, $this->target ) );
 
 		$out = $this->getOutput();
 
@@ -180,11 +179,7 @@ class SpecialBlockList extends SpecialPage {
 
 		$pager = new BlockListPager( $this, $conds );
 		if ( $pager->getNumRows() ) {
-			$out->addHTML(
-				$pager->getNavigationBar() .
-					$pager->getBody() .
-					$pager->getNavigationBar()
-			);
+			$out->addParserOutputContent( $pager->getFullOutput() );
 		} elseif ( $this->target ) {
 			$out->addWikiMsg( 'ipblocklist-no-results' );
 		} else {
@@ -203,7 +198,11 @@ class SpecialBlockList extends SpecialPage {
 			foreach ( $otherBlockLink as $link ) {
 				$list .= Html::rawElement( 'li', array(), $link ) . "\n";
 			}
-			$out->addHTML( Html::rawElement( 'ul', array( 'class' => 'mw-ipblocklist-otherblocks' ), $list ) . "\n" );
+			$out->addHTML( Html::rawElement(
+				'ul',
+				array( 'class' => 'mw-ipblocklist-otherblocks' ),
+				$list
+			) . "\n" );
 		}
 	}
 
@@ -217,13 +216,13 @@ class BlockListPager extends TablePager {
 	protected $page;
 
 	/**
-	 * @param $page SpecialPage
-	 * @param $conds Array
+	 * @param SpecialPage $page
+	 * @param array $conds
 	 */
 	function __construct( $page, $conds ) {
 		$this->page = $page;
 		$this->conds = $conds;
-		$this->mDefaultDirection = true;
+		$this->mDefaultDirection = IndexPager::DIR_DESCENDING;
 		parent::__construct( $page->getContext() );
 	}
 
@@ -258,7 +257,6 @@ class BlockListPager extends TablePager {
 				'blocklist-nousertalk',
 				'unblocklink',
 				'change-blocklink',
-				'infiniteblock',
 			);
 			$msg = array_combine( $msg, array_map( array( $this, 'msg' ), $msg ) );
 		}
@@ -395,6 +393,10 @@ class BlockListPager extends TablePager {
 			'join_conds' => array( 'user' => array( 'LEFT JOIN', 'user_id = ipb_by' ) )
 		);
 
+		# Filter out any expired blocks
+		$db = $this->getDatabase();
+		$info['conds'][] = 'ipb_expiry > ' . $db->addQuotes( $db->timestamp() );
+
 		# Is the user allowed to see hidden blocks?
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
 			$info['conds']['ipb_deleted'] = 0;
@@ -404,7 +406,7 @@ class BlockListPager extends TablePager {
 	}
 
 	public function getTableClass() {
-		return 'TablePager mw-blocklist';
+		return parent::getTableClass() . ' mw-blocklist';
 	}
 
 	function getIndexField() {
@@ -424,7 +426,6 @@ class BlockListPager extends TablePager {
 	 * @param ResultWrapper $result
 	 */
 	function preprocessResults( $result ) {
-		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		$lb = new LinkBatch;
 		$lb->setCaller( __METHOD__ );
@@ -449,36 +450,5 @@ class BlockListPager extends TablePager {
 		}
 
 		$lb->execute();
-		wfProfileOut( __METHOD__ );
-	}
-}
-
-/**
- * Items per page dropdown. Essentially a crap workaround for bug 32603.
- */
-class HTMLBlockedUsersItemSelect extends HTMLSelectField {
-	/**
-	 * Basically don't do any validation. If it's a number that's fine. Also,
-	 * add it to the list if it's not there already
-	 *
-	 * @param $value
-	 * @param $alldata
-	 * @return bool
-	 */
-	function validate( $value, $alldata ) {
-		if ( $value == '' ) {
-			return true;
-		}
-
-		// Let folks pick an explicit limit not from our list, as long as it's a real numbr.
-		if ( !in_array( $value, $this->mParams['options'] ) && $value == intval( $value ) && $value > 0 ) {
-			// This adds the explicitly requested limit value to the drop-down,
-			// then makes sure it's sorted correctly so when we output the list
-			// later, the custom option doesn't just show up last.
-			$this->mParams['options'][$this->mParent->getLanguage()->formatNum( $value )] = intval( $value );
-			asort( $this->mParams['options'] );
-		}
-
-		return true;
 	}
 }

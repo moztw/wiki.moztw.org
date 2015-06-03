@@ -25,15 +25,15 @@
 /**
  * A codec for %MediaWiki page titles.
  *
- * @note: Normalization and validation is applied while parsing, not when formatting.
+ * @note Normalization and validation is applied while parsing, not when formatting.
  * It's possible to construct a TitleValue with an invalid title, and use MediaWikiTitleCodec
  * to generate an (invalid) title string from it. TitleValues should be constructed only
  * via parseTitle() or from a (semi)trusted source, such as the database.
  *
  * @see https://www.mediawiki.org/wiki/Requests_for_comment/TitleValue
+ * @since 1.23
  */
 class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
-
 	/**
 	 * @var Language
 	 */
@@ -50,11 +50,13 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	protected $localInterwikis;
 
 	/**
-	 * @param Language $language the language object to use for localizing namespace names.
-	 * @param GenderCache $genderCache the gender cache for generating gendered namespace names
+	 * @param Language $language The language object to use for localizing namespace names.
+	 * @param GenderCache $genderCache The gender cache for generating gendered namespace names
 	 * @param string[]|string $localInterwikis
 	 */
-	public function __construct( Language $language, GenderCache $genderCache, $localInterwikis = array() ) {
+	public function __construct( Language $language, GenderCache $genderCache,
+		$localInterwikis = array()
+	) {
 		$this->language = $language;
 		$this->genderCache = $genderCache;
 		$this->localInterwikis = (array)$localInterwikis;
@@ -66,12 +68,13 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	 * @param int $namespace
 	 * @param string $text
 	 *
-	 * @throws InvalidArgumentException if the namespace is invalid
-	 * @return String
+	 * @throws InvalidArgumentException If the namespace is invalid
+	 * @return string
 	 */
 	public function getNamespaceName( $namespace, $text ) {
 		if ( $this->language->needsGenderDistinction() &&
-			MWNamespace::hasGenderDistinction( $namespace ) ) {
+			MWNamespace::hasGenderDistinction( $namespace )
+		) {
 
 			//NOTE: we are assuming here that the title text is a user name!
 			$gender = $this->genderCache->getGenderOf( $text, __METHOD__ );
@@ -95,7 +98,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	 *        Underscores will be replaced.
 	 * @param string $fragment The fragment name (may be empty).
 	 *
-	 * @throws InvalidArgumentException if the namespace is invalid
+	 * @throws InvalidArgumentException If the namespace is invalid
 	 * @return string
 	 */
 	public function formatTitle( $namespace, $text, $fragment = '' ) {
@@ -120,8 +123,8 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	 * Parses the given text and constructs a TitleValue. Normalization
 	 * is applied according to the rules appropriate for the form specified by $form.
 	 *
-	 * @param string $text the text to parse
-	 * @param int $defaultNamespace namespace to assume per default (usually NS_MAIN)
+	 * @param string $text The text to parse
+	 * @param int $defaultNamespace Namespace to assume per default (usually NS_MAIN)
 	 *
 	 * @throws MalformedTitleException
 	 * @return TitleValue
@@ -185,10 +188,10 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	 * namespace prefixes, sets the other forms, and canonicalizes
 	 * everything.
 	 *
-	 * @todo: this method is only exposed as a temporary measure to ease refactoring.
+	 * @todo this method is only exposed as a temporary measure to ease refactoring.
 	 * It was copied with minimal changes from Title::secureAndSplit().
 	 *
-	 * @todo: This method should be split up and an appropriate interface
+	 * @todo This method should be split up and an appropriate interface
 	 * defined for use by the Title class.
 	 *
 	 * @param string $text
@@ -204,6 +207,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		# Initialisation
 		$parts = array(
 			'interwiki' => '',
+			'local_interwiki' => false,
 			'fragment' => '',
 			'namespace' => $defaultNamespace,
 			'dbkey' => $dbkey,
@@ -219,10 +223,14 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		# Note: use of the /u option on preg_replace here will cause
 		# input with invalid UTF-8 sequences to be nullified out in PHP 5.2.x,
 		# conveniently disabling them.
-		$dbkey = preg_replace( '/[ _\xA0\x{1680}\x{180E}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '_', $dbkey );
+		$dbkey = preg_replace(
+			'/[ _\xA0\x{1680}\x{180E}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u',
+			'_',
+			$dbkey
+		);
 		$dbkey = trim( $dbkey, '_' );
 
-		if ( strpos( $dbkey, UTF8_REPLACEMENT ) !== false ) {
+		if ( strpos( $dbkey, UtfNormal\Constants::UTF8_REPLACEMENT ) !== false ) {
 			# Contained illegal UTF-8 sequences or forbidden Unicode chars.
 			throw new MalformedTitleException( 'Bad UTF-8 sequences found in title: ' . $text );
 		}
@@ -242,7 +250,6 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		}
 
 		# Namespace or interwiki prefix
-		$firstPass = true;
 		$prefixRegexp = "/^(.+?)_*:_*(.*)$/S";
 		do {
 			$m = array();
@@ -264,13 +271,6 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 						}
 					}
 				} elseif ( Interwiki::isValidInterwiki( $p ) ) {
-					if ( !$firstPass ) {
-						//TODO: get rid of global state!
-						# Can't make a local interwiki link to an interwiki link.
-						# That's just crazy!
-						throw new MalformedTitleException( 'Interwiki prefix found in title: ' . $text );
-					}
-
 					# Interwiki link
 					$dbkey = $m[2];
 					$parts['interwiki'] = $this->language->lc( $p );
@@ -279,11 +279,21 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 					foreach ( $this->localInterwikis as $localIW ) {
 						if ( 0 == strcasecmp( $parts['interwiki'], $localIW ) ) {
 							if ( $dbkey == '' ) {
-								# Can't have an empty self-link
-								throw new MalformedTitleException( 'Local interwiki with empty title: ' . $text );
+								# Empty self-links should point to the Main Page, to ensure
+								# compatibility with cross-wiki transclusions and the like.
+								$mainPage = Title::newMainPage();
+								return array(
+									'interwiki' => $mainPage->getInterwiki(),
+									'local_interwiki' => true,
+									'fragment' => $mainPage->getFragment(),
+									'namespace' => $mainPage->getNamespace(),
+									'dbkey' => $mainPage->getDBkey(),
+									'user_case_dbkey' => $mainPage->getUserCaseDBKey()
+								);
 							}
 							$parts['interwiki'] = '';
-							$firstPass = false;
+							# local interwikis should behave like initial-colon links
+							$parts['local_interwiki'] = true;
 
 							# Do another namespace split...
 							continue 2;
@@ -313,7 +323,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		}
 
 		# Reject illegal characters.
-		$rxTc = Title::getTitleInvalidRegex();
+		$rxTc = self::getTitleInvalidRegex();
 		if ( preg_match( $rxTc, $dbkey ) ) {
 			throw new MalformedTitleException( 'Illegal characters found in title: ' . $text );
 		}
@@ -385,7 +395,36 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 
 		# Fill fields
 		$parts['dbkey'] = $dbkey;
+
 		return $parts;
 	}
 
+	/**
+	 * Returns a simple regex that will match on characters and sequences invalid in titles.
+	 * Note that this doesn't pick up many things that could be wrong with titles, but that
+	 * replacing this regex with something valid will make many titles valid.
+	 * Previously Title::getTitleInvalidRegex()
+	 *
+	 * @return string Regex string
+	 * @since 1.25
+	 */
+	public static function getTitleInvalidRegex() {
+		static $rxTc = false;
+		if ( !$rxTc ) {
+			# Matching titles will be held as illegal.
+			$rxTc = '/' .
+				# Any character not allowed is forbidden...
+				'[^' . Title::legalChars() . ']' .
+				# URL percent encoding sequences interfere with the ability
+				# to round-trip titles -- you can't link to them consistently.
+				'|%[0-9A-Fa-f]{2}' .
+				# XML/HTML character references produce similar issues.
+				'|&[A-Za-z0-9\x80-\xff]+;' .
+				'|&#[0-9]+;' .
+				'|&#x[0-9A-Fa-f]+;' .
+				'/S';
+		}
+
+		return $rxTc;
+	}
 }

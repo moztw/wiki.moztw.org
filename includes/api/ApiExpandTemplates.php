@@ -39,11 +39,32 @@ class ApiExpandTemplates extends ApiBase {
 
 		// Get parameters
 		$params = $this->extractRequestParams();
+		$this->requireMaxOneParameter( $params, 'prop', 'generatexml' );
 
-		// Create title for parser
-		$title_obj = Title::newFromText( $params['title'] );
-		if ( !$title_obj || $title_obj->isExternal() ) {
-			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
+		if ( $params['prop'] === null ) {
+			$this->logFeatureUsage( 'action=expandtemplates&!prop' );
+			$this->setWarning( 'Because no values have been specified for the prop parameter, a ' .
+				'legacy format has been used for the output. This format is deprecated, and in ' .
+				'the future, a default value will be set for the prop parameter, causing the new' .
+				'format to always be used.' );
+			$prop = array();
+		} else {
+			$prop = array_flip( $params['prop'] );
+		}
+
+		// Get title and revision ID for parser
+		$revid = $params['revid'];
+		if ( $revid !== null ) {
+			$rev = Revision::newFromId( $revid );
+			if ( !$rev ) {
+				$this->dieUsage( "There is no revision ID $revid", 'missingrev' );
+			}
+			$title_obj = $rev->getTitle();
+		} else {
+			$title_obj = Title::newFromText( $params['title'] );
+			if ( !$title_obj || $title_obj->isExternal() ) {
+				$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
+			}
 		}
 
 		$result = $this->getResult();
@@ -56,24 +77,75 @@ class ApiExpandTemplates extends ApiBase {
 			$options->setRemoveComments( false );
 		}
 
-		if ( $params['generatexml'] ) {
-			$wgParser->startExternalParse( $title_obj, $options, OT_PREPROCESS );
+		$retval = array();
+
+		if ( isset( $prop['parsetree'] ) || $params['generatexml'] ) {
+			if ( !isset( $prop['parsetree'] ) ) {
+				$this->logFeatureUsage( 'action=expandtemplates&generatexml' );
+			}
+
+			$wgParser->startExternalParse( $title_obj, $options, Parser::OT_PREPROCESS );
 			$dom = $wgParser->preprocessToDom( $params['text'] );
 			if ( is_callable( array( $dom, 'saveXML' ) ) ) {
 				$xml = $dom->saveXML();
 			} else {
 				$xml = $dom->__toString();
 			}
-			$xml_result = array();
-			ApiResult::setContent( $xml_result, $xml );
-			$result->addValue( null, 'parsetree', $xml_result );
+			if ( isset( $prop['parsetree'] ) ) {
+				unset( $prop['parsetree'] );
+				$retval['parsetree'] = $xml;
+			} else {
+				// the old way
+				$result->addValue( null, 'parsetree', $xml );
+				$result->addValue( null, ApiResult::META_BC_SUBELEMENTS, array( 'parsetree' ) );
+			}
 		}
-		$retval = $wgParser->preprocess( $params['text'], $title_obj, $options );
 
-		// Return result
-		$retval_array = array();
-		ApiResult::setContent( $retval_array, $retval );
-		$result->addValue( null, $this->getModuleName(), $retval_array );
+		// if they didn't want any output except (probably) the parse tree,
+		// then don't bother actually fully expanding it
+		if ( $prop || $params['prop'] === null ) {
+			$wgParser->startExternalParse( $title_obj, $options, Parser::OT_PREPROCESS );
+			$frame = $wgParser->getPreprocessor()->newFrame();
+			$wikitext = $wgParser->preprocess( $params['text'], $title_obj, $options, $revid, $frame );
+			if ( $params['prop'] === null ) {
+				// the old way
+				ApiResult::setContentValue( $retval, 'wikitext', $wikitext );
+			} else {
+				if ( isset( $prop['categories'] ) ) {
+					$categories = $wgParser->getOutput()->getCategories();
+					if ( $categories ) {
+						$categories_result = array();
+						foreach ( $categories as $category => $sortkey ) {
+							$entry = array();
+							$entry['sortkey'] = $sortkey;
+							ApiResult::setContentValue( $entry, 'category', $category );
+							$categories_result[] = $entry;
+						}
+						ApiResult::setIndexedTagName( $categories_result, 'category' );
+						$retval['categories'] = $categories_result;
+					}
+				}
+				if ( isset( $prop['properties'] ) ) {
+					$properties = $wgParser->getOutput()->getProperties();
+					if ( $properties ) {
+						ApiResult::setArrayType( $properties, 'BCkvp', 'name' );
+						ApiResult::setIndexedTagName( $properties, 'property' );
+						$retval['properties'] = $properties;
+					}
+				}
+				if ( isset( $prop['volatile'] ) ) {
+					$retval['volatile'] = $frame->isVolatile();
+				}
+				if ( isset( $prop['ttl'] ) && $frame->getTTL() !== null ) {
+					$retval['ttl'] = $frame->getTTL();
+				}
+				if ( isset( $prop['wikitext'] ) ) {
+					$retval['wikitext'] = $wikitext;
+				}
+			}
+		}
+		ApiResult::setSubelementsList( $retval, array( 'wikitext', 'parsetree' ) );
+		$result->addValue( null, $this->getModuleName(), $retval );
 	}
 
 	public function getAllowedParams() {
@@ -85,41 +157,32 @@ class ApiExpandTemplates extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true,
 			),
-			'generatexml' => false,
+			'revid' => array(
+				ApiBase::PARAM_TYPE => 'integer',
+			),
+			'prop' => array(
+				ApiBase::PARAM_TYPE => array(
+					'wikitext',
+					'categories',
+					'properties',
+					'volatile',
+					'ttl',
+					'parsetree',
+				),
+				ApiBase::PARAM_ISMULTI => true,
+			),
 			'includecomments' => false,
+			'generatexml' => array(
+				ApiBase::PARAM_TYPE => 'boolean',
+				ApiBase::PARAM_DEPRECATED => true,
+			),
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'text' => 'Wikitext to convert',
-			'title' => 'Title of page',
-			'generatexml' => 'Generate XML parse tree',
-			'includecomments' => 'Whether to include HTML comments in the output',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'*' => 'string'
-			)
-		);
-	}
-
-	public function getDescription() {
-		return 'Expands all templates in wikitext.';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'invalidtitle', 'title' ),
-		) );
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=expandtemplates&text={{Project:Sandbox}}'
+			'action=expandtemplates&text={{Project:Sandbox}}'
+				=> 'apihelp-expandtemplates-example-simple',
 		);
 	}
 

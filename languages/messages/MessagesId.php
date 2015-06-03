@@ -1,8 +1,7 @@
 <?php
 /** Indonesian (Bahasa Indonesia)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -48,7 +47,6 @@ $bookstoreList = array(
 	'Barnes & Noble' => 'http://search.barnesandnoble.com/bookSearch/isbnInquiry.asp?isbn=$1',
 	'Bhinneka.com bookstore' => 'http://www.bhinneka.com/Buku/Engine/search.asp?fisbn=$1',
 	'Gramedia Cyberstore (via Google)' => 'http://www.google.com/search?q=%22ISBN+:+$1%22+%22product_detail%22+site:www.gramediacyberstore.com+OR+site:www.gramediaonline.com+OR+site:www.kompas.com&hl=id',
-	'PriceSCAN' => 'http://www.pricescan.com/books/bookDetail.asp?isbn=$1',
 );
 
 $magicWords = array(
@@ -86,7 +84,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'JUMLAHPENGGUNA', 'JUMPENG', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'JUMLAHPENGGUNAAKTIF', 'JUMPENGTIF', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'JUMLAHSUNTINGAN', 'JUMTING', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'JUMLAHTAMPILAN', 'JUMTAM', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'NAMAHALAMAN', 'NAMMAN', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'NAMAHALAMANE', 'NAMMANE', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'RUANGNAMA', 'RUNAM', 'NAMESPACE' ),
@@ -247,6 +244,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Perubahan_terbanyak', 'PerubahanTerbanyak' ),
 	'Movepage'                  => array( 'Pindahkan_halaman', 'PindahkanHalaman' ),
 	'Mycontributions'           => array( 'Kontribusi_saya', 'KontribusiSaya' ),
+	'MyLanguage'                => array( 'Bahasa_saya' ),
 	'Mypage'                    => array( 'Halaman_saya', 'HalamanSaya' ),
 	'Mytalk'                    => array( 'Pembicaraan_saya', 'PembicaraanSaya' ),
 	'Myuploads'                 => array( 'Unggahan_saya' ),

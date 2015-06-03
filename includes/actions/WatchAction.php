@@ -1,6 +1,6 @@
 <?php
 /**
- * Performs the watch and unwatch actions on a page
+ * Performs the watch actions on a page
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,7 @@ class WatchAction extends FormAction {
 	}
 
 	public function onSubmit( $data ) {
-		wfProfileIn( __METHOD__ );
 		self::doWatch( $this->getTitle(), $this->getUser() );
-		wfProfileOut( __METHOD__ );
 
 		return true;
 	}
@@ -82,17 +80,10 @@ class WatchAction extends FormAction {
 	protected function checkCanExecute( User $user ) {
 		// Must be logged in
 		if ( $user->isAnon() ) {
-			$loginreqlink = Linker::linkKnown(
-				SpecialPage::getTitleFor( 'Userlogin' ),
-				$this->msg( 'loginreqlink' )->escaped(),
-				array(),
-				array( 'returnto' => $this->getPageTitle(), 'returntoquery' => 'action=' . $this->getName() )
-			);
-			$reasonMsg = $this->msg( 'watchlistanontext' )->rawParams( $loginreqlink );
-			throw new UserNotLoggedIn( $reasonMsg, 'watchnologin' );
+			throw new UserNotLoggedIn( 'watchlistanontext', 'watchnologin' );
 		}
 
-		return parent::checkCanExecute( $user );
+		parent::checkCanExecute( $user );
 	}
 
 	/**
@@ -139,10 +130,10 @@ class WatchAction extends FormAction {
 		$page = WikiPage::factory( $title );
 
 		$status = Status::newFatal( 'hookaborted' );
-		if ( wfRunHooks( 'WatchArticle', array( &$user, &$page, &$status ) ) ) {
+		if ( Hooks::run( 'WatchArticle', array( &$user, &$page, &$status ) ) ) {
 			$status = Status::newGood();
 			$user->addWatch( $title, $checkRights );
-			wfRunHooks( 'WatchArticleComplete', array( &$user, &$page ) );
+			Hooks::run( 'WatchArticleComplete', array( &$user, &$page ) );
 		}
 
 		return $status;
@@ -163,10 +154,10 @@ class WatchAction extends FormAction {
 		$page = WikiPage::factory( $title );
 
 		$status = Status::newFatal( 'hookaborted' );
-		if ( wfRunHooks( 'UnwatchArticle', array( &$user, &$page, &$status ) ) ) {
+		if ( Hooks::run( 'UnwatchArticle', array( &$user, &$page, &$status ) ) ) {
 			$status = Status::newGood();
 			$user->removeWatch( $title );
-			wfRunHooks( 'UnwatchArticleComplete', array( &$user, &$page ) );
+			Hooks::run( 'UnwatchArticleComplete', array( &$user, &$page ) );
 		}
 
 		return $status;
@@ -185,7 +176,7 @@ class WatchAction extends FormAction {
 		if ( $action != 'unwatch' ) {
 			$action = 'watch';
 		}
-		$salt = array( $action, $title->getDBkey() );
+		$salt = array( $action, $title->getPrefixedDBkey() );
 
 		// This token stronger salted and not compatible with ApiWatch
 		// It's title/action specific because index.php is GET and API is POST
@@ -215,41 +206,5 @@ class WatchAction extends FormAction {
 
 	public function onSuccess() {
 		$this->getOutput()->addWikiMsg( 'addedwatchtext', $this->getTitle()->getPrefixedText() );
-	}
-}
-
-/**
- * Page removal from a user's watchlist
- *
- * @ingroup Actions
- */
-class UnwatchAction extends WatchAction {
-
-	public function getName() {
-		return 'unwatch';
-	}
-
-	protected function getDescription() {
-		return $this->msg( 'removewatch' )->escaped();
-	}
-
-	public function onSubmit( $data ) {
-		wfProfileIn( __METHOD__ );
-		self::doUnwatch( $this->getTitle(), $this->getUser() );
-		wfProfileOut( __METHOD__ );
-
-		return true;
-	}
-
-	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitTextMsg( 'confirm-unwatch-button' );
-	}
-
-	protected function preText() {
-		return $this->msg( 'confirm-unwatch-top' )->parse();
-	}
-
-	public function onSuccess() {
-		$this->getOutput()->addWikiMsg( 'removedwatchtext', $this->getTitle()->getPrefixedText() );
 	}
 }

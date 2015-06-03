@@ -32,12 +32,28 @@ class ApiUserrights extends ApiBase {
 
 	private $mUser = null;
 
+	/**
+	 * Get a UserrightsPage object, or subclass.
+	 * @return UserrightsPage
+	 */
+	protected function getUserRightsPage() {
+		return new UserrightsPage;
+	}
+
+	/**
+	 * Get all available groups.
+	 * @return array
+	 */
+	protected function getAllGroups() {
+		return User::getAllGroups();
+	}
+
 	public function execute() {
 		$params = $this->extractRequestParams();
 
-		$user = $this->getUrUser();
+		$user = $this->getUrUser( $params );
 
-		$form = new UserrightsPage;
+		$form = $this->getUserRightsPage();
 		$form->setContext( $this->getContext() );
 		$r['user'] = $user->getName();
 		$r['userid'] = $user->getId();
@@ -47,25 +63,25 @@ class ApiUserrights extends ApiBase {
 		);
 
 		$result = $this->getResult();
-		$result->setIndexedTagName( $r['added'], 'group' );
-		$result->setIndexedTagName( $r['removed'], 'group' );
+		ApiResult::setIndexedTagName( $r['added'], 'group' );
+		ApiResult::setIndexedTagName( $r['removed'], 'group' );
 		$result->addValue( null, $this->getModuleName(), $r );
 	}
 
 	/**
+	 * @param array $params
 	 * @return User
 	 */
-	private function getUrUser() {
+	private function getUrUser( array $params ) {
 		if ( $this->mUser !== null ) {
 			return $this->mUser;
 		}
 
-		$params = $this->extractRequestParams();
 		$this->requireOnlyOneParameter( $params, 'user', 'userid' );
 
 		$user = isset( $params['user'] ) ? $params['user'] : '#' . $params['userid'];
 
-		$form = new UserrightsPage;
+		$form = $this->getUserRightsPage();
 		$form->setContext( $this->getContext() );
 		$status = $form->fetchUser( $user );
 		if ( !$status->isOK() ) {
@@ -94,50 +110,37 @@ class ApiUserrights extends ApiBase {
 				ApiBase::PARAM_TYPE => 'integer',
 			),
 			'add' => array(
-				ApiBase::PARAM_TYPE => User::getAllGroups(),
+				ApiBase::PARAM_TYPE => $this->getAllGroups(),
 				ApiBase::PARAM_ISMULTI => true
 			),
 			'remove' => array(
-				ApiBase::PARAM_TYPE => User::getAllGroups(),
+				ApiBase::PARAM_TYPE => $this->getAllGroups(),
 				ApiBase::PARAM_ISMULTI => true
-			),
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
 			),
 			'reason' => array(
 				ApiBase::PARAM_DFLT => ''
-			)
+			),
+			'token' => array(
+				// Standard definition automatically inserted
+				ApiBase::PARAM_HELP_MSG_APPEND => array( 'api-help-param-token-webui' ),
+			),
 		);
-	}
-
-	public function getParamDescription() {
-		return array(
-			'user' => 'User name',
-			'userid' => 'User id',
-			'add' => 'Add the user to these groups',
-			'remove' => 'Remove the user from these groups',
-			'token' => 'A userrights token previously retrieved through list=users',
-			'reason' => 'Reason for the change',
-		);
-	}
-
-	public function getDescription() {
-		return 'Add/remove a user to/from groups.';
 	}
 
 	public function needsToken() {
-		return true;
+		return 'userrights';
 	}
 
-	public function getTokenSalt() {
-		return $this->getUrUser()->getName();
+	protected function getWebUITokenSalt( array $params ) {
+		return $this->getUrUser( $params )->getName();
 	}
 
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=userrights&user=FooBot&add=bot&remove=sysop|bureaucrat&token=123ABC',
-			'api.php?action=userrights&userid=123&add=bot&remove=sysop|bureaucrat&token=123ABC'
+			'action=userrights&user=FooBot&add=bot&remove=sysop|bureaucrat&token=123ABC'
+				=> 'apihelp-userrights-example-user',
+			'action=userrights&userid=123&add=bot&remove=sysop|bureaucrat&token=123ABC'
+				=> 'apihelp-userrights-example-userid',
 		);
 	}
 

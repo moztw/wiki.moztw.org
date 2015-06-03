@@ -80,7 +80,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @var integer DB_ enum
+	 * @var int DB_ enum
 	 */
 	protected $readDb = DB_SLAVE;
 
@@ -129,6 +129,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * Gets the db field prefix.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, use the $this->fieldPrefix property instead
 	 *
 	 * @return string
 	 */
@@ -189,7 +190,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as DBDataObject. Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -210,7 +211,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as DBDataObject. Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -220,8 +221,8 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array $options
 	 * @param string|null $functionName
 	 *
-	 * @return array of row objects
-	 * @throws DBQueryError if the query failed (even if the database was in ignoreErrors mode).
+	 * @return array Array of row objects
+	 * @throws DBQueryError If the query failed (even if the database was in ignoreErrors mode).
 	 */
 	public function selectObjects( $fields = null, array $conditions = array(),
 		array $options = array(), $functionName = null
@@ -247,8 +248,8 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array $options
 	 * @param null|string $functionName
 	 * @return ResultWrapper
-	 * @throws DBQueryError if the query failed (even if the database was in
-	 *   ignoreErrors mode).
+	 * @throws Exception
+	 * @throws MWException
 	 */
 	public function rawSelect( $fields = null, array $conditions = array(),
 		array $options = array(), $functionName = null
@@ -295,7 +296,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as associative arrays.
 	 * Provided field names get prefixed.
 	 * Returned field names will not have a prefix.
@@ -311,10 +312,10 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array|string|null $fields
 	 * @param array $conditions
 	 * @param array $options
-	 * @param boolean $collapse Set to false to always return each result row as associative array.
+	 * @param bool $collapse Set to false to always return each result row as associative array.
 	 * @param string|null $functionName
 	 *
-	 * @return array of array
+	 * @return array Array of array
 	 */
 	public function selectFields( $fields = null, array $conditions = array(),
 		array $options = array(), $collapse = true, $functionName = null
@@ -345,7 +346,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the first matching record.
+	 * Selects the specified fields of the first matching record.
 	 * Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -368,7 +369,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions. Field names do NOT get prefixed.
 	 *
 	 * @since 1.20
@@ -399,7 +400,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the first record matching the provided
+	 * Selects the specified fields of the first record matching the provided
 	 * conditions and returns it as an associative array, or false when nothing matches.
 	 * This method makes use of selectFields and expects the same parameters and
 	 * returns the same results (if there are any, if there are none, this method returns false).
@@ -410,7 +411,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array|string|null $fields
 	 * @param array $conditions
 	 * @param array $options
-	 * @param boolean $collapse Set to false to always return each result row as associative array.
+	 * @param bool $collapse Set to false to always return each result row as associative array.
 	 * @param string|null $functionName
 	 *
 	 * @return mixed|array|bool False on failure
@@ -433,7 +434,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @param array $conditions
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function has( array $conditions = array() ) {
 		return $this->selectRow( array( 'id' ), $conditions ) !== false;
@@ -444,7 +445,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @since 1.21
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function exists() {
 		$dbr = $this->getReadDbConnection();
@@ -466,7 +467,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array $conditions
 	 * @param array $options
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function count( array $conditions = array(), array $options = array() ) {
 		$res = $this->rawSelectRow(
@@ -487,7 +488,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array $conditions
 	 * @param string|null $functionName
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function delete( array $conditions, $functionName = null ) {
 		$dbw = $this->getWriteDbConnection();
@@ -508,8 +509,8 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @param boolean $requireParams
-	 * @param boolean $setDefaults
+	 * @param bool $requireParams
+	 * @param bool $setDefaults
 	 *
 	 * @return array
 	 */
@@ -572,7 +573,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @return integer DB_ enum
+	 * @return int DB_ enum
 	 */
 	public function getReadDb() {
 		return $this->readDb;
@@ -582,7 +583,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * Set the database ID to use for read operations, use DB_XXX constants or
 	 *   an index to the load balancer setup.
 	 *
-	 * @param integer $db
+	 * @param int $db
 	 *
 	 * @since 1.20
 	 */
@@ -595,7 +596,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @return String|bool The target wiki, in a form that LBFactory understands
+	 * @return string|bool The target wiki, in a form that LBFactory understands
 	 *   (or false if the local wiki is used)
 	 */
 	public function getTargetWiki() {
@@ -648,7 +649,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @see LoadBalancer::reuseConnection
 	 *
-	 * @param DatabaseBase $db the database
+	 * @param DatabaseBase $db
 	 *
 	 * @since 1.20
 	 */
@@ -668,7 +669,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array $values
 	 * @param array $conditions
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function update( array $values, array $conditions = array() ) {
 		$dbw = $this->getWriteDbConnection();
@@ -748,7 +749,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @param array|string $fields
+	 * @param array $fields
 	 *
 	 * @return array
 	 */
@@ -770,33 +771,54 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @return string
 	 */
 	public function getPrefixedField( $field ) {
-		return $this->getFieldPrefix() . $field;
+		return $this->fieldPrefix . $field;
 	}
 
 	/**
 	 * Takes an array of field names with prefix and returns the unprefixed equivalent.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, will be removed
 	 *
-	 * @param array $fieldNames
+	 * @param string[] $fieldNames
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function unprefixFieldNames( array $fieldNames ) {
-		return array_map( array( $this, 'unprefixFieldName' ), $fieldNames );
+		wfDeprecated( __METHOD__, '1.25' );
+
+		return $this->stripFieldPrefix( $fieldNames );
+	}
+
+	/**
+	 * Takes an array of field names with prefix and returns the unprefixed equivalent.
+	 *
+	 * @param string[] $fieldNames
+	 *
+	 * @return string[]
+	 */
+	private function stripFieldPrefix( array $fieldNames ) {
+		$start = strlen( $this->fieldPrefix );
+
+		return array_map( function ( $fieldName ) use ( $start ) {
+			return substr( $fieldName, $start );
+		}, $fieldNames );
 	}
 
 	/**
 	 * Takes a field name with prefix and returns the unprefixed equivalent.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, will be removed
 	 *
 	 * @param string $fieldName
 	 *
 	 * @return string
 	 */
 	public function unprefixFieldName( $fieldName ) {
-		return substr( $fieldName, strlen( $this->getFieldPrefix() ) );
+		wfDeprecated( __METHOD__, '1.25' );
+
+		return substr( $fieldName, strlen( $this->fieldPrefix ) );
 	}
 
 	/**
@@ -832,7 +854,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 		$result = (array)$result;
 
 		$rawFields = array_combine(
-			$this->unprefixFieldNames( array_keys( $result ) ),
+			$this->stripFieldPrefix( array_keys( $result ) ),
 			array_values( $result )
 		);
 
@@ -888,7 +910,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	/**
 	 * @see ORMTable::newRowFromFromDBResult
 	 *
-	 * @deprecated use newRowFromDBResult instead
+	 * @deprecated since 1.20 use newRowFromDBResult instead
 	 * @since 1.20
 	 *
 	 * @param stdClass $result
@@ -915,11 +937,11 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	/**
 	 * @see ORMTable::newRow
 	 *
-	 * @deprecated use newRow instead
+	 * @deprecated since 1.20 use newRow instead
 	 * @since 1.20
 	 *
 	 * @param array $data
-	 * @param boolean $loadDefaults
+	 * @param bool $loadDefaults
 	 *
 	 * @return IORMRow
 	 */
@@ -933,7 +955,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @since 1.20
 	 *
 	 * @param array $fields
-	 * @param boolean $loadDefaults
+	 * @param bool $loadDefaults
 	 *
 	 * @return IORMRow
 	 */
@@ -961,7 +983,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @param string $name
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function canHaveField( $name ) {
 		return array_key_exists( $name, $this->getFields() );
@@ -975,7 +997,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param IORMRow $row The row to save
 	 * @param string|null $functionName
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function updateRow( IORMRow $row, $functionName = null ) {
 		$dbw = $this->getWriteDbConnection();
@@ -1002,7 +1024,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param string|null $functionName
 	 * @param array|null $options
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function insertRow( IORMRow $row, $functionName = null, array $options = null ) {
 		$dbw = $this->getWriteDbConnection();
@@ -1068,7 +1090,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param IORMRow $row
 	 * @param string|null $functionName
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function removeRow( IORMRow $row, $functionName = null ) {
 		$success = $this->delete(
@@ -1087,9 +1109,9 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 *
 	 * @param array $conditions
 	 * @param string $field
-	 * @param integer $amount
+	 * @param int $amount
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 * @throws MWException
 	 */
 	public function addToField( array $conditions, $field, $amount ) {

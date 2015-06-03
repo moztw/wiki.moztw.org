@@ -1,8 +1,7 @@
 <?php
 /** Czech (čeština)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -262,7 +261,7 @@ $magicWords = array(
  * Date formats list for Special:Preferences
  * see $dateFormats for definitions
  */
-$datePreferences =  array(
+$datePreferences = array(
 	'ČSN basic dt',
 	'ČSN padded dt',
 	'ČSN basic td',

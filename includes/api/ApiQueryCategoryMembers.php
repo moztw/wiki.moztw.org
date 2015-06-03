@@ -31,7 +31,7 @@
  */
 class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'cm' );
 	}
 
@@ -48,7 +48,16 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param $resultPageSet ApiPageSet
+	 * @param string $hexSortkey
+	 * @return bool
+	 */
+	private function validateHexSortkey( $hexSortkey ) {
+		// A hex sortkey has an unbound number of 2 letter pairs
+		return preg_match( '/^(?:[a-fA-F0-9]{2})*$/', $hexSortkey );
+	}
+
+	/**
+	 * @param ApiPageSet $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -86,9 +95,8 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 		// Scanning large datasets for rare categories sucks, and I already told
 		// how to have efficient subcategory access :-) ~~~~ (oh well, domas)
-		global $wgMiserMode;
 		$miser_ns = array();
-		if ( $wgMiserMode ) {
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
 			$miser_ns = $params['namespace'];
 		} else {
 			$this->addWhereFld( 'page_namespace', $params['namespace'] );
@@ -129,6 +137,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$queryTypes = array_slice( $queryTypes, $contTypeIndex );
 
 				// Add a WHERE clause for sortkey and from
+				$this->dieContinueUsageIf( !$this->validateHexSortkey( $cont[1] ) );
 				// pack( "H*", $foo ) is used to convert hex back to binary
 				$escSortkey = $this->getDB()->addQuotes( pack( 'H*', $cont[1] ) );
 				$from = intval( $cont[2] );
@@ -141,12 +150,28 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$this->addWhereRange( 'cl_sortkey', $dir, null, null );
 				$this->addWhereRange( 'cl_from', $dir, null, null );
 			} else {
-				$startsortkey = $params['startsortkeyprefix'] !== null ?
-					Collation::singleton()->getSortkey( $params['startsortkeyprefix'] ) :
-					$params['startsortkey'];
-				$endsortkey = $params['endsortkeyprefix'] !== null ?
-					Collation::singleton()->getSortkey( $params['endsortkeyprefix'] ) :
-					$params['endsortkey'];
+				if ( $params['startsortkeyprefix'] !== null ) {
+					$startsortkey = Collation::singleton()->getSortkey( $params['startsortkeyprefix'] );
+				} elseif ( $params['starthexsortkey'] !== null ) {
+					if ( !$this->validateHexSortkey( $params['starthexsortkey'] ) ) {
+						$this->dieUsage( 'The starthexsortkey provided is not valid', 'bad_starthexsortkey' );
+					}
+					$startsortkey = pack( 'H*', $params['starthexsortkey'] );
+				} else {
+					$this->logFeatureUsage( 'list=categorymembers&cmstartsortkey' );
+					$startsortkey = $params['startsortkey'];
+				}
+				if ( $params['endsortkeyprefix'] !== null ) {
+					$endsortkey = Collation::singleton()->getSortkey( $params['endsortkeyprefix'] );
+				} elseif ( $params['endhexsortkey'] !== null ) {
+					if ( !$this->validateHexSortkey( $params['endhexsortkey'] ) ) {
+						$this->dieUsage( 'The endhexsortkey provided is not valid', 'bad_endhexsortkey' );
+					}
+					$endsortkey = pack( 'H*', $params['endhexsortkey'] );
+				} else {
+					$this->logFeatureUsage( 'list=categorymembers&cmendsortkey' );
+					$endsortkey = $params['endsortkey'];
+				}
 
 				// The below produces ORDER BY cl_sortkey, cl_from, possibly with DESC added to each of them
 				$this->addWhereRange( 'cl_sortkey',
@@ -221,7 +246,9 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			}
 
 			if ( is_null( $resultPageSet ) ) {
-				$vals = array();
+				$vals = array(
+					ApiResult::META_TYPE => 'assoc',
+				);
 				if ( $fld_ids ) {
 					$vals['pageid'] = intval( $row->page_id );
 				}
@@ -260,13 +287,13 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		}
 
 		if ( is_null( $resultPageSet ) ) {
-			$result->setIndexedTagName_internal(
+			$result->addIndexedTagName(
 				array( 'query', $this->getModuleName() ), 'cm' );
 		}
 	}
 
 	public function getAllowedParams() {
-		return array(
+		$ret = array(
 			'title' => array(
 				ApiBase::PARAM_TYPE => 'string',
 			),
@@ -298,7 +325,9 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 					'file'
 				)
 			),
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'limit' => array(
 				ApiBase::PARAM_TYPE => 'limit',
 				ApiBase::PARAM_DFLT => 10,
@@ -331,110 +360,33 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			'end' => array(
 				ApiBase::PARAM_TYPE => 'timestamp'
 			),
-			'startsortkey' => null,
-			'endsortkey' => null,
+			'starthexsortkey' => null,
+			'endhexsortkey' => null,
 			'startsortkeyprefix' => null,
 			'endsortkeyprefix' => null,
-		);
-	}
-
-	public function getParamDescription() {
-		global $wgMiserMode;
-		$p = $this->getModulePrefix();
-		$desc = array(
-			'title' => "Which category to enumerate (required). Must include " .
-				"'Category:' prefix. Cannot be used together with {$p}pageid",
-			'pageid' => "Page ID of the category to enumerate. Cannot be used together with {$p}title",
-			'prop' => array(
-				'What pieces of information to include',
-				' ids           - Adds the page ID',
-				' title         - Adds the title and namespace ID of the page',
-				' sortkey       - Adds the sortkey used for sorting in the category (hexadecimal string)',
-				' sortkeyprefix - Adds the sortkey prefix used for sorting in the ' .
-					'category (human-readable part of the sortkey)',
-				' type          - Adds the type that the page has been categorised as (page, subcat or file)',
-				' timestamp     - Adds the timestamp of when the page was included',
+			'startsortkey' => array(
+				ApiBase::PARAM_DEPRECATED => true,
 			),
-			'namespace' => 'Only include pages in these namespaces',
-			'type' => "What type of category members to include. Ignored when {$p}sort=timestamp is set",
-			'sort' => 'Property to sort by',
-			'dir' => 'In which direction to sort',
-			'start' => "Timestamp to start listing from. Can only be used with {$p}sort=timestamp",
-			'end' => "Timestamp to end listing at. Can only be used with {$p}sort=timestamp",
-			'startsortkey' => "Sortkey to start listing from. Must be given in " .
-				"binary format. Can only be used with {$p}sort=sortkey",
-			'endsortkey' => "Sortkey to end listing at. Must be given in binary " .
-				"format. Can only be used with {$p}sort=sortkey",
-			'startsortkeyprefix' => "Sortkey prefix to start listing from. Can " .
-				"only be used with {$p}sort=sortkey. Overrides {$p}startsortkey",
-			'endsortkeyprefix' => "Sortkey prefix to end listing BEFORE (not at, " .
-				"if this value occurs it will not be included!). Can only be used with " .
-				"{$p}sort=sortkey. Overrides {$p}endsortkey",
-			'continue' => 'For large categories, give the value returned from previous query',
-			'limit' => 'The maximum number of pages to return.',
+			'endsortkey' => array(
+				ApiBase::PARAM_DEPRECATED => true,
+			),
 		);
 
-		if ( $wgMiserMode ) {
-			$desc['namespace'] = array(
-				$desc['namespace'],
-				"NOTE: Due to \$wgMiserMode, using this may result in fewer than \"{$p}limit\" results",
-				'returned before continuing; in extreme cases, zero results may be returned.',
-				"Note that you can use {$p}type=subcat or {$p}type=file instead of {$p}namespace=14 or 6.",
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
+			$ret['namespace'][ApiBase::PARAM_HELP_MSG_APPEND] = array(
+				'api-help-param-limited-in-miser-mode',
 			);
 		}
 
-		return $desc;
+		return $ret;
 	}
 
-	public function getResultProperties() {
+	protected function getExamplesMessages() {
 		return array(
-			'ids' => array(
-				'pageid' => 'integer'
-			),
-			'title' => array(
-				'ns' => 'namespace',
-				'title' => 'string'
-			),
-			'sortkey' => array(
-				'sortkey' => 'string'
-			),
-			'sortkeyprefix' => array(
-				'sortkeyprefix' => 'string'
-			),
-			'type' => array(
-				'type' => array(
-					ApiBase::PROP_TYPE => array(
-						'page',
-						'subcat',
-						'file'
-					)
-				)
-			),
-			'timestamp' => array(
-				'timestamp' => 'timestamp'
-			)
-		);
-	}
-
-	public function getDescription() {
-		return 'List all pages in a given category.';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(),
-			$this->getTitleOrPageIdErrorMessage(),
-			array(
-				array( 'code' => 'invalidcategory', 'info' => 'The category name you entered is not valid' ),
-			)
-		);
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=categorymembers&cmtitle=Category:Physics'
-				=> 'Get first 10 pages in [[Category:Physics]]',
-			'api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info'
-				=> 'Get page info about first 10 pages in [[Category:Physics]]',
+			'action=query&list=categorymembers&cmtitle=Category:Physics'
+				=> 'apihelp-query+categorymembers-example-simple',
+			'action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info'
+				=> 'apihelp-query+categorymembers-example-generator',
 		);
 	}
 

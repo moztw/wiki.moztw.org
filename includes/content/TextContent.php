@@ -37,6 +37,7 @@ class TextContent extends AbstractContent {
 	/**
 	 * @param string $text
 	 * @param string $model_id
+	 * @throws MWException
 	 */
 	public function __construct( $text, $model_id = CONTENT_MODEL_TEXT ) {
 		parent::__construct( $model_id );
@@ -77,9 +78,9 @@ class TextContent extends AbstractContent {
 	}
 
 	/**
-	 * returns the text's size in bytes.
+	 * Returns the text's size in bytes.
 	 *
-	 * @return int The size
+	 * @return int
 	 */
 	public function getSize() {
 		$text = $this->getNativeData();
@@ -116,9 +117,7 @@ class TextContent extends AbstractContent {
 	 * @return string The raw text.
 	 */
 	public function getNativeData() {
-		$text = $this->mText;
-
-		return $text;
+		return $this->mText;
 	}
 
 	/**
@@ -134,9 +133,9 @@ class TextContent extends AbstractContent {
 	 * Returns attempts to convert this content object to wikitext,
 	 * and then returns the text string. The conversion may be lossy.
 	 *
-	 * @note: this allows any text-based content to be transcluded as if it was wikitext.
+	 * @note this allows any text-based content to be transcluded as if it was wikitext.
 	 *
-	 * @return string|false The raw text, or false if the conversion failed.
+	 * @return string|bool The raw text, or false if the conversion failed.
 	 */
 	public function getWikitextForTransclusion() {
 		$wikitext = $this->convert( CONTENT_MODEL_WIKITEXT, 'lossy' );
@@ -162,7 +161,7 @@ class TextContent extends AbstractContent {
 		$text = $this->getNativeData();
 		$pst = rtrim( $text );
 
-		return ( $text === $pst ) ? $this : new static( $pst );
+		return ( $text === $pst ) ? $this : new static( $pst, $this->getModel() );
 	}
 
 	/**
@@ -170,8 +169,7 @@ class TextContent extends AbstractContent {
 	 *
 	 * @since 1.21
 	 *
-	 * @param Content $that The other content object to compare this content
-	 * object to.
+	 * @param Content $that The other content object to compare this content object to.
 	 * @param Language $lang The language object to use for text segmentation.
 	 *    If not given, $wgContentLang is used.
 	 *
@@ -202,30 +200,30 @@ class TextContent extends AbstractContent {
 	}
 
 	/**
-	 * Returns a generic ParserOutput object, wrapping the HTML returned by
-	 * getHtml().
+	 * Fills the provided ParserOutput object with information derived from the content.
+	 * Unless $generateHtml was false, this includes an HTML representation of the content
+	 * provided by getHtml().
+	 *
+	 * For content models listed in $wgTextModelsToParse, this method will call the MediaWiki
+	 * wikitext parser on the text to extract any (wikitext) links, magic words, etc.
+	 *
+	 * Subclasses may override this to provide custom content processing.
+	 * For custom HTML generation alone, it is sufficient to override getHtml().
 	 *
 	 * @param Title $title Context title for parsing
 	 * @param int $revId Revision ID (for {{REVISIONID}})
 	 * @param ParserOptions $options Parser options
 	 * @param bool $generateHtml Whether or not to generate HTML
-	 *
-	 * @return ParserOutput Representing the HTML form of the text.
+	 * @param ParserOutput $output The output object to fill (reference).
 	 */
-	public function getParserOutput( Title $title, $revId = null,
-		ParserOptions $options = null, $generateHtml = true ) {
+	protected function fillParserOutput( Title $title, $revId,
+		ParserOptions $options, $generateHtml, ParserOutput &$output
+	) {
 		global $wgParser, $wgTextModelsToParse;
 
-		if ( !$options ) {
-			//NOTE: use canonical options per default to produce cacheable output
-			$options = $this->getContentHandler()->makeParserOptions( 'canonical' );
-		}
-
 		if ( in_array( $this->getModel(), $wgTextModelsToParse ) ) {
-			// parse just to get links etc into the database
-			$po = $wgParser->parse( $this->getNativeData(), $title, $options, true, true, $revId );
-		} else {
-			$po = new ParserOutput();
+			// parse just to get links etc into the database, HTML is replaced below.
+			$output = $wgParser->parse( $this->getNativeData(), $title, $options, true, true, $revId );
 		}
 
 		if ( $generateHtml ) {
@@ -234,19 +232,19 @@ class TextContent extends AbstractContent {
 			$html = '';
 		}
 
-		$po->setText( $html );
-
-		return $po;
+		$output->setText( $html );
 	}
 
 	/**
 	 * Generates an HTML version of the content, for display. Used by
-	 * getParserOutput() to construct a ParserOutput object.
+	 * fillParserOutput() to provide HTML for the ParserOutput object.
 	 *
-	 * This default implementation just calls getHighlightHtml(). Content
-	 * models that have another mapping to HTML (as is the case for markup
-	 * languages like wikitext) should override this method to generate the
-	 * appropriate HTML.
+	 * Subclasses may override this to provide a custom HTML rendering.
+	 * If further information is to be derived from the content (such as
+	 * categories), the fillParserOutput() method can be overridden instead.
+	 *
+	 * For backwards-compatibility, this default implementation just calls
+	 * getHighlightHtml().
 	 *
 	 * @return string An HTML representation of the content
 	 */
@@ -255,13 +253,22 @@ class TextContent extends AbstractContent {
 	}
 
 	/**
-	 * Generates a syntax-highlighted version of the content, as HTML.
-	 * Used by the default implementation of getHtml().
+	 * Generates an HTML version of the content, for display.
 	 *
-	 * @return string A HTML representation of the content's markup
+	 * This default implementation returns an HTML-escaped version
+	 * of the raw text content.
+	 *
+	 * @note The functionality of this method should really be implemented
+	 * in getHtml(), and subclasses should override getHtml() if needed.
+	 * getHighlightHtml() is kept around for backward compatibility with
+	 * extensions that already override it.
+	 *
+	 * @deprecated since 1.24. Use getHtml() instead. In particular, subclasses overriding
+	 *     getHighlightHtml() should override getHtml() instead.
+	 *
+	 * @return string An HTML representation of the content
 	 */
 	protected function getHighlightHtml() {
-		# TODO: make Highlighter interface, use highlighter here, if available
 		return htmlspecialchars( $this->getNativeData() );
 	}
 
@@ -269,10 +276,12 @@ class TextContent extends AbstractContent {
 	 * This implementation provides lossless conversion between content models based
 	 * on TextContent.
 	 *
-	 * @param string $toModel
-	 * @param string $lossy
+	 * @param string $toModel The desired content model, use the CONTENT_MODEL_XXX flags.
+	 * @param string $lossy Flag, set to "lossy" to allow lossy conversion. If lossy conversion is not
+	 *     allowed, full round-trip conversion is expected to work without losing information.
 	 *
-	 * @return Content|bool
+	 * @return Content|bool A content object with the content model $toModel, or false if that
+	 *     conversion is not supported.
 	 *
 	 * @see Content::convert()
 	 */
@@ -286,7 +295,7 @@ class TextContent extends AbstractContent {
 		$toHandler = ContentHandler::getForModelID( $toModel );
 
 		if ( $toHandler instanceof TextContentHandler ) {
-			//NOTE: ignore content serialization format - it's just text anyway.
+			// NOTE: ignore content serialization format - it's just text anyway.
 			$text = $this->getNativeData();
 			$converted = $toHandler->unserializeContent( $text );
 		}

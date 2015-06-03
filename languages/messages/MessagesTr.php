@@ -1,8 +1,7 @@
 <?php
 /** Turkish (Türkçe)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -146,6 +145,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'EnÇokRevizyon' ),
 	'Movepage'                  => array( 'SayfaTaşı' ),
 	'Mycontributions'           => array( 'Katkılarım' ),
+	'MyLanguage'                => array( 'Dilim', 'BenimDilim' ),
 	'Mypage'                    => array( 'Sayfam', 'BenimSayfam', 'KullanıcıSayfam' ),
 	'Mytalk'                    => array( 'MesajSayfam', 'İletiSayfam' ),
 	'Myuploads'                 => array( 'Yüklemelerim' ),
@@ -230,7 +230,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'KULLANICISAYISI', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'AKTİFKULLANICISAYISI', 'ETKİNKULLANICISAYISI', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'DEĞİŞİKLİKSAYISI', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'GÖRÜNTÜLEMESAYISI', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'SAYFAADI', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'SAYFAADIU', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ADALANI', 'İSİMALANI', 'NAMESPACE' ),

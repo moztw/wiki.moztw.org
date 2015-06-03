@@ -37,12 +37,15 @@ class ApiRsd extends ApiBase {
 		$result->addValue( null, 'version', '1.0' );
 		$result->addValue( null, 'xmlns', 'http://archipelago.phrasewise.com/rsd' );
 
-		$service = array( 'apis' => $this->formatRsdApiList() );
-		ApiResult::setContent( $service, 'MediaWiki', 'engineName' );
-		ApiResult::setContent( $service, 'https://www.mediawiki.org/', 'engineLink' );
-		ApiResult::setContent( $service, Title::newMainPage()->getCanonicalURL(), 'homePageLink' );
+		$service = array(
+			'apis' => $this->formatRsdApiList(),
+			'engineName' => 'MediaWiki',
+			'engineLink' => 'https://www.mediawiki.org/',
+			'homePageLink' => Title::newMainPage()->getCanonicalURL(),
+		);
 
-		$result->setIndexedTagName( $service['apis'], 'api' );
+		ApiResult::setSubelementsList( $service, array( 'engineName', 'engineLink', 'homePageLink' ) );
+		ApiResult::setIndexedTagName( $service['apis'], 'api' );
 
 		$result->addValue( null, 'service', $service );
 	}
@@ -51,22 +54,15 @@ class ApiRsd extends ApiBase {
 		return new ApiFormatXmlRsd( $this->getMain(), 'xml' );
 	}
 
-	public function getAllowedParams() {
-		return array();
-	}
-
-	public function getParamDescription() {
-		return array();
-	}
-
-	public function getDescription() {
-		return 'Export an RSD (Really Simple Discovery) schema.';
-	}
-
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=rsd'
+			'action=rsd'
+				=> 'apihelp-rsd-example-simple',
 		);
+	}
+
+	public function isReadMode() {
+		return false;
 	}
 
 	/**
@@ -106,7 +102,7 @@ class ApiRsd extends ApiBase {
 				)
 			),
 		);
-		wfRunHooks( 'ApiRsdServiceApis', array( &$apis ) );
+		Hooks::run( 'ApiRsdServiceApis', array( &$apis ) );
 
 		return $apis;
 	}
@@ -130,7 +126,8 @@ class ApiRsd extends ApiBase {
 			);
 			$settings = array();
 			if ( isset( $info['docs'] ) ) {
-				ApiResult::setContent( $settings, $info['docs'], 'docs' );
+				$settings['docs'] = $info['docs'];
+				ApiResult::setSubelementsList( $settings, 'docs' );
 			}
 			if ( isset( $info['settings'] ) ) {
 				foreach ( $info['settings'] as $setting => $val ) {
@@ -140,12 +137,12 @@ class ApiRsd extends ApiBase {
 						$xmlVal = $val;
 					}
 					$setting = array( 'name' => $setting );
-					ApiResult::setContent( $setting, $xmlVal );
+					ApiResult::setContentValue( $setting, 'value', $xmlVal );
 					$settings[] = $setting;
 				}
 			}
 			if ( count( $settings ) ) {
-				$this->getResult()->setIndexedTagName( $settings, 'setting' );
+				ApiResult::setIndexedTagName( $settings, 'setting' );
 				$data['settings'] = $settings;
 			}
 			$outputData[] = $data;
@@ -156,12 +153,17 @@ class ApiRsd extends ApiBase {
 }
 
 class ApiFormatXmlRsd extends ApiFormatXml {
-	public function __construct( $main, $format ) {
+	public function __construct( ApiMain $main, $format ) {
 		parent::__construct( $main, $format );
 		$this->setRootElement( 'rsd' );
 	}
 
 	public function getMimeType() {
 		return 'application/rsd+xml';
+	}
+
+	public static function recXmlPrint( $name, $value, $indent, $attributes = array() ) {
+		unset( $attributes['_idx'] );
+		return parent::recXmlPrint( $name, $value, $indent, $attributes );
 	}
 }

@@ -1,8 +1,7 @@
 <?php
 /** Upper Franconian (Mainfränkisch)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -59,4 +58,7 @@ $specialPageAliases = array(
 	'Userlogout'                => array( 'Ôbmäldâ' ),
 	'Watchlist'                 => array( 'Bäoobôchdungslisdâ' ),
 );
+
+// Remove German aliases
+$namespaceGenderAliases = array();
 

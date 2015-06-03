@@ -120,6 +120,7 @@ TEXT;
 			}
 			if ( $count == 0 ) {
 				$this->output( "Collations up-to-date.\n" );
+
 				return;
 			}
 			$this->output( "Fixing collation for $count rows.\n" );
@@ -150,7 +151,8 @@ TEXT;
 					# This is an old-style row, so the sortkey needs to be
 					# converted.
 					if ( $row->cl_sortkey == $title->getText()
-						|| $row->cl_sortkey == $title->getPrefixedText() ) {
+						|| $row->cl_sortkey == $title->getPrefixedText()
+					) {
 						$prefix = '';
 					} else {
 						# Custom sortkey, use it as a prefix
@@ -217,6 +219,9 @@ TEXT;
 	/**
 	 * Return an SQL expression selecting rows which sort above the given row,
 	 * assuming an ordering of cl_to, cl_type, cl_from
+	 * @param stdClass $row
+	 * @param DatabaseBase $dbw
+	 * @return string
 	 */
 	function getBatchCondition( $row, $dbw ) {
 		$fields = array( 'cl_to', 'cl_type', 'cl_from' );
@@ -236,6 +241,7 @@ TEXT;
 				$prefix .= " AND $equality";
 			}
 		}
+
 		return $cond;
 	}
 

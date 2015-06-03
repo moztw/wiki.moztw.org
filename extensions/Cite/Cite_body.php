@@ -17,7 +17,17 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
+/**
+ * WARNING: MediaWiki core hardcodes this class name to check if the
+ * Cite extension is installed. See T89151.
+ */
 class Cite {
+
+	/**
+	 * @todo document
+	 */
+	const DEFAULT_GROUP = '';
+
 	/**#@+
 	 * @access private
 	 */
@@ -53,21 +63,21 @@ class Cite {
 	 *
 	 * @var array
 	 **/
-	var $mRefs = array();
+	public $mRefs = array();
 
 	/**
 	 * Count for user displayed output (ref[1], ref[2], ...)
 	 *
 	 * @var int
 	 */
-	var $mOutCnt = 0;
-	var $mGroupCnt = array();
+	public $mOutCnt = 0;
+	public $mGroupCnt = array();
 
 	/**
 	 * Counter to track the total number of (useful) calls to either the
 	 * ref or references tag hook
 	 */
-	var $mCallCnt = 0;
+	public $mCallCnt = 0;
 
 	/**
 	 * The backlinks, in order, to pass as $3 to
@@ -76,19 +86,19 @@ class Cite {
 	 *
 	 * @var array
 	 */
-	var $mBacklinkLabels;
+	public $mBacklinkLabels;
 
 	/**
 	 * The links to use per group, in order.
 	 *
 	 * @var array
 	 */
-	var $mLinkLabels = array();
+	public $mLinkLabels = array();
 
 	/**
 	 * @var Parser
 	 */
-	var $mParser;
+	public $mParser;
 
 	/**
 	 * True when the ParserAfterParse hook has been called.
@@ -96,7 +106,7 @@ class Cite {
 	 *
 	 * @var boolean
 	 */
-	var $mHaveAfterParse = false;
+	public $mHaveAfterParse = false;
 
 	/**
 	 * True when a <ref> tag is being processed.
@@ -104,7 +114,7 @@ class Cite {
 	 *
 	 * @var boolean
 	 */
-	var $mInCite = false;
+	public $mInCite = false;
 
 	/**
 	 * True when a <references> tag is being processed.
@@ -112,21 +122,21 @@ class Cite {
 	 *
 	 * @var boolean
 	 */
-	var $mInReferences = false;
+	public $mInReferences = false;
 
 	/**
 	 * Error stack used when defining refs in <references>
 	 *
 	 * @var array
 	 */
-	var $mReferencesErrors = array();
+	public $mReferencesErrors = array();
 
 	/**
 	 * Group used when in <references> block
 	 *
 	 * @var string
 	 */
-	var $mReferencesGroup = '';
+	public $mReferencesGroup = '';
 
 	/**
 	 * <ref> call stack
@@ -135,7 +145,7 @@ class Cite {
 	 *
 	 * @var array
 	 */
-	var $mRefCallStack = array();
+	public $mRefCallStack = array();
 
 	/**
 	 * Did we install us into $wgHooks yet?
@@ -151,26 +161,31 @@ class Cite {
 	 * @param $str string Input
 	 * @param $argv array Arguments
 	 * @param $parser Parser
+	 * @param $frame PPFrame
 	 *
 	 * @return string
 	 */
-	function ref( $str, $argv, $parser ) {
-		global $wgCiteEnablePopups;
+	function ref( $str, $argv, $parser, $frame ) {
 		if ( $this->mInCite ) {
 			return htmlspecialchars( "<ref>$str</ref>" );
-		} else {
-			$this->mCallCnt++;
-			$this->mInCite = true;
-			$ret = $this->guardedRef( $str, $argv, $parser );
-			$this->mInCite = false;
-			$parserOutput = $parser->getOutput();
-			$parserOutput->addModules( 'ext.cite' );
-			if ( $wgCiteEnablePopups ) {
-				$parserOutput->addModules( 'ext.cite.popups' );
-			}
-			$parserOutput->addModuleStyles( 'ext.rtlcite' );
-			return $ret;
 		}
+
+		$this->mCallCnt++;
+		$this->mInCite = true;
+
+		$ret = $this->guardedRef( $str, $argv, $parser );
+
+		$this->mInCite = false;
+
+		$parserOutput = $parser->getOutput();
+		$parserOutput->addModules( 'ext.cite' );
+		$parserOutput->addModuleStyles( 'ext.rtlcite' );
+
+		if ( is_callable( array( $frame, 'setVolatile' ) ) ) {
+			$frame->setVolatile();
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -180,7 +195,7 @@ class Cite {
 	 * @param $default_group string
 	 * @return string
 	 */
-	function guardedRef( $str, $argv, $parser, $default_group = CITE_DEFAULT_GROUP ) {
+	function guardedRef( $str, $argv, $parser, $default_group = self::DEFAULT_GROUP ) {
 		$this->mParser = $parser;
 
 		# The key here is the "name" attribute.
@@ -296,7 +311,7 @@ class Cite {
 
 		# Not clear how we could get here, but something is probably
 		# wrong with the types.  Let's fail fast.
-		throw new MWException( 'Invalid $str and/or $key: ' . serialize( array( $str, $key ) ) );
+		throw new Exception( 'Invalid $str and/or $key: ' . serialize( array( $str, $key ) ) );
 	}
 
 	/**
@@ -386,18 +401,19 @@ class Cite {
 				$this->mRefs[$group][$follow]['text'] = $this->mRefs[$group][$follow]['text'] . ' ' . $str;
 			} else {
 				// insert part of note at the beginning of the group
-				for ( $k = 0 ; $k < count( $this->mRefs[$group] ) ; $k++ ) {
-					if ( $this->mRefs[$group][$k]['follow'] == null ) {
+				$groupsCount = count( $this->mRefs[$group] );
+				for ( $k = 0; $k < $groupsCount; $k++ ) {
+					if ( !isset( $this->mRefs[$group][$k]['follow'] ) ) {
 						break;
 					}
 				}
 				array_splice( $this->mRefs[$group], $k, 0,
-						   array( array( 'count' => - 1,
-							  'text' => $str,
-							  'key' => ++$this->mOutCnt ,
-							  'follow' => $follow ) ) );
+					array( array( 'count' => - 1,
+						'text' => $str,
+						'key' => ++$this->mOutCnt ,
+						'follow' => $follow ) ) );
 				array_splice( $this->mRefCallStack, $k, 0,
-						   array( array( 'new', $call, $str, $key, $group, $this->mOutCnt ) ) );
+					array( array( 'new', $call, $str, $key, $group, $this->mOutCnt ) ) );
 			}
 			// return an empty string : this is not a reference
 			return '';
@@ -450,7 +466,7 @@ class Cite {
 					);
 			}
 		} else {
-			throw new MWException( 'Invalid stack key: ' . serialize( $key ) );
+			throw new Exception( 'Invalid stack key: ' . serialize( $key ) );
 		}
 	}
 
@@ -526,10 +542,11 @@ class Cite {
 	 * @param $str string Input
 	 * @param $argv array Arguments
 	 * @param $parser Parser
+	 * @param $frame PPFrame
 	 *
 	 * @return string
 	 */
-	function references( $str, $argv, $parser ) {
+	function references( $str, $argv, $parser, $frame ) {
 		if ( $this->mInCite || $this->mInReferences ) {
 			if ( is_null( $str ) ) {
 				return htmlspecialchars( "<references/>" );
@@ -541,6 +558,9 @@ class Cite {
 			$this->mInReferences = true;
 			$ret = $this->guardedReferences( $str, $argv, $parser );
 			$this->mInReferences = false;
+			if ( is_callable( array( $frame, 'setVolatile' ) ) ) {
+				$frame->setVolatile();
+			}
 			return $ret;
 		}
 	}
@@ -552,7 +572,7 @@ class Cite {
 	 * @param $group string
 	 * @return string
 	 */
-	function guardedReferences( $str, $argv, $parser, $group = CITE_DEFAULT_GROUP ) {
+	function guardedReferences( $str, $argv, $parser, $group = self::DEFAULT_GROUP ) {
 		global $wgAllowCiteGroups;
 
 		$this->mParser = $parser;
@@ -631,7 +651,6 @@ class Cite {
 			return '';
 		}
 
-		wfProfileIn( __METHOD__ );
 		wfProfileIn( __METHOD__ . '-entries' );
 		$ent = array();
 		foreach ( $this->mRefs[$group] as $k => $v ) {
@@ -642,7 +661,8 @@ class Cite {
 		$suffix = wfMessage( 'cite_references_suffix' )->inContentLanguage()->plain();
 		$content = implode( "\n", $ent );
 
-		// Prepare the parser input. We add new lines between the pieces to avoid a confused tidy (bug 13073)
+		// Prepare the parser input.
+		// We add new lines between the pieces to avoid a confused tidy (bug 13073).
 		$parserInput = $prefix . "\n" . $content . "\n" . $suffix;
 
 		// Let's try to cache it.
@@ -663,7 +683,7 @@ class Cite {
 			wfProfileIn( __METHOD__ . '-parse' );
 
 			// Live hack: parse() adds two newlines on WM, can't reproduce it locally -ævar
-			$ret = rtrim( $this->parse( $parserInput ), "\n" );
+			$ret = rtrim( $this->mParser->recursiveTagParse( $parserInput ), "\n" );
 
 			if ( $wgCiteCacheReferences ) {
 				$serData = $this->mParser->serializeHalfParsedText( $ret );
@@ -674,8 +694,6 @@ class Cite {
 		} else {
 			$ret = $this->mParser->unserializeHalfParsedText( $data );
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		// done, clean up so we can reuse the group
 		unset( $this->mRefs[$group] );
@@ -709,7 +727,7 @@ class Cite {
 					$this->referencesKey( $val['follow'] ),
 					$text
 				)->inContentLanguage()->plain();
-		} elseif ( $val['text'] == '' ) {
+		} elseif ( !isset( $val['text'] ) ) {
 			return wfMessage(
 						'cite_references_link_one',
 						$this->referencesKey( $key ),
@@ -768,7 +786,7 @@ class Cite {
 	 * @return String
 	 */
 	function referenceText( $key, $text ) {
-		if ( $text == '' ) {
+		if ( !isset( $text ) || $text === '' ) {
 			return $this->error( 'cite_error_references_no_text', $key, 'noparse' );
 		}
 		return '<span class="reference-text">' . rtrim( $text, "\n" ) . "</span>\n";
@@ -911,13 +929,13 @@ class Cite {
 		$label = is_null( $label ) ? ++$this->mGroupCnt[$group] : $label;
 
 		return
-			$this->parse(
+			$this->mParser->recursiveTagParse(
 				wfMessage(
 					'cite_reference_link',
 					$this->refKey( $key, $count ),
 					$this->referencesKey( $key . $subkey ),
 					$this->getLinkLabel( $label, $group,
-						( ( $group == CITE_DEFAULT_GROUP ) ? '' : "$group " ) . $wgContLang->formatNum( $label ) )
+						( ( $group == self::DEFAULT_GROUP ) ? '' : "$group " ) . $wgContLang->formatNum( $label ) )
 				)->inContentLanguage()->plain()
 			);
 	}
@@ -950,70 +968,14 @@ class Cite {
 	}
 
 	/**
-	 * Parse a given fragment and fix up Tidy's trail of blood on
-	 * it...
-	 *
-	 * @param string $in The text to parse
-	 * @return string The parsed text
-	 */
-	function parse( $in ) {
-		if ( method_exists( $this->mParser, 'recursiveTagParse' ) ) {
-			// New fast method
-			return $this->mParser->recursiveTagParse( $in );
-		} else {
-			// Old method
-			$ret = $this->mParser->parse(
-				$in,
-				$this->mParser->mTitle,
-				$this->mParser->mOptions,
-				// Avoid whitespace buildup
-				false,
-				// Important, otherwise $this->clearState()
-				// would get run every time <ref> or
-				// <references> is called, fucking the whole
-				// thing up.
-				false
-			);
-			$text = $ret->getText();
-
-			return $this->fixTidy( $text );
-		}
-	}
-
-	/**
-	 * Tidy treats all input as a block, it will e.g. wrap most
-	 * input in <p> if it isn't already, fix that and return the fixed text
-	 *
-	 * @static
-	 *
-	 * @param string $text The text to fix
-	 * @return string The fixed text
-	 */
-	function fixTidy( $text ) {
-		global $wgUseTidy;
-
-		if ( !$wgUseTidy ) {
-			return $text;
-		} else {
-			$text = preg_replace( '~^<p>\s*~', '', $text );
-			$text = preg_replace( '~\s*</p>\s*~', '', $text );
-			$text = preg_replace( '~\n$~', '', $text );
-
-			return $text;
-		}
-	}
-
-	/**
 	 * Generate the labels to pass to the
 	 * 'cite_references_link_many_format' message, the format is an
 	 * arbitrary number of tokens separated by [\t\n ]
 	 */
 	function genBacklinkLabels() {
-		wfProfileIn( __METHOD__ );
 		$text = wfMessage( 'cite_references_link_many_format_backlink_labels' )
 			->inContentLanguage()->plain();
 		$this->mBacklinkLabels = preg_split( '#[\n\t ]#', $text );
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -1025,14 +987,12 @@ class Cite {
 	 * @param $message
 	 */
 	function genLinkLabels( $group, $message ) {
-		wfProfileIn( __METHOD__ );
 		$text = false;
 		$msg = wfMessage( $message )->inContentLanguage();
 		if ( $msg->exists() ) {
 			$text = $msg->plain();
 		}
-		$this->mLinkLabels[$group] = ( $text == '' ) ? false : preg_split( '#[\n\t ]#', $text );
-		wfProfileOut( __METHOD__ );
+		$this->mLinkLabels[$group] = ( !$text ) ? false : preg_split( '#[\n\t ]#', $text );
 	}
 
 	/**
@@ -1077,8 +1037,8 @@ class Cite {
 		}
 
 		$parser->extCite = clone $this;
-		$parser->setHook( 'ref' , array( $parser->extCite, 'ref' ) );
-		$parser->setHook( 'references' , array( $parser->extCite, 'references' ) );
+		$parser->setHook( 'ref', array( $parser->extCite, 'ref' ) );
+		$parser->setHook( 'references', array( $parser->extCite, 'references' ) );
 
 		// Clear the state, making sure it will actually work.
 		$parser->extCite->mInCite = false;
@@ -1117,19 +1077,20 @@ class Cite {
 			if ( count( $refs ) == 0 ) {
 				continue;
 			}
-			$text .= "\n<br />";
-			if ( $group == CITE_DEFAULT_GROUP ) {
-				$text .= $this->error( 'cite_error_refs_without_references' );
+			if ( $group == self::DEFAULT_GROUP ) {
+				$text .= $this->referencesFormat( $group, '', '' );
 			} else {
-				$text .= $this->error( 'cite_error_group_refs_without_references', htmlspecialchars( $group ) );
+				$text .= "\n<br />" .
+					$this->error( 'cite_error_group_refs_without_references', htmlspecialchars( $group ) );
 			}
 		}
 		return true;
 	}
 
 	/**
-	 * Hook for the InlineEditor extension. If any ref or reference reference tag is in the text, the entire
-	 * page should be reparsed, so we return false in that case.
+	 * Hook for the InlineEditor extension.
+	 * If any ref or reference reference tag is in the text,
+	 * the entire page should be reparsed, so we return false in that case.
 	 *
 	 * @param $output
 	 *
@@ -1161,8 +1122,8 @@ class Cite {
 			$wgHooks['InlineEditorPartialAfterParse'][] = array( $parser->extCite, 'checkAnyCalls' );
 			Cite::$hooksInstalled = true;
 		}
-		$parser->setHook( 'ref' , array( $parser->extCite, 'ref' ) );
-		$parser->setHook( 'references' , array( $parser->extCite, 'references' ) );
+		$parser->setHook( 'ref', array( $parser->extCite, 'ref' ) );
+		$parser->setHook( 'references', array( $parser->extCite, 'references' ) );
 
 		return true;
 	}
@@ -1179,12 +1140,16 @@ class Cite {
 		# We rely on the fact that PHP is okay with passing unused argu-
 		# ments to functions.  If $1 is not used in the message, wfMessage will
 		# just ignore the extra parameter.
-		$ret = '<strong class="error mw-ext-cite-error">' .
-			wfMessage( 'cite_error', wfMessage( $key, $param )->inContentLanguage()->plain() )->inContentLanguage()->plain() .
-			'</strong>';
+		$msg = wfMessage( 'cite_error', wfMessage( $key, $param )->inContentLanguage()->plain() )
+			->inContentLanguage()
+			->plain();
+
+		$ret = '<strong class="error mw-ext-cite-error">' . $msg . '</strong>';
+
 		if ( $parse == 'parse' ) {
-			$ret = $this->parse( $ret );
+			$ret = $this->mParser->recursiveTagParse( $ret );
 		}
+
 		return $ret;
 	}
 

@@ -29,7 +29,7 @@
  * Wrapper allowing us to handle a system message as a Content object.
  * Note that this is generally *not* used to represent content from the
  * MediaWiki namespace, and that there is no MessageContentHandler.
- * MessageContent is just intended as glue for wrapping a message programatically.
+ * MessageContent is just intended as glue for wrapping a message programmatically.
  *
  * @ingroup Content
  */
@@ -106,7 +106,7 @@ class MessageContent extends AbstractContent {
 	}
 
 	/**
-	 * @param int $maxLength Maximum length of the summary text, defaults to 250.
+	 * @param int $maxlength Maximum length of the summary text, defaults to 250.
 	 *
 	 * @return string The summary text.
 	 *
@@ -126,7 +126,7 @@ class MessageContent extends AbstractContent {
 	}
 
 	/**
-	 * @return Content. A copy of this object
+	 * @return Content A copy of this object
 	 *
 	 * @see Content::copy
 	 */
@@ -165,6 +165,8 @@ class MessageContent extends AbstractContent {
 		}
 
 		$po = new ParserOutput( $html );
+		// Message objects are in the user language.
+		$po->recordOption( 'userlang' );
 
 		return $po;
 	}

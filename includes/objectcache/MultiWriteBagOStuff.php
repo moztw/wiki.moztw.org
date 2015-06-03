@@ -29,7 +29,8 @@
  * @ingroup Cache
  */
 class MultiWriteBagOStuff extends BagOStuff {
-	var $caches;
+	/** @var array BagOStuff[] */
+	protected $caches;
 
 	/**
 	 * Constructor. Parameters are:
@@ -38,12 +39,13 @@ class MultiWriteBagOStuff extends BagOStuff {
 	 *               structures, in the style required by $wgObjectCaches. See
 	 *               the documentation of $wgObjectCaches for more detail.
 	 *
-	 * @param $params array
-	 * @throws MWException
+	 * @param array $params
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $params ) {
+		parent::__construct( $params );
 		if ( !isset( $params['caches'] ) ) {
-			throw new MWException( __METHOD__ . ': the caches parameter is required' );
+			throw new InvalidArgumentException( __METHOD__ . ': the caches parameter is required' );
 		}
 
 		$this->caches = array();
@@ -53,15 +55,15 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $debug bool
+	 * @param bool $debug
 	 */
 	public function setDebug( $debug ) {
 		$this->doWrite( 'setDebug', $debug );
 	}
 
 	/**
-	 * @param $key string
-	 * @param $casToken[optional] mixed
+	 * @param string $key
+	 * @param mixed $casToken [optional]
 	 * @return bool|mixed
 	 */
 	public function get( $key, &$casToken = null ) {
@@ -75,20 +77,9 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $casToken mixed
-	 * @param $key string
-	 * @param $value mixed
-	 * @param $exptime int
-	 * @return bool
-	 */
-	public function cas( $casToken, $key, $value, $exptime = 0 ) {
-		throw new MWException( "CAS is not implemented in " . __CLASS__ );
-	}
-
-	/**
-	 * @param $key string
-	 * @param $value mixed
-	 * @param $exptime int
+	 * @param string $key
+	 * @param mixed $value
+	 * @param int $exptime
 	 * @return bool
 	 */
 	public function set( $key, $value, $exptime = 0 ) {
@@ -96,18 +87,17 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $key string
-	 * @param $time int
+	 * @param string $key
 	 * @return bool
 	 */
-	public function delete( $key, $time = 0 ) {
-		return $this->doWrite( 'delete', $key, $time );
+	public function delete( $key ) {
+		return $this->doWrite( 'delete', $key );
 	}
 
 	/**
-	 * @param $key string
-	 * @param $value mixed
-	 * @param $exptime int
+	 * @param string $key
+	 * @param mixed $value
+	 * @param int $exptime
 	 * @return bool
 	 */
 	public function add( $key, $value, $exptime = 0 ) {
@@ -115,18 +105,8 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $key string
-	 * @param $value mixed
-	 * @param $exptime int
-	 * @return bool
-	 */
-	public function replace( $key, $value, $exptime = 0 ) {
-		return $this->doWrite( 'replace', $key, $value, $exptime );
-	}
-
-	/**
-	 * @param $key string
-	 * @param $value int
+	 * @param string $key
+	 * @param int $value
 	 * @return bool|null
 	 */
 	public function incr( $key, $value = 1 ) {
@@ -134,8 +114,8 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $key string
-	 * @param $value int
+	 * @param string $key
+	 * @param int $value
 	 * @return bool
 	 */
 	public function decr( $key, $value = 1 ) {
@@ -143,21 +123,22 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $key string
-	 * @param $timeout int
+	 * @param string $key
+	 * @param int $timeout
+	 * @param int $expiry
 	 * @return bool
 	 */
-	public function lock( $key, $timeout = 0 ) {
+	public function lock( $key, $timeout = 6, $expiry = 6 ) {
 		// Lock only the first cache, to avoid deadlocks
 		if ( isset( $this->caches[0] ) ) {
-			return $this->caches[0]->lock( $key, $timeout );
+			return $this->caches[0]->lock( $key, $timeout, $expiry );
 		} else {
 			return true;
 		}
 	}
 
 	/**
-	 * @param $key string
+	 * @param string $key
 	 * @return bool
 	 */
 	public function unlock( $key ) {
@@ -169,13 +150,13 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $key string
-	 * @param $callback closure Callback method to be executed
+	 * @param string $key
+	 * @param callable $callback Callback method to be executed
 	 * @param int $exptime Either an interval in seconds or a unix timestamp for expiry
 	 * @param int $attempts The amount of times to attempt a merge in case of failure
-	 * @return bool success
+	 * @return bool Success
 	 */
-	public function merge( $key, closure $callback, $exptime = 0, $attempts = 10 ) {
+	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
 		return $this->doWrite( 'merge', $key, $callback, $exptime );
 	}
 
@@ -190,7 +171,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param $method string
+	 * @param string $method
 	 * @return bool
 	 */
 	protected function doWrite( $method /*, ... */ ) {
@@ -210,8 +191,8 @@ class MultiWriteBagOStuff extends BagOStuff {
 	 * Delete objects expiring before a certain date.
 	 *
 	 * Succeed if any of the child caches succeed.
-	 * @param $date string
-	 * @param $progressCallback bool|callback
+	 * @param string $date
+	 * @param bool|callable $progressCallback
 	 * @return bool
 	 */
 	public function deleteObjectsExpiringBefore( $date, $progressCallback = false ) {

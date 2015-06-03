@@ -35,7 +35,7 @@ class SearchUpdate implements DeferrableUpdate {
 	/** @var Title Title we're updating */
 	private $title;
 
-	/** @var Content|false Content of the page (not text) */
+	/** @var Content|bool Content of the page (not text) */
 	private $content;
 
 	/**
@@ -78,13 +78,11 @@ class SearchUpdate implements DeferrableUpdate {
 			return;
 		}
 
-		wfProfileIn( __METHOD__ );
-
-		$page = WikiPage::newFromId( $this->id, WikiPage::READ_LATEST );
-		$indexTitle = Title::indexTitle( $this->title->getNamespace(), $this->title->getText() );
+		$page = WikiPage::newFromID( $this->id, WikiPage::READ_LATEST );
 
 		foreach ( SearchEngine::getSearchTypes() as $type ) {
 			$search = SearchEngine::create( $type );
+			$indexTitle = $this->indexTitle( $search );
 			if ( !$search->supports( 'search-update' ) ) {
 				continue;
 			}
@@ -108,13 +106,14 @@ class SearchUpdate implements DeferrableUpdate {
 			$search->update( $this->id, $normalTitle, $search->normalizeText( $text ) );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
 	 * Clean text for indexing. Only really suitable for indexing in databases.
 	 * If you're using a real search engine, you'll probably want to override
 	 * this behavior and do something nicer with the original wikitext.
+	 * @param string $text
+	 * @return string
 	 */
 	public static function updateText( $text ) {
 		global $wgContLang;
@@ -123,7 +122,6 @@ class SearchUpdate implements DeferrableUpdate {
 		$text = $wgContLang->normalizeForSearch( $text );
 		$lc = SearchEngine::legalSearchChars() . '&#;';
 
-		wfProfileIn( __METHOD__ . '-regexps' );
 		$text = preg_replace( "/<\\/?\\s*[A-Za-z][^>]*?>/",
 			' ', $wgContLang->lc( " " . $text . " " ) ); # Strip HTML markup
 		$text = preg_replace( "/(^|\\n)==\\s*([^\\n]+)\\s*==(\\s)/sD",
@@ -170,8 +168,37 @@ class SearchUpdate implements DeferrableUpdate {
 
 		# Strip wiki '' and '''
 		$text = preg_replace( "/''[']*/", " ", $text );
-		wfProfileOut( __METHOD__ . '-regexps' );
 
 		return $text;
+	}
+
+	/**
+	 * Get a string representation of a title suitable for
+	 * including in a search index
+	 *
+	 * @param SearchEngine $search
+	 * @return string A stripped-down title string ready for the search index
+	 */
+	private function indexTitle( SearchEngine $search ) {
+		global $wgContLang;
+
+		$ns = $this->title->getNamespace();
+		$title = $this->title->getText();
+
+		$lc = $search->legalSearchChars() . '&#;';
+		$t = $wgContLang->normalizeForSearch( $title );
+		$t = preg_replace( "/[^{$lc}]+/", ' ', $t );
+		$t = $wgContLang->lc( $t );
+
+		# Handle 's, s'
+		$t = preg_replace( "/([{$lc}]+)'s( |$)/", "\\1 \\1's ", $t );
+		$t = preg_replace( "/([{$lc}]+)s'( |$)/", "\\1s ", $t );
+
+		$t = preg_replace( "/\\s+/", ' ', $t );
+
+		if ( $ns == NS_FILE ) {
+			$t = preg_replace( "/ (png|gif|jpg|jpeg|ogg)$/", "", $t );
+		}
+		return trim( $t );
 	}
 }

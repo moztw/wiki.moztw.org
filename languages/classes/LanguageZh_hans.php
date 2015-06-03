@@ -26,8 +26,9 @@
  *
  * @ingroup Language
  */
+// @codingStandardsIgnoreStart Ignore class name is not in camel caps format error
 class LanguageZh_hans extends Language {
-
+	// @codingStandardsIgnoreEnd
 	/**
 	 * @return bool
 	 */
@@ -40,7 +41,7 @@ class LanguageZh_hans extends Language {
 	 * for now just treat each character as a word.
 	 * @todo FIXME: Only do this for Han characters...
 	 *
-	 * @param $string string
+	 * @param string $string
 	 *
 	 * @return string
 	 */
@@ -51,18 +52,16 @@ class LanguageZh_hans extends Language {
 	}
 
 	/**
-	 * @param $s
+	 * @param string $s
 	 * @return string
 	 */
 	function normalizeForSearch( $s ) {
-		wfProfileIn( __METHOD__ );
 
 		// Double-width roman characters
 		$s = parent::normalizeForSearch( $s );
 		$s = trim( $s );
 		$s = $this->segmentByWord( $s );
 
-		wfProfileOut( __METHOD__ );
 		return $s;
 	}
 
@@ -71,7 +70,7 @@ class LanguageZh_hans extends Language {
 	 *
 	 * @since 1.21
 	 *
-	 * @param integer $seconds The amount of seconds.
+	 * @param int $seconds The amount of seconds.
 	 * @param array $chosenIntervals The intervals to enable.
 	 *
 	 * @return string

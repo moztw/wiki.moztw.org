@@ -30,22 +30,45 @@ class SpecialNewFiles extends IncludableSpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 
+		$out = $this->getOutput();
+		$this->addHelpLink( 'Help:New images' );
+
 		$pager = new NewFilesPager( $this->getContext(), $par );
 
 		if ( !$this->including() ) {
+			$this->setTopText();
 			$form = $pager->getForm();
 			$form->prepareForm();
 			$form->displayForm( '' );
 		}
 
-		$this->getOutput()->addHTML( $pager->getBody() );
+		$out->addHTML( $pager->getBody() );
 		if ( !$this->including() ) {
-			$this->getOutput()->addHTML( $pager->getNavigationBar() );
+			$out->addHTML( $pager->getNavigationBar() );
 		}
 	}
 
 	protected function getGroupName() {
 		return 'changes';
+	}
+
+	/**
+	 * Send the text to be displayed above the options
+	 */
+	function setTopText() {
+		global $wgContLang;
+
+		$message = $this->msg( 'newimagestext' )->inContentLanguage();
+		if ( !$message->isDisabled() ) {
+			$this->getOutput()->addWikiText(
+				Html::rawElement( 'p',
+					array( 'lang' => $wgContLang->getHtmlCode(), 'dir' => $wgContLang->getDir() ),
+					"\n" . $message->plain() . "\n"
+				),
+				/* $lineStart */ false,
+				/* $interface */ false
+			);
+		}
 	}
 }
 
@@ -56,7 +79,7 @@ class NewFilesPager extends ReverseChronologicalPager {
 	/**
 	 * @var ImageGallery
 	 */
-	var $gallery;
+	protected $gallery;
 
 	function __construct( IContextSource $context, $par = null ) {
 		$this->like = $context->getRequest()->getText( 'like' );
@@ -69,7 +92,6 @@ class NewFilesPager extends ReverseChronologicalPager {
 	}
 
 	function getQueryInfo() {
-		global $wgMiserMode;
 		$conds = $jconds = array();
 		$tables = array( 'image' );
 
@@ -89,7 +111,7 @@ class NewFilesPager extends ReverseChronologicalPager {
 			}
 		}
 
-		if ( !$wgMiserMode && $this->like !== null ) {
+		if ( !$this->getConfig()->get( 'MiserMode' ) && $this->like !== null ) {
 			$dbr = wfGetDB( DB_SLAVE );
 			$likeObj = Title::newFromURL( $this->like );
 			if ( $likeObj instanceof Title ) {
@@ -121,12 +143,11 @@ class NewFilesPager extends ReverseChronologicalPager {
 			// Note that null for mode is taken to mean use default.
 			$mode = $this->getRequest()->getVal( 'gallerymode', null );
 			try {
-				$this->gallery = ImageGalleryBase::factory( $mode );
-			} catch ( MWException $e ) {
+				$this->gallery = ImageGalleryBase::factory( $mode, $this->getContext() );
+			} catch ( Exception $e ) {
 				// User specified something invalid, fallback to default.
-				$this->gallery = ImageGalleryBase::factory();
+				$this->gallery = ImageGalleryBase::factory( false, $this->getContext() );
 			}
-			$this->gallery->setContext( $this->getContext() );
 		}
 
 		return '';
@@ -153,8 +174,6 @@ class NewFilesPager extends ReverseChronologicalPager {
 	}
 
 	function getForm() {
-		global $wgMiserMode;
-
 		$fields = array(
 			'like' => array(
 				'type' => 'text',
@@ -163,7 +182,7 @@ class NewFilesPager extends ReverseChronologicalPager {
 			),
 			'showbots' => array(
 				'type' => 'check',
-				'label' => $this->msg( 'showhidebots', $this->msg( 'show' )->plain() )->escaped(),
+				'label-message' => 'newimages-showbots',
 				'name' => 'showbots',
 			),
 			'limit' => array(
@@ -178,14 +197,17 @@ class NewFilesPager extends ReverseChronologicalPager {
 			),
 		);
 
-		if ( $wgMiserMode ) {
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
 			unset( $fields['like'] );
 		}
 
 		$context = new DerivativeContext( $this->getContext() );
 		$context->setTitle( $this->getTitle() ); // Remove subpage
 		$form = new HTMLForm( $fields, $context );
+
 		$form->setSubmitTextMsg( 'ilsubmit' );
+		$form->setSubmitProgressive();
+
 		$form->setMethod( 'get' );
 		$form->setWrapperLegendMsg( 'newimages-legend' );
 

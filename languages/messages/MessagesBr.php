@@ -1,8 +1,7 @@
 <?php
 /** Breton (brezhoneg)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -67,6 +66,7 @@ $specialPageAliases = array(
 	'Mostlinkedtemplates'       => array( 'PatromoùImplijetañ' ),
 	'Movepage'                  => array( 'AdkasPajenn' ),
 	'Mycontributions'           => array( 'MaDegasadennoù' ),
+	'MyLanguage'                => array( 'MaYezh' ),
 	'Mypage'                    => array( 'MaFajenn' ),
 	'Mytalk'                    => array( 'MaC\'haozeadennoù' ),
 	'Newimages'                 => array( 'RestroùNevez', 'SkeudennoùNevez' ),
@@ -115,7 +115,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'NIVERAIMPLIJERIEN', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'NIVERAIMPLIJERIENOBERIANT', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'NIVERAZEGASEDENNOU', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'NIVERALENNADENNOU', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'ANVPAJENN', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'ANVPAJENNSK', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ESAOUENNANV', 'NAMESPACE' ),

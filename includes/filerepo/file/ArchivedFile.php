@@ -27,7 +27,7 @@
  * @ingroup FileAbstraction
  */
 class ArchivedFile {
-	/** @var int filearchive row ID */
+	/** @var int Filearchive row ID */
 	private $id;
 
 	/** @var string File name */
@@ -42,7 +42,7 @@ class ArchivedFile {
 	/** @var int File size in bytes */
 	private $size;
 
-	/** @var int size in bytes */
+	/** @var int Size in bytes */
 	private $bits;
 
 	/** @var int Width */
@@ -100,8 +100,9 @@ class ArchivedFile {
 	 * @param Title $title
 	 * @param int $id
 	 * @param string $key
+	 * @param string $sha1
 	 */
-	function __construct( $title, $id = 0, $key = '' ) {
+	function __construct( $title, $id = 0, $key = '', $sha1 = '' ) {
 		$this->id = -1;
 		$this->title = false;
 		$this->name = false;
@@ -136,7 +137,11 @@ class ArchivedFile {
 			$this->key = $key;
 		}
 
-		if ( !$id && !$key && !( $title instanceof Title ) ) {
+		if ( $sha1 ) {
+			$this->sha1 = $sha1;
+		}
+
+		if ( !$id && !$key && !( $title instanceof Title ) && !$sha1 ) {
 			throw new MWException( "No specifications provided to ArchivedFile constructor." );
 		}
 	}
@@ -161,6 +166,9 @@ class ArchivedFile {
 		}
 		if ( $this->title ) {
 			$conds['fa_name'] = $this->title->getDBkey();
+		}
+		if ( $this->sha1 ) {
+			$conds['fa_sha1'] = $this->sha1;
 		}
 
 		if ( !count( $conds ) ) {
@@ -264,6 +272,9 @@ class ArchivedFile {
 			// old row, populate from key
 			$this->sha1 = LocalRepo::getHashFromKey( $this->key );
 		}
+		if ( !$this->title ) {
+			$this->title = Title::makeTitleSafe( NS_FILE, $row->fa_name );
+		}
 	}
 
 	/**
@@ -272,6 +283,9 @@ class ArchivedFile {
 	 * @return Title
 	 */
 	public function getTitle() {
+		if ( !$this->title ) {
+			$this->load();
+		}
 		return $this->title;
 	}
 
@@ -281,6 +295,10 @@ class ArchivedFile {
 	 * @return string
 	 */
 	public function getName() {
+		if ( $this->name === false ) {
+			$this->load();
+		}
+
 		return $this->name;
 	}
 
@@ -379,7 +397,7 @@ class ArchivedFile {
 	}
 
 	/**
-	 * Returns the mime type of the file.
+	 * Returns the MIME type of the file.
 	 * @return string
 	 */
 	public function getMimeType() {
@@ -403,6 +421,7 @@ class ArchivedFile {
 	/**
 	 * Returns the number of pages of a multipage document, or false for
 	 * documents which aren't multipage documents
+	 * @return bool|int
 	 */
 	function pageCount() {
 		if ( !isset( $this->pageCount ) ) {
@@ -475,7 +494,7 @@ class ArchivedFile {
 	/**
 	 * Return the user name of the uploader.
 	 *
-	 * @deprecated 1.23 Use getUser( 'text' ) instead.
+	 * @deprecated since 1.23 Use getUser( 'text' ) instead.
 	 * @return string
 	 */
 	public function getUserText() {
@@ -567,6 +586,7 @@ class ArchivedFile {
 	public function userCan( $field, User $user = null ) {
 		$this->load();
 
-		return Revision::userCanBitfield( $this->deleted, $field, $user );
+		$title = $this->getTitle();
+		return Revision::userCanBitfield( $this->deleted, $field, $user, $title ? : null );
 	}
 }

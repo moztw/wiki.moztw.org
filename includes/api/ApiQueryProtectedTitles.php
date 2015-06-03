@@ -31,7 +31,7 @@
  */
 class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'pt' );
 	}
 
@@ -44,7 +44,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param $resultPageSet ApiPageSet
+	 * @param ApiPageSet $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -156,7 +156,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 		}
 
 		if ( is_null( $resultPageSet ) ) {
-			$result->setIndexedTagName_internal(
+			$result->addIndexedTagName(
 				array( 'query', $this->getModuleName() ),
 				$this->getModulePrefix()
 			);
@@ -175,8 +175,6 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 	}
 
 	public function getAllowedParams() {
-		global $wgRestrictionLevels;
-
 		return array(
 			'namespace' => array(
 				ApiBase::PARAM_ISMULTI => true,
@@ -184,7 +182,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 			),
 			'level' => array(
 				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => array_diff( $wgRestrictionLevels, array( '' ) )
+				ApiBase::PARAM_TYPE => array_diff( $this->getConfig()->get( 'RestrictionLevels' ), array( '' ) )
 			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
@@ -198,7 +196,8 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_TYPE => array(
 					'newer',
 					'older'
-				)
+				),
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-direction',
 			),
 			'start' => array(
 				ApiBase::PARAM_TYPE => 'timestamp'
@@ -219,77 +218,18 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 					'level'
 				)
 			),
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'namespace' => 'Only list titles in these namespaces',
-			'start' => 'Start listing at this protection timestamp',
-			'end' => 'Stop listing at this protection timestamp',
-			'dir' => $this->getDirectionDescription( $this->getModulePrefix() ),
-			'limit' => 'How many total pages to return',
-			'prop' => array(
-				'Which properties to get',
-				' timestamp      - Adds the timestamp of when protection was added',
-				' user           - Adds the user that added the protection',
-				' userid         - Adds the user id that added the protection',
-				' comment        - Adds the comment for the protection',
-				' parsedcomment  - Adds the parsed comment for the protection',
-				' expiry         - Adds the timestamp of when the protection will be lifted',
-				' level          - Adds the protection level',
-			),
-			'level' => 'Only list titles with these protection levels',
-			'continue' => 'When more results are available, use this to continue',
-		);
-	}
-
-	public function getResultProperties() {
-		global $wgRestrictionLevels;
-
-		return array(
-			'' => array(
-				'ns' => 'namespace',
-				'title' => 'string'
-			),
-			'timestamp' => array(
-				'timestamp' => 'timestamp'
-			),
-			'user' => array(
-				'user' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'userid' => 'integer'
-			),
-			'userid' => array(
-				'userid' => 'integer'
-			),
-			'comment' => array(
-				'comment' => 'string'
-			),
-			'parsedcomment' => array(
-				'parsedcomment' => 'string'
-			),
-			'expiry' => array(
-				'expiry' => 'timestamp'
-			),
-			'level' => array(
-				'level' => array(
-					ApiBase::PROP_TYPE => array_diff( $wgRestrictionLevels, array( '' ) )
-				)
-			)
-		);
-	}
-
-	public function getDescription() {
-		return 'List all titles protected from creation.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=protectedtitles',
+			'action=query&list=protectedtitles'
+				=> 'apihelp-query+protectedtitles-example-simple',
+			'action=query&generator=protectedtitles&gptnamespace=0&prop=linkshere'
+				=> 'apihelp-query+protectedtitles-example-generator',
 		);
 	}
 

@@ -51,7 +51,7 @@ class BmpHandler extends BitmapHandler {
 	/**
 	 * Get width and height from the bmp header.
 	 *
-	 * @param $image
+	 * @param File $image
 	 * @param string $filename
 	 * @return array
 	 */
@@ -71,7 +71,7 @@ class BmpHandler extends BitmapHandler {
 		try {
 			$w = wfUnpack( 'V', $w, 4 );
 			$h = wfUnpack( 'V', $h, 4 );
-		} catch ( MWException $e ) {
+		} catch ( Exception $e ) {
 			return false;
 		}
 

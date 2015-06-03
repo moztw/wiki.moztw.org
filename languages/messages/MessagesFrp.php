@@ -1,8 +1,7 @@
 <?php
 /** Franco-Provençal (arpetan)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -12,10 +11,10 @@
 $fallback = 'fr';
 
 $bookstoreList = array(
-    'Amazon.fr'    => 'http://www.amazon.fr/exec/obidos/ISBN=$1',
-    'alapage.fr'   => 'http://www.alapage.com/mx/?tp=F&type=101&l_isbn=$1&donnee_appel=ALASQ&devise=&',
-    'fnac.com'     => 'http://www3.fnac.com/advanced/book.do?isbn=$1',
-    'chapitre.com' => 'http://www.chapitre.com/frame_rec.asp?isbn=$1',
+	'Amazon.fr'    => 'http://www.amazon.fr/exec/obidos/ISBN=$1',
+	'alapage.fr'   => 'http://www.alapage.com/mx/?tp=F&type=101&l_isbn=$1&donnee_appel=ALASQ&devise=&',
+	'fnac.com'     => 'http://www3.fnac.com/advanced/book.do?isbn=$1',
+	'chapitre.com' => 'http://www.chapitre.com/frame_rec.asp?isbn=$1',
 );
 
 $namespaceNames = array(
@@ -178,7 +177,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'NOMBRO_D_USANCIÉRS', 'NOMBREUTILISATEURS', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'NOMBRO_D_USANCIÉRS_ACTIFS', 'NOMBREUTILISATEURSACTIFS', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'NOMBRO_DE_CHANGEMENTS', 'NOMBREMODIFS', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'NOMBRO_DE_VUES', 'NOMBREVUES', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'NOM_DE_LA_PÂGE', 'NOMPAGE', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'NOM_DE_LA_PÂGE_URL', 'NOMPAGEX', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ÈSPÂÇO_DE_NOMS', 'ESPACENOMMAGE', 'NAMESPACE' ),
@@ -208,9 +206,9 @@ $magicWords = array(
 	'img_framed'                => array( '1', 'encâdrâ', 'câdro', 'cadre', 'encadré', 'encadre', 'framed', 'enframed', 'frame' ),
 	'img_frameless'             => array( '1', 'sen_câdro', 'pas_encâdrâ', 'sans_cadre', 'non_encadré', 'non_encadre', 'frameless' ),
 	'img_page'                  => array( '1', 'pâge=$1', 'pâge $1', 'page=$1', 'page $1' ),
-	'img_upright'               => array( '1', 'drêt', 'drêt=$1', 'drêt $1', 'redresse', 'redresse=$1', 'redresse $1', 'upright', 'upright=$1', 'upright $1' ),
+	'img_upright'               => array( '1', 'drêt', 'drêt=$1', 'drêt $1', 'redresse', 'redresse=$1', 'redresse $1', 'redresse_$1', 'upright', 'upright=$1', 'upright $1' ),
 	'img_border'                => array( '1', 'bordura', 'bordure', 'border' ),
-	'img_baseline'              => array( '1', 'legne_de_bâsa', 'ligne_de_base', 'base', 'baseline' ),
+	'img_baseline'              => array( '1', 'legne_de_bâsa', 'ligne_de_base', 'base', 'ligne-de-base', 'baseline' ),
 	'img_sub'                   => array( '1', 'segno', 'indice', 'ind', 'sub' ),
 	'img_super'                 => array( '1', 'èxposent', 'èxp', 'exposant', 'exp', 'super', 'sup' ),
 	'img_top'                   => array( '1', 'd\'amont', 'haut', 'top' ),
@@ -291,17 +289,17 @@ $magicWords = array(
 $linkTrail = '/^([a-zàâçéèêîœôû·’æäåāăëēïīòöōùü‘]+)(.*)$/sDu';
 
 $dateFormats = array(
-    'mdy time' => 'H:i',
-    'mdy date' => 'F j, Y',
-    'mdy both' => 'F j, Y "a" H:i',
+	'mdy time' => 'H:i',
+	'mdy date' => 'F j, Y',
+	'mdy both' => 'F j, Y "a" H:i',
 
-    'dmy time' => 'H:i',
-    'dmy date' => 'j F Y',
-    'dmy both' => 'j F Y "a" H:i',
+	'dmy time' => 'H:i',
+	'dmy date' => 'j F Y',
+	'dmy both' => 'j F Y "a" H:i',
 
-    'ymd time' => 'H:i',
-    'ymd date' => 'Y F j',
-    'ymd both' => 'Y F j "a" H:i',
+	'ymd time' => 'H:i',
+	'ymd date' => 'Y F j',
+	'ymd both' => 'Y F j "a" H:i',
 );
 
 $separatorTransformTable = array( ',' => "\xc2\xa0", '.' => ',' );

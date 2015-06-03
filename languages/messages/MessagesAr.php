@@ -1,8 +1,7 @@
 <?php
 /** Arabic (العربية)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -30,6 +29,7 @@ $datePreferences = array(
 	'ymd',
 	'hijri',
 	'ISO 8601',
+	'jMY',
 );
 
 /**
@@ -79,6 +79,10 @@ $dateFormats = array(
 	'ISO 8601 time' => 'xnH:xni:xns',
 	'ISO 8601 date' => 'xnY-xnm-xnd',
 	'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
+
+	'jMY time' => 'H:i',
+	'jMY date' => 'j M Y',
+	'jMY both' => 'H:i، j M Y', # Arabic comma
 );
 
 $digitTransformTable = array(
@@ -167,7 +171,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'عدد_المستخدمين', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'عدد_المستخدمين_النشطين', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'عدد_التعديلات', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'عدد_المشاهدات', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'اسم_الصفحة', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'عنوان_الصفحة', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'نطاق', 'NAMESPACE' ),
@@ -182,6 +185,7 @@ $magicWords = array(
 	'subpagename'               => array( '1', 'اسم_الصفحة_الفرعي', 'SUBPAGENAME' ),
 	'subpagenamee'              => array( '1', 'عنوان_الصفحة_الفرعي', 'SUBPAGENAMEE' ),
 	'rootpagename'              => array( '1', 'جذر_اسم_الصفحة', 'ROOTPAGENAME' ),
+	'rootpagenamee'             => array( '1', 'عنوان_جذر_الصفحة', 'ROOTPAGENAMEE' ),
 	'basepagename'              => array( '1', 'اسم_الصفحة_الأساسي', 'BASEPAGENAME' ),
 	'basepagenamee'             => array( '1', 'عنوان_الصفحة_الأساسي', 'BASEPAGENAMEE' ),
 	'talkpagename'              => array( '1', 'اسم_صفحة_النقاش', 'TALKPAGENAME' ),
@@ -257,6 +261,7 @@ $magicWords = array(
 	'raw'                       => array( '0', 'خام:', 'RAW:' ),
 	'displaytitle'              => array( '1', 'عرض_العنوان', 'DISPLAYTITLE' ),
 	'rawsuffix'                 => array( '1', 'أر', 'آر', 'R' ),
+	'nocommafysuffix'           => array( '0', 'لا_سيب', 'NOSEP' ),
 	'newsectionlink'            => array( '1', '__وصلة_قسم_جديد__', '__NEWSECTIONLINK__' ),
 	'nonewsectionlink'          => array( '1', 'لا_وصلة_قسم_جديد__', '__NONEWSECTIONLINK__' ),
 	'currentversion'            => array( '1', 'نسخة_حالية', 'CURRENTVERSION' ),
@@ -285,12 +290,15 @@ $magicWords = array(
 	'numberingroup'             => array( '1', 'عدد_في_المجموعة', 'عدد_في_مجموعة', 'NUMBERINGROUP', 'NUMINGROUP' ),
 	'staticredirect'            => array( '1', '__تحويلة_إستاتيكية__', '__تحويلة_ساكنة__', '__STATICREDIRECT__' ),
 	'protectionlevel'           => array( '1', 'مستوى_الحماية', 'PROTECTIONLEVEL' ),
+	'cascadingsources'          => array( '1', 'مصادر_مضمنة', 'CASCADINGSOURCES' ),
 	'formatdate'                => array( '0', 'تهيئة_التاريخ', 'تهيئة_تاريخ', 'formatdate', 'dateformat' ),
 	'url_path'                  => array( '0', 'مسار', 'PATH' ),
 	'url_wiki'                  => array( '0', 'ويكي', 'WIKI' ),
 	'url_query'                 => array( '0', 'استعلام', 'QUERY' ),
 	'defaultsort_noerror'       => array( '0', 'لاخطأ', 'noerror' ),
 	'defaultsort_noreplace'     => array( '0', 'لاتستبدل', 'noreplace' ),
+	'displaytitle_noerror'      => array( '0', 'لا_خطأ', 'noerror' ),
+	'displaytitle_noreplace'    => array( '0', 'لااستبدال', 'noreplace' ),
 	'pagesincategory_all'       => array( '0', 'كل', 'all' ),
 	'pagesincategory_pages'     => array( '0', 'صفحات', 'pages' ),
 	'pagesincategory_subcats'   => array( '0', 'تصنيفات_فرعية', 'subcats' ),
@@ -302,6 +310,7 @@ $specialPageAliases = array(
 	'Allmessages'               => array( 'كل_الرسائل' ),
 	'AllMyUploads'              => array( 'كل_ملفاتي' ),
 	'Allpages'                  => array( 'كل_الصفحات' ),
+	'ApiHelp'                   => array( 'مساعدة_إيه_بي_آي' ),
 	'Ancientpages'              => array( 'صفحات_قديمة' ),
 	'Badtitle'                  => array( 'عنوان_سيئ' ),
 	'Blankpage'                 => array( 'صفحة_فارغة' ),
@@ -317,6 +326,7 @@ $specialPageAliases = array(
 	'CreateAccount'             => array( 'إنشاء_حساب' ),
 	'Deadendpages'              => array( 'صفحات_نهاية_مسدودة' ),
 	'DeletedContributions'      => array( 'مساهمات_محذوفة' ),
+	'Diff'                      => array( 'فرق' ),
 	'DoubleRedirects'           => array( 'تحويلات_مزدوجة' ),
 	'EditWatchlist'             => array( 'تعديل_قائمة_المراقبة' ),
 	'Emailuser'                 => array( 'مراسلة_المستخدم' ),
@@ -335,11 +345,13 @@ $specialPageAliases = array(
 	'Listfiles'                 => array( 'عرض_الملفات', 'قائمة_الملفات', 'قائمة_الصور' ),
 	'Listgrouprights'           => array( 'عرض_صلاحيات_المجموعات', 'صلاحيات_مجموعات_المستخدمين' ),
 	'Listredirects'             => array( 'عرض_التحويلات' ),
+	'ListDuplicatedFiles'       => array( 'عرض_الملفات_المكررة', 'عرض_تكرار_الملفات' ),
 	'Listusers'                 => array( 'عرض_المستخدمين', 'قائمة_المستخدمين' ),
 	'Lockdb'                    => array( 'غلق_قب' ),
 	'Log'                       => array( 'سجل', 'سجلات' ),
 	'Lonelypages'               => array( 'صفحات_وحيدة', 'صفحات_يتيمة' ),
 	'Longpages'                 => array( 'صفحات_طويلة' ),
+	'MediaStatistics'           => array( 'إحصاءات_الميديا' ),
 	'MergeHistory'              => array( 'دمج_التاريخ' ),
 	'MIMEsearch'                => array( 'بحث_ميم' ),
 	'Mostcategories'            => array( 'الأكثر_تصنيفا' ),
@@ -351,12 +363,14 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'الأكثر_تعديلا' ),
 	'Movepage'                  => array( 'نقل_صفحة' ),
 	'Mycontributions'           => array( 'مساهماتي' ),
+	'MyLanguage'                => array( 'لغتي' ),
 	'Mypage'                    => array( 'صفحتي' ),
 	'Mytalk'                    => array( 'نقاشي' ),
 	'Myuploads'                 => array( 'رفوعاتي' ),
 	'Newimages'                 => array( 'ملفات_جديدة', 'صور_جديدة' ),
 	'Newpages'                  => array( 'صفحات_جديدة' ),
 	'PagesWithProp'             => array( 'صفحات_بخاصية' ),
+	'PageLanguage'              => array( 'لغة_الصفحة' ),
 	'PasswordReset'             => array( 'إعادة_ضبط_كلمة_السر' ),
 	'PermanentLink'             => array( 'وصلة_دائمة', 'رابط_دائم' ),
 	'Popularpages'              => array( 'صفحات_مشهورة' ),
@@ -372,11 +386,13 @@ $specialPageAliases = array(
 	'Redirect'                  => array( 'تحويل' ),
 	'ResetTokens'               => array( 'إعادة_ضبط_المفاتيح' ),
 	'Revisiondelete'            => array( 'حذف_مراجعة', 'حذف_نسخة' ),
+	'RunJobs'                   => array( 'تشغيل_الوظائف' ),
 	'Search'                    => array( 'بحث' ),
 	'Shortpages'                => array( 'صفحات_قصيرة' ),
 	'Specialpages'              => array( 'صفحات_خاصة' ),
 	'Statistics'                => array( 'إحصاءات' ),
 	'Tags'                      => array( 'وسوم' ),
+	'TrackingCategories'        => array( 'تصنيفات_التتبع' ),
 	'Unblock'                   => array( 'رفع_منع' ),
 	'Uncategorizedcategories'   => array( 'تصنيفات_غير_مصنفة' ),
 	'Uncategorizedimages'       => array( 'ملفات_غير_مصنفة', 'صور_غير_مصنفة' ),

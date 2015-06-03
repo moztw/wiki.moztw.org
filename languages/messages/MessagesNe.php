@@ -1,8 +1,7 @@
 <?php
 /** Nepali (नेपाली)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -39,6 +38,11 @@ $namespaceNames = array(
 	NS_HELP_TALK        => 'मद्दत_वार्ता',
 	NS_CATEGORY         => 'श्रेणी',
 	NS_CATEGORY_TALK    => 'श्रेणी_वार्ता',
+);
+
+$specialPageAliases = array(
+	'Activeusers'               => array( 'सक्रिय_प्रयोगकर्ताहरु' ),
+	'Listgrouprights'           => array( 'प्रयोगकर्ता_समूह_अधिकार' ),
 );
 
 $digitTransformTable = array(

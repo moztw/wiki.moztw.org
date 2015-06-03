@@ -72,7 +72,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 				if ( $this->mParser instanceof Parser ) {
 					# Give extensions a chance to select the file revision for us
 					$options = array();
-					wfRunHooks( 'BeforeParserFetchFileAndTitle',
+					Hooks::run( 'BeforeParserFetchFileAndTitle',
 						array( $this->mParser, $nt, &$options, &$descQuery ) );
 					# Fetch and register the file (file title may be different via hooks)
 					list( $img, $nt ) = $this->mParser->fetchFileAndTitle( $nt, $options );
@@ -132,6 +132,8 @@ class TraditionalImageGallery extends ImageGalleryBase {
 				}
 
 				$this->adjustImageParameters( $thumb, $imageParameters );
+
+				Linker::processResponsiveImages( $img, $thumb, $transformOptions );
 
 				# Set both fixed width and min-height.
 				$thumbhtml = "\n\t\t\t"
@@ -328,7 +330,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
  * if called the old way, for extensions that may expect traditional
  * mode.
  *
- * @deprecated 1.22 Use ImageGalleryBase::factory instead.
+ * @deprecated since 1.22 Use ImageGalleryBase::factory instead.
  */
 class ImageGallery extends TraditionalImageGallery {
 	function __construct( $mode = 'traditional' ) {

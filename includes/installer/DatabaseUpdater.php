@@ -31,6 +31,7 @@ require_once __DIR__ . '/../../maintenance/Maintenance.php';
  * @since 1.17
  */
 abstract class DatabaseUpdater {
+	protected static $updateCounter = 0;
 
 	/**
 	 * Array of updates to perform on the database
@@ -72,6 +73,7 @@ abstract class DatabaseUpdater {
 		'PopulateImageSha1',
 		'FixExtLinksProtocolRelative',
 		'PopulateFilearchiveSha1',
+		'PopulateBacklinkNamespace'
 	);
 
 	/**
@@ -113,7 +115,7 @@ abstract class DatabaseUpdater {
 		$this->maintenance->setDB( $db );
 		$this->initOldGlobals();
 		$this->loadExtensions();
-		wfRunHooks( 'LoadExtensionSchemaUpdates', array( $this ) );
+		Hooks::run( 'LoadExtensionSchemaUpdates', array( $this ) );
 	}
 
 	/**
@@ -232,9 +234,9 @@ abstract class DatabaseUpdater {
 	/**
 	 * @since 1.19
 	 *
-	 * @param $tableName string
-	 * @param $indexName string
-	 * @param $sqlPath string
+	 * @param string $tableName
+	 * @param string $indexName
+	 * @param string $sqlPath
 	 */
 	public function addExtensionIndex( $tableName, $indexName, $sqlPath ) {
 		$this->extensionUpdates[] = array( 'addIndex', $tableName, $indexName, $sqlPath, true );
@@ -244,9 +246,9 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.19
 	 *
-	 * @param $tableName string
-	 * @param $columnName string
-	 * @param $sqlPath string
+	 * @param string $tableName
+	 * @param string $columnName
+	 * @param string $sqlPath
 	 */
 	public function addExtensionField( $tableName, $columnName, $sqlPath ) {
 		$this->extensionUpdates[] = array( 'addField', $tableName, $columnName, $sqlPath, true );
@@ -256,9 +258,9 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.20
 	 *
-	 * @param $tableName string
-	 * @param $columnName string
-	 * @param $sqlPath string
+	 * @param string $tableName
+	 * @param string $columnName
+	 * @param string $sqlPath
 	 */
 	public function dropExtensionField( $tableName, $columnName, $sqlPath ) {
 		$this->extensionUpdates[] = array( 'dropField', $tableName, $columnName, $sqlPath, true );
@@ -281,8 +283,8 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.20
 	 *
-	 * @param $tableName string
-	 * @param $sqlPath string
+	 * @param string $tableName
+	 * @param string $sqlPath
 	 */
 	public function dropExtensionTable( $tableName, $sqlPath ) {
 		$this->extensionUpdates[] = array( 'dropTable', $tableName, $sqlPath, true );
@@ -296,9 +298,9 @@ abstract class DatabaseUpdater {
 	 * @param string $tableName The table name
 	 * @param string $oldIndexName The old index name
 	 * @param string $newIndexName The new index name
-	 * @param $skipBothIndexExistWarning Boolean: Whether to warn if both the old
-	 * and the new indexes exist. [facultative; by default, false]
 	 * @param string $sqlPath The path to the SQL change path
+	 * @param bool $skipBothIndexExistWarning Whether to warn if both the old
+	 * and the new indexes exist. [facultative; by default, false]
 	 */
 	public function renameExtensionIndex( $tableName, $oldIndexName, $newIndexName,
 		$sqlPath, $skipBothIndexExistWarning = false
@@ -329,7 +331,7 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.20
 	 *
-	 * @param $tableName string
+	 * @param string $tableName
 	 * @return bool
 	 */
 	public function tableExists( $tableName ) {
@@ -352,7 +354,7 @@ abstract class DatabaseUpdater {
 	/**
 	 * Get the list of extension-defined updates
 	 *
-	 * @return Array
+	 * @return array
 	 */
 	protected function getExtensionUpdates() {
 		return $this->extensionUpdates;
@@ -371,6 +373,7 @@ abstract class DatabaseUpdater {
 	 * @since 1.21
 	 *
 	 * Writes the schema updates desired to a file for the DB Admin to run.
+	 * @param array $schemaUpdate
 	 */
 	private function writeSchemaUpdateFile( $schemaUpdate = array() ) {
 		$updates = $this->updatesSkipped;
@@ -423,9 +426,8 @@ abstract class DatabaseUpdater {
 	/**
 	 * Helper function for doUpdates()
 	 *
-	 * @param array $updates of updates to run
-	 * @param bool $passSelf Whether to pass this object we calling external
-	 *                  functions
+	 * @param array $updates Array of updates to run
+	 * @param bool $passSelf Whether to pass this object we calling external functions
 	 */
 	private function runUpdates( array $updates, $passSelf ) {
 		$updatesDone = array();
@@ -459,7 +461,8 @@ abstract class DatabaseUpdater {
 		if ( !$this->canUseNewUpdatelog() ) {
 			return;
 		}
-		$key = "updatelist-$version-" . time();
+		$key = "updatelist-$version-" . time() . self::$updateCounter;
+		self::$updateCounter++;
 		$this->db->insert( 'updatelog',
 			array( 'ul_key' => $key, 'ul_value' => serialize( $updates ) ),
 			__METHOD__ );
@@ -476,7 +479,8 @@ abstract class DatabaseUpdater {
 	public function updateRowExists( $key ) {
 		$row = $this->db->selectRow(
 			'updatelog',
-			'1',
+			# Bug 65813
+			'1 AS X',
 			array( 'ul_key' => $key ),
 			__METHOD__
 		);
@@ -507,7 +511,7 @@ abstract class DatabaseUpdater {
 	 * class does). Pre-1.17 wikis won't have this column, and really old wikis
 	 * might not even have updatelog at all
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function canUseNewUpdatelog() {
 		return $this->db->tableExists( 'updatelog', __METHOD__ ) &&
@@ -531,7 +535,12 @@ abstract class DatabaseUpdater {
 			return true;
 		}
 
-		return !in_array( $name, $wgSharedTables );
+		if ( in_array( $name, $wgSharedTables ) ) {
+			$this->output( "...skipping update to shared table $name.\n" );
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -603,7 +612,7 @@ abstract class DatabaseUpdater {
 	 * Append a line to the open filehandle.  The line is assumed to
 	 * be a complete SQL statement.
 	 *
-	 * This is used as a callback for for sourceLine().
+	 * This is used as a callback for sourceLine().
 	 *
 	 * @param string $line Text to append to the file
 	 * @return bool False to skip actually executing the file
@@ -622,7 +631,7 @@ abstract class DatabaseUpdater {
 	 * Applies a SQL patch
 	 *
 	 * @param string $path Path to the patch file
-	 * @param $isFullPath Boolean Whether to treat $path as a relative or not
+	 * @param bool $isFullPath Whether to treat $path as a relative or not
 	 * @param string $msg Description of the patch
 	 * @return bool False if patch is skipped.
 	 */
@@ -775,7 +784,7 @@ abstract class DatabaseUpdater {
 	 * @param string $table Name of the table to modify
 	 * @param string $oldIndex Old name of the index
 	 * @param string $newIndex New name of the index
-	 * @param $skipBothIndexExistWarning Boolean: Whether to warn if both the
+	 * @param bool $skipBothIndexExistWarning Whether to warn if both the
 	 * old and the new indexes exist.
 	 * @param string $patch Path to the patch file
 	 * @param bool $fullpath Whether to treat $patch path as a relative or not
@@ -889,6 +898,29 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
+	 * Set any .htaccess files or equivilent for storage repos
+	 *
+	 * Some zones (e.g. "temp") used to be public and may have been initialized as such
+	 */
+	public function setFileAccess() {
+		$repo = RepoGroup::singleton()->getLocalRepo();
+		$zonePath = $repo->getZonePath( 'temp' );
+		if ( $repo->getBackend()->directoryExists( array( 'dir' => $zonePath ) ) ) {
+			// If the directory was never made, then it will have the right ACLs when it is made
+			$status = $repo->getBackend()->secure( array(
+				'dir' => $zonePath,
+				'noAccess' => true,
+				'noListing' => true
+			) );
+			if ( $status->isOK() ) {
+				$this->output( "Set the local repo temp zone container to be private.\n" );
+			} else {
+				$this->output( "Failed to set the local repo temp zone container to be private.\n" );
+			}
+		}
+	}
+
+	/**
 	 * Purge the objectcache table
 	 */
 	public function purgeCache() {
@@ -900,7 +932,9 @@ abstract class DatabaseUpdater {
 		if ( $wgLocalisationCacheConf['manualRecache'] ) {
 			$this->rebuildLocalisationCache();
 		}
-		MessageBlobStore::clear();
+		$blobStore = new MessageBlobStore();
+		$blobStore->clear();
+		$this->db->delete( 'module_deps', '*', __METHOD__ );
 		$this->output( "done.\n" );
 	}
 
@@ -977,6 +1011,7 @@ abstract class DatabaseUpdater {
 
 	/**
 	 * Updates the timestamps in the transcache table
+	 * @return bool
 	 */
 	protected function doUpdateTranscacheField() {
 		if ( $this->updateRowExists( 'convert transcache field' ) ) {
@@ -1022,6 +1057,31 @@ abstract class DatabaseUpdater {
 			$cl = $this->maintenance->runChild( 'ConvertUserOptions', 'convertUserOptions.php' );
 			$cl->execute();
 			$this->output( "done.\n" );
+		}
+	}
+
+	/**
+	 * Enable profiling table when it's turned on
+	 */
+	protected function doEnableProfiling() {
+		global $wgProfiler;
+
+		if ( !$this->doTable( 'profiling' ) ) {
+			return true;
+		}
+
+		$profileToDb = false;
+		if ( isset( $wgProfiler['output'] ) ) {
+			$out = $wgProfiler['output'];
+			if ( $out === 'db' ) {
+				$profileToDb = true;
+			} elseif ( is_array( $out ) && in_array( 'db', $out ) ) {
+				$profileToDb = true;
+			}
+		}
+
+		if ( $profileToDb && !$this->db->tableExists( 'profiling', __METHOD__ ) ) {
+			$this->applyPatch( 'patch-profiling.sql', false, 'Add profiling table' );
 		}
 	}
 

@@ -34,7 +34,7 @@ class IPTC {
 	 *
 	 * @see http://www.iptc.org/std/IIM/4.1/specification/IIMV4.1.pdf
 	 *
-	 * @param string $rawData app13 block from jpeg containing iptc/iim data
+	 * @param string $rawData The app13 block from jpeg containing iptc/iim data
 	 * @return array IPTC metadata array
 	 */
 	static function parse( $rawData ) {
@@ -456,7 +456,7 @@ class IPTC {
 			//treat as utf-8 if is valid utf-8. otherwise pretend its windows-1252
 			// most of the time if there is no 1:90 tag, it is either ascii, latin1, or utf-8
 			$oldData = $data;
-			UtfNormal::quickIsNFCVerify( $data ); //make $data valid utf-8
+			UtfNormal\Validator::quickIsNFCVerify( $data ); //make $data valid utf-8
 			if ( $data === $oldData ) {
 				return $data; //if validation didn't change $data
 			} else {
@@ -470,7 +470,7 @@ class IPTC {
 	/**
 	 * take the value of 1:90 tag and returns a charset
 	 * @param string $tag 1:90 tag.
-	 * @return string charset name or "?"
+	 * @return string Charset name or "?"
 	 * Warning, this function does not (and is not intended to) detect
 	 * all iso 2022 escape codes. In practise, the code for utf-8 is the
 	 * only code that seems to have wide use. It does detect that code.

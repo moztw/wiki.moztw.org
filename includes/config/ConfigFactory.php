@@ -41,24 +41,42 @@ class ConfigFactory {
 	 */
 	protected $configs = array();
 
+	/**
+	 * @var ConfigFactory
+	 */
+	private static $self;
+
 	public static function getDefaultInstance() {
-		static $self = null;
-		if ( !$self ) {
-			$self = new self;
+		if ( !self::$self ) {
+			self::$self = new self;
 			global $wgConfigRegistry;
 			foreach ( $wgConfigRegistry as $name => $callback ) {
-				$self->register( $name, $callback );
+				self::$self->register( $name, $callback );
 			}
 		}
-		return $self;
+		return self::$self;
+	}
+
+	/**
+	 * Destroy the default instance
+	 * Should only be called inside unit tests
+	 * @throws MWException
+	 * @codeCoverageIgnore
+	 */
+	public static function destroyDefaultInstance() {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MWException( __METHOD__ . ' was called outside of unit tests' );
+		}
+
+		self::$self = null;
 	}
 
 	/**
 	 * Register a new config factory function
 	 * Will override if it's already registered
 	 * @param string $name
-	 * @param callable $callback that takes this ConfigFactory as an argument
-	 * @throws InvalidArgumentException if an invalid callback is provided
+	 * @param callable $callback That takes this ConfigFactory as an argument
+	 * @throws InvalidArgumentException If an invalid callback is provided
 	 */
 	public function register( $name, $callback ) {
 		if ( !is_callable( $callback ) ) {
@@ -70,10 +88,10 @@ class ConfigFactory {
 	/**
 	 * Create a given Config using the registered callback for $name.
 	 * If an object was already created, the same Config object is returned.
-	 * @param string $name of the extension/component you want a Config object for
+	 * @param string $name Name of the extension/component you want a Config object for
 	 *                     'main' is used for core
-	 * @throws ConfigException if a factory function isn't registered for $name
-	 * @throws UnexpectedValueException if the factory function returns a non-Config object
+	 * @throws ConfigException If a factory function isn't registered for $name
+	 * @throws UnexpectedValueException If the factory function returns a non-Config object
 	 * @return Config
 	 */
 	public function makeConfig( $name ) {

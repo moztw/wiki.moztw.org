@@ -5,7 +5,7 @@
 	if ( document.selection && document.selection.createRange ) {
 		// On IE, patch the focus() method to restore the windows' scroll position
 		// (bug 32241)
-		$.fn.extend({
+		$.fn.extend( {
 			focus: ( function ( jqFocus ) {
 				return function () {
 					var $w, state, result;
@@ -19,13 +19,14 @@
 					return jqFocus.apply( this, arguments );
 				};
 			}( $.fn.focus ) )
-		});
+		} );
 	}
 
 	$.fn.textSelection = function ( command, options ) {
 		var fn,
+			alternateFn,
 			context,
-			hasIframe,
+			hasWikiEditor,
 			needSave,
 			retval;
 
@@ -61,6 +62,12 @@
 			 */
 			getContents: function () {
 				return this.val();
+			},
+			/**
+			 * Set the contents of the textarea, replacing anything that was there before
+			 */
+			setContents: function ( content ) {
+				this.val( content );
 			},
 			/**
 			 * Get the currently selected text in this textarea. Will focus the textarea
@@ -110,12 +117,12 @@
 						} else {
 							while ( selText.charAt( selText.length - 1 ) === ' ' ) {
 								// Exclude ending space char
-								selText = selText.substring( 0, selText.length - 1 );
+								selText = selText.slice( 0, -1 );
 								post += ' ';
 							}
 							while ( selText.charAt( 0 ) === ' ' ) {
 								// Exclude prepending space char
-								selText = selText.substring( 1, selText.length );
+								selText = selText.slice( 1 );
 								pre = ' ' + pre;
 							}
 						}
@@ -153,10 +160,10 @@
 								context.fn.restoreCursorAndScrollTop();
 							}
 							if ( options.selectionStart !== undefined ) {
-								$(this).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
+								$( this ).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
 							}
 
-							selText = $(this).textSelection( 'getSelection' );
+							selText = $( this ).textSelection( 'getSelection' );
 							scrollTop = this.scrollTop;
 							range = document.selection.createRange();
 
@@ -194,19 +201,20 @@
 						} else if ( this.selectionStart || this.selectionStart === 0 ) {
 							// Mozilla/Opera
 
-							$(this).focus();
+							$( this ).focus();
 							if ( options.selectionStart !== undefined ) {
-								$(this).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
+								$( this ).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
 							}
 
-							selText = $(this).textSelection( 'getSelection' );
+							selText = $( this ).textSelection( 'getSelection' );
 							startPos = this.selectionStart;
 							endPos = this.selectionEnd;
 							scrollTop = this.scrollTop;
 							checkSelectedText();
-							if ( options.selectionStart !== undefined
-									&& endPos - startPos !== options.selectionEnd - options.selectionStart )
-							{
+							if (
+								options.selectionStart !== undefined &&
+								endPos - startPos !== options.selectionEnd - options.selectionStart
+							) {
 								// This means there is a difference in the selection range returned by browser and what we passed.
 								// This happens for Chrome in the case of composite characters. Ref bug #30130
 								// Set the startPos to the correct position.
@@ -227,8 +235,8 @@
 									post += '\n';
 								}
 							}
-							this.value = this.value.substring( 0, startPos ) + insertText +
-								this.value.substring( endPos, this.value.length );
+							this.value = this.value.slice( 0, startPos ) + insertText +
+								this.value.slice( endPos );
 							// Setting this.value scrolls the textarea to the top, restore the scroll position
 							this.scrollTop = scrollTop;
 							if ( window.opera ) {
@@ -236,7 +244,7 @@
 								selText = selText.replace( /\r?\n/g, '\r\n' );
 								post = post.replace( /\r?\n/g, '\r\n' );
 							}
-							if ( isSample && options.selectPeri && !options.splitlines ) {
+							if ( isSample && options.selectPeri && ( !options.splitlines || ( options.splitlines && selText.indexOf( '\n' ) === -1 ) ) ) {
 								this.selectionStart = startPos + pre.length;
 								this.selectionEnd = startPos + pre.length + selText.length;
 							} else {
@@ -245,9 +253,9 @@
 							}
 						}
 					}
-					$(this).trigger( 'encapsulateSelection', [ options.pre, options.peri, options.post, options.ownline,
+					$( this ).trigger( 'encapsulateSelection', [ options.pre, options.peri, options.post, options.ownline,
 						options.replace, options.spitlines ] );
-				});
+				} );
 			},
 			/**
 			 * Ported from Wikia's LinkSuggest extension
@@ -262,7 +270,7 @@
 			 *
 			 * @fixme document the options parameters
 			 */
-			 getCaretPosition: function ( options ) {
+			getCaretPosition: function ( options ) {
 				function getCaret( e ) {
 					var caretPos = 0,
 						endPos = 0,
@@ -365,7 +373,7 @@
 				return this.each( function () {
 					var selection, length, newLines;
 					// Do nothing if hidden
-					if ( !$(this).is( ':hidden' ) ) {
+					if ( !$( this ).is( ':hidden' ) ) {
 						if ( this.selectionStart || this.selectionStart === 0 ) {
 							// Opera 9.0 doesn't allow setting selectionStart past
 							// selectionEnd; any attempts to do that will be ignored
@@ -395,7 +403,7 @@
 							} catch ( e ) { }
 						}
 					}
-				});
+				} );
 			},
 			/**
 			 * Ported from Wikia's LinkSuggest extension
@@ -458,16 +466,16 @@
 					}
 					return ( $.client.profile().platform === 'mac' ? 13 : ( $.client.profile().platform === 'linux' ? 15 : 16 ) ) * row;
 				}
-				return this.each(function () {
+				return this.each( function () {
 					var scroll, range, savedRange, pos, oldScrollTop;
 					// Do nothing if hidden
-					if ( !$(this).is( ':hidden' ) ) {
+					if ( !$( this ).is( ':hidden' ) ) {
 						if ( this.selectionStart || this.selectionStart === 0 ) {
 							// Mozilla
 							scroll = getCaretScrollPosition( this );
-							if ( options.force || scroll < $(this).scrollTop() ||
-									scroll > $(this).scrollTop() + $(this).height() ) {
-								$(this).scrollTop( scroll );
+							if ( options.force || scroll < $( this ).scrollTop() ||
+									scroll > $( this ).scrollTop() + $( this ).height() ) {
+								$( this ).scrollTop( scroll );
 							}
 						} else if ( document.selection && document.selection.createRange ) {
 							// IE / Opera
@@ -481,11 +489,11 @@
 							 */
 							range = document.body.createTextRange();
 							savedRange = document.selection.createRange();
-							pos = $(this).textSelection( 'getCaretPosition' );
+							pos = $( this ).textSelection( 'getCaretPosition' );
 							oldScrollTop = this.scrollTop;
 							range.moveToElementText( this );
 							range.collapse();
-							range.move( 'character', pos + 1);
+							range.move( 'character', pos + 1 );
 							range.select();
 							if ( this.scrollTop !== oldScrollTop ) {
 								this.scrollTop += range.offsetTop;
@@ -496,16 +504,18 @@
 							savedRange.select();
 						}
 					}
-					$(this).trigger( 'scrollToPosition' );
+					$( this ).trigger( 'scrollToPosition' );
 				} );
 			}
 		};
 
+		alternateFn = $( this ).data( 'jquery.textSelection' );
+
 		// Apply defaults
 		switch ( command ) {
-			//case 'getContents': // no params
-			//case 'setContents': // no params with defaults
-			//case 'getSelection': // no params
+			// case 'getContents': // no params
+			// case 'setContents': // no params with defaults
+			// case 'getSelection': // no params
 			case 'encapsulateSelection':
 				options = $.extend( {
 					pre: '', // Text to insert before the cursor/selection
@@ -531,18 +541,11 @@
 					// Position to start selection at
 					start: undefined,
 					// Position to end selection at. Defaults to start
-					end: undefined,
-					// Element to start selection in (iframe only)
-					startContainer: undefined,
-					// Element to end selection in (iframe only). Defaults to startContainer
-					endContainer: undefined
+					end: undefined
 				}, options );
 
 				if ( options.end === undefined ) {
 					options.end = options.start;
-				}
-				if ( options.endContainer === undefined ) {
-					options.endContainer = options.startContainer;
 				}
 				// FIXME: We may not need character position-based functions if we insert markers in the right places
 				break;
@@ -551,19 +554,30 @@
 					force: false // Force a scroll even if the caret position is already visible
 				}, options );
 				break;
+			case 'register':
+				if ( alternateFn ) {
+					throw new Error( 'Another textSelection API was already registered' );
+				}
+				$( this ).data( 'jquery.textSelection', options );
+				// No need to update alternateFn as this command only stores the options.
+				// A command that uses it will set it again.
+				return;
+			case 'unregister':
+				$( this ).removeData( 'jquery.textSelection' );
+				return;
 		}
 
-		context = $(this).data( 'wikiEditor-context' );
-		hasIframe = context !== undefined && context && context.$iframe !== undefined;
+		context = $( this ).data( 'wikiEditor-context' );
+		hasWikiEditor = ( context !== undefined && context.$iframe !== undefined );
 
 		// IE selection restore voodoo
 		needSave = false;
-		if ( hasIframe && context.savedSelection !== null ) {
+		if ( hasWikiEditor && context.savedSelection !== null ) {
 			context.fn.restoreSelection();
 			needSave = true;
 		}
-		retval = ( hasIframe ? context.fn : fn )[command].call( this, options );
-		if ( hasIframe && needSave ) {
+		retval = ( alternateFn && alternateFn[command] || fn[command] ).call( this, options );
+		if ( hasWikiEditor && needSave ) {
 			context.fn.saveSelection();
 		}
 

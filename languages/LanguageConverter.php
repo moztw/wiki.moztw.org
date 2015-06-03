@@ -24,10 +24,11 @@
  * @ingroup Language
  *
  * @author Zhengzhu Feng <zhengzhu@gmail.com>
- * @maintainers fdcn <fdcn64@gmail.com>, shinjiman <shinjiman@gmail.com>, PhiLiP <philip.npc@gmail.com>
+ * @author fdcn <fdcn64@gmail.com>
+ * @author shinjiman <shinjiman@gmail.com>
+ * @author PhiLiP <philip.npc@gmail.com>
  */
 class LanguageConverter {
-
 	/**
 	 * languages supporting variants
 	 * @since 1.20
@@ -53,7 +54,7 @@ class LanguageConverter {
 	public $mManualLevel;
 
 	/**
-	 * @var string memcached key name
+	 * @var string Memcached key name
 	 */
 	public $mCacheKey;
 
@@ -330,25 +331,22 @@ class LanguageConverter {
 	 * If you want to parse rules, try to use convert() or
 	 * convertTo().
 	 *
-	 * @param $text String the text to be converted
-	 * @param $toVariant bool|string the target language code
-	 * @return String the converted text
+	 * @param string $text The text to be converted
+	 * @param bool|string $toVariant The target language code
+	 * @return string The converted text
 	 */
 	public function autoConvert( $text, $toVariant = false ) {
-		wfProfileIn( __METHOD__ );
 
 		$this->loadTables();
 
 		if ( !$toVariant ) {
 			$toVariant = $this->getPreferredVariant();
 			if ( !$toVariant ) {
-				wfProfileOut( __METHOD__ );
 				return $text;
 			}
 		}
 
 		if ( $this->guessVariant( $text, $toVariant ) ) {
-			wfProfileOut( __METHOD__ );
 			return $text;
 		}
 
@@ -445,7 +443,6 @@ class LanguageConverter {
 			$literalIter->next();
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $output;
 	}
 
@@ -459,14 +456,12 @@ class LanguageConverter {
 	 * @return string Translated text
 	 */
 	public function translate( $text, $variant ) {
-		wfProfileIn( __METHOD__ );
 		// If $text is empty or only includes spaces, do nothing
 		// Otherwise translate it
 		if ( trim( $text ) ) {
 			$this->loadTables();
 			$text = $this->mTables[$variant]->replace( $text );
 		}
-		wfProfileOut( __METHOD__ );
 		return $text;
 	}
 
@@ -477,7 +472,6 @@ class LanguageConverter {
 	 * @return array Variant => converted text
 	 */
 	public function autoConvertToAllVariants( $text ) {
-		wfProfileIn( __METHOD__ );
 		$this->loadTables();
 
 		$ret = array();
@@ -485,14 +479,13 @@ class LanguageConverter {
 			$ret[$variant] = $this->translate( $text, $variant );
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $ret;
 	}
 
 	/**
 	 * Apply manual conversion rules.
 	 *
-	 * @param $convRule ConverterRule Object of ConverterRule
+	 * @param ConverterRule $convRule
 	 */
 	protected function applyManualConv( $convRule ) {
 		// Use syntax -{T|zh-cn:TitleCN; zh-tw:TitleTw}- to custom
@@ -736,12 +729,12 @@ class LanguageConverter {
 	 * If a language supports multiple variants, it is possible that
 	 * non-existing link in one variant actually exists in another variant.
 	 * This function tries to find it. See e.g. LanguageZh.php
+	 * The input parameters may be modified upon return
 	 *
-	 * @param string $link The name of the link
-	 * @param mixed $nt The title object of the link
+	 * @param string &$link The name of the link
+	 * @param Title &$nt The title object of the link
 	 * @param bool $ignoreOtherCond To disable other conditions when
 	 *   we need to transclude a template or update a category's link
-	 * @return void Null, the input parameters may be modified upon return
 	 */
 	public function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
 		# If the article has already existed, there is no need to
@@ -753,6 +746,9 @@ class LanguageConverter {
 		global $wgDisableLangConversion, $wgDisableTitleConversion, $wgRequest;
 		$isredir = $wgRequest->getText( 'redirect', 'yes' );
 		$action = $wgRequest->getText( 'action' );
+		if ( $action == 'edit' && $wgRequest->getBool( 'redlink' ) ) {
+			$action = 'view';
+		}
 		$linkconvert = $wgRequest->getText( 'linkconvert', 'yes' );
 		$disableLinkConversion = $wgDisableLangConversion
 			|| $wgDisableTitleConversion;
@@ -809,15 +805,16 @@ class LanguageConverter {
 	 */
 	public function getExtraHashOptions() {
 		$variant = $this->getPreferredVariant();
+
 		return '!' . $variant;
 	}
 
 	/**
 	 * Guess if a text is written in a variant. This should be implemented in subclasses.
 	 *
-	 * @param string $text the text to be checked
-	 * @param string $variant language code of the variant to be checked for
-	 * @return bool true if $text appears to be written in $variant, false if not
+	 * @param string $text The text to be checked
+	 * @param string $variant Language code of the variant to be checked for
+	 * @return bool True if $text appears to be written in $variant, false if not
 	 *
 	 * @author Nikola Smolenski <smolensk@eunet.rs>
 	 * @since 1.19
@@ -835,6 +832,7 @@ class LanguageConverter {
 	 */
 	function loadDefaultTables() {
 		$name = get_class( $this );
+
 		throw new MWException( "Must implement loadDefaultTables() method in class $name" );
 	}
 
@@ -844,18 +842,18 @@ class LanguageConverter {
 	 * @param bool $fromCache Load from memcached? Defaults to true.
 	 */
 	function loadTables( $fromCache = true ) {
-		global $wgLangConvMemc;
+		global $wgLanguageConverterCacheType;
 
 		if ( $this->mTablesLoaded ) {
 			return;
 		}
 
-		wfProfileIn( __METHOD__ );
 		$this->mTablesLoaded = true;
 		$this->mTables = false;
+		$cache = ObjectCache::getInstance( $wgLanguageConverterCacheType );
 		if ( $fromCache ) {
 			wfProfileIn( __METHOD__ . '-cache' );
-			$this->mTables = $wgLangConvMemc->get( $this->mCacheKey );
+			$this->mTables = $cache->get( $this->mCacheKey );
 			wfProfileOut( __METHOD__ . '-cache' );
 		}
 		if ( !$this->mTables || !array_key_exists( self::CACHE_VERSION_KEY, $this->mTables ) ) {
@@ -872,16 +870,16 @@ class LanguageConverter {
 			$this->postLoadTables();
 			$this->mTables[self::CACHE_VERSION_KEY] = true;
 
-			$wgLangConvMemc->set( $this->mCacheKey, $this->mTables, 43200 );
+			$cache->set( $this->mCacheKey, $this->mTables, 43200 );
 			wfProfileOut( __METHOD__ . '-recache' );
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
 	 * Hook for post processing after conversion tables are loaded.
 	 */
-	function postLoadTables() { }
+	function postLoadTables() {
+	}
 
 	/**
 	 * Reload the conversion tables.
@@ -892,6 +890,7 @@ class LanguageConverter {
 		if ( $this->mTables ) {
 			unset( $this->mTables );
 		}
+
 		$this->mTablesLoaded = false;
 		$this->loadTables( false );
 	}
@@ -1036,7 +1035,7 @@ class LanguageConverter {
 	 * Convert the sorting key for category links. This should make different
 	 * keys that are variants of each other map to the same key.
 	 *
-	 * @param $key string
+	 * @param string $key
 	 *
 	 * @return string
 	 */
@@ -1051,14 +1050,14 @@ class LanguageConverter {
 	 *
 	 * @param WikiPage $page
 	 * @param User $user User object for the current user
-	 * @param Content $content new page content
-	 * @param string $summary edit summary of the edit
-	 * @param bool $isMinor was the edit marked as minor?
-	 * @param bool $isWatch did the user watch this page or not?
-	 * @param string|int $section
+	 * @param Content $content New page content
+	 * @param string $summary Edit summary of the edit
+	 * @param bool $isMinor Was the edit marked as minor?
+	 * @param null $isWatch Unused.
+	 * @param null $section Unused.
 	 * @param int $flags Bitfield
-	 * @param Revision $revision new Revision object or null
-	 * @return bool true
+	 * @param Revision|null $revision New Revision object or null
+	 * @return bool True
 	 */
 	function OnPageContentSaveComplete( $page, $user, $content, $summary, $isMinor,
 			$isWatch, $section, $flags, $revision ) {
@@ -1094,6 +1093,7 @@ class LanguageConverter {
 
 	/**
 	 * Get the cached separator pattern for ConverterRule::parseRules()
+	 * @return string
 	 */
 	function getVarSeparatorPattern() {
 		if ( is_null( $this->mVarSeparatorPattern ) ) {

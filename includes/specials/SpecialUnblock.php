@@ -53,7 +53,7 @@ class SpecialUnblock extends SpecialPage {
 
 		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'unblockip' ) );
-		$out->addModules( 'mediawiki.special' );
+		$out->addModules( array( 'mediawiki.special', 'mediawiki.userSuggest' ) );
 
 		$form = new HTMLForm( $this->getFields(), $this->getContext() );
 		$form->setWrapperLegendMsg( 'unblockip' );
@@ -63,8 +63,10 @@ class SpecialUnblock extends SpecialPage {
 
 		if ( $form->show() ) {
 			switch ( $this->type ) {
-				case Block::TYPE_USER:
 				case Block::TYPE_IP:
+					$out->addWikiMsg( 'unblocked-ip', wfEscapeWikiText( $this->target ) );
+					break;
+				case Block::TYPE_USER:
 					$out->addWikiMsg( 'unblocked', wfEscapeWikiText( $this->target ) );
 					break;
 				case Block::TYPE_RANGE:
@@ -82,14 +84,15 @@ class SpecialUnblock extends SpecialPage {
 		$fields = array(
 			'Target' => array(
 				'type' => 'text',
-				'label-message' => 'ipadressorusername',
-				'tabindex' => '1',
+				'label-message' => 'ipaddressorusername',
+				'autofocus' => true,
 				'size' => '45',
 				'required' => true,
+				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 			),
 			'Name' => array(
 				'type' => 'info',
-				'label-message' => 'ipadressorusername',
+				'label-message' => 'ipaddressorusername',
 			),
 			'Reason' => array(
 				'type' => 'text',
@@ -111,8 +114,14 @@ class SpecialUnblock extends SpecialPage {
 				$fields['Target']['default'] = $target;
 				$fields['Target']['type'] = 'hidden';
 				switch ( $type ) {
-					case Block::TYPE_USER:
 					case Block::TYPE_IP:
+						$fields['Name']['default'] = Linker::linkKnown(
+							SpecialPage::getTitleFor( 'Contributions', $target->getName() ),
+							$target->getName()
+						);
+						$fields['Name']['raw'] = true;
+						break;
+					case Block::TYPE_USER:
 						$fields['Name']['default'] = Linker::link(
 							$target->getUserPage(),
 							$target->getName()
@@ -131,6 +140,9 @@ class SpecialUnblock extends SpecialPage {
 						$fields['Target']['default'] = "#{$this->target}";
 						break;
 				}
+				// target is hidden, so the reason is the first element
+				$fields['Target']['autofocus'] = false;
+				$fields['Reason']['autofocus'] = true;
 			}
 		} else {
 			$fields['Target']['default'] = $this->target;
@@ -144,7 +156,7 @@ class SpecialUnblock extends SpecialPage {
 	 * Submit callback for an HTMLForm object
 	 * @param array $data
 	 * @param HTMLForm $form
-	 * @return Array( Array(message key, parameters)
+	 * @return array|bool Array(message key, parameters)
 	 */
 	public static function processUIUnblock( array $data, HTMLForm $form ) {
 		return self::processUnblock( $data, $form->getContext() );
@@ -153,10 +165,10 @@ class SpecialUnblock extends SpecialPage {
 	/**
 	 * Process the form
 	 *
-	 * @param $data Array
-	 * @param $context IContextSource
+	 * @param array $data
+	 * @param IContextSource $context
 	 * @throws ErrorPageError
-	 * @return Array( Array(message key, parameters) ) on failure, True on success
+	 * @return array|bool Array(message key, parameters) on failure, True on success
 	 */
 	public static function processUnblock( array $data, IContextSource $context ) {
 		$performer = $context->getUser();
@@ -215,8 +227,12 @@ class SpecialUnblock extends SpecialPage {
 		}
 
 		# Make log entry
-		$log = new LogPage( 'block' );
-		$log->addEntry( 'unblock', $page, $data['Reason'], array(), $performer );
+		$logEntry = new ManualLogEntry( 'block', 'unblock' );
+		$logEntry->setTarget( $page );
+		$logEntry->setComment( $data['Reason'] );
+		$logEntry->setPerformer( $performer );
+		$logId = $logEntry->insert();
+		$logEntry->publish( $logId );
 
 		return true;
 	}

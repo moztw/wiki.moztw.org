@@ -3,7 +3,7 @@
  * Parse some wikitext.
  *
  * Wikitext can be given by stdin or using a file. The wikitext will be parsed
- * using 'CLIParser' as a title. This can be overriden with --title option.
+ * using 'CLIParser' as a title. This can be overridden with --title option.
  *
  * Example1:
  * @code
@@ -62,7 +62,12 @@ class CLIParser extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Parse a given wikitext";
-		$this->addOption( 'title', 'Title name for the given wikitext (Default: \'CLIParser\')', false, true );
+		$this->addOption(
+			'title',
+			'Title name for the given wikitext (Default: \'CLIParser\')',
+			false,
+			true
+		);
 		$this->addArg( 'file', 'File containing wikitext (Default: stdin)', false );
 	}
 
@@ -90,7 +95,8 @@ class CLIParser extends Maintenance {
 
 		if ( $input_file === $php_stdin ) {
 			$ctrl = wfIsWindows() ? 'CTRL+Z' : 'CTRL+D';
-			$this->error( basename( __FILE__ ) . ": warning: reading wikitext from STDIN. Press $ctrl to parse.\n" );
+			$this->error( basename( __FILE__ )
+				. ": warning: reading wikitext from STDIN. Press $ctrl to parse.\n" );
 		}
 
 		return file_get_contents( $input_file );
@@ -104,16 +110,16 @@ class CLIParser extends Maintenance {
 
 	/**
 	 * Title object to use for CLI parsing.
-	 * Default title is 'CLIParser', it can be overriden with the option
+	 * Default title is 'CLIParser', it can be overridden with the option
 	 * --title <Your:Title>
 	 *
-	 * @return Title object
+	 * @return Title
 	 */
 	protected function getTitle() {
-		$title =
-			$this->getOption( 'title' )
+		$title = $this->getOption( 'title' )
 			? $this->getOption( 'title' )
 			: 'CLIParser';
+
 		return Title::newFromText( $title );
 	}
 

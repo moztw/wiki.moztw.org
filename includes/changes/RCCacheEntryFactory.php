@@ -39,7 +39,7 @@ class RCCacheEntryFactory {
 
 	/**
 	 * @param RecentChange $baseRC
-	 * @param boolean $watched
+	 * @param bool $watched
 	 *
 	 * @return RCCacheEntry
 	 */
@@ -83,7 +83,7 @@ class RCCacheEntryFactory {
 	 * @param RecentChange $cacheEntry
 	 * @param User $user
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	private function showDiffLinks( RecentChange $cacheEntry, User $user ) {
 		return ChangesList::userCan( $cacheEntry, Revision::DELETED_TEXT, $user );
@@ -97,11 +97,8 @@ class RCCacheEntryFactory {
 	private function buildCLink( RecentChange $cacheEntry ) {
 		$type = $cacheEntry->mAttribs['rc_type'];
 
-		// Page moves, very old style, not supported anymore
-		if ( $type == RC_MOVE || $type == RC_MOVE_OVER_REDIRECT ) {
-			$clink = '';
 		// New unpatrolled pages
-		} elseif ( $cacheEntry->unpatrolled && $type == RC_NEW ) {
+		if ( $cacheEntry->unpatrolled && $type == RC_NEW ) {
 			$clink = Linker::linkKnown( $cacheEntry->getTitle() );
 		// Log entries
 		} elseif ( $type == RC_LOG ) {
@@ -163,7 +160,7 @@ class RCCacheEntryFactory {
 
 	/**
 	 * @param RecentChange $cacheEntry
-	 * @param boolean $showDiffLinks
+	 * @param bool $showDiffLinks
 	 * @param int $counter
 	 *
 	 * @return string
@@ -171,7 +168,7 @@ class RCCacheEntryFactory {
 	private function buildCurLink( RecentChange $cacheEntry, $showDiffLinks, $counter ) {
 		$queryParams = $this->buildCurQueryParams( $cacheEntry );
 		$curMessage = $this->getMessage( 'cur' );
-		$logTypes = array( RC_LOG, RC_MOVE, RC_MOVE_OVER_REDIRECT );
+		$logTypes = array( RC_LOG );
 
 		if ( !$showDiffLinks || in_array( $cacheEntry->mAttribs['rc_type'], $logTypes ) ) {
 			$curLink = $curMessage;
@@ -198,7 +195,7 @@ class RCCacheEntryFactory {
 
 	/**
 	 * @param RecentChange $cacheEntry
-	 * @param boolean $showDiffLinks
+	 * @param bool $showDiffLinks
 	 * @param int $counter
 	 *
 	 * @return string
@@ -206,7 +203,7 @@ class RCCacheEntryFactory {
 	private function buildDiffLink( RecentChange $cacheEntry, $showDiffLinks, $counter ) {
 		$queryParams = $this->buildDiffQueryParams( $cacheEntry );
 		$diffMessage = $this->getMessage( 'diff' );
-		$logTypes = array( RC_NEW, RC_LOG, RC_MOVE, RC_MOVE_OVER_REDIRECT );
+		$logTypes = array( RC_NEW, RC_LOG );
 
 		if ( !$showDiffLinks ) {
 			$diffLink = $diffMessage;
@@ -222,7 +219,7 @@ class RCCacheEntryFactory {
 
 	/**
 	 * @param RecentChange $cacheEntry
-	 * @param boolean $showDiffLinks
+	 * @param bool $showDiffLinks
 	 *
 	 * @return string
 	 */
@@ -230,7 +227,7 @@ class RCCacheEntryFactory {
 		$lastOldid = $cacheEntry->mAttribs['rc_last_oldid'];
 		$lastMessage = $this->getMessage( 'last' );
 		$type = $cacheEntry->mAttribs['rc_type'];
-		$logTypes = array( RC_LOG, RC_MOVE, RC_MOVE_OVER_REDIRECT );
+		$logTypes = array( RC_LOG );
 
 		// Make "last" link
 		if ( !$showDiffLinks || !$lastOldid || in_array( $type, $logTypes ) ) {

@@ -26,6 +26,7 @@
 
 /**
  * API PHP's var_export() output formatter
+ * @deprecated since 1.24
  * @ingroup API
  */
 class ApiFormatDbg extends ApiFormatBase {
@@ -38,10 +39,16 @@ class ApiFormatDbg extends ApiFormatBase {
 	}
 
 	public function execute() {
-		$this->printText( var_export( $this->getResultData(), true ) );
+		$this->markDeprecated();
+		$data = $this->getResult()->getResultData( null, array(
+			'BC' => array(),
+			'Types' => array(),
+			'Strip' => 'all',
+		) );
+		$this->printText( var_export( $data, true ) );
 	}
 
-	public function getDescription() {
-		return 'Output data in PHP\'s var_export() format' . parent::getDescription();
+	public function isDeprecated() {
+		return true;
 	}
 }

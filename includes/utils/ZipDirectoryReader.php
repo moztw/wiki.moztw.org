@@ -64,7 +64,7 @@ class ZipDirectoryReader {
 	 *        valid ZIP64 file, and working out what non-ZIP64 readers will make
 	 *        of such a file is not trivial.
 	 *
-	 * @return Status object. The following fatal errors are defined:
+	 * @return Status A Status object. The following fatal errors are defined:
 	 *
 	 *      - zip-file-open-error: The file could not be opened.
 	 *
@@ -129,6 +129,9 @@ class ZipDirectoryReader {
 
 	/**
 	 * Private constructor
+	 * @param string $fileName
+	 * @param callable $callback
+	 * @param array $options
 	 */
 	protected function __construct( $fileName, $callback, $options ) {
 		$this->fileName = $fileName;
@@ -181,6 +184,9 @@ class ZipDirectoryReader {
 
 	/**
 	 * Throw an error, and log a debug message
+	 * @param mixed $code
+	 * @param string $debugMessage
+	 * @throws ZipDirectoryReaderError
 	 */
 	function error( $code, $debugMessage ) {
 		wfDebug( __CLASS__ . ": Fatal error: $debugMessage\n" );
@@ -299,7 +305,7 @@ class ZipDirectoryReader {
 	 * Find the location of the central directory, as would be seen by a
 	 * non-ZIP64 reader.
 	 *
-	 * @return List containing offset, size and end position.
+	 * @return array List containing offset, size and end position.
 	 */
 	function findOldCentralDirectory() {
 		$size = $this->eocdr['CD size'];
@@ -357,6 +363,8 @@ class ZipDirectoryReader {
 
 	/**
 	 * Read the central directory at the given location
+	 * @param int $offset
+	 * @param int $size
 	 */
 	function readCentralDirectory( $offset, $size ) {
 		$block = $this->getBlock( $offset, $size );
@@ -430,9 +438,7 @@ class ZipDirectoryReader {
 				$year, $month, $day, $hour, $minute, $second );
 
 			// Convert the character set in the file name
-			if ( !function_exists( 'iconv' )
-				|| $this->testBit( $data['general bits'], self::GENERAL_UTF8 )
-			) {
+			if ( $this->testBit( $data['general bits'], self::GENERAL_UTF8 ) ) {
 				$name = $data['name'];
 			} else {
 				$name = iconv( 'CP437', 'UTF-8', $data['name'] );
@@ -450,6 +456,7 @@ class ZipDirectoryReader {
 
 	/**
 	 * Interpret ZIP64 "extra field" data and return an associative array.
+	 * @param string $extraField
 	 * @return array|bool
 	 */
 	function unpackZip64Extra( $extraField ) {
@@ -485,6 +492,7 @@ class ZipDirectoryReader {
 
 	/**
 	 * Get the length of the file.
+	 * @return int
 	 */
 	function getFileLength() {
 		if ( $this->fileLength === null ) {
@@ -546,6 +554,9 @@ class ZipDirectoryReader {
 	 * If there are not enough bytes in the file to satisfy the request, the
 	 * return value will be truncated. If a request is made for a segment beyond
 	 * the end of the file, an empty string will be returned.
+	 *
+	 * @param int $segIndex
+	 *
 	 * @return string
 	 */
 	function getSegment( $segIndex ) {
@@ -571,6 +582,7 @@ class ZipDirectoryReader {
 
 	/**
 	 * Get the size of a structure in bytes. See unpack() for the format of $struct.
+	 * @param array $struct
 	 * @return int
 	 */
 	function getStructSize( $struct ) {
@@ -658,7 +670,7 @@ class ZipDirectoryReader {
 	 * Returns a bit from a given position in an integer value, converted to
 	 * boolean.
 	 *
-	 * @param $value integer
+	 * @param int $value
 	 * @param int $bitIndex The index of the bit, where 0 is the LSB.
 	 * @return bool
 	 */
@@ -668,6 +680,7 @@ class ZipDirectoryReader {
 
 	/**
 	 * Debugging helper function which dumps a string in hexdump -C format.
+	 * @param string $s
 	 */
 	function hexDump( $s ) {
 		$n = strlen( $s );

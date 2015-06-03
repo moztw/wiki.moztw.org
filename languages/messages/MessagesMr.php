@@ -1,8 +1,7 @@
 <?php
 /** Marathi (मराठी)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -124,6 +123,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'सर्वाधिकआवर्तने' ),
 	'Movepage'                  => array( 'पान_हलवा' ),
 	'Mycontributions'           => array( 'माझे_योगदान' ),
+	'MyLanguage'                => array( 'माझीभाषा' ),
 	'Mypage'                    => array( 'माझे_पान' ),
 	'Mytalk'                    => array( 'माझ्या_चर्चा' ),
 	'Newimages'                 => array( 'नवीन_संचिका', 'नवीन_चित्रे' ),
@@ -202,7 +202,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'सदस्यसंख्या', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'सक्रीयसदस्यसंख्या', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'संपादनसंख्या', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'धडकसंख्या', 'प्रेक्षासंख्या', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'लेखनाव', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'लेखानावव', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'नामविश्व', 'NAMESPACE' ),

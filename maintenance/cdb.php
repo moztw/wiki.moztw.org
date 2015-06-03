@@ -21,6 +21,8 @@
  * @todo document
  * @ingroup Maintenance
  */
+use \Cdb\Exception as CdbException;
+use \Cdb\Reader as CdbReader;
 
 /** */
 require_once __DIR__ . '/commandLine.inc';
@@ -77,7 +79,8 @@ do {
 			print "Loading cdb file $file...";
 			try {
 				$fileHandle = CdbReader::open( $file );
-			} catch ( CdbException $e ) {}
+			} catch ( CdbException $e ) {
+			}
 
 			if ( !$fileHandle ) {
 				print "not a cdb file or unable to read it\n";

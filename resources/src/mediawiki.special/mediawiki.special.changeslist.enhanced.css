@@ -1,4 +1,4 @@
-/**
+/*!
  * Styling for Special:Watchlist and Special:RecentChanges when preference 'usenewrc'
  * a.k.a. Enhanced Recent Changes is enabled.
  */
@@ -54,11 +54,6 @@ table.mw-enhanced-rc td.mw-enhanced-rc-nested {
 	zoom: 1;
 	width: 15px;
 	height: 15px;
-}
-
-/* let it look like it is clickable */
-.mw-enhancedchanges-arrow.mw-collapsible-toggle {
-	cursor: pointer;
 }
 
 .mw-enhanced-watched .mw-enhanced-rc-time {

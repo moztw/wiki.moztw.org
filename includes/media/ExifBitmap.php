@@ -80,7 +80,7 @@ class ExifBitmapHandler extends BitmapHandler {
 	}
 
 	/**
-	 * @param $image
+	 * @param File $image
 	 * @param array $metadata
 	 * @return bool|int
 	 */
@@ -125,15 +125,16 @@ class ExifBitmapHandler extends BitmapHandler {
 
 	/**
 	 * @param File $image
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return array|bool
 	 */
-	function formatMetadata( $image ) {
+	function formatMetadata( $image, $context = false ) {
 		$meta = $this->getCommonMetaArray( $image );
 		if ( count( $meta ) === 0 ) {
 			return false;
 		}
 
-		return $this->formatMetadataHelper( $meta );
+		return $this->formatMetadataHelper( $meta, $context );
 	}
 
 	public function getCommonMetaArray( File $file ) {
@@ -173,7 +174,7 @@ class ExifBitmapHandler extends BitmapHandler {
 
 		// Don't just call $image->getMetadata(); FSFile::getPropsFromPath() calls us with a bogus object.
 		// This may mean we read EXIF data twice on initial upload.
-		if ( BitmapHandler::autoRotateEnabled() ) {
+		if ( $this->autoRotateEnabled() ) {
 			$meta = $this->getMetadata( $image, $path );
 			$rotation = $this->getRotationForExif( $meta );
 		} else {
@@ -198,11 +199,11 @@ class ExifBitmapHandler extends BitmapHandler {
 	 * the width and height we normally work with is logical, and will match
 	 * any produced output views.
 	 *
-	 * @param $file File
+	 * @param File $file
 	 * @return int 0, 90, 180 or 270
 	 */
 	public function getRotation( $file ) {
-		if ( !BitmapHandler::autoRotateEnabled() ) {
+		if ( !$this->autoRotateEnabled() ) {
 			return 0;
 		}
 

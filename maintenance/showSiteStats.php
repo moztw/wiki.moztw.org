@@ -41,9 +41,9 @@ class ShowSiteStats extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "Show the cached statistics";
 	}
+
 	public function execute() {
 		$fields = array(
-			'ss_total_views' => 'Total views',
 			'ss_total_edits' => 'Total edits',
 			'ss_good_articles' => 'Number of articles',
 			'ss_total_pages' => 'Total pages',
@@ -65,7 +65,11 @@ class ShowSiteStats extends Maintenance {
 
 		// Show them
 		foreach ( $fields as $field => $desc ) {
-			$this->output( sprintf( "%-{$max_length_desc}s: %{$max_length_value}d\n", $desc, $stats->$field ) );
+			$this->output( sprintf(
+				"%-{$max_length_desc}s: %{$max_length_value}d\n",
+				$desc,
+				$stats->$field
+			) );
 		}
 	}
 }

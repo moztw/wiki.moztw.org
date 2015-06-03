@@ -38,6 +38,9 @@ class ApiPurge extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
+		$continuationManager = new ApiContinuationManager( $this, array(), array() );
+		$this->setContinuationManager( $continuationManager );
+
 		$forceLinkUpdate = $params['forcelinkupdate'];
 		$forceRecursiveLinkUpdate = $params['forcerecursivelinkupdate'];
 		$pageSet = $this->getPageSet();
@@ -50,21 +53,20 @@ class ApiPurge extends ApiBase {
 			ApiQueryBase::addTitleInfo( $r, $title );
 			$page = WikiPage::factory( $title );
 			$page->doPurge(); // Directly purge and skip the UI part of purge().
-			$r['purged'] = '';
+			$r['purged'] = true;
 
 			if ( $forceLinkUpdate || $forceRecursiveLinkUpdate ) {
 				if ( !$this->getUser()->pingLimiter( 'linkpurge' ) ) {
-					global $wgEnableParserCache;
-
 					$popts = $page->makeParserOptions( 'canonical' );
 
 					# Parse content; note that HTML generation is only needed if we want to cache the result.
 					$content = $page->getContent( Revision::RAW );
+					$enableParserCache = $this->getConfig()->get( 'EnableParserCache' );
 					$p_result = $content->getParserOutput(
 						$title,
 						$page->getLatest(),
 						$popts,
-						$wgEnableParserCache
+						$enableParserCache
 					);
 
 					# Update the links tables
@@ -72,9 +74,9 @@ class ApiPurge extends ApiBase {
 						$title, null, $forceRecursiveLinkUpdate, $p_result );
 					DataUpdate::runUpdates( $updates );
 
-					$r['linkupdate'] = '';
+					$r['linkupdate'] = true;
 
-					if ( $wgEnableParserCache ) {
+					if ( $enableParserCache ) {
 						$pcache = ParserCache::singleton();
 						$pcache->save( $p_result, $page, $popts );
 					}
@@ -88,7 +90,7 @@ class ApiPurge extends ApiBase {
 			$result[] = $r;
 		}
 		$apiResult = $this->getResult();
-		$apiResult->setIndexedTagName( $result, 'page' );
+		ApiResult::setIndexedTagName( $result, 'page' );
 		$apiResult->addValue( null, $this->getModuleName(), $result );
 
 		$values = $pageSet->getNormalizedTitlesAsResult( $apiResult );
@@ -103,6 +105,9 @@ class ApiPurge extends ApiBase {
 		if ( $values ) {
 			$apiResult->addValue( null, 'redirects', $values );
 		}
+
+		$this->setContinuationManager( null );
+		$continuationManager->setContinuationIntoResult( $apiResult );
 	}
 
 	/**
@@ -129,7 +134,10 @@ class ApiPurge extends ApiBase {
 	public function getAllowedParams( $flags = 0 ) {
 		$result = array(
 			'forcelinkupdate' => false,
-			'forcerecursivelinkupdate' => false
+			'forcerecursivelinkupdate' => false,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 		);
 		if ( $flags ) {
 			$result += $this->getPageSet()->getFinalParams( $flags );
@@ -138,64 +146,12 @@ class ApiPurge extends ApiBase {
 		return $result;
 	}
 
-	public function getParamDescription() {
-		return $this->getPageSet()->getFinalParamDescription()
-			+ array(
-				'forcelinkupdate' => 'Update the links tables',
-				'forcerecursivelinkupdate' => 'Update the links table, and update ' .
-					'the links tables for any page that uses this page as a template',
-			);
-	}
-
-	public function getResultProperties() {
+	protected function getExamplesMessages() {
 		return array(
-			ApiBase::PROP_LIST => true,
-			'' => array(
-				'ns' => array(
-					ApiBase::PROP_TYPE => 'namespace',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'title' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'pageid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'revid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'invalid' => 'boolean',
-				'special' => 'boolean',
-				'missing' => 'boolean',
-				'purged' => 'boolean',
-				'linkupdate' => 'boolean',
-				'iw' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-			)
-		);
-	}
-
-	public function getDescription() {
-		return array( 'Purge the cache for the given titles.',
-			'Requires a POST request if the user is not logged in.'
-		);
-	}
-
-	public function getPossibleErrors() {
-		return array_merge(
-			parent::getPossibleErrors(),
-			$this->getPageSet()->getFinalPossibleErrors()
-		);
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=purge&titles=Main_Page|API' => 'Purge the "Main Page" and the "API" page',
+			'action=purge&titles=Main_Page|API'
+				=> 'apihelp-purge-example-simple',
+			'action=purge&generator=allpages&gapnamespace=0&gaplimit=10'
+				=> 'apihelp-purge-example-generator',
 		);
 	}
 

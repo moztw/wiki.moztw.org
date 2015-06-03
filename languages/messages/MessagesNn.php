@@ -1,8 +1,7 @@
 <?php
 /** Norwegian Nynorsk (norsk nynorsk)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -36,12 +35,12 @@
  */
 
 /**
-  * @license http://www.gnu.org/copyleft/fdl.html GNU Free Documentation License
-  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License
-  *
-  * @see http://meta.wikimedia.org/w/index.php?title=LanguageNn.php&action=history
-  * @see http://nn.wikipedia.org/w/index.php?title=Brukar:Dittaeva/LanguageNn.php&action=history
-  */
+ * @license http://www.gnu.org/copyleft/fdl.html GNU Free Documentation License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ *
+ * @see http://meta.wikimedia.org/w/index.php?title=LanguageNn.php&action=history
+ * @see http://nn.wikipedia.org/w/index.php?title=Brukar:Dittaeva/LanguageNn.php&action=history
+ */
 
 
 $datePreferences = array(
@@ -102,7 +101,7 @@ $bookstoreList = array(
 );
 
 $magicWords = array(
-	'redirect'                  => array( '0', '#omdiriger', '#REDIRECT' ),
+	'redirect'                  => array( '0', '#OMDIRIGER', '#omdiriger', '#REDIRECT' ),
 	'notoc'                     => array( '0', '__INGAINNHALDSLISTE__', '__INGENINNHOLDSLISTE__', '__NOTOC__' ),
 	'nogallery'                 => array( '0', '__INKJEGALLERI__', '__NOGALLERY__' ),
 	'forcetoc'                  => array( '0', '__ALLTIDINNHALDSLISTE__', '__ALLTIDINNHOLDSLISTE__', '__FORCETOC__' ),
@@ -123,7 +122,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'BRUKARTAL', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'AKTIVEBRUKARAR', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'ENDRINGSTAL', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'VISINGSTAL', 'TALPÅVISINGAR', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'SIDENAMN', 'SIDENAVN', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'SIDENAMNE', 'SIDENAVNE', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'NAMNEROM', 'NAVNEROM', 'NAMESPACE' ),
@@ -144,6 +142,7 @@ $magicWords = array(
 	'img_center'                => array( '1', 'sentrum', 'center', 'centre' ),
 	'img_framed'                => array( '1', 'ramme', 'ramma', 'framed', 'enframed', 'frame' ),
 	'img_frameless'             => array( '1', 'rammelaus', 'frameless' ),
+	'img_lang'                  => array( '1', 'språk=$1', 'lang=$1' ),
 	'img_page'                  => array( '1', 'side=$1', 'side_$1', 'page=$1', 'page $1' ),
 	'img_link'                  => array( '1', 'lenkje=$1', 'lenke=$1', 'link=$1' ),
 	'sitename'                  => array( '1', 'NETTSTADNAMN', 'SITENAME' ),
@@ -268,6 +267,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Flest_endringar' ),
 	'Movepage'                  => array( 'Flytt_side' ),
 	'Mycontributions'           => array( 'Bidraga_mine' ),
+	'MyLanguage'                => array( 'Språket_mitt' ),
 	'Mypage'                    => array( 'Sida_mi' ),
 	'Mytalk'                    => array( 'Diskusjonssida_mi' ),
 	'Myuploads'                 => array( 'Opplastingane_mine' ),
@@ -280,15 +280,18 @@ $specialPageAliases = array(
 	'Protectedpages'            => array( 'Verna_sider' ),
 	'Protectedtitles'           => array( 'Verna_sidenamn' ),
 	'Randompage'                => array( 'Tilfeldig_side' ),
+	'RandomInCategory'          => array( 'Tilfeldig_frå_kategori' ),
 	'Randomredirect'            => array( 'Tilfeldig_omdirigering' ),
 	'Recentchanges'             => array( 'Siste_endringar', 'Siste_endringane' ),
 	'Recentchangeslinked'       => array( 'Relaterte_endringar' ),
+	'Redirect'                  => array( 'Omdiriger' ),
 	'Revisiondelete'            => array( 'Versjonssletting' ),
 	'Search'                    => array( 'Søk' ),
 	'Shortpages'                => array( 'Korte_sider', 'Stutte_sider' ),
 	'Specialpages'              => array( 'Spesialsider', 'Særsider' ),
 	'Statistics'                => array( 'Statistikk' ),
 	'Tags'                      => array( 'Merke' ),
+	'TrackingCategories'        => array( 'Sporingskategoriar' ),
 	'Uncategorizedcategories'   => array( 'Ukategoriserte_kategoriar' ),
 	'Uncategorizedimages'       => array( 'Ukategoriserte_filer' ),
 	'Uncategorizedpages'        => array( 'Ukategoriserte_sider' ),

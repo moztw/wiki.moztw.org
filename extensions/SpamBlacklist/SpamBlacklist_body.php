@@ -34,13 +34,13 @@ class SpamBlacklist extends BaseBlacklist {
 	 *               This is used to load the old links already on the page, so
 	 *               the filter is only applied to links that got added. If not given,
 	 *               the filter is applied to all $links.
+	 * @param boolean $preventLog Whether to prevent logging of hits. Set to true when
+	 *               the action is testing the links rather than attempting to save them
+	 *               (e.g. the API spamblacklist action)
 	 *
 	 * @return Array Matched text(s) if the edit should not be allowed, false otherwise
 	 */
-	function filter( array $links, Title $title = null ) {
-		$fname = 'wfSpamBlacklistFilter';
-		wfProfileIn( $fname );
-
+	function filter( array $links, Title $title = null, $preventLog = false ) {
 		$blacklists = $this->getBlacklists();
 		$whitelists = $this->getWhitelists();
 
@@ -91,13 +91,18 @@ class SpamBlacklist extends BaseBlacklist {
 					wfDebugLog( 'SpamBlacklist', "Match!\n" );
 					global $wgRequest;
 					$ip = $wgRequest->getIP();
-					$imploded = implode( ' ', $matches[0] );
+					$fullUrls = array();
+					$fullLineRegex = substr( $regex, 0, strrpos( $regex, '/' ) ) . '.*/Sim';
+					preg_match_all( $fullLineRegex, $links, $fullUrls );
+					$imploded = implode( ' ', $fullUrls[0] );
 					wfDebugLog( 'SpamBlacklistHit', "$ip caught submitting spam: $imploded\n" );
-					$this->logFilterHit( $title, $imploded ); // Log it
+					if( !$preventLog ) {
+						$this->logFilterHit( $title, $imploded ); // Log it
+					}
 					if( $retVal === false ){
 						$retVal = array();
 					}
-					$retVal = array_merge( $retVal, $matches[1] );
+					$retVal = array_merge( $retVal, $fullUrls[1] );
 				}
 			}
 			if ( is_array( $retVal ) ) {
@@ -106,7 +111,7 @@ class SpamBlacklist extends BaseBlacklist {
 		} else {
 			$retVal = false;
 		}
-		wfProfileOut( $fname );
+
 		return $retVal;
 	}
 

@@ -25,25 +25,29 @@
  * Class for dealing with PoolCounters using class members
  */
 abstract class PoolCounterWork {
-	protected $cacheable = false; //Does this override getCachedWork() ?
+	/** @var string */
+	protected $type = 'generic';
+	/** @var bool */
+	protected $cacheable = false; // does this override getCachedWork() ?
 
 	/**
 	 * @param string $type The type of PoolCounter to use
 	 * @param string $key Key that identifies the queue this work is placed on
 	 */
 	public function __construct( $type, $key ) {
+		$this->type = $type;
 		$this->poolCounter = PoolCounter::factory( $type, $key );
 	}
 
 	/**
 	 * Actually perform the work, caching it if needed
-	 * @return mixed work result or false
+	 * @return mixed Work result or false
 	 */
 	abstract public function doWork();
 
 	/**
 	 * Retrieve the work from cache
-	 * @return mixed work result or false
+	 * @return mixed Work result or false
 	 */
 	public function getCachedWork() {
 		return false;
@@ -52,7 +56,7 @@ abstract class PoolCounterWork {
 	/**
 	 * A work not so good (eg. expired one) but better than an error
 	 * message.
-	 * @return mixed work result or false
+	 * @return mixed Work result or false
 	 */
 	public function fallback() {
 		return false;
@@ -60,6 +64,9 @@ abstract class PoolCounterWork {
 
 	/**
 	 * Do something with the error, like showing it to the user.
+	 *
+	 * @param Status $status
+	 *
 	 * @return bool
 	 */
 	public function error( $status ) {
@@ -69,13 +76,13 @@ abstract class PoolCounterWork {
 	/**
 	 * Log an error
 	 *
-	 * @param $status Status
+	 * @param Status $status
 	 * @return void
 	 */
 	public function logError( $status ) {
 		$key = $this->poolCounter->getKey();
 
-		wfDebugLog( 'poolcounter', "Pool key '$key': "
+		wfDebugLog( 'poolcounter', "Pool key '$key' ({$this->type}): "
 			. $status->getMessage()->inLanguage( 'en' )->useDatabase( false )->text() );
 	}
 
@@ -91,7 +98,7 @@ abstract class PoolCounterWork {
 	 *   - c) fallback()     : Applies for all remaining cases.
 	 * If these all fall through (by returning false), then the result of error() is returned.
 	 *
-	 * @param $skipcache bool
+	 * @param bool $skipcache
 	 * @return mixed
 	 */
 	public function execute( $skipcache = false ) {
@@ -108,6 +115,10 @@ abstract class PoolCounterWork {
 		}
 
 		switch ( $status->value ) {
+			case PoolCounter::LOCK_HELD:
+				// Better to ignore nesting pool counter limits than to fail.
+				// Assume that the outer pool limiting is reasonable enough.
+				/* no break */
 			case PoolCounter::LOCKED:
 				$result = $this->doWork();
 				$this->poolCounter->release();
@@ -145,75 +156,5 @@ abstract class PoolCounterWork {
 				$this->logError( $status );
 				return $this->error( $status );
 		}
-	}
-}
-
-/**
- * Convenience class for dealing with PoolCounters using callbacks
- * @since 1.22
- */
-class PoolCounterWorkViaCallback extends PoolCounterWork {
-	/** @var callable */
-	protected $doWork;
-	/** @var callable|null */
-	protected $doCachedWork;
-	/** @var callable|null */
-	protected $fallback;
-	/** @var callable|null */
-	protected $error;
-
-	/**
-	 * Build a PoolCounterWork class from a type, key, and callback map.
-	 *
-	 * The callback map must at least have a callback for the 'doWork' method.
-	 * Additionally, callbacks can be provided for the 'doCachedWork', 'fallback',
-	 * and 'error' methods. Methods without callbacks will be no-ops that return false.
-	 * If a 'doCachedWork' callback is provided, then execute() may wait for any prior
-	 * process in the pool to finish and reuse its cached result.
-	 *
-	 * @param string $type
-	 * @param string $key
-	 * @param array $callbacks Map of callbacks
-	 * @throws MWException
-	 */
-	public function __construct( $type, $key, array $callbacks ) {
-		parent::__construct( $type, $key );
-		foreach ( array( 'doWork', 'doCachedWork', 'fallback', 'error' ) as $name ) {
-			if ( isset( $callbacks[$name] ) ) {
-				if ( !is_callable( $callbacks[$name] ) ) {
-					throw new MWException( "Invalid callback provided for '$name' function." );
-				}
-				$this->$name = $callbacks[$name];
-			}
-		}
-		if ( !isset( $this->doWork ) ) {
-			throw new MWException( "No callback provided for 'doWork' function." );
-		}
-		$this->cacheable = isset( $this->doCachedWork );
-	}
-
-	public function doWork() {
-		return call_user_func_array( $this->doWork, array() );
-	}
-
-	public function getCachedWork() {
-		if ( $this->doCachedWork ) {
-			return call_user_func_array( $this->doCachedWork, array() );
-		}
-		return false;
-	}
-
-	public function fallback() {
-		if ( $this->fallback ) {
-			return call_user_func_array( $this->fallback, array() );
-		}
-		return false;
-	}
-
-	public function error( $status ) {
-		if ( $this->error ) {
-			return call_user_func_array( $this->error, array( $status ) );
-		}
-		return false;
 	}
 }

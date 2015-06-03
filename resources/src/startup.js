@@ -7,15 +7,14 @@
 var mediaWikiLoadStart = ( new Date() ).getTime();
 
 /**
- * Returns false when run in a black-listed browser
+ * Returns false for Grade C supported browsers.
  *
- * This function will be deleted after it's used, so do not expand it to be
- * generally useful beyond startup.
+ * This function should only be used by the Startup module, do not expand it to
+ * be generally useful beyond startup.
  *
  * See also:
- * - https://www.mediawiki.org/wiki/Compatibility#Browser
- * - http://jquerymobile.com/gbs/
- * - http://jquery.com/browser-support/
+ * - https://www.mediawiki.org/wiki/Compatibility#Browsers
+ * - https://jquery.com/browser-support/
  */
 
 /*jshint unused: false */
@@ -24,12 +23,21 @@ function isCompatible( ua ) {
 		ua = navigator.userAgent;
 	}
 
-	// MediaWiki JS or jQuery is known to have issues with:
+	// Browsers with outdated or limited JavaScript engines get the no-JS experience
 	return !(
-		// Internet Explorer < 6
-		( ua.indexOf( 'MSIE' ) !== -1 && parseFloat( ua.split( 'MSIE' )[1] ) < 6 ) ||
+		// Internet Explorer < 8
+		( ua.indexOf( 'MSIE' ) !== -1 && parseFloat( ua.split( 'MSIE' )[1] ) < 8 ) ||
 		// Firefox < 3
 		( ua.indexOf( 'Firefox/' ) !== -1 && parseFloat( ua.split( 'Firefox/' )[1] ) < 3 ) ||
+		// Opera < 12
+		( ua.indexOf( 'Opera/' ) !== -1 && ( ua.indexOf( 'Version/' ) === -1 ?
+			// "Opera/x.y"
+			parseFloat( ua.split( 'Opera/' )[1] ) < 10 :
+			// "Opera/9.80 ... Version/x.y"
+			parseFloat( ua.split( 'Version/' )[1] ) < 12
+		) ) ||
+		// "Mozilla/0.0 ... Opera x.y"
+		( ua.indexOf( 'Opera ' ) !== -1 && parseFloat( ua.split( ' Opera ' )[1] ) < 10 ) ||
 		// BlackBerry < 6
 		ua.match( /BlackBerry[^\/]*\/[1-5]\./ ) ||
 		// Open WebOS < 1.5

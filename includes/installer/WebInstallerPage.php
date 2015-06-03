@@ -133,7 +133,7 @@ abstract class WebInstallerPage {
 	 * @return string
 	 */
 	public function getName() {
-		return str_replace( 'WebInstaller_', '', get_class( $this ) );
+		return str_replace( 'WebInstaller', '', get_class( $this ) );
 	}
 
 	/**
@@ -145,11 +145,12 @@ abstract class WebInstallerPage {
 
 	/**
 	 * @param string $var
+	 * @param mixed $default
 	 *
 	 * @return mixed
 	 */
-	public function getVar( $var ) {
-		return $this->parent->getVar( $var );
+	public function getVar( $var, $default = null ) {
+		return $this->parent->getVar( $var, $default );
 	}
 
 	/**
@@ -163,7 +164,7 @@ abstract class WebInstallerPage {
 	/**
 	 * Get the starting tags of a fieldset.
 	 *
-	 * @param string $legend message name
+	 * @param string $legend Message name
 	 *
 	 * @return string
 	 */
@@ -186,7 +187,7 @@ abstract class WebInstallerPage {
 	protected function startLiveBox() {
 		$this->addHTML(
 			'<div id="config-spinner" style="display:none;">' .
-			'<img src="../skins/common/images/ajax-loader.gif" /></div>' .
+			'<img src="images/ajax-loader.gif" /></div>' .
 			'<script>jQuery( "#config-spinner" ).show();</script>' .
 			'<div id="config-live-log">' .
 			'<textarea name="LiveLog" rows="10" cols="30" readonly="readonly">'
@@ -205,7 +206,7 @@ abstract class WebInstallerPage {
 
 }
 
-class WebInstaller_Language extends WebInstallerPage {
+class WebInstallerLanguage extends WebInstallerPage {
 
 	/**
 	 * @return string|null
@@ -306,7 +307,7 @@ class WebInstaller_Language extends WebInstallerPage {
 
 }
 
-class WebInstaller_ExistingWiki extends WebInstallerPage {
+class WebInstallerExistingWiki extends WebInstallerPage {
 
 	/**
 	 * @return string
@@ -470,7 +471,7 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 
 }
 
-class WebInstaller_Welcome extends WebInstallerPage {
+class WebInstallerWelcome extends WebInstallerPage {
 
 	/**
 	 * @return string
@@ -499,7 +500,7 @@ class WebInstaller_Welcome extends WebInstallerPage {
 
 }
 
-class WebInstaller_DBConnect extends WebInstallerPage {
+class WebInstallerDBConnect extends WebInstallerPage {
 
 	/**
 	 * @return string|null When string, "skip" or "continue"
@@ -600,7 +601,7 @@ class WebInstaller_DBConnect extends WebInstallerPage {
 
 }
 
-class WebInstaller_Upgrade extends WebInstallerPage {
+class WebInstallerUpgrade extends WebInstallerPage {
 
 	/**
 	 * @return bool Always true.
@@ -691,7 +692,7 @@ class WebInstaller_Upgrade extends WebInstallerPage {
 
 }
 
-class WebInstaller_DBSettings extends WebInstallerPage {
+class WebInstallerDBSettings extends WebInstallerPage {
 
 	/**
 	 * @return string|null
@@ -725,7 +726,7 @@ class WebInstaller_DBSettings extends WebInstallerPage {
 
 }
 
-class WebInstaller_Name extends WebInstallerPage {
+class WebInstallerName extends WebInstallerPage {
 
 	/**
 	 * @return string
@@ -790,11 +791,14 @@ class WebInstaller_Name extends WebInstallerPage {
 				'label' => 'config-admin-password',
 			) ) .
 			$this->parent->getPasswordBox( array(
-				'var' => '_AdminPassword2',
+				'var' => '_AdminPasswordConfirm',
 				'label' => 'config-admin-password-confirm'
 			) ) .
 			$this->parent->getTextBox( array(
 				'var' => '_AdminEmail',
+				'attribs' => array(
+					'dir' => 'ltr',
+				),
 				'label' => 'config-admin-email',
 				'help' => $this->parent->getHelpBox( 'config-admin-email-help' )
 			) ) .
@@ -829,7 +833,7 @@ class WebInstaller_Name extends WebInstallerPage {
 	public function submit() {
 		$retVal = true;
 		$this->parent->setVarsFromRequest( array( 'wgSitename', '_NamespaceType',
-			'_AdminName', '_AdminPassword', '_AdminPassword2', '_AdminEmail',
+			'_AdminName', '_AdminPassword', '_AdminPasswordConfirm', '_AdminEmail',
 			'_Subscribe', '_SkipOptional', 'wgMetaNamespace' ) );
 
 		// Validate site name
@@ -911,7 +915,7 @@ class WebInstaller_Name extends WebInstallerPage {
 			# $user->getPasswordValidity just checks for $wgMinimalPasswordLength.
 			# This message is more specific and helpful.
 			$msg = 'config-admin-password-blank';
-		} elseif ( $pwd !== $this->getVar( '_AdminPassword2' ) ) {
+		} elseif ( $pwd !== $this->getVar( '_AdminPasswordConfirm' ) ) {
 			$msg = 'config-admin-password-mismatch';
 		} elseif ( $valid !== true ) {
 			$msg = $valid;
@@ -919,7 +923,7 @@ class WebInstaller_Name extends WebInstallerPage {
 		if ( $msg !== false ) {
 			call_user_func_array( array( $this->parent, 'showError' ), (array)$msg );
 			$this->setVar( '_AdminPassword', '' );
-			$this->setVar( '_AdminPassword2', '' );
+			$this->setVar( '_AdminPasswordConfirm', '' );
 			$retVal = false;
 		}
 
@@ -941,13 +945,14 @@ class WebInstaller_Name extends WebInstallerPage {
 
 }
 
-class WebInstaller_Options extends WebInstallerPage {
+class WebInstallerOptions extends WebInstallerPage {
 
 	/**
 	 * @return string|null
 	 */
 	public function execute() {
 		if ( $this->getVar( '_SkipOptional' ) == 'skip' ) {
+			$this->submitSkins();
 			return 'skip';
 		}
 		if ( $this->parent->request->wasPosted() ) {
@@ -1024,6 +1029,41 @@ class WebInstaller_Options extends WebInstallerPage {
 			"</div>" .
 			$this->getFieldSetEnd()
 		);
+
+		$skins = $this->parent->findExtensions( 'skins' );
+		$skinHtml = $this->getFieldSetStart( 'config-skins' );
+
+		$skinNames = array_map( 'strtolower', $skins );
+		$chosenSkinName = $this->getVar( 'wgDefaultSkin', $this->parent->getDefaultSkin( $skinNames ) );
+
+		if ( $skins ) {
+			$radioButtons = $this->parent->getRadioElements( array(
+				'var' => 'wgDefaultSkin',
+				'itemLabels' => array_fill_keys( $skinNames, 'config-skins-use-as-default' ),
+				'values' => $skinNames,
+				'value' => $chosenSkinName,
+			) );
+
+			foreach ( $skins as $skin ) {
+				$skinHtml .=
+					'<div class="config-skins-item">' .
+					$this->parent->getCheckBox( array(
+						'var' => "skin-$skin",
+						'rawtext' => $skin,
+						'value' => $this->getVar( "skin-$skin", true ), // all found skins enabled by default
+					) ) .
+					'<div class="config-skins-use-as-default">' . $radioButtons[strtolower( $skin )] . '</div>' .
+					'</div>';
+			}
+		} else {
+			$skinHtml .=
+				$this->parent->getWarningBox( wfMessage( 'config-skins-missing' )->plain() ) .
+				Html::hidden( 'config_wgDefaultSkin', $chosenSkinName );
+		}
+
+		$skinHtml .= $this->parent->getHelpBox( 'config-skins-help' ) .
+			$this->getFieldSetEnd();
+		$this->addHTML( $skinHtml );
 
 		$extensions = $this->parent->findExtensions();
 
@@ -1142,8 +1182,8 @@ class WebInstaller_Options extends WebInstallerPage {
 			'config_wgRightsIcon' => '[license_button]',
 		) );
 		$styleUrl = $server . dirname( dirname( $this->parent->getUrl() ) ) .
-			'/skins/common/config-cc.css';
-		$iframeUrl = 'http://creativecommons.org/license/?' .
+			'/mw-config/config-cc.css';
+		$iframeUrl = '//creativecommons.org/license/?' .
 			wfArrayToCgi( array(
 				'partner' => 'MediaWiki',
 				'exit_url' => $exitUrl,
@@ -1221,6 +1261,24 @@ class WebInstaller_Options extends WebInstallerPage {
 	}
 
 	/**
+	 * If the user skips this installer page, we still need to set up the default skins, but ignore
+	 * everything else.
+	 *
+	 * @return bool
+	 */
+	public function submitSkins() {
+		$skins = $this->parent->findExtensions( 'skins' );
+		$this->parent->setVar( '_Skins', $skins );
+
+		if ( $skins ) {
+			$skinNames = array_map( 'strtolower', $skins );
+			$this->parent->setVar( 'wgDefaultSkin', $this->parent->getDefaultSkin( $skinNames ) );
+		}
+
+		return true;
+	}
+
+	/**
 	 * @return bool
 	 */
 	public function submit() {
@@ -1228,10 +1286,11 @@ class WebInstaller_Options extends WebInstallerPage {
 			'wgEnableEmail', 'wgPasswordSender', 'wgEnableUploads', 'wgLogo',
 			'wgEnableUserEmail', 'wgEnotifUserTalk', 'wgEnotifWatchlist',
 			'wgEmailAuthentication', 'wgMainCacheType', '_MemCachedServers',
-			'wgUseInstantCommons' ) );
+			'wgUseInstantCommons', 'wgDefaultSkin' ) );
 
-		if ( !array_key_exists( $this->getVar( '_RightsProfile' ), $this->parent->rightsProfiles )
-		) {
+		$retVal = true;
+
+		if ( !array_key_exists( $this->getVar( '_RightsProfile' ), $this->parent->rightsProfiles ) ) {
 			reset( $this->parent->rightsProfiles );
 			$this->setVar( '_RightsProfile', key( $this->parent->rightsProfiles ) );
 		}
@@ -1240,8 +1299,7 @@ class WebInstaller_Options extends WebInstallerPage {
 		if ( $code == 'cc-choose' ) {
 			if ( !$this->getVar( '_CCDone' ) ) {
 				$this->parent->showError( 'config-cc-not-chosen' );
-
-				return false;
+				$retVal = false;
 			}
 		} elseif ( array_key_exists( $code, $this->parent->licenses ) ) {
 			// Messages:
@@ -1262,10 +1320,32 @@ class WebInstaller_Options extends WebInstallerPage {
 			$this->setVar( 'wgRightsIcon', '' );
 		}
 
+		$skinsAvailable = $this->parent->findExtensions( 'skins' );
+		$skinsToInstall = array();
+		foreach ( $skinsAvailable as $skin ) {
+			$this->parent->setVarsFromRequest( array( "skin-$skin" ) );
+			if ( $this->getVar( "skin-$skin" ) ) {
+				$skinsToInstall[] = $skin;
+			}
+		}
+		$this->parent->setVar( '_Skins', $skinsToInstall );
+
+		if ( !$skinsToInstall && $skinsAvailable ) {
+			$this->parent->showError( 'config-skins-must-enable-some' );
+			$retVal = false;
+		}
+		$defaultSkin = $this->getVar( 'wgDefaultSkin' );
+		$skinsToInstallLowercase = array_map( 'strtolower', $skinsToInstall );
+		if ( $skinsToInstall && array_search( $defaultSkin, $skinsToInstallLowercase ) === false ) {
+			$this->parent->showError( 'config-skins-must-enable-default' );
+			$retVal = false;
+		}
+
 		$extsAvailable = $this->parent->findExtensions();
 		$extsToInstall = array();
 		foreach ( $extsAvailable as $ext ) {
-			if ( $this->parent->request->getCheck( 'config_ext-' . $ext ) ) {
+			$this->parent->setVarsFromRequest( array( "ext-$ext" ) );
+			if ( $this->getVar( "ext-$ext" ) ) {
 				$extsToInstall[] = $ext;
 			}
 		}
@@ -1275,8 +1355,7 @@ class WebInstaller_Options extends WebInstallerPage {
 			$memcServers = explode( "\n", $this->getVar( '_MemCachedServers' ) );
 			if ( !$memcServers ) {
 				$this->parent->showError( 'config-memcache-needservers' );
-
-				return false;
+				$retVal = false;
 			}
 
 			foreach ( $memcServers as $server ) {
@@ -1286,26 +1365,23 @@ class WebInstaller_Options extends WebInstallerPage {
 						&& ( gethostbyname( $memcParts[0] ) == $memcParts[0] ) )
 				) {
 					$this->parent->showError( 'config-memcache-badip', $memcParts[0] );
-
-					return false;
+					$retVal = false;
 				} elseif ( !isset( $memcParts[1] ) ) {
 					$this->parent->showError( 'config-memcache-noport', $memcParts[0] );
-
-					return false;
+					$retVal = false;
 				} elseif ( $memcParts[1] < 1 || $memcParts[1] > 65535 ) {
 					$this->parent->showError( 'config-memcache-badport', 1, 65535 );
-
-					return false;
+					$retVal = false;
 				}
 			}
 		}
 
-		return true;
+		return $retVal;
 	}
 
 }
 
-class WebInstaller_Install extends WebInstallerPage {
+class WebInstallerInstall extends WebInstallerPage {
 
 	/**
 	 * @return bool Always true.
@@ -1380,7 +1456,7 @@ class WebInstaller_Install extends WebInstallerPage {
 
 }
 
-class WebInstaller_Complete extends WebInstallerPage {
+class WebInstallerComplete extends WebInstallerPage {
 
 	public function execute() {
 		// Pop up a dialog box, to make it difficult for the user to forget
@@ -1390,7 +1466,7 @@ class WebInstaller_Complete extends WebInstallerPage {
 			strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== false
 		) {
 			// JS appears to be the only method that works consistently with IE7+
-			$this->addHtml( "\n<script>jQuery( function () { document.location = " .
+			$this->addHtml( "\n<script>jQuery( function () { location.href = " .
 				Xml::encodeJsVar( $lsUrl ) . "; } );</script>\n" );
 		} else {
 			$this->parent->request->response()->header( "Refresh: 0;url=$lsUrl" );
@@ -1418,7 +1494,7 @@ class WebInstaller_Complete extends WebInstallerPage {
 
 }
 
-class WebInstaller_Restart extends WebInstallerPage {
+class WebInstallerRestart extends WebInstallerPage {
 
 	/**
 	 * @return string|null
@@ -1444,7 +1520,7 @@ class WebInstaller_Restart extends WebInstallerPage {
 
 }
 
-abstract class WebInstaller_Document extends WebInstallerPage {
+abstract class WebInstallerDocument extends WebInstallerPage {
 
 	/**
 	 * @return string
@@ -1473,7 +1549,7 @@ abstract class WebInstaller_Document extends WebInstallerPage {
 
 }
 
-class WebInstaller_Readme extends WebInstaller_Document {
+class WebInstallerReadme extends WebInstallerDocument {
 
 	/**
 	 * @return string
@@ -1484,7 +1560,7 @@ class WebInstaller_Readme extends WebInstaller_Document {
 
 }
 
-class WebInstaller_ReleaseNotes extends WebInstaller_Document {
+class WebInstallerReleaseNotes extends WebInstallerDocument {
 
 	/**
 	 * @throws MWException
@@ -1502,7 +1578,7 @@ class WebInstaller_ReleaseNotes extends WebInstaller_Document {
 
 }
 
-class WebInstaller_UpgradeDoc extends WebInstaller_Document {
+class WebInstallerUpgradeDoc extends WebInstallerDocument {
 
 	/**
 	 * @return string
@@ -1513,7 +1589,7 @@ class WebInstaller_UpgradeDoc extends WebInstaller_Document {
 
 }
 
-class WebInstaller_Copying extends WebInstaller_Document {
+class WebInstallerCopying extends WebInstallerDocument {
 
 	/**
 	 * @return string

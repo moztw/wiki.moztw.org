@@ -1,8 +1,7 @@
 <?php
 /** Dutch (Nederlands)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -147,7 +146,6 @@ $magicWords = array(
 	'numberofusers'             => array( '1', 'AANTALGEBRUIKERS', 'NUMBEROFUSERS' ),
 	'numberofactiveusers'       => array( '1', 'AANTALACTIEVEGEBRUIKERS', 'ACTIEVEGEBRUIKERS', 'NUMBEROFACTIVEUSERS' ),
 	'numberofedits'             => array( '1', 'AANTALBEWERKINGEN', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'AANTALKERENBEKEKEN', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'PAGINANAAM', 'PAGENAME' ),
 	'pagenamee'                 => array( '1', 'PAGINANAAME', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'NAAMRUIMTE', 'NAMESPACE' ),
@@ -276,6 +274,7 @@ $specialPageAliases = array(
 	'Allmessages'               => array( 'AlleBerichten', 'Systeemberichten' ),
 	'AllMyUploads'              => array( 'AlMijnUploads' ),
 	'Allpages'                  => array( 'AllePaginas', 'AllePagina’s', 'AllePagina\'s' ),
+	'ApiHelp'                   => array( 'ApiHulp' ),
 	'Ancientpages'              => array( 'OudstePaginas', 'OudstePagina’s', 'OudstePagina\'s' ),
 	'Badtitle'                  => array( 'OnjuistePaginanaam' ),
 	'Blankpage'                 => array( 'LegePagina' ),
@@ -308,11 +307,13 @@ $specialPageAliases = array(
 	'Listfiles'                 => array( 'Bestandenlijst', 'Afbeeldingenlijst' ),
 	'Listgrouprights'           => array( 'GroepsrechtenWeergeven' ),
 	'Listredirects'             => array( 'Doorverwijzinglijst', 'Redirectlijst' ),
+	'ListDuplicatedFiles'       => array( 'DuplicaatbestandenWeergeven' ),
 	'Listusers'                 => array( 'Gebruikerslijst', 'Gebruikerlijst' ),
 	'Lockdb'                    => array( 'DBblokkeren', 'DbBlokkeren', 'BlokkeerDB' ),
 	'Log'                       => array( 'Logboeken', 'Logboek' ),
 	'Lonelypages'               => array( 'Weespaginas', 'Weespagina\'s' ),
 	'Longpages'                 => array( 'LangePaginas', 'LangePagina’s', 'LangePagina\'s' ),
+	'MediaStatistics'           => array( 'Mediastatistieken' ),
 	'MergeHistory'              => array( 'GeschiedenisSamenvoegen' ),
 	'MIMEsearch'                => array( 'MIMEzoeken', 'MIME-zoeken' ),
 	'Mostcategories'            => array( 'MeesteCategorieën' ),
@@ -324,12 +325,14 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'MeesteVersies', 'MeesteHerzieningen', 'MeesteRevisies' ),
 	'Movepage'                  => array( 'PaginaHernoemen', 'PaginaVerplaatsen', 'TitelWijzigen', 'VerplaatsPagina' ),
 	'Mycontributions'           => array( 'MijnBijdragen' ),
+	'MyLanguage'                => array( 'MijnTaal' ),
 	'Mypage'                    => array( 'MijnPagina' ),
 	'Mytalk'                    => array( 'MijnOverleg' ),
 	'Myuploads'                 => array( 'MijnUploads' ),
 	'Newimages'                 => array( 'NieuweBestanden', 'NieuweAfbeeldingen' ),
 	'Newpages'                  => array( 'NieuwePaginas', 'NieuwePagina’s', 'NieuwePagina\'s' ),
 	'PagesWithProp'             => array( 'PaginasMetEigenschap', 'Pagina\'sMetEigenschap' ),
+	'PageLanguage'              => array( 'Paginataal' ),
 	'PasswordReset'             => array( 'WachtwoordOpnieuwInstellen' ),
 	'PermanentLink'             => array( 'PermanenteVerwijzing' ),
 	'Popularpages'              => array( 'PopulairePaginas', 'PopulairePagina’s', 'PopulairePagina\'s' ),
@@ -345,11 +348,13 @@ $specialPageAliases = array(
 	'Redirect'                  => array( 'Doorverwijzen' ),
 	'ResetTokens'               => array( 'TokensOpnieuwInstellen' ),
 	'Revisiondelete'            => array( 'VersieVerwijderen', 'HerzieningVerwijderen', 'RevisieVerwijderen' ),
+	'RunJobs'                   => array( 'TakenUitvoeren' ),
 	'Search'                    => array( 'Zoeken' ),
 	'Shortpages'                => array( 'KortePaginas', 'KortePagina’s', 'KortePagina\'s' ),
 	'Specialpages'              => array( 'SpecialePaginas', 'SpecialePagina’s', 'SpecialePagina\'s' ),
 	'Statistics'                => array( 'Statistieken' ),
 	'Tags'                      => array( 'Labels' ),
+	'TrackingCategories'        => array( 'Trackingcategorieen' ),
 	'Unblock'                   => array( 'Deblokkeren' ),
 	'Uncategorizedcategories'   => array( 'NietGecategoriseerdeCategorieën', 'Niet-GecategoriseerdeCategorieën' ),
 	'Uncategorizedimages'       => array( 'NietGecategoriseerdeBestanden', 'NietGecategoriseerdeAfbeeldingen', 'Niet-GecategoriseerdeAfbeeldingen' ),

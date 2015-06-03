@@ -17,7 +17,7 @@ mediaWiki.language.convertGrammar = function ( word, form ) {
 	if ( word.match( /wiki$/i ) ) {
 		aou = false;
 	}
-	//append i after final consonant
+	// append i after final consonant
 	if ( word.match( /[bcdfghjklmnpqrstvwxz]$/i ) ) {
 		word += 'i';
 	}
@@ -34,7 +34,7 @@ mediaWiki.language.convertGrammar = function ( word, form ) {
 			break;
 		case 'illative':
 			// Double the last letter and add 'n'
-			word += word.substr(  word.length - 1 ) + 'n';
+			word += word.slice( -1 ) + 'n';
 			break;
 		case 'inessive':
 			word += ( aou ? 'ssa' : 'ssä' );

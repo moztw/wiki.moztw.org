@@ -94,6 +94,7 @@ class JobQueueGroup {
 		} else {
 			$conf = $conf + $wgJobTypeConf['default'];
 		}
+		$conf['aggregator'] = JobQueueAggregator::singleton();
 
 		return JobQueue::factory( $conf );
 	}
@@ -104,14 +105,14 @@ class JobQueueGroup {
 	 * This inserts the jobs into the queue specified by $wgJobTypeConf
 	 * and updates the aggregate job queue information cache as needed.
 	 *
-	 * @param Job|array $jobs A single Job or a list of Jobs
+	 * @param Job|Job[] $jobs A single Job or a list of Jobs
 	 * @throws MWException
-	 * @return bool
+	 * @return void
 	 */
 	public function push( $jobs ) {
 		$jobs = is_array( $jobs ) ? $jobs : array( $jobs );
 		if ( !count( $jobs ) ) {
-			return true;
+			return;
 		}
 
 		$jobsByType = array(); // (job type => list of jobs)
@@ -123,13 +124,8 @@ class JobQueueGroup {
 			}
 		}
 
-		$ok = true;
 		foreach ( $jobsByType as $type => $jobs ) {
-			if ( $this->get( $type )->push( $jobs ) ) {
-				JobQueueAggregator::singleton()->notifyQueueNonEmpty( $this->wiki, $type );
-			} else {
-				$ok = false;
-			}
+			$this->get( $type )->push( $jobs );
 		}
 
 		if ( $this->cache->has( 'queues-ready', 'list' ) ) {
@@ -138,8 +134,6 @@ class JobQueueGroup {
 				$this->cache->clear( 'queues-ready' );
 			}
 		}
-
-		return $ok;
 	}
 
 	/**
@@ -159,9 +153,6 @@ class JobQueueGroup {
 		if ( is_string( $qtype ) ) { // specific job type
 			if ( !in_array( $qtype, $blacklist ) ) {
 				$job = $this->get( $qtype )->pop();
-				if ( !$job ) {
-					JobQueueAggregator::singleton()->notifyQueueEmpty( $this->wiki, $qtype );
-				}
 			}
 		} else { // any job in the "default" jobs types
 			if ( $flags & self::USE_CACHE ) {
@@ -185,7 +176,6 @@ class JobQueueGroup {
 				if ( $job ) { // found
 					break;
 				} else { // not found
-					JobQueueAggregator::singleton()->notifyQueueEmpty( $this->wiki, $type );
 					$this->cache->clear( 'queues-ready' );
 				}
 			}
@@ -226,12 +216,10 @@ class JobQueueGroup {
 	public function waitForBackups() {
 		global $wgJobTypeConf;
 
-		wfProfileIn( __METHOD__ );
 		// Try to avoid doing this more than once per queue storage medium
 		foreach ( $wgJobTypeConf as $type => $conf ) {
 			$this->get( $type )->waitForBackups();
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -257,7 +245,7 @@ class JobQueueGroup {
 	/**
 	 * Check if there are any queues with jobs (this is cached)
 	 *
-	 * @param integer $type JobQueueGroup::TYPE_* constant
+	 * @param int $type JobQueueGroup::TYPE_* constant
 	 * @return bool
 	 * @since 1.23
 	 */
@@ -389,10 +377,10 @@ class JobQueueGroup {
 					}
 				}
 			}
-			// The tasks may have recycled jobs or release delayed jobs into the queue
-			if ( isset( $tasksRun[$type] ) && !$queue->isEmpty() ) {
-				JobQueueAggregator::singleton()->notifyQueueNonEmpty( $this->wiki, $type );
-			}
+		}
+
+		if ( $count === 0 ) {
+			return $count; // nothing to update
 		}
 
 		$wgMemc->merge( $key, function ( $cache, $key, $lastRuns ) use ( $tasksRun ) {
@@ -417,7 +405,7 @@ class JobQueueGroup {
 	}
 
 	/**
-	 * @param $name string
+	 * @param string $name
 	 * @return mixed
 	 */
 	private function getCachedConfigVar( $name ) {

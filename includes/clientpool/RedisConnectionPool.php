@@ -44,6 +44,8 @@ class RedisConnectionPool {
 	 */
 	/** @var string Connection timeout in seconds */
 	protected $connectTimeout;
+	/** @var string Read timeout in seconds */
+	protected $readTimeout;
 	/** @var string Plaintext auth password */
 	protected $password;
 	/** @var bool Whether connections persist */
@@ -76,6 +78,7 @@ class RedisConnectionPool {
 				'See https://www.mediawiki.org/wiki/Redis#Setup' );
 		}
 		$this->connectTimeout = $options['connectTimeout'];
+		$this->readTimeout = $options['readTimeout'];
 		$this->persistent = $options['persistent'];
 		$this->password = $options['password'];
 		if ( !isset( $options['serializer'] ) || $options['serializer'] === 'php' ) {
@@ -97,6 +100,9 @@ class RedisConnectionPool {
 		if ( !isset( $options['connectTimeout'] ) ) {
 			$options['connectTimeout'] = 1;
 		}
+		if ( !isset( $options['readTimeout'] ) ) {
+			$options['readTimeout'] = 1;
+		}
 		if ( !isset( $options['persistent'] ) ) {
 			$options['persistent'] = false;
 		}
@@ -111,6 +117,9 @@ class RedisConnectionPool {
 	 * @param array $options
 	 * $options include:
 	 *   - connectTimeout : The timeout for new connections, in seconds.
+	 *                      Optional, default is 1 second.
+	 *   - readTimeout    : The timeout for operation reads, in seconds.
+	 *                      Commands like BLPOP can fail if told to wait longer than this.
 	 *                      Optional, default is 1 second.
 	 *   - persistent     : Set this to true to allow connections to persist across
 	 *                      multiple web requests. False by default.
@@ -216,6 +225,7 @@ class RedisConnectionPool {
 		}
 
 		if ( $conn ) {
+			$conn->setOption( Redis::OPT_READ_TIMEOUT, $this->readTimeout );
 			$conn->setOption( Redis::OPT_SERIALIZER, $this->serializer );
 			$this->connections[$server][] = array( 'conn' => $conn, 'free' => false );
 
@@ -277,7 +287,7 @@ class RedisConnectionPool {
 	 * @param string $server
 	 * @param RedisConnRef $cref
 	 * @param RedisException $e
-	 * @deprecated 1.23
+	 * @deprecated since 1.23
 	 */
 	public function handleException( $server, RedisConnRef $cref, RedisException $e ) {
 		return $this->handleError( $cref, $e );
@@ -330,6 +340,16 @@ class RedisConnectionPool {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Adjust or reset the connection handle read timeout value
+	 *
+	 * @param Redis $conn
+	 * @param int $timeout Optional
+	 */
+	public function resetTimeout( Redis $conn, $timeout = null ) {
+		$conn->setOption( Redis::OPT_READ_TIMEOUT, $timeout ?: $this->readTimeout );
 	}
 
 	/**
@@ -391,16 +411,33 @@ class RedisConnRef {
 	public function __call( $name, $arguments ) {
 		$conn = $this->conn; // convenience
 
+		// Work around https://github.com/nicolasff/phpredis/issues/70
+		$lname = strtolower( $name );
+		if ( ( $lname === 'blpop' || $lname == 'brpop' )
+			&& is_array( $arguments[0] ) && isset( $arguments[1] )
+		) {
+			$this->pool->resetTimeout( $conn, $arguments[1] + 1 );
+		} elseif ( $lname === 'brpoplpush' && isset( $arguments[2] ) ) {
+			$this->pool->resetTimeout( $conn, $arguments[2] + 1 );
+		}
+
 		$conn->clearLastError();
-		$res = call_user_func_array( array( $conn, $name ), $arguments );
-		if ( preg_match( '/^ERR operation not permitted\b/', $conn->getLastError() ) ) {
-			$this->pool->reauthenticateConnection( $this->server, $conn );
-			$conn->clearLastError();
+		try {
 			$res = call_user_func_array( array( $conn, $name ), $arguments );
-			wfDebugLog( 'redis', "Used automatic re-authentication for method '$name'." );
+			if ( preg_match( '/^ERR operation not permitted\b/', $conn->getLastError() ) ) {
+				$this->pool->reauthenticateConnection( $this->server, $conn );
+				$conn->clearLastError();
+				$res = call_user_func_array( array( $conn, $name ), $arguments );
+				wfDebugLog( 'redis', "Used automatic re-authentication for method '$name'." );
+			}
+		} catch ( RedisException $e ) {
+			$this->pool->resetTimeout( $conn ); // restore
+			throw $e;
 		}
 
 		$this->lastError = $conn->getLastError() ?: $this->lastError;
+
+		$this->pool->resetTimeout( $conn ); // restore
 
 		return $res;
 	}

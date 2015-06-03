@@ -22,6 +22,8 @@
  * @author Aaron Schulz
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * Special page designed for running background tasks (internal use only)
  *
@@ -47,7 +49,7 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 			return;
 		}
 
-		$optional = array( 'maxjobs' => 0 );
+		$optional = array( 'maxjobs' => 0, 'maxtime' => 30, 'type' => false, 'async' => true );
 		$required = array_flip( array( 'title', 'tasks', 'signature', 'sigexpiry' ) );
 
 		$params = array_intersect_key( $this->getRequest()->getValues(), $required + $optional );
@@ -61,21 +63,11 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 
 		$squery = $params;
 		unset( $squery['signature'] );
-		$cSig = self::getQuerySignature( $squery ); // correct signature
-		$rSig = $params['signature']; // provided signature
+		$correctSignature = self::getQuerySignature( $squery, $this->getConfig()->get( 'SecretKey' ) );
+		$providedSignature = $params['signature'];
 
-		// Constant-time signature verification
-		// http://www.emerose.com/timing-attacks-explained
-		// @todo: make a common method for this
-		if ( !is_string( $rSig ) || strlen( $rSig ) !== strlen( $cSig ) ) {
-			$verified = false;
-		} else {
-			$result = 0;
-			for ( $i = 0; $i < strlen( $cSig ); $i++ ) {
-				$result |= ord( $cSig[$i] ) ^ ord( $rSig[$i] );
-			}
-			$verified = ( $result == 0 );
-		}
+		$verified = is_string( $providedSignature )
+			&& hash_equals( $correctSignature, $providedSignature );
 		if ( !$verified || $params['sigexpiry'] < time() ) {
 			header( "HTTP/1.0 400 Bad Request" );
 			print 'Invalid or stale signature provided';
@@ -86,77 +78,38 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 		// Apply any default parameter values
 		$params += $optional;
 
-		// Client will usually disconnect before checking the response,
-		// but it needs to know when it is safe to disconnect. Until this
-		// reaches ignore_user_abort(), it is not safe as the jobs won't run.
-		ignore_user_abort( true ); // jobs may take a bit of time
-		header( "HTTP/1.0 202 Accepted" );
-		ob_flush();
-		flush();
-		// Once the client receives this response, it can disconnect
+		if ( $params['async'] ) {
+			// Client will usually disconnect before checking the response,
+			// but it needs to know when it is safe to disconnect. Until this
+			// reaches ignore_user_abort(), it is not safe as the jobs won't run.
+			ignore_user_abort( true ); // jobs may take a bit of time
+			header( "HTTP/1.0 202 Accepted" );
+			ob_flush();
+			flush();
+			// Once the client receives this response, it can disconnect
+		}
 
 		// Do all of the specified tasks...
 		if ( in_array( 'jobs', explode( '|', $params['tasks'] ) ) ) {
-			self::executeJobs( (int)$params['maxjobs'] );
+			$runner = new JobRunner( LoggerFactory::getInstance( 'runJobs' ) );
+			$response = $runner->run( array(
+				'type'     => $params['type'],
+				'maxJobs'  => $params['maxjobs'] ? $params['maxjobs'] : 1,
+				'maxTime'  => $params['maxtime'] ? $params['maxjobs'] : 30
+			) );
+			if ( !$params['async'] ) {
+				print FormatJson::encode( $response, true );
+			}
 		}
 	}
 
 	/**
 	 * @param array $query
+	 * @param string $secretKey
 	 * @return string
 	 */
-	public static function getQuerySignature( array $query ) {
-		global $wgSecretKey;
-
+	public static function getQuerySignature( array $query, $secretKey ) {
 		ksort( $query ); // stable order
-		return hash_hmac( 'sha1', wfArrayToCgi( $query ), $wgSecretKey );
-	}
-
-	/**
-	 * Run jobs from the job queue
-	 *
-	 * @note: also called from Wiki.php
-	 *
-	 * @param integer $maxJobs Maximum number of jobs to run
-	 * @return void
-	 */
-	public static function executeJobs( $maxJobs ) {
-		$n = $maxJobs; // number of jobs to run
-		if ( $n < 1 ) {
-			return;
-		}
-		try {
-			$group = JobQueueGroup::singleton();
-			$count = $group->executeReadyPeriodicTasks();
-			if ( $count > 0 ) {
-				wfDebugLog( 'jobqueue', "Executed $count periodic queue task(s)." );
-			}
-
-			do {
-				$job = $group->pop( JobQueueGroup::TYPE_DEFAULT, JobQueueGroup::USE_CACHE );
-				if ( $job ) {
-					$output = $job->toString() . "\n";
-					$t = -microtime( true );
-					wfProfileIn( __METHOD__ . '-' . get_class( $job ) );
-					$success = $job->run();
-					wfProfileOut( __METHOD__ . '-' . get_class( $job ) );
-					$group->ack( $job ); // done
-					$t += microtime( true );
-					$t = round( $t * 1000 );
-					if ( $success === false ) {
-						$output .= "Error: " . $job->getLastError() . ", Time: $t ms\n";
-					} else {
-						$output .= "Success, Time: $t ms\n";
-					}
-					wfDebugLog( 'jobqueue', $output );
-				}
-			} while ( --$n && $job );
-		} catch ( MWException $e ) {
-			MWExceptionHandler::rollbackMasterChangesAndLog( $e );
-			// We don't want exceptions thrown during job execution to
-			// be reported to the user since the output is already sent.
-			// Instead we just log them.
-			MWExceptionHandler::logException( $e );
-		}
+		return hash_hmac( 'sha1', wfArrayToCgi( $query ), $secretKey );
 	}
 }

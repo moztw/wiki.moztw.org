@@ -32,7 +32,7 @@
  */
 class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'wr' );
 	}
 
@@ -45,7 +45,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param $resultPageSet ApiPageSet
+	 * @param ApiPageSet $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -123,7 +123,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 			}
 		}
 		if ( is_null( $resultPageSet ) ) {
-			$this->getResult()->setIndexedTagName_internal( $this->getModuleName(), 'wr' );
+			$this->getResult()->addIndexedTagName( $this->getModuleName(), 'wr' );
 		} else {
 			$resultPageSet->populateFromTitles( $titles );
 		}
@@ -131,7 +131,9 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 
 	public function getAllowedParams() {
 		return array(
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'namespace' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_TYPE => 'namespace'
@@ -168,63 +170,17 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 					'ascending',
 					'descending'
 				),
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-direction',
 			),
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'continue' => 'When more results are available, use this to continue',
-			'namespace' => 'Only list pages in the given namespace(s)',
-			'limit' => 'How many total results to return per request',
-			'prop' => array(
-				'Which additional properties to get (non-generator mode only)',
-				' changed  - Adds timestamp of when the user was last notified about the edit',
-			),
-			'show' => 'Only list items that meet these criteria',
-			'owner' => 'The name of the user whose watchlist you\'d like to access',
-			'token' => 'Give a security token (settable in preferences) to allow ' .
-				'access to another user\'s watchlist',
-			'dir' => 'Direction to sort the titles and namespaces in',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'ns' => 'namespace',
-				'title' => 'string'
-			),
-			'changed' => array(
-				'changed' => array(
-					ApiBase::PROP_TYPE => 'timestamp',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-	}
-
-	public function getDescription() {
-		return "Get all pages on the logged in user's watchlist.";
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'notloggedin', 'info' => 'You must be logged-in to have a watchlist' ),
-			array( 'show' ),
-			array( 'code' => 'bad_wlowner', 'info' => 'Specified user does not exist' ),
-			array(
-				'code' => 'bad_wltoken',
-				'info' => 'Incorrect watchlist token provided -- ' .
-					'please set a correct token in Special:Preferences'
-			),
-		) );
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=watchlistraw',
-			'api.php?action=query&generator=watchlistraw&gwrshow=changed&prop=revisions',
+			'action=query&list=watchlistraw'
+				=> 'apihelp-query+watchlistraw-example-simple',
+			'action=query&generator=watchlistraw&gwrshow=changed&prop=info'
+				=> 'apihelp-query+watchlistraw-example-generator',
 		);
 	}
 

@@ -1,8 +1,7 @@
 <?php
 /** Tatar (Cyrillic script) (татарча)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -35,18 +34,18 @@ $datePreferences = false;
 $defaultDateFormat = 'dmy';
 
 $dateFormats = array(
-        'mdy time' => 'H:i',
-        'mdy date' => 'M j, Y',
-        'mdy both' => 'H:i, M j, Y',
-        'dmy time' => 'H:i',
-        'dmy date' => 'j M Y',
-        'dmy both' => 'j M Y, H:i',
-        'ymd time' => 'H:i',
-        'ymd date' => 'Y M j',
-        'ymd both' => 'H:i, Y M j',
-        'ISO 8601 time' => 'xnH:xni:xns',
-        'ISO 8601 date' => 'xnY-xnm-xnd',
-        'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
+	'mdy time' => 'H:i',
+	'mdy date' => 'M j, Y',
+	'mdy both' => 'H:i, M j, Y',
+	'dmy time' => 'H:i',
+	'dmy date' => 'j M Y',
+	'dmy both' => 'j M Y, H:i',
+	'ymd time' => 'H:i',
+	'ymd date' => 'Y M j',
+	'ymd both' => 'H:i, Y M j',
+	'ISO 8601 time' => 'xnH:xni:xns',
+	'ISO 8601 date' => 'xnY-xnm-xnd',
+	'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
 );
 
 $namespaceNames = array(
@@ -141,6 +140,7 @@ $specialPageAliases = array(
 	'Mostcategories'            => array( 'Зур_төркемнәр' ),
 	'Mostrevisions'             => array( 'Зур_үзгәртүләр' ),
 	'Movepage'                  => array( 'Битне_күчерү' ),
+	'MyLanguage'                => array( 'Телем' ),
 	'Mypage'                    => array( 'Сәхифәм' ),
 	'Mytalk'                    => array( 'Бәхәсем' ),
 	'Newimages'                 => array( 'Яңа_файл' ),
@@ -157,12 +157,12 @@ $specialPageAliases = array(
 	'Specialpages'              => array( 'Махсус_битләр' ),
 	'Statistics'                => array( 'Статистика' ),
 	'Tags'                      => array( 'Теглар' ),
-	'Uncategorizedcategories'   => array( 'Үзләштерелмәгән__бүлекләр' ),
+	'Uncategorizedcategories'   => array( 'Үзләштерелмәгән_бүлекләр' ),
 	'Uncategorizedimages'       => array( 'Үзләштерелмәгән_файллар' ),
 	'Uncategorizedpages'        => array( 'Үзләштерелмәгән_битләр' ),
-	'Uncategorizedtemplates'    => array( 'Үзләштерелмәгән__үрнәкләр' ),
+	'Uncategorizedtemplates'    => array( 'Үзләштерелмәгән_үрнәкләр' ),
 	'Unusedcategories'          => array( 'Кулланылмаган_төркемнәр' ),
-	'Unusedimages'              => array( 'Кулланылмаучы__файллар' ),
+	'Unusedimages'              => array( 'Кулланылмаучы_файллар' ),
 	'Upload'                    => array( 'Йөкләү' ),
 	'Userlogin'                 => array( 'Кулланучы_исеме' ),
 	'Userlogout'                => array( 'Чыгу' ),

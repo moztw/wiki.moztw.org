@@ -1,8 +1,7 @@
 <?php
 /** Upper Sorbian (hornjoserbsce)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -36,8 +35,8 @@ $namespaceAliases = array(
 );
 
 $namespaceGenderAliases = array(
-        NS_USER => array( 'male' => 'Wužiwar', 'female' => 'Wužiwarka' ),
-        NS_USER_TALK => array( 'male' => 'Diskusija_z_wužiwarjom', 'female' => 'Diskusija_z_wužiwarku' ),
+	NS_USER => array( 'male' => 'Wužiwar', 'female' => 'Wužiwarka' ),
+	NS_USER_TALK => array( 'male' => 'Diskusija_z_wužiwarjom', 'female' => 'Diskusija_z_wužiwarku' ),
 );
 
 $datePreferences = array(
@@ -71,6 +70,7 @@ $specialPageAliases = array(
 	'Deadendpages'              => array( 'Strony_bjez_wotkazow' ),
 	'DeletedContributions'      => array( 'Zničene_přinoški' ),
 	'DoubleRedirects'           => array( 'Dwójne_daleposrědkowanja' ),
+	'EditWatchlist'             => array( 'Wobkedźbowanki_wobdźěłać' ),
 	'Emailuser'                 => array( 'E-Mejl' ),
 	'Export'                    => array( 'Eksport' ),
 	'Fewestrevisions'           => array( 'Strony_z_najmjenje_wersijemi' ),
@@ -100,10 +100,12 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Strony_z_najwjace_wersijemi' ),
 	'Movepage'                  => array( 'Přesunyć' ),
 	'Mycontributions'           => array( 'Moje_přinoški' ),
+	'MyLanguage'                => array( 'Moja_rěč' ),
 	'Mypage'                    => array( 'Moja_wužiwarska_strona' ),
 	'Mytalk'                    => array( 'Moja_diskusijna_strona' ),
 	'Newimages'                 => array( 'Nowe_dataje' ),
 	'Newpages'                  => array( 'Nowe_strony' ),
+	'PermanentLink'             => array( 'Trajny_wotkaz' ),
 	'Popularpages'              => array( 'Najwoblubowaniše_strony' ),
 	'Preferences'               => array( 'Nastajenja' ),
 	'Prefixindex'               => array( 'Prefiksindeks' ),
@@ -113,6 +115,7 @@ $specialPageAliases = array(
 	'Randomredirect'            => array( 'Připadne_daleposrědkowanje' ),
 	'Recentchanges'             => array( 'Aktualne_změny' ),
 	'Recentchangeslinked'       => array( 'Změny_zwjazanych_stronow' ),
+	'Redirect'                  => array( 'Dalesposrědkowanje' ),
 	'Revisiondelete'            => array( 'Wušmórnjenje_wersijow' ),
 	'Search'                    => array( 'Pytać' ),
 	'Shortpages'                => array( 'Najkrótše_strony' ),

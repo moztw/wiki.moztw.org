@@ -45,14 +45,14 @@ class SearchResult {
 	protected $mTitle;
 
 	/**
-	 * @var String
+	 * @var string
 	 */
 	protected $mText;
 
 	/**
 	 * Return a new SearchResult and initializes it with a title.
 	 *
-	 * @param $title Title
+	 * @param Title $title
 	 * @return SearchResult
 	 */
 	public static function newFromTitle( $title ) {
@@ -62,45 +62,16 @@ class SearchResult {
 	}
 
 	/**
-	 * Return a new SearchResult and initializes it with a row.
-	 *
-	 * @param $row object
-	 * @return SearchResult
-	 */
-	public static function newFromRow( $row ) {
-		$result = new self();
-		$result->initFromRow( $row );
-		return $result;
-	}
-
-	public function __construct( $row = null ) {
-		if ( !is_null( $row ) ) {
-			// Backwards compatibility with pre-1.17 callers
-			$this->initFromRow( $row );
-		}
-	}
-
-	/**
-	 * Initialize from a database row. Makes a Title and passes that to
-	 * initFromTitle.
-	 *
-	 * @param $row object
-	 */
-	protected function initFromRow( $row ) {
-		$this->initFromTitle( Title::makeTitle( $row->page_namespace, $row->page_title ) );
-	}
-
-	/**
 	 * Initialize from a Title and if possible initializes a corresponding
 	 * Revision and File.
 	 *
-	 * @param $title Title
+	 * @param Title $title
 	 */
 	protected function initFromTitle( $title ) {
 		$this->mTitle = $title;
 		if ( !is_null( $this->mTitle ) ) {
 			$id = false;
-			wfRunHooks( 'SearchResultInitFromTitle', array( $title, &$id ) );
+			Hooks::run( 'SearchResultInitFromTitle', array( $title, &$id ) );
 			$this->mRevision = Revision::newFromTitle(
 				$this->mTitle, $id, Revision::READ_NORMAL );
 			if ( $this->mTitle->getNamespace() === NS_FILE ) {
@@ -112,7 +83,7 @@ class SearchResult {
 	/**
 	 * Check if this is result points to an invalid title
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	function isBrokenTitle() {
 		return is_null( $this->mTitle );
@@ -121,7 +92,7 @@ class SearchResult {
 	/**
 	 * Check if target page is missing, happens when index is out of date
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	function isMissingRevision() {
 		return !$this->mRevision && !$this->mImage;
@@ -143,13 +114,6 @@ class SearchResult {
 	}
 
 	/**
-	 * @return float|null if not supported
-	 */
-	function getScore() {
-		return null;
-	}
-
-	/**
 	 * Lazy initialization of article text from DB
 	 */
 	protected function initText() {
@@ -164,8 +128,8 @@ class SearchResult {
 	}
 
 	/**
-	 * @param array $terms terms to highlight
-	 * @return String: highlighted text snippet, null (and not '') if not supported
+	 * @param array $terms Terms to highlight
+	 * @return string Highlighted text snippet, null (and not '') if not supported
 	 */
 	function getTextSnippet( $terms ) {
 		global $wgAdvancedSearchHighlighting;
@@ -173,51 +137,63 @@ class SearchResult {
 
 		// TODO: make highliter take a content object. Make ContentHandler a factory for SearchHighliter.
 		list( $contextlines, $contextchars ) = SearchEngine::userHighlightPrefs();
+
 		$h = new SearchHighlighter();
-		if ( $wgAdvancedSearchHighlighting ) {
-			return $h->highlightText( $this->mText, $terms, $contextlines, $contextchars );
+		if ( count( $terms ) > 0 ) {
+			if ( $wgAdvancedSearchHighlighting ) {
+				return $h->highlightText( $this->mText, $terms, $contextlines, $contextchars );
+			} else {
+				return $h->highlightSimple( $this->mText, $terms, $contextlines, $contextchars );
+			}
 		} else {
-			return $h->highlightSimple( $this->mText, $terms, $contextlines, $contextchars );
+			return $h->highlightNone( $this->mText, $contextlines, $contextchars );
 		}
 	}
 
 	/**
-	 * @return String: highlighted title, '' if not supported
+	 * @return string Highlighted title, '' if not supported
 	 */
 	function getTitleSnippet() {
 		return '';
 	}
 
 	/**
-	 * @return String: highlighted redirect name (redirect to this page), '' if none or not supported
+	 * @return string Highlighted redirect name (redirect to this page), '' if none or not supported
 	 */
 	function getRedirectSnippet() {
 		return '';
 	}
 
 	/**
-	 * @return Title object for the redirect to this page, null if none or not supported
+	 * @return Title Title object for the redirect to this page, null if none or not supported
 	 */
 	function getRedirectTitle() {
 		return null;
 	}
 
 	/**
-	 * @return string highlighted relevant section name, null if none or not supported
+	 * @return string Highlighted relevant section name, null if none or not supported
 	 */
 	function getSectionSnippet() {
 		return '';
 	}
 
 	/**
-	 * @return Title object (pagename+fragment) for the section, null if none or not supported
+	 * @return Title Title object (pagename+fragment) for the section, null if none or not supported
 	 */
 	function getSectionTitle() {
 		return null;
 	}
 
 	/**
-	 * @return String: timestamp
+	 * @return string Highlighted relevant category name or '' if none or not supported
+	 */
+	public function getCategorySnippet() {
+		return '';
+	}
+
+	/**
+	 * @return string Timestamp
 	 */
 	function getTimestamp() {
 		if ( $this->mRevision ) {
@@ -229,7 +205,7 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Integer: number of words
+	 * @return int Number of words
 	 */
 	function getWordCount() {
 		$this->initText();
@@ -237,7 +213,7 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Integer: size in bytes
+	 * @return int Size in bytes
 	 */
 	function getByteSize() {
 		$this->initText();
@@ -245,21 +221,14 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Boolean if hit has related articles
-	 */
-	function hasRelated() {
-		return false;
-	}
-
-	/**
-	 * @return String: interwiki prefix of the title (return iw even if title is broken)
+	 * @return string Interwiki prefix of the title (return iw even if title is broken)
 	 */
 	function getInterwikiPrefix() {
 		return '';
 	}
 
 	/**
-	 * @return string interwiki namespace of the title (since we likely can't resolve it locally)
+	 * @return string Interwiki namespace of the title (since we likely can't resolve it locally)
 	 */
 	function getInterwikiNamespaceText() {
 		return '';
@@ -267,6 +236,7 @@ class SearchResult {
 
 	/**
 	 * Did this match file contents (eg: PDF/DJVU)?
+	 * @return bool
 	 */
 	function isFileMatch() {
 		return false;

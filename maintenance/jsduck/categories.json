@@ -13,7 +13,9 @@
 					"mw.html",
 					"mw.html.Cdata",
 					"mw.html.Raw",
-					"mw.hook"
+					"mw.hook",
+					"mw.template",
+					"mw.errorLogger"
 				]
 			},
 			{
@@ -21,11 +23,13 @@
 				"classes": [
 					"mw.Title",
 					"mw.Uri",
+					"mw.messagePoster.*",
 					"mw.notification",
 					"mw.Notification_",
 					"mw.user",
 					"mw.util",
-					"mw.plugin.*"
+					"mw.plugin.*",
+					"mw.cookie"
 				]
 			},
 			{
@@ -53,7 +57,14 @@
 			{
 				"name": "Interfaces",
 				"classes": [
-					"mw.Feedback"
+					"mw.Feedback",
+					"mw.Feedback.Dialog"
+				]
+			},
+			{
+				"name": "Special",
+				"classes": [
+					"mw.special*"
 				]
 			},
 			{
@@ -62,8 +73,7 @@
 					"mw.log",
 					"mw.inspect",
 					"mw.inspect.reports",
-					"mw.Debug",
-					"mw.Debug.profile"
+					"mw.Debug"
 				]
 			}
 		]
@@ -73,7 +83,11 @@
 		"groups": [
 			{
 				"name": "Plugins",
-				"classes": ["jQuery.plugin.*"]
+				"classes": [
+					"jQuery.client",
+					"jQuery.colorUtil",
+					"jQuery.plugin.*"
+				]
 			}
 		]
 	},

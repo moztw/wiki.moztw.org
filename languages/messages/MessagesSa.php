@@ -1,8 +1,7 @@
 <?php
 /** Sanskrit (संस्कृतम्)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -204,7 +203,6 @@ $magicWords = array(
 	'numberoffiles'             => array( '1', 'संचिकानाम्‌‌सङ्ख्या', 'NUMBEROFFILES' ),
 	'numberofusers'             => array( '1', 'योजकस्यसङ्ख्या', 'NUMBEROFUSERS' ),
 	'numberofedits'             => array( '1', 'सम्पादनसङ्ख्या', 'NUMBEROFEDITS' ),
-	'numberofviews'             => array( '1', 'दृष्टिसङ्ख्या', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', 'पृष्ठनाम', 'PAGENAME' ),
 	'namespace'                 => array( '1', 'नामविश्व', 'NAMESPACE' ),
 	'talkspace'                 => array( '1', 'व्यासपिठ', 'TALKSPACE' ),

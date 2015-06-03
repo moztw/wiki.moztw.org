@@ -33,7 +33,7 @@
  */
 class ApiQueryFilearchive extends ApiQueryBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'fa' );
 	}
 
@@ -67,9 +67,8 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$this->addTables( 'filearchive' );
 
 		$this->addFields( ArchivedFile::selectFields() );
-		$this->addFields( array( 'fa_name', 'fa_deleted' ) );
+		$this->addFields( array( 'fa_id', 'fa_name', 'fa_timestamp', 'fa_deleted' ) );
 		$this->addFieldsIf( 'fa_sha1', $fld_sha1 );
-		$this->addFieldsIf( 'fa_timestamp', $fld_timestamp );
 		$this->addFieldsIf( array( 'fa_user', 'fa_user_text' ), $fld_user );
 		$this->addFieldsIf( array( 'fa_height', 'fa_width', 'fa_size' ), $fld_dimensions || $fld_size );
 		$this->addFieldsIf( 'fa_description', $fld_description );
@@ -81,18 +80,23 @@ class ApiQueryFilearchive extends ApiQueryBase {
 
 		if ( !is_null( $params['continue'] ) ) {
 			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 1 );
+			$this->dieContinueUsageIf( count( $cont ) != 3 );
 			$op = $params['dir'] == 'descending' ? '<' : '>';
 			$cont_from = $db->addQuotes( $cont[0] );
-			$this->addWhere( "fa_name $op= $cont_from" );
+			$cont_timestamp = $db->addQuotes( $db->timestamp( $cont[1] ) );
+			$cont_id = (int)$cont[2];
+			$this->dieContinueUsageIf( $cont[2] !== (string)$cont_id );
+			$this->addWhere( "fa_name $op $cont_from OR " .
+				"(fa_name = $cont_from AND " .
+				"(fa_timestamp $op $cont_timestamp OR " .
+				"(fa_timestamp = $cont_timestamp AND " .
+				"fa_id $op= $cont_id )))"
+			);
 		}
 
 		// Image filters
 		$dir = ( $params['dir'] == 'descending' ? 'older' : 'newer' );
 		$from = ( $params['from'] === null ? null : $this->titlePartToKey( $params['from'], NS_FILE ) );
-		if ( !is_null( $params['continue'] ) ) {
-			$from = $params['continue'];
-		}
 		$to = ( $params['to'] === null ? null : $this->titlePartToKey( $params['to'], NS_FILE ) );
 		$this->addWhereRange( 'fa_name', $dir, $from, $to );
 		if ( isset( $params['prefix'] ) ) {
@@ -125,7 +129,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		// Exclude files this user can't view.
 		if ( !$user->isAllowed( 'deletedtext' ) ) {
 			$bitmask = File::DELETED_FILE;
-		} elseif ( !$user->isAllowed( 'suppressrevision' ) ) {
+		} elseif ( !$user->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
 			$bitmask = File::DELETED_FILE | File::DELETED_RESTRICTED;
 		} else {
 			$bitmask = 0;
@@ -137,7 +141,11 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$limit = $params['limit'];
 		$this->addOption( 'LIMIT', $limit + 1 );
 		$sort = ( $params['dir'] == 'descending' ? ' DESC' : '' );
-		$this->addOption( 'ORDER BY', 'fa_name' . $sort );
+		$this->addOption( 'ORDER BY', array(
+			'fa_name' . $sort,
+			'fa_timestamp' . $sort,
+			'fa_id' . $sort,
+		) );
 
 		$res = $this->select( __METHOD__ );
 
@@ -147,11 +155,14 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( ++$count > $limit ) {
 				// We've reached the one extra which shows that there are
 				// additional pages to be had. Stop here...
-				$this->setContinueEnumParameter( 'continue', $row->fa_name );
+				$this->setContinueEnumParameter(
+					'continue', "$row->fa_name|$row->fa_timestamp|$row->fa_id"
+				);
 				break;
 			}
 
 			$file = array();
+			$file['id'] = $row->fa_id;
 			$file['name'] = $row->fa_name;
 			$title = Title::makeTitle( NS_FILE, $row->fa_name );
 			self::addTitleInfo( $file, $title );
@@ -182,7 +193,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 
 				$pageCount = ArchivedFile::newFromRow( $row )->pageCount();
 				if ( $pageCount !== false ) {
-					$vals['pagecount'] = $pageCount;
+					$file['pagecount'] = $pageCount;
 				}
 
 				$file['height'] = $row->fa_height;
@@ -207,42 +218,36 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			}
 
 			if ( $row->fa_deleted & File::DELETED_FILE ) {
-				$file['filehidden'] = '';
+				$file['filehidden'] = true;
 			}
 			if ( $row->fa_deleted & File::DELETED_COMMENT ) {
-				$file['commenthidden'] = '';
+				$file['commenthidden'] = true;
 			}
 			if ( $row->fa_deleted & File::DELETED_USER ) {
-				$file['userhidden'] = '';
+				$file['userhidden'] = true;
 			}
 			if ( $row->fa_deleted & File::DELETED_RESTRICTED ) {
 				// This file is deleted for normal admins
-				$file['suppressed'] = '';
+				$file['suppressed'] = true;
 			}
 
 			$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $file );
 			if ( !$fit ) {
-				$this->setContinueEnumParameter( 'continue', $row->fa_name );
+				$this->setContinueEnumParameter(
+					'continue', "$row->fa_name|$row->fa_timestamp|$row->fa_id"
+				);
 				break;
 			}
 		}
 
-		$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'fa' );
+		$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'fa' );
 	}
 
 	public function getAllowedParams() {
 		return array(
 			'from' => null,
-			'continue' => null,
 			'to' => null,
 			'prefix' => null,
-			'limit' => array(
-				ApiBase::PARAM_DFLT => 10,
-				ApiBase::PARAM_TYPE => 'limit',
-				ApiBase::PARAM_MIN => 1,
-				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
-				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
-			),
 			'dir' => array(
 				ApiBase::PARAM_DFLT => 'ascending',
 				ApiBase::PARAM_TYPE => array(
@@ -270,127 +275,23 @@ class ApiQueryFilearchive extends ApiQueryBase {
 					'archivename',
 				),
 			),
-		);
-	}
-
-	public function getParamDescription() {
-		return array(
-			'from' => 'The image title to start enumerating from',
-			'continue' => 'When more results are available, use this to continue',
-			'to' => 'The image title to stop enumerating at',
-			'prefix' => 'Search for all image titles that begin with this value',
-			'dir' => 'The direction in which to list',
-			'limit' => 'How many images to return in total',
-			'sha1' => "SHA1 hash of image. Overrides {$this->getModulePrefix()}sha1base36",
-			'sha1base36' => 'SHA1 hash of image in base 36 (used in MediaWiki)',
-			'prop' => array(
-				'What image information to get:',
-				' sha1              - Adds SHA-1 hash for the image',
-				' timestamp         - Adds timestamp for the uploaded version',
-				' user              - Adds user who uploaded the image version',
-				' size              - Adds the size of the image in bytes and the height, ' .
-					'width and page count (if applicable)',
-				' dimensions        - Alias for size',
-				' description       - Adds description the image version',
-				' parseddescription - Parse the description on the version',
-				' mime              - Adds MIME of the image',
-				' mediatype         - Adds the media type of the image',
-				' metadata          - Lists Exif metadata for the version of the image',
-				' bitdepth          - Adds the bit depth of the version',
-				' archivename       - Adds the file name of the archive version for non-latest versions'
+			'limit' => array(
+				ApiBase::PARAM_DFLT => 10,
+				ApiBase::PARAM_TYPE => 'limit',
+				ApiBase::PARAM_MIN => 1,
+				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
+				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
+			),
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 			),
 		);
 	}
 
-	public function getResultProperties() {
+	protected function getExamplesMessages() {
 		return array(
-			'' => array(
-				'name' => 'string',
-				'ns' => 'namespace',
-				'title' => 'string',
-				'filehidden' => 'boolean',
-				'commenthidden' => 'boolean',
-				'userhidden' => 'boolean',
-				'suppressed' => 'boolean'
-			),
-			'sha1' => array(
-				'sha1' => 'string'
-			),
-			'timestamp' => array(
-				'timestamp' => 'timestamp'
-			),
-			'user' => array(
-				'userid' => 'integer',
-				'user' => 'string'
-			),
-			'size' => array(
-				'size' => 'integer',
-				'pagecount' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'height' => 'integer',
-				'width' => 'integer'
-			),
-			'dimensions' => array(
-				'size' => 'integer',
-				'pagecount' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'height' => 'integer',
-				'width' => 'integer'
-			),
-			'description' => array(
-				'description' => 'string'
-			),
-			'parseddescription' => array(
-				'description' => 'string',
-				'parseddescription' => 'string'
-			),
-			'metadata' => array(
-				'metadata' => 'string'
-			),
-			'bitdepth' => array(
-				'bitdepth' => 'integer'
-			),
-			'mime' => array(
-				'mime' => 'string'
-			),
-			'mediatype' => array(
-				'mediatype' => 'string'
-			),
-			'archivename' => array(
-				'archivename' => 'string'
-			),
-		);
-	}
-
-	public function getDescription() {
-		return 'Enumerate all deleted files sequentially.';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array(
-				'code' => 'permissiondenied',
-				'info' => 'You don\'t have permission to view deleted file information'
-			),
-			array( 'code' => 'hashsearchdisabled', 'info' => 'Search by hash disabled in Miser Mode' ),
-			array( 'code' => 'invalidsha1hash', 'info' => 'The SHA-1 hash provided is not valid' ),
-			array(
-				'code' => 'invalidsha1base36hash',
-				'info' => 'The SHA1Base36 hash provided is not valid'
-			),
-		) );
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=filearchive' => array(
-				'Simple Use',
-				'Show a list of all deleted files',
-			),
+			'action=query&list=filearchive'
+				=> 'apihelp-query+filearchive-example-simple',
 		);
 	}
 

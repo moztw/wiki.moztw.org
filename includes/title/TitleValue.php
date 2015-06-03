@@ -32,9 +32,9 @@
  * It does not represent a link, and does not support interwiki prefixes etc.
  *
  * @see https://www.mediawiki.org/wiki/Requests_for_comment/TitleValue
+ * @since 1.23
  */
 class TitleValue {
-
 	/**
 	 * @var int
 	 */
@@ -53,16 +53,16 @@ class TitleValue {
 	/**
 	 * Constructs a TitleValue.
 	 *
-	 * @note: TitleValue expects a valid DB key; typically, a TitleValue is constructed either
+	 * @note TitleValue expects a valid DB key; typically, a TitleValue is constructed either
 	 * from a database entry, or by a TitleParser. We could apply "some" normalization here,
 	 * such as substituting spaces by underscores, but that would encourage the use of
 	 * un-normalized text when constructing TitleValues. For constructing a TitleValue from
 	 * user input or external sources, use a TitleParser.
 	 *
-	 * @param $namespace int The namespace ID. This is not validated.
-	 * @param $dbkey string The page title in valid DBkey form. No normalization is applied.
-	 * @param $fragment string The fragment title. Use '' to represent the whole page.
-	 *        No validation or normalization is applied.
+	 * @param int $namespace The namespace ID. This is not validated.
+	 * @param string $dbkey The page title in valid DBkey form. No normalization is applied.
+	 * @param string $fragment The fragment title. Use '' to represent the whole page.
+	 *   No validation or normalization is applied.
 	 *
 	 * @throws InvalidArgumentException
 	 */
@@ -123,8 +123,8 @@ class TitleValue {
 	 *
 	 * This is computed from the DB key by replacing any underscores with spaces.
 	 *
-	 * @note: To get a title string that includes the namespace and/or fragment,
-	 *        use a TitleFormatter.
+	 * @note To get a title string that includes the namespace and/or fragment,
+	 *       use a TitleFormatter.
 	 *
 	 * @return string
 	 */
@@ -153,7 +153,7 @@ class TitleValue {
 	public function __toString() {
 		$name = $this->namespace . ':' . $this->dbkey;
 
-		if ( $this->fragment !== '' )  {
+		if ( $this->fragment !== '' ) {
 			$name .= '#' . $this->fragment;
 		}
 

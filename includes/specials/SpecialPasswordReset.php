@@ -62,9 +62,10 @@ class SpecialPasswordReset extends FormSpecialPage {
 	}
 
 	protected function getFormFields() {
-		global $wgPasswordResetRoutes, $wgAuth;
+		global $wgAuth;
+		$resetRoutes = $this->getConfig()->get( 'PasswordResetRoutes' );
 		$a = array();
-		if ( isset( $wgPasswordResetRoutes['username'] ) && $wgPasswordResetRoutes['username'] ) {
+		if ( isset( $resetRoutes['username'] ) && $resetRoutes['username'] ) {
 			$a['Username'] = array(
 				'type' => 'text',
 				'label-message' => 'passwordreset-username',
@@ -75,14 +76,14 @@ class SpecialPasswordReset extends FormSpecialPage {
 			}
 		}
 
-		if ( isset( $wgPasswordResetRoutes['email'] ) && $wgPasswordResetRoutes['email'] ) {
+		if ( isset( $resetRoutes['email'] ) && $resetRoutes['email'] ) {
 			$a['Email'] = array(
 				'type' => 'email',
 				'label-message' => 'passwordreset-email',
 			);
 		}
 
-		if ( isset( $wgPasswordResetRoutes['domain'] ) && $wgPasswordResetRoutes['domain'] ) {
+		if ( isset( $resetRoutes['domain'] ) && $resetRoutes['domain'] ) {
 			$domains = $wgAuth->domainList();
 			$a['Domain'] = array(
 				'type' => 'select',
@@ -102,26 +103,23 @@ class SpecialPasswordReset extends FormSpecialPage {
 		return $a;
 	}
 
-	public function alterForm( HTMLForm $form ) {
-		global $wgPasswordResetRoutes;
+	protected function getDisplayFormat() {
+		return 'vform';
+	}
 
-		$form->setDisplayFormat( 'vform' );
-		// Turn the old-school line around the form off.
-		// XXX This wouldn't be necessary here if we could set the format of
-		// the HTMLForm to 'vform' at its creation, but there's no way to do so
-		// from a FormSpecialPage class.
-		$form->setWrapperLegend( false );
+	public function alterForm( HTMLForm $form ) {
+		$resetRoutes = $this->getConfig()->get( 'PasswordResetRoutes' );
 
 		$form->addHiddenFields( $this->getRequest()->getValues( 'returnto', 'returntoquery' ) );
 
 		$i = 0;
-		if ( isset( $wgPasswordResetRoutes['username'] ) && $wgPasswordResetRoutes['username'] ) {
+		if ( isset( $resetRoutes['username'] ) && $resetRoutes['username'] ) {
 			$i++;
 		}
-		if ( isset( $wgPasswordResetRoutes['email'] ) && $wgPasswordResetRoutes['email'] ) {
+		if ( isset( $resetRoutes['email'] ) && $resetRoutes['email'] ) {
 			$i++;
 		}
-		if ( isset( $wgPasswordResetRoutes['domain'] ) && $wgPasswordResetRoutes['domain'] ) {
+		if ( isset( $resetRoutes['domain'] ) && $resetRoutes['domain'] ) {
 			$i++;
 		}
 
@@ -135,10 +133,10 @@ class SpecialPasswordReset extends FormSpecialPage {
 	 * Process the form.  At this point we know that the user passes all the criteria in
 	 * userCanExecute(), and if the data array contains 'Username', etc, then Username
 	 * resets are allowed.
-	 * @param $data array
+	 * @param array $data
 	 * @throws MWException
 	 * @throws ThrottledError|PermissionsError
-	 * @return Bool|Array
+	 * @return bool|array
 	 */
 	public function onSubmit( array $data ) {
 		global $wgAuth;
@@ -194,7 +192,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 
 		// Check for hooks (captcha etc), and allow them to modify the users list
 		$error = array();
-		if ( !wfRunHooks( 'SpecialPasswordResetOnSubmit', array( &$users, $data, &$error ) ) ) {
+		if ( !Hooks::run( 'SpecialPasswordResetOnSubmit', array( &$users, $data, &$error ) ) ) {
 			return array( $error );
 		}
 
@@ -222,18 +220,15 @@ class SpecialPasswordReset extends FormSpecialPage {
 		// Check against password throttle
 		foreach ( $users as $user ) {
 			if ( $user->isPasswordReminderThrottled() ) {
-				global $wgPasswordReminderResendTime;
 
 				# Round the time in hours to 3 d.p., in case someone is specifying
 				# minutes or seconds.
 				return array( array(
 					'throttled-mailpassword',
-					round( $wgPasswordReminderResendTime, 3 )
+					round( $this->getConfig()->get( 'PasswordReminderResendTime' ), 3 )
 				) );
 			}
 		}
-
-		global $wgNewPasswordExpiry;
 
 		// All the users will have the same email address
 		if ( $firstUser->getEmail() == '' ) {
@@ -248,7 +243,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 			return array( 'badipaddress' );
 		}
 		$caller = $this->getUser();
-		wfRunHooks( 'User::mailPasswordInternal', array( &$caller, &$ip, &$firstUser ) );
+		Hooks::run( 'User::mailPasswordInternal', array( &$caller, &$ip, &$firstUser ) );
 		$username = $caller->getName();
 		$msg = IP::isValid( $username )
 			? 'passwordreset-emailtext-ip'
@@ -273,7 +268,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 			$passwordBlock,
 			count( $passwords ),
 			'<' . Title::newMainPage()->getCanonicalURL() . '>',
-			round( $wgNewPasswordExpiry / 86400 )
+			round( $this->getConfig()->get( 'NewPasswordExpiry' ) / 86400 )
 		);
 
 		$title = $this->msg( 'passwordreset-emailtitle' );
@@ -320,11 +315,12 @@ class SpecialPasswordReset extends FormSpecialPage {
 	}
 
 	protected function canChangePassword( User $user ) {
-		global $wgPasswordResetRoutes, $wgEnableEmail, $wgAuth;
+		global $wgAuth;
+		$resetRoutes = $this->getConfig()->get( 'PasswordResetRoutes' );
 
 		// Maybe password resets are disabled, or there are no allowable routes
-		if ( !is_array( $wgPasswordResetRoutes ) ||
-			!in_array( true, array_values( $wgPasswordResetRoutes ) )
+		if ( !is_array( $resetRoutes ) ||
+			!in_array( true, array_values( $resetRoutes ) )
 		) {
 			return 'passwordreset-disabled';
 		}
@@ -335,7 +331,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 		}
 
 		// Maybe email features have been disabled
-		if ( !$wgEnableEmail ) {
+		if ( !$this->getConfig()->get( 'EnableEmail' ) ) {
 			return 'passwordreset-emaildisabled';
 		}
 
@@ -350,7 +346,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 
 	/**
 	 * Hide the password reset page if resets are disabled.
-	 * @return Bool
+	 * @return bool
 	 */
 	function isListed() {
 		if ( $this->canChangePassword( $this->getUser() ) === true ) {

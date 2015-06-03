@@ -60,7 +60,7 @@ class DjVuImage {
 
 	/**
 	 * Return data in the style of getimagesize()
-	 * @return array or false on failure
+	 * @return array|bool Array or false on failure
 	 */
 	public function getImageSize() {
 		$data = $this->getInfo();
@@ -88,7 +88,7 @@ class DjVuImage {
 		// something that explicitly initializes local variables.
 		extract( unpack( 'a4magic/a4chunk/NchunkLength', $header ) );
 		/** @var string $chunk
-		 *  @var string $chunkLength */
+		 * @var string $chunkLength */
 		echo "$chunk $chunkLength\n";
 		$this->dumpForm( $file, $chunkLength, 1 );
 		fclose( $file );
@@ -107,7 +107,7 @@ class DjVuImage {
 			// something that explicitly initializes local variables.
 			extract( unpack( 'a4chunk/NchunkLength', $chunkHeader ) );
 			/** @var string $chunk
-			 *  @var string $chunkLength */
+			 * @var string $chunkLength */
 			echo str_repeat( ' ', $indent * 4 ) . "$chunk $chunkLength\n";
 
 			if ( $chunk == 'FORM' ) {
@@ -143,9 +143,9 @@ class DjVuImage {
 			extract( unpack( 'a4magic/a4form/NformLength/a4subtype', $header ) );
 
 			/** @var string $magic
-			 *  @var string $subtype
-			 *  @var string $formLength
-			 *  @var string $formType */
+			 * @var string $subtype
+			 * @var string $formLength
+			 * @var string $formType */
 			if ( $magic != 'AT&T' ) {
 				wfDebug( __METHOD__ . ": not a DjVu file\n" );
 			} elseif ( $subtype == 'DJVU' ) {
@@ -173,7 +173,7 @@ class DjVuImage {
 			extract( unpack( 'a4chunk/Nlength', $header ) );
 
 			/** @var string $chunk
-			 *  @var string $length */
+			 * @var string $length */
 			return array( $chunk, $length );
 		}
 	}
@@ -249,12 +249,12 @@ class DjVuImage {
 		# Newer files have rotation info in byte 10, but we don't use it yet.
 
 		/** @var string $width
-		 *  @var string $height
-		 *  @var string $major
-		 *  @var string $minor
-		 *  @var string $resolution
-		 *  @var string $length
-		 *  @var string $gamma */
+		 * @var string $height
+		 * @var string $major
+		 * @var string $minor
+		 * @var string $resolution
+		 * @var string $length
+		 * @var string $gamma */
 		return array(
 			'width' => $width,
 			'height' => $height,
@@ -265,37 +265,34 @@ class DjVuImage {
 
 	/**
 	 * Return an XML string describing the DjVu image
-	 * @return string
+	 * @return string|bool
 	 */
 	function retrieveMetaData() {
 		global $wgDjvuToXML, $wgDjvuDump, $wgDjvuTxt;
-		wfProfileIn( __METHOD__ );
+
+		if ( !$this->isValid() ) {
+			return false;
+		}
 
 		if ( isset( $wgDjvuDump ) ) {
 			# djvudump is faster as of version 3.5
 			# http://sourceforge.net/tracker/index.php?func=detail&aid=1704049&group_id=32953&atid=406583
-			wfProfileIn( 'djvudump' );
 			$cmd = wfEscapeShellArg( $wgDjvuDump ) . ' ' . wfEscapeShellArg( $this->mFilename );
 			$dump = wfShellExec( $cmd );
 			$xml = $this->convertDumpToXML( $dump );
-			wfProfileOut( 'djvudump' );
 		} elseif ( isset( $wgDjvuToXML ) ) {
-			wfProfileIn( 'djvutoxml' );
 			$cmd = wfEscapeShellArg( $wgDjvuToXML ) . ' --without-anno --without-text ' .
 				wfEscapeShellArg( $this->mFilename );
 			$xml = wfShellExec( $cmd );
-			wfProfileOut( 'djvutoxml' );
 		} else {
 			$xml = null;
 		}
 		# Text layer
 		if ( isset( $wgDjvuTxt ) ) {
-			wfProfileIn( 'djvutxt' );
 			$cmd = wfEscapeShellArg( $wgDjvuTxt ) . ' --detail=page ' . wfEscapeShellArg( $this->mFilename );
 			wfDebug( __METHOD__ . ": $cmd\n" );
 			$retval = '';
 			$txt = wfShellExec( $cmd, $retval, array(), array( 'memory' => self::DJVUTXT_MEMORY_LIMIT ) );
-			wfProfileOut( 'djvutxt' );
 			if ( $retval == 0 ) {
 				# Strip some control characters
 				$txt = preg_replace( "/[\013\035\037]/", "", $txt );
@@ -316,21 +313,20 @@ EOR;
 				$xml = $xml . $txt . '</mw-djvu>';
 			}
 		}
-		wfProfileOut( __METHOD__ );
 
 		return $xml;
 	}
 
 	function pageTextCallback( $matches ) {
 		# Get rid of invalid UTF-8, strip control characters
-		$val = htmlspecialchars( UtfNormal::cleanUp( stripcslashes( $matches[1] ) ) );
+		$val = htmlspecialchars( UtfNormal\Validator::cleanUp( stripcslashes( $matches[1] ) ) );
 		$val = str_replace( array( "\n", '�' ), array( '&#10;', '' ), $val );
 		return '<PAGE value="' . $val . '" />';
 	}
 
 	/**
 	 * Hack to temporarily work around djvutoxml bug
-	 * @param $dump
+	 * @param string $dump
 	 * @return string
 	 */
 	function convertDumpToXML( $dump ) {

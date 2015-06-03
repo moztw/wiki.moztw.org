@@ -109,9 +109,8 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 			$opts['tagfilter']
 		);
 
-		if ( !wfRunHooks( 'SpecialRecentChangesQuery',
-			array( &$conds, &$tables, &$join_conds, $opts, &$query_options, &$select ),
-			'1.23' )
+		if ( !$this->runMainQueryHook( $tables, $select, $conds, $query_options, $join_conds,
+			$opts )
 		) {
 			return false;
 		}
@@ -225,6 +224,7 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 		$target = $this->getTargetTitle();
 		if ( $target ) {
 			$this->getOutput()->addBacklinkSubtitle( $target );
+			$this->getSkin()->setRelevantTitle( $target );
 		}
 	}
 

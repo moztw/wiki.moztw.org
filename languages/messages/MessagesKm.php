@@ -1,8 +1,7 @@
 <?php
 /** Khmer (ភាសាខ្មែរ)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -140,6 +139,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'ទំព័រមានកំណែច្រើនជាងគេ' ),
 	'Movepage'                  => array( 'ប្ដូរទីតាំងទំព័រ' ),
 	'Mycontributions'           => array( 'ការរួមចំណែករបស់ខ្ញុំ' ),
+	'MyLanguage'                => array( 'ភាសារបស់ខ្ញុំ' ),
 	'Mypage'                    => array( 'ទំព័ររបស់ខ្ញុំ' ),
 	'Mytalk'                    => array( 'ការពិភាក្សារបស់ខ្ញុំ' ),
 	'Myuploads'                 => array( 'អ្វីដែលខ្ញុំផ្ទុកឡើង' ),

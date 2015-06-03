@@ -55,7 +55,6 @@ class FileOpBatch {
 	 * @return Status
 	 */
 	public static function attempt( array $performOps, array $opts, FileJournal $journal ) {
-		$section = new ProfileSection( __METHOD__ );
 		$status = Status::newGood();
 
 		$n = count( $performOps );
@@ -152,6 +151,8 @@ class FileOpBatch {
 				// We can't continue (even with $ignoreErrors) as $predicates is wrong.
 				// Log the remaining ops as failed for recovery...
 				foreach ( $performOpsBatch as $i => $fileOp ) {
+					$status->success[$i] = false;
+					++$status->failCount;
 					$performOpsBatch[$i]->logFailure( 'attempt_aborted' );
 				}
 				continue;

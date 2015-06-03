@@ -1,8 +1,7 @@
 <?php
 /** Catalan (català)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -61,7 +60,7 @@ $specialPageAliases = array(
 	'LinkSearch'                => array( 'Enllaços_web', 'Busca_enllaços', 'Recerca_d\'enllaços_web' ),
 	'Listadmins'                => array( 'Administradors' ),
 	'Listbots'                  => array( 'Bots' ),
-	'Listfiles'                 => array( 'Imatges' ),
+	'Listfiles'                 => array( 'Imatges', 'Fitxers' ),
 	'Listgrouprights'           => array( 'Drets_dels_grups_d\'usuaris' ),
 	'Listredirects'             => array( 'Redireccions' ),
 	'Listusers'                 => array( 'Usuaris' ),
@@ -81,7 +80,7 @@ $specialPageAliases = array(
 	'Mycontributions'           => array( 'Contribucions_pròpies' ),
 	'Mypage'                    => array( 'Pàgina_personal' ),
 	'Mytalk'                    => array( 'Discussió_personal' ),
-	'Newimages'                 => array( 'Imatges_noves' ),
+	'Newimages'                 => array( 'Imatges_noves', 'Fitxers_nous' ),
 	'Newpages'                  => array( 'Pàgines_noves' ),
 	'Popularpages'              => array( 'Pàgines_populars' ),
 	'Preferences'               => array( 'Preferències' ),

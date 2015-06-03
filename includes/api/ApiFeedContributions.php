@@ -41,30 +41,29 @@ class ApiFeedContributions extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
-		global $wgFeed, $wgFeedClasses, $wgFeedLimit, $wgSitename, $wgLanguageCode;
-
-		if ( !$wgFeed ) {
+		$config = $this->getConfig();
+		if ( !$config->get( 'Feed' ) ) {
 			$this->dieUsage( 'Syndication feeds are not available', 'feed-unavailable' );
 		}
 
-		if ( !isset( $wgFeedClasses[$params['feedformat']] ) ) {
+		$feedClasses = $config->get( 'FeedClasses' );
+		if ( !isset( $feedClasses[$params['feedformat']] ) ) {
 			$this->dieUsage( 'Invalid subscription feed type', 'feed-invalid' );
 		}
 
-		global $wgMiserMode;
-		if ( $params['showsizediff'] && $wgMiserMode ) {
+		if ( $params['showsizediff'] && $this->getConfig()->get( 'MiserMode' ) ) {
 			$this->dieUsage( 'Size difference is disabled in Miser Mode', 'sizediffdisabled' );
 		}
 
 		$msg = wfMessage( 'Contributions' )->inContentLanguage()->text();
-		$feedTitle = $wgSitename . ' - ' . $msg . ' [' . $wgLanguageCode . ']';
+		$feedTitle = $config->get( 'Sitename' ) . ' - ' . $msg . ' [' . $config->get( 'LanguageCode' ) . ']';
 		$feedUrl = SpecialPage::getTitleFor( 'Contributions', $params['user'] )->getFullURL();
 
 		$target = $params['user'] == 'newbies'
 			? 'newbies'
 			: Title::makeTitleSafe( NS_USER, $params['user'] )->getText();
 
-		$feed = new $wgFeedClasses[$params['feedformat']] (
+		$feed = new $feedClasses[$params['feedformat']] (
 			$feedTitle,
 			htmlspecialchars( $msg ),
 			$feedUrl
@@ -82,8 +81,9 @@ class ApiFeedContributions extends ApiBase {
 			'showSizeDiff' => $params['showsizediff'],
 		) );
 
-		if ( $pager->getLimit() > $wgFeedLimit ) {
-			$pager->setLimit( $wgFeedLimit );
+		$feedLimit = $this->getConfig()->get( 'FeedLimit' );
+		if ( $pager->getLimit() > $feedLimit ) {
+			$pager->setLimit( $feedLimit );
 		}
 
 		$feedItems = array();
@@ -95,7 +95,10 @@ class ApiFeedContributions extends ApiBase {
 				if ( ++$count > $limit ) {
 					break;
 				}
-				$feedItems[] = $this->feedItem( $row );
+				$item = $this->feedItem( $row );
+				if ( $item !== null ) {
+					$feedItems[] = $item;
+				}
 			}
 		}
 
@@ -103,6 +106,23 @@ class ApiFeedContributions extends ApiBase {
 	}
 
 	protected function feedItem( $row ) {
+		// This hook is the api contributions equivalent to the
+		// ContributionsLineEnding hook. Hook implementers may cancel
+		// the hook to signal the user is not allowed to read this item.
+		$feedItem = null;
+		$hookResult = Hooks::run(
+			'ApiFeedContributions::feedItem',
+			array( $row, $this->getContext(), &$feedItem )
+		);
+		// Hook returned a valid feed item
+		if ( $feedItem instanceof FeedItem ) {
+			return $feedItem;
+		// Hook was canceled and did not return a valid feed item
+		} elseif ( !$hookResult ) {
+			return null;
+		}
+
+		// Hook completed and did not return a valid feed item
 		$title = Title::makeTitle( intval( $row->page_namespace ), $row->page_title );
 		if ( $title && $title->userCan( 'read', $this->getUser() ) ) {
 			$date = $row->rev_timestamp;
@@ -112,7 +132,7 @@ class ApiFeedContributions extends ApiBase {
 			return new FeedItem(
 				$title->getPrefixedText(),
 				$this->feedItemDesc( $revision ),
-				$title->getFullURL(),
+				$title->getFullURL( array( 'diff' => $revision->getId() ) ),
 				$date,
 				$this->feedItemAuthor( $revision ),
 				$comments
@@ -123,7 +143,7 @@ class ApiFeedContributions extends ApiBase {
 	}
 
 	/**
-	 * @param $revision Revision
+	 * @param Revision $revision
 	 * @return string
 	 */
 	protected function feedItemAuthor( $revision ) {
@@ -131,7 +151,7 @@ class ApiFeedContributions extends ApiBase {
 	}
 
 	/**
-	 * @param $revision Revision
+	 * @param Revision $revision
 	 * @return string
 	 */
 	protected function feedItemDesc( $revision ) {
@@ -159,10 +179,9 @@ class ApiFeedContributions extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		global $wgFeedClasses;
-		$feedFormatNames = array_keys( $wgFeedClasses );
+		$feedFormatNames = array_keys( $this->getConfig()->get( 'FeedClasses' ) );
 
-		return array(
+		$ret = array(
 			'feedformat' => array(
 				ApiBase::PARAM_DFLT => 'rss',
 				ApiBase::PARAM_TYPE => $feedFormatNames
@@ -188,40 +207,22 @@ class ApiFeedContributions extends ApiBase {
 			'deletedonly' => false,
 			'toponly' => false,
 			'newonly' => false,
-			'showsizediff' => false,
+			'showsizediff' => array(
+				ApiBase::PARAM_DFLT => false,
+			),
 		);
+
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
+			$ret['showsizediff'][ApiBase::PARAM_HELP_MSG] = 'api-help-param-disabled-in-miser-mode';
+		}
+
+		return $ret;
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'feedformat' => 'The format of the feed',
-			'user' => 'What users to get the contributions for',
-			'namespace' => 'What namespace to filter the contributions by',
-			'year' => 'From year (and earlier)',
-			'month' => 'From month (and earlier)',
-			'tagfilter' => 'Filter contributions that have these tags',
-			'deletedonly' => 'Show only deleted contributions',
-			'toponly' => 'Only show edits that are latest revisions',
-			'newonly' => 'Only show edits that are page creations',
-			'showsizediff' => 'Show the size difference between revisions. Disabled in Miser Mode',
-		);
-	}
-
-	public function getDescription() {
-		return 'Returns a user contributions feed.';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'feed-unavailable', 'info' => 'Syndication feeds are not available' ),
-			array( 'code' => 'feed-invalid', 'info' => 'Invalid subscription feed type' ),
-			array( 'code' => 'sizediffdisabled', 'info' => 'Size difference is disabled in Miser Mode' ),
-		) );
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=feedcontributions&user=Reedy',
+			'action=feedcontributions&user=Example'
+				=> 'apihelp-feedcontributions-example-simple',
 		);
 	}
 }

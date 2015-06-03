@@ -1,8 +1,7 @@
 <?php
 /** Swiss German (Alemannisch)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -61,6 +60,7 @@ $specialPageAliases = array(
 	'Mostrevisions'             => array( 'Syte_wo_am_meischte_bearbeitet_sin' ),
 	'Movepage'                  => array( 'Verschiebe' ),
 	'Mycontributions'           => array( 'Myyni_Byytreeg' ),
+	'MyLanguage'                => array( 'Myyni_Sprooch' ),
 	'Mypage'                    => array( 'Myyni_Benutzersyte' ),
 	'Mytalk'                    => array( 'Myyni_Diskussionssyte' ),
 	'Myuploads'                 => array( 'Dateie_wonni_uffeglade_han' ),

@@ -77,7 +77,8 @@ class MWTimestamp {
 		$da = array();
 		$strtime = '';
 
-		if ( !$ts || $ts === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0" ) { // We want to catch 0, '', null... but not date strings starting with a letter.
+		// We want to catch 0, '', null... but not date strings starting with a letter.
+		if ( !$ts || $ts === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0" ) {
 			$uts = time();
 			$strtime = "@$uts";
 		} elseif ( preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $ts, $da ) ) {
@@ -93,18 +94,41 @@ class MWTimestamp {
 			# TS_ORACLE // session altered to DD-MM-YYYY HH24:MI:SS.FF6
 			$strtime = preg_replace( '/(\d\d)\.(\d\d)\.(\d\d)(\.(\d+))?/', "$1:$2:$3",
 					str_replace( '+00:00', 'UTC', $ts ) );
-		} elseif ( preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.*\d*)?Z?$/', $ts, $da ) ) {
+		} elseif ( preg_match(
+			'/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.*\d*)?Z?$/',
+			$ts,
+			$da
+		) ) {
 			# TS_ISO_8601
-		} elseif ( preg_match( '/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(?:\.*\d*)?Z?$/', $ts, $da ) ) {
+		} elseif ( preg_match(
+			'/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(?:\.*\d*)?Z?$/',
+			$ts,
+			$da
+		) ) {
 			#TS_ISO_8601_BASIC
-		} elseif ( preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)\.*\d*[\+\- ](\d\d)$/', $ts, $da ) ) {
+		} elseif ( preg_match(
+			'/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)\.*\d*[\+\- ](\d\d)$/',
+			$ts,
+			$da
+		) ) {
 			# TS_POSTGRES
-		} elseif ( preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)\.*\d* GMT$/', $ts, $da ) ) {
+		} elseif ( preg_match(
+			'/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)\.*\d* GMT$/',
+			$ts,
+			$da
+		) ) {
 			# TS_POSTGRES
-		} elseif ( preg_match( '/^[ \t\r\n]*([A-Z][a-z]{2},[ \t\r\n]*)?' . # Day of week
-								'\d\d?[ \t\r\n]*[A-Z][a-z]{2}[ \t\r\n]*\d{2}(?:\d{2})?' .  # dd Mon yyyy
-								'[ \t\r\n]*\d\d[ \t\r\n]*:[ \t\r\n]*\d\d[ \t\r\n]*:[ \t\r\n]*\d\d/S', $ts ) ) { # hh:mm:ss
-			# TS_RFC2822, accepting a trailing comment. See http://www.squid-cache.org/mail-archive/squid-users/200307/0122.html / r77171
+		} elseif ( preg_match(
+			# Day of week
+			'/^[ \t\r\n]*([A-Z][a-z]{2},[ \t\r\n]*)?' .
+			# dd Mon yyyy
+			'\d\d?[ \t\r\n]*[A-Z][a-z]{2}[ \t\r\n]*\d{2}(?:\d{2})?' .
+			# hh:mm:ss
+			'[ \t\r\n]*\d\d[ \t\r\n]*:[ \t\r\n]*\d\d[ \t\r\n]*:[ \t\r\n]*\d\d/S',
+			$ts
+		) ) {
+			# TS_RFC2822, accepting a trailing comment.
+			# See http://www.squid-cache.org/mail-archive/squid-users/200307/0122.html / r77171
 			# The regex is a superset of rfc2822 for readability
 			$strtime = strtok( $ts, ';' );
 		} elseif ( preg_match( '/^[A-Z][a-z]{5,8}, \d\d-[A-Z][a-z]{2}-\d{2} \d\d:\d\d:\d\d/', $ts ) ) {
@@ -158,6 +182,11 @@ class MWTimestamp {
 			$output .= ' GMT';
 		}
 
+		if ( $style == TS_MW && strlen( $output ) !== 14 ) {
+			throw new TimestampException( __METHOD__ . ': The timestamp cannot be represented in ' .
+				'the specified format' );
+		}
+
 		return $output;
 	}
 
@@ -171,12 +200,17 @@ class MWTimestamp {
 	 * @since 1.20
 	 * @since 1.22 Uses Language::getHumanTimestamp to produce the timestamp
 	 *
-	 * @param MWTimestamp|null $relativeTo The base timestamp to compare to (defaults to now)
-	 * @param User|null $user User the timestamp is being generated for (or null to use main context's user)
-	 * @param Language|null $lang Language to use to make the human timestamp (or null to use main context's language)
+	 * @param MWTimestamp|null $relativeTo The base timestamp to compare to
+	 *   (defaults to now).
+	 * @param User|null $user User the timestamp is being generated for (or null
+	 *   to use main context's user).
+	 * @param Language|null $lang Language to use to make the human timestamp
+	 *   (or null to use main context's language).
 	 * @return string Formatted timestamp
 	 */
-	public function getHumanTimestamp( MWTimestamp $relativeTo = null, User $user = null, Language $lang = null ) {
+	public function getHumanTimestamp( MWTimestamp $relativeTo = null,
+		User $user = null, Language $lang = null
+	) {
 		if ( $relativeTo === null ) {
 			$relativeTo = new self();
 		}
@@ -192,7 +226,7 @@ class MWTimestamp {
 		$offsetRel = $relativeTo->offsetForUser( $user );
 
 		$ts = '';
-		if ( wfRunHooks( 'GetHumanTimestamp', array( &$ts, $this, $relativeTo, $user, $lang ) ) ) {
+		if ( Hooks::run( 'GetHumanTimestamp', array( &$ts, $this, $relativeTo, $user, $lang ) ) ) {
 			$ts = $lang->getHumanTimestamp( $this, $relativeTo, $user );
 		}
 
@@ -209,7 +243,6 @@ class MWTimestamp {
 	 * @since 1.22
 	 *
 	 * @param User $user User to take preferences from
-	 * @param[out] MWTimestamp $ts Timestamp to adjust
 	 * @return DateInterval Offset that was applied to the timestamp
 	 */
 	public function offsetForUser( User $user ) {
@@ -239,7 +272,7 @@ class MWTimestamp {
 		// first value.
 		if ( $data[0] == 'System' ) {
 			// First value is System, so use the system offset.
-			if ( isset( $wgLocalTZoffset ) ) {
+			if ( $wgLocalTZoffset !== null ) {
 				$diff = $wgLocalTZoffset;
 			}
 		} elseif ( $data[0] == 'Offset' ) {
@@ -298,11 +331,13 @@ class MWTimestamp {
 
 		$ts = '';
 		$diff = $this->diff( $relativeTo );
-		if ( wfRunHooks( 'GetRelativeTimestamp', array( &$ts, &$diff, $this, $relativeTo, $user, $lang ) ) ) {
+		if ( Hooks::run(
+			'GetRelativeTimestamp',
+			array( &$ts, &$diff, $this, $relativeTo, $user, $lang )
+		) ) {
 			$seconds = ( ( ( $diff->days * 24 + $diff->h ) * 60 + $diff->i ) * 60 + $diff->s );
 			$ts = wfMessage( 'ago', $lang->formatDuration( $seconds, $chosenIntervals ) )
-				->inLanguage( $lang )
-				->text();
+				->inLanguage( $lang )->text();
 		}
 
 		return $ts;
@@ -322,7 +357,8 @@ class MWTimestamp {
 	 *
 	 * @since 1.22
 	 * @param MWTimestamp $relativeTo Base time to calculate difference from
-	 * @return DateInterval|bool The DateInterval object representing the difference between the two dates or false on failure
+	 * @return DateInterval|bool The DateInterval object representing the
+	 *   difference between the two dates or false on failure
 	 */
 	public function diff( MWTimestamp $relativeTo ) {
 		return $this->timestamp->diff( $relativeTo->timestamp );
@@ -332,7 +368,7 @@ class MWTimestamp {
 	 * Set the timezone of this timestamp to the specified timezone.
 	 *
 	 * @since 1.22
-	 * @param String $timezone Timezone to set
+	 * @param string $timezone Timezone to set
 	 * @throws TimestampException
 	 */
 	public function setTimezone( $timezone ) {
@@ -369,7 +405,7 @@ class MWTimestamp {
 	 *
 	 * @since 1.22
 	 * @param bool|string $ts Timestamp to set, or false for current time
-	 * @return MWTimestamp the local instance
+	 * @return MWTimestamp The local instance
 	 */
 	public static function getLocalInstance( $ts = false ) {
 		global $wgLocaltimezone;
@@ -383,7 +419,7 @@ class MWTimestamp {
 	 *
 	 * @since 1.22
 	 * @param bool|string $ts Timestamp to set, or false for current time
-	 * @return MWTimestamp the instance
+	 * @return MWTimestamp The instance
 	 */
 	public static function getInstance( $ts = false ) {
 		return new self( $ts );

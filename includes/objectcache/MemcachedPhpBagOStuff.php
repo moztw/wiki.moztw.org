@@ -39,9 +39,10 @@ class MemcachedPhpBagOStuff extends MemcachedBagOStuff {
 	 *   - timeout:             The read timeout in microseconds
 	 *   - connect_timeout:     The connect timeout in seconds
 	 *
-	 * @param $params array
+	 * @param array $params
 	 */
 	function __construct( $params ) {
+		parent::__construct( $params );
 		$params = $this->applyDefaultParams( $params );
 
 		$this->client = new MemCachedClientforWiki( $params );
@@ -50,15 +51,15 @@ class MemcachedPhpBagOStuff extends MemcachedBagOStuff {
 	}
 
 	/**
-	 * @param $debug bool
+	 * @param bool $debug
 	 */
 	public function setDebug( $debug ) {
 		$this->client->set_debug( $debug );
 	}
 
 	/**
-	 * @param $keys Array
-	 * @return Array
+	 * @param array $keys
+	 * @return array
 	 */
 	public function getMulti( array $keys ) {
 		$callback = array( $this, 'encodeKey' );
@@ -66,35 +67,18 @@ class MemcachedPhpBagOStuff extends MemcachedBagOStuff {
 	}
 
 	/**
-	 * @param $key
-	 * @param $timeout int
-	 * @return bool
-	 */
-	public function lock( $key, $timeout = 0 ) {
-		return $this->client->lock( $this->encodeKey( $key ), $timeout );
-	}
-
-	/**
-	 * @param $key string
-	 * @return Mixed
-	 */
-	public function unlock( $key ) {
-		return $this->client->unlock( $this->encodeKey( $key ) );
-	}
-
-	/**
-	 * @param $key string
-	 * @param $value int
-	 * @return Mixed
+	 * @param string $key
+	 * @param int $value
+	 * @return mixed
 	 */
 	public function incr( $key, $value = 1 ) {
 		return $this->client->incr( $this->encodeKey( $key ), $value );
 	}
 
 	/**
-	 * @param $key string
-	 * @param $value int
-	 * @return Mixed
+	 * @param string $key
+	 * @param int $value
+	 * @return mixed
 	 */
 	public function decr( $key, $value = 1 ) {
 		return $this->client->decr( $this->encodeKey( $key ), $value );

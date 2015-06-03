@@ -3,7 +3,7 @@
  */
 ( function ( $ ) {
 
-	$.extend({
+	$.extend( {
 		trimLeft: function ( str ) {
 			return str === null ? '' : str.toString().replace( /^\s+/, '' );
 		},
@@ -12,19 +12,19 @@
 					'' : str.toString().replace( /\s+$/, '' );
 		},
 		ucFirst: function ( str ) {
-			return str.charAt( 0 ).toUpperCase() + str.substr( 1 );
+			return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 		},
 		escapeRE: function ( str ) {
-			return str.replace ( /([\\{}()|.?*+\-\^$\[\]])/g, '\\$1' );
+			return str.replace( /([\\{}()|.?*+\-\^$\[\]])/g, '\\$1' );
 		},
 		isDomElement: function ( el ) {
 			return !!el && !!el.nodeType;
 		},
 		isEmpty: function ( v ) {
 			var key;
-			if ( v === '' || v === 0 || v === '0' || v === null
-				|| v === false || v === undefined )
-			{
+			if (
+				v === '' || v === 0 || v === '0' || v === null || v === false || v === undefined
+			) {
 				return true;
 			}
 			// the for-loop could potentially contain prototypes
@@ -117,6 +117,6 @@
 			}
 			return true;
 		}
-	});
+	} );
 
 }( jQuery ) );

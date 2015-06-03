@@ -5,7 +5,7 @@
  * Copyright © 2004 Gabriel Wicke <wicke@wikidev.net>
  * http://wikidev.net/
  *
- * Based on HistoryPage and SpecialExport
+ * Based on HistoryAction and SpecialExport
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,13 @@
  * @ingroup Actions
  */
 class RawAction extends FormlessAction {
-	private $mGen;
+	/**
+	 * @var bool Does the request include a gen=css|javascript parameter
+	 * @deprecated This used to be a string for "css" or "javascript" but
+	 * it is no longer used. Setting this parameter results in empty content
+	 * being served
+	 */
+	private $gen = false;
 
 	public function getName() {
 		return 'raw';
@@ -48,10 +54,9 @@ class RawAction extends FormlessAction {
 	}
 
 	function onView() {
-		global $wgSquidMaxage, $wgForcedRawSMaxage;
-
 		$this->getOutput()->disable();
 		$request = $this->getRequest();
+		$config = $this->context->getConfig();
 
 		if ( !$request->checkUrlExtension() ) {
 			return;
@@ -67,12 +72,10 @@ class RawAction extends FormlessAction {
 		$smaxage = $request->getIntOrNull( 'smaxage' );
 
 		if ( $gen == 'css' || $gen == 'js' ) {
-			$this->mGen = $gen;
+			$this->gen = true;
 			if ( $smaxage === null ) {
-				$smaxage = $wgSquidMaxage;
+				$smaxage = $config->get( 'SquidMaxage' );
 			}
-		} else {
-			$this->mGen = false;
 		}
 
 		$contentType = $this->getContentType();
@@ -81,13 +84,13 @@ class RawAction extends FormlessAction {
 		# Note: If using a canonical url for userpage css/js, we send an HTCP purge.
 		if ( $smaxage === null ) {
 			if ( $contentType == 'text/css' || $contentType == 'text/javascript' ) {
-				$smaxage = intval( $wgForcedRawSMaxage );
+				$smaxage = intval( $config->get( 'ForcedRawSMaxage' ) );
 			} else {
 				$smaxage = 0;
 			}
 		}
 
-		$maxage = $request->getInt( 'maxage', $wgSquidMaxage );
+		$maxage = $request->getInt( 'maxage', $config->get( 'SquidMaxage' ) );
 
 		$response = $request->response();
 
@@ -114,7 +117,7 @@ class RawAction extends FormlessAction {
 			$response->header( 'HTTP/1.x 404 Not Found' );
 		}
 
-		if ( !wfRunHooks( 'RawPageViewBeforeOutput', array( &$this, &$text ) ) ) {
+		if ( !Hooks::run( 'RawPageViewBeforeOutput', array( &$this, &$text ) ) ) {
 			wfDebug( __METHOD__ . ": RawPageViewBeforeOutput hook broke raw page output.\n" );
 		}
 
@@ -131,7 +134,7 @@ class RawAction extends FormlessAction {
 		global $wgParser;
 
 		# No longer used
-		if ( $this->mGen ) {
+		if ( $this->gen ) {
 			return '';
 		}
 
@@ -205,10 +208,11 @@ class RawAction extends FormlessAction {
 		switch ( $this->getRequest()->getText( 'direction' ) ) {
 			case 'next':
 				# output next revision, or nothing if there isn't one
+				$nextid = 0;
 				if ( $oldid ) {
-					$oldid = $this->getTitle()->getNextRevisionID( $oldid );
+					$nextid = $this->getTitle()->getNextRevisionID( $oldid );
 				}
-				$oldid = $oldid ? $oldid : -1;
+				$oldid = $nextid ?: -1;
 				break;
 			case 'prev':
 				# output previous revision, or nothing if there isn't one
@@ -216,8 +220,8 @@ class RawAction extends FormlessAction {
 					# get the current revision so we can get the penultimate one
 					$oldid = $this->page->getLatest();
 				}
-				$prev = $this->getTitle()->getPreviousRevisionID( $oldid );
-				$oldid = $prev ? $prev : -1;
+				$previd = $this->getTitle()->getPreviousRevisionID( $oldid );
+				$oldid = $previd ?: -1;
 				break;
 			case 'cur':
 				$oldid = 0;
@@ -250,42 +254,5 @@ class RawAction extends FormlessAction {
 		}
 
 		return $ctype;
-	}
-}
-
-/**
- * Backward compatibility for extensions
- *
- * @deprecated in 1.19
- */
-class RawPage extends RawAction {
-	public $mOldId;
-
-	/**
-	 * @param Page $page
-	 * @param WebRequest|bool $request The WebRequest (default: false).
-	 */
-	function __construct( Page $page, $request = false ) {
-		wfDeprecated( __CLASS__, '1.19' );
-		parent::__construct( $page );
-
-		if ( $request !== false ) {
-			$context = new DerivativeContext( $this->getContext() );
-			$context->setRequest( $request );
-			$this->context = $context;
-		}
-	}
-
-	public function view() {
-		$this->onView();
-	}
-
-	public function getOldId() {
-		# Some extensions like to set $mOldId
-		if ( $this->mOldId !== null ) {
-			return $this->mOldId;
-		}
-
-		return parent::getOldId();
 	}
 }

@@ -57,14 +57,14 @@ abstract class FileJournal {
 	 *
 	 * @param array $config
 	 * @param string $backend A registered file backend name
-	 * @throws MWException
+	 * @throws Exception
 	 * @return FileJournal
 	 */
 	final public static function factory( array $config, $backend ) {
 		$class = $config['class'];
 		$jrn = new $class( $config );
 		if ( !$jrn instanceof self ) {
-			throw new MWException( "Class given is not an instance of FileJournal." );
+			throw new Exception( "Class given is not an instance of FileJournal." );
 		}
 		$jrn->backend = $backend;
 
@@ -132,7 +132,7 @@ abstract class FileJournal {
 	/**
 	 * Get the position ID of the latest journal entry at some point in time
 	 *
-	 * @param int|string $time timestamp
+	 * @param int|string $time Timestamp
 	 * @return int|bool
 	 */
 	final public function getPositionAtTime( $time ) {
@@ -150,9 +150,9 @@ abstract class FileJournal {
 	 * Get an array of file change log entries.
 	 * A starting change ID and/or limit can be specified.
 	 *
-	 * @param $start integer Starting change ID or null
-	 * @param $limit integer Maximum number of items to return
-	 * @param &$next string Updated to the ID of the next entry.
+	 * @param int $start Starting change ID or null
+	 * @param int $limit Maximum number of items to return
+	 * @param string &$next Updated to the ID of the next entry.
 	 * @return array List of associative arrays, each having:
 	 *     id         : unique, monotonic, ID for this change
 	 *     batch_uuid : UUID for an operation batch
@@ -224,7 +224,7 @@ class NullFileJournal extends FileJournal {
 
 	/**
 	 * @see FileJournal::doGetPositionAtTime()
-	 * @param int|string $time timestamp
+	 * @param int|string $time Timestamp
 	 * @return int|bool
 	 */
 	protected function doGetPositionAtTime( $time ) {

@@ -69,7 +69,6 @@ CREATE TABLE &mw_prefix.page (
   page_namespace     NUMBER       DEFAULT 0 NOT NULL,
   page_title         VARCHAR2(255)           NOT NULL,
   page_restrictions  VARCHAR2(255),
-  page_counter       NUMBER         DEFAULT 0 NOT NULL,
   page_is_redirect   CHAR(1)           DEFAULT '0' NOT NULL,
   page_is_new        CHAR(1)           DEFAULT '0' NOT NULL,
   page_random        NUMBER(15,14) NOT NULL,
@@ -77,7 +76,8 @@ CREATE TABLE &mw_prefix.page (
   page_links_updated TIMESTAMP(6) WITH TIME ZONE,
   page_latest        NUMBER        DEFAULT 0 NOT NULL, -- FK?
   page_len           NUMBER        DEFAULT 0 NOT NULL,
-  page_content_model VARCHAR2(32)
+  page_content_model VARCHAR2(32),
+  page_lang VARCHAR2(35) DEFAULT NULL
 );
 ALTER TABLE &mw_prefix.page ADD CONSTRAINT &mw_prefix.page_pk PRIMARY KEY (page_id);
 CREATE UNIQUE INDEX &mw_prefix.page_u01 ON &mw_prefix.page (page_namespace,page_title);
@@ -87,7 +87,7 @@ CREATE INDEX &mw_prefix.page_i03 ON &mw_prefix.page (page_is_redirect, page_name
 
 -- Create a dummy page to satisfy fk contraints especially with revisions
 INSERT INTO &mw_prefix.page
-  VALUES (0, 0, ' ', NULL, 0, 0, 0, 0, current_timestamp, NULL, 0, 0, NULL);
+  VALUES (0, 0, ' ', NULL, 0, 0, 0, 0, current_timestamp, NULL, 0, 0, NULL, NULL);
 
 /*$mw$*/
 CREATE TRIGGER &mw_prefix.page_set_random BEFORE INSERT ON &mw_prefix.page
@@ -246,7 +246,6 @@ CREATE UNIQUE INDEX &mw_prefix.iwlinks_ui02 ON &mw_prefix.iwlinks (iwl_prefix, i
 
 CREATE TABLE &mw_prefix.site_stats (
   ss_row_id         NUMBER  NOT NULL ,
-  ss_total_views    NUMBER            DEFAULT 0,
   ss_total_edits    NUMBER            DEFAULT 0,
   ss_good_articles  NUMBER            DEFAULT 0,
   ss_total_pages    NUMBER            DEFAULT -1,
@@ -255,10 +254,6 @@ CREATE TABLE &mw_prefix.site_stats (
   ss_images         NUMBER            DEFAULT 0
 );
 CREATE UNIQUE INDEX &mw_prefix.site_stats_u01 ON &mw_prefix.site_stats (ss_row_id);
-
-CREATE TABLE &mw_prefix.hitcounter (
-  hc_id  NUMBER  NOT NULL
-);
 
 CREATE SEQUENCE ipblocks_ipb_id_seq;
 CREATE TABLE &mw_prefix.ipblocks (

@@ -106,7 +106,7 @@ class UserrightsPage extends SpecialPage {
 			}
 		}
 
-		if ( User::getCanonicalName( $this->mTarget ) == $user->getName() ) {
+		if ( User::getCanonicalName( $this->mTarget ) === $user->getName() ) {
 			$this->isself = true;
 		}
 
@@ -135,6 +135,7 @@ class UserrightsPage extends SpecialPage {
 
 		$out = $this->getOutput();
 		$out->addModuleStyles( 'mediawiki.special' );
+		$this->addHelpLink( 'Help:Assigning permissions' );
 
 		// show the general form
 		if ( count( $available['add'] ) || count( $available['remove'] ) ) {
@@ -190,8 +191,8 @@ class UserrightsPage extends SpecialPage {
 	 * Save user groups changes in the database.
 	 * Data comes from the editUserGroupsForm() form function
 	 *
-	 * @param string $username username to apply changes to.
-	 * @param string $reason reason for group change
+	 * @param string $username Username to apply changes to.
+	 * @param string $reason Reason for group change
 	 * @param User|UserRightsProxy $user Target user object.
 	 * @return null
 	 */
@@ -218,7 +219,7 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Save user groups changes in the database.
 	 *
-	 * @param User $user
+	 * @param User|UserRightsProxy $user
 	 * @param array $add Array of groups to add
 	 * @param array $remove Array of groups to remove
 	 * @param string $reason Reason for group change
@@ -228,7 +229,7 @@ class UserrightsPage extends SpecialPage {
 		global $wgAuth;
 
 		// Validate input set...
-		$isself = ( $user->getName() == $this->getUser()->getName() );
+		$isself = $user->getName() == $this->getUser()->getName();
 		$groups = $user->getGroups();
 		$changeable = $this->changeableGroups();
 		$addable = array_merge( $changeable['add'], $isself ? $changeable['add-self'] : array() );
@@ -244,18 +245,22 @@ class UserrightsPage extends SpecialPage {
 		$oldGroups = $user->getGroups();
 		$newGroups = $oldGroups;
 
-		// remove then add groups
+		// Remove then add groups
 		if ( $remove ) {
-			$newGroups = array_diff( $newGroups, $remove );
-			foreach ( $remove as $group ) {
-				$user->removeGroup( $group );
+			foreach ( $remove as $index => $group ) {
+				if ( !$user->removeGroup( $group ) ) {
+					unset($remove[$index]);
+				}
 			}
+			$newGroups = array_diff( $newGroups, $remove );
 		}
 		if ( $add ) {
-			$newGroups = array_merge( $newGroups, $add );
-			foreach ( $add as $group ) {
-				$user->addGroup( $group );
+			foreach ( $add as $index => $group ) {
+				if ( !$user->addGroup( $group ) ) {
+					unset($add[$index]);
+				}
 			}
+			$newGroups = array_merge( $newGroups, $add );
 		}
 		$newGroups = array_unique( $newGroups );
 
@@ -267,7 +272,7 @@ class UserrightsPage extends SpecialPage {
 
 		wfDebug( 'oldGroups: ' . print_r( $oldGroups, true ) . "\n" );
 		wfDebug( 'newGroups: ' . print_r( $newGroups, true ) . "\n" );
-		wfRunHooks( 'UserRights', array( &$user, $add, $remove ) );
+		Hooks::run( 'UserRights', array( &$user, $add, $remove ) );
 
 		if ( $newGroups != $oldGroups ) {
 			$this->addLogEntry( $user, $oldGroups, $newGroups, $reason );
@@ -278,6 +283,10 @@ class UserrightsPage extends SpecialPage {
 
 	/**
 	 * Add a rights log entry for an action.
+	 * @param User $user
+	 * @param array $oldGroups
+	 * @param array $newGroups
+	 * @param array $reason
 	 */
 	function addLogEntry( $user, $oldGroups, $newGroups, $reason ) {
 		$logEntry = new ManualLogEntry( 'rights', 'rights' );
@@ -294,7 +303,7 @@ class UserrightsPage extends SpecialPage {
 
 	/**
 	 * Edit user groups membership
-	 * @param string $username name of the user.
+	 * @param string $username Name of the user.
 	 */
 	function editUserGroupsForm( $username ) {
 		$status = $this->fetchUser( $username );
@@ -321,12 +330,10 @@ class UserrightsPage extends SpecialPage {
 	 *
 	 * Side effects: error output for invalid access
 	 * @param string $username
-	 * @return Status object
+	 * @return Status
 	 */
 	public function fetchUser( $username ) {
-		global $wgUserrightsInterwikiDelimiter;
-
-		$parts = explode( $wgUserrightsInterwikiDelimiter, $username );
+		$parts = explode( $this->getConfig()->get( 'UserrightsInterwikiDelimiter' ), $username );
 		if ( count( $parts ) < 2 ) {
 			$name = trim( $username );
 			$database = '';
@@ -395,8 +402,8 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Make a list of group names to be stored as parameter for log entries
 	 *
-	 * @deprecated in 1.21; use LogFormatter instead.
-	 * @param $ids array
+	 * @deprecated since 1.21; use LogFormatter instead.
+	 * @param array $ids
 	 * @return string
 	 */
 	function makeGroupNameListForLog( $ids ) {
@@ -413,13 +420,14 @@ class UserrightsPage extends SpecialPage {
 	 * Output a form to allow searching for a user
 	 */
 	function switchForm() {
-		global $wgScript;
+		$this->getOutput()->addModules( 'mediawiki.userSuggest' );
+
 		$this->getOutput()->addHTML(
 			Html::openElement(
 				'form',
 				array(
 					'method' => 'get',
-					'action' => $wgScript,
+					'action' => wfScript(),
 					'name' => 'uluser',
 					'id' => 'mw-userrights-form1'
 				)
@@ -432,7 +440,10 @@ class UserrightsPage extends SpecialPage {
 				'username',
 				30,
 				str_replace( '_', ' ', $this->mTarget ),
-				array( 'autofocus' => true )
+				array(
+					'autofocus' => '',
+					'class' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
+				)
 			) . ' ' .
 			Xml::submitButton( $this->msg( 'editusergroup' )->text() ) .
 			Html::closeElement( 'fieldset' ) .
@@ -487,25 +498,32 @@ class UserrightsPage extends SpecialPage {
 		}
 
 		$language = $this->getLanguage();
-		$displayedList = $this->msg( 'userrights-groupsmember-type',
-			$language->listToText( $list ),
-			$language->listToText( $membersList )
-		)->plain();
-		$displayedAutolist = $this->msg( 'userrights-groupsmember-type',
-			$language->listToText( $autoList ),
-			$language->listToText( $autoMembersList )
-		)->plain();
+		$displayedList = $this->msg( 'userrights-groupsmember-type' )
+			->rawParams(
+				$language->listToText( $list ),
+				$language->listToText( $membersList )
+			)->escaped();
+		$displayedAutolist = $this->msg( 'userrights-groupsmember-type' )
+			->rawParams(
+				$language->listToText( $autoList ),
+				$language->listToText( $autoMembersList )
+			)->escaped();
 
 		$grouplist = '';
 		$count = count( $list );
 		if ( $count > 0 ) {
-			$grouplist = $this->msg( 'userrights-groupsmember', $count, $user->getName() )->parse();
+			$grouplist = $this->msg( 'userrights-groupsmember' )
+				->numParams( $count )
+				->params( $user->getName() )
+				->parse();
 			$grouplist = '<p>' . $grouplist . ' ' . $displayedList . "</p>\n";
 		}
 
 		$count = count( $autoList );
 		if ( $count > 0 ) {
-			$autogrouplistintro = $this->msg( 'userrights-groupsmember-auto', $count, $user->getName() )
+			$autogrouplistintro = $this->msg( 'userrights-groupsmember-auto' )
+				->numParams( $count )
+				->params( $user->getName() )
 				->parse();
 			$grouplist .= '<p>' . $autogrouplistintro . ' ' . $displayedAutolist . "</p>\n";
 		}
@@ -543,7 +561,7 @@ class UserrightsPage extends SpecialPage {
 				->rawParams( $userToolLinks )->parse() .
 			$this->msg( 'userrights-groups-help', $user->getName() )->parse() .
 			$grouplist .
-			Xml::tags( 'p', null, $this->groupCheckboxes( $groups, $user ) ) .
+			$this->groupCheckboxes( $groups, $user ) .
 			Xml::openElement( 'table', array( 'id' => 'mw-userrights-table-outer' ) ) .
 				"<tr>
 					<td class='mw-label'>" .
@@ -572,7 +590,7 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Format a link to a group description page
 	 *
-	 * @param $group string
+	 * @param string $group
 	 * @return string
 	 */
 	private static function buildGroupLink( $group ) {
@@ -582,7 +600,7 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Format a link to a group member description page
 	 *
-	 * @param $group string
+	 * @param string $group
 	 * @return string
 	 */
 	private static function buildGroupMemberLink( $group ) {
@@ -601,8 +619,8 @@ class UserrightsPage extends SpecialPage {
 	 * Adds a table with checkboxes where you can select what groups to add/remove
 	 *
 	 * @todo Just pass the username string?
-	 * @param array $usergroups groups the user belongs to
-	 * @param $user User a user object
+	 * @param array $usergroups Groups the user belongs to
+	 * @param User $user
 	 * @return string XHTML table element with checkboxes
 	 */
 	private function groupCheckboxes( $usergroups, $user ) {
@@ -663,9 +681,9 @@ class UserrightsPage extends SpecialPage {
 
 				$member = User::getGroupMember( $group, $user->getName() );
 				if ( $checkbox['irreversible'] ) {
-					$text = $this->msg( 'userrights-irreversible-marker', $member )->escaped();
+					$text = $this->msg( 'userrights-irreversible-marker', $member )->text();
 				} else {
-					$text = htmlspecialchars( $member );
+					$text = $member;
 				}
 				$checkboxHtml = Xml::checkLabel( $text, "wpGroup-" . $group,
 					"wpGroup-" . $group, $checkbox['set'], $attr );
@@ -696,7 +714,7 @@ class UserrightsPage extends SpecialPage {
 	}
 
 	/**
-	 * @param string $group the name of the group to check
+	 * @param string $group The name of the group to check
 	 * @return bool Can we add the group?
 	 */
 	private function canAdd( $group ) {
@@ -711,7 +729,7 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Returns $this->getUser()->changeableGroups()
 	 *
-	 * @return array array(
+	 * @return array Array(
 	 *   'add' => array( addablegroups ),
 	 *   'remove' => array( removablegroups ),
 	 *   'add-self' => array( addablegroups to self ),
@@ -725,8 +743,8 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Show a rights log fragment for the specified user
 	 *
-	 * @param $user User to show log for
-	 * @param $output OutputPage to use
+	 * @param User $user User to show log for
+	 * @param OutputPage $output OutputPage to use
 	 */
 	protected function showLogFragment( $user, $output ) {
 		$rightsLogPage = new LogPage( 'rights' );

@@ -4,8 +4,7 @@
  * Quickie parser class that can happily read the subset of PHP we need
  * for our localization arrays safely.
  *
- * About an order of magnitude faster than ConfEditor(), but still an
- * order of magnitude slower than eval().
+ * Still an order of magnitude slower than eval().
  */
 class QuickArrayReader {
 	private $vars = array();

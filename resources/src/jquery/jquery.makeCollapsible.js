@@ -1,27 +1,22 @@
 /**
  * jQuery makeCollapsible
  *
- * This will enable collapsible-functionality on all passed elements.
- * - Will prevent binding twice to the same element.
- * - Initial state is expanded by default, this can be overriden by adding class
- *   "mw-collapsed" to the "mw-collapsible" element.
- * - Elements made collapsible have jQuery data "mw-made-collapsible" set to true.
- * - The inner content is wrapped in a "div.mw-collapsible-content" (except for tables and lists).
+ * Dual licensed:
+ * - CC BY 3.0 <http://creativecommons.org/licenses/by/3.0>
+ * - GPL2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
  *
- * @author Krinkle, 2011-2012
- *
- * Dual license:
- * @license CC BY 3.0 <http://creativecommons.org/licenses/by/3.0>
- * @license GPL2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
+ * @class jQuery.plugin.makeCollapsible
  */
 ( function ( $, mw ) {
+
 	/**
 	 * Handler for a click on a collapsible toggler.
 	 *
+	 * @private
 	 * @param {jQuery} $collapsible
 	 * @param {string} action The action this function will take ('expand' or 'collapse').
-	 * @param {jQuery|null} [optional] $defaultToggle
-	 * @param {Object|undefined} options
+	 * @param {jQuery|null} [$defaultToggle]
+	 * @param {Object|undefined} [options]
 	 */
 	function toggleElement( $collapsible, action, $defaultToggle, options ) {
 		var $collapsibleContent, $containers, hookCallback;
@@ -146,10 +141,11 @@
 	}
 
 	/**
-	 * Handles clicking/keypressing on the collapsible element toggle and other
+	 * Handle clicking/keypressing on the collapsible element toggle and other
 	 * situations where a collapsible element is toggled (e.g. the initial
 	 * toggle for collapsed ones).
 	 *
+	 * @private
 	 * @param {jQuery} $toggle the clickable toggle itself
 	 * @param {jQuery} $collapsible the collapsible element
 	 * @param {jQuery.Event|null} e either the event or null if unavailable
@@ -209,28 +205,34 @@
 	}
 
 	/**
-	 * Make any element collapsible.
+	 * Enable collapsible-functionality on all elements in the collection.
 	 *
-	 * Supported options:
-	 * - collapseText: text to be used for the toggler when clicking it would
-	 *   collapse the element. Default: the 'data-collapsetext' attribute of
-	 *   the collapsible element or the content of 'collapsible-collapse'
-	 *   message.
-	 * - expandText: text to be used for the toggler when clicking it would
-	 *   expand the element. Default: the 'data-expandtext' attribute of
-	 *   the collapsible element or the content of 'collapsible-expand'
-	 *   message.
-	 * - collapsed: boolean, whether to collapse immediately. By default
+	 * - Will prevent binding twice to the same element.
+	 * - Initial state is expanded by default, this can be overridden by adding class
+	 *   "mw-collapsed" to the "mw-collapsible" element.
+	 * - Elements made collapsible have jQuery data "mw-made-collapsible" set to true.
+	 * - The inner content is wrapped in a "div.mw-collapsible-content" (except for tables and lists).
+	 *
+	 * @param {Object} [options]
+	 * @param {string} [options.collapseText] Text used for the toggler, when clicking it would
+	 *   collapse the element. Default: the 'data-collapsetext' attribute of the
+	 *   collapsible element or the content of 'collapsible-collapse' message.
+	 * @param {string} [options.expandText] Text used for the toggler, when clicking it would
+	 *   expand the element. Default: the 'data-expandtext' attribute of the
+	 *   collapsible element or the content of 'collapsible-expand' message.
+	 * @param {boolean} [options.collapsed] Whether to collapse immediately. By default
 	 *   collapse only if the elements has the 'mw-collapsible' class.
-	 * - $customTogglers: jQuerified list of elements to be used as togglers
+	 * @param {jQuery} [options.$customTogglers] Elements to be used as togglers
 	 *   for this collapsible element. By default, if the collapsible element
 	 *   has an id attribute like 'mw-customcollapsible-XXX', elements with a
 	 *   *class* of 'mw-customtoggle-XXX' are made togglers for it.
-	 * - plainMode: boolean, whether to use a "plain mode" when making the
+	 * @param {boolean} [options.plainMode=false] Whether to use a "plain mode" when making the
 	 *   element collapsible - that is, hide entire tables and lists (instead
 	 *   of hiding only all rows but first of tables, and hiding each list
 	 *   item separately for lists) and don't wrap other elements in
 	 *   div.mw-collapsible-content. May only be used with custom togglers.
+	 * @return {jQuery}
+	 * @chainable
 	 */
 	$.fn.makeCollapsible = function ( options ) {
 		if ( options === undefined ) {
@@ -271,8 +273,8 @@
 					.text( collapseText )
 					.wrap( '<span class="mw-collapsible-toggle"></span>' )
 						.parent()
-						.prepend( '&nbsp;[' )
-						.append( ']&nbsp;' )
+						.prepend( '<span class="mw-collapsible-bracket">[</span>' )
+						.append( '<span class="mw-collapsible-bracket">]</span>' )
 						.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
 			};
 
@@ -290,7 +292,8 @@
 			} else {
 				collapsibleId = $collapsible.attr( 'id' ) || '';
 				if ( collapsibleId.indexOf( 'mw-customcollapsible-' ) === 0 ) {
-					$customTogglers = $( '.' + collapsibleId.replace( 'mw-customcollapsible', 'mw-customtoggle' ) );
+					$customTogglers = $( '.' + collapsibleId.replace( 'mw-customcollapsible', 'mw-customtoggle' ) )
+						.addClass( 'mw-customtoggle' );
 				}
 			}
 
@@ -302,8 +305,9 @@
 					togglingHandler( $( this ), $collapsible, e, opts );
 				};
 
-				$toggleLink = $customTogglers;
-				$toggleLink.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
+				$toggleLink = $customTogglers
+					.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
+					.prop( 'tabIndex', 0 );
 
 			} else {
 				// If this is not a custom case, do the default: wrap the
@@ -322,10 +326,11 @@
 							$toggleLink = buildDefaultToggleLink().appendTo( $caption );
 						} else {
 							actionHandler = premadeToggleHandler;
-							$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
+							$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
+								.prop( 'tabIndex', 0 );
 						}
 					} else {
-						// The toggle-link will be in one the the cells (td or th) of the first row
+						// The toggle-link will be in one of the cells (td or th) of the first row
 						$firstItem = $collapsible.find( 'tr:first th, tr:first td' );
 						$toggle = $firstItem.find( '> .mw-collapsible-toggle' );
 
@@ -334,7 +339,8 @@
 							$toggleLink = buildDefaultToggleLink().prependTo( $firstItem.eq( -1 ) );
 						} else {
 							actionHandler = premadeToggleHandler;
-							$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
+							$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
+								.prop( 'tabIndex', 0 );
 						}
 					}
 
@@ -348,15 +354,16 @@
 						// Make sure the numeral order doesn't get messed up, force the first (soon to be second) item
 						// to be "1". Except if the value-attribute is already used.
 						// If no value was set WebKit returns "", Mozilla returns '-1', others return 0, null or undefined.
-						firstval = $firstItem.attr( 'value' );
+						firstval = $firstItem.prop( 'value' );
 						if ( firstval === undefined || !firstval || firstval === '-1' || firstval === -1 ) {
-							$firstItem.attr( 'value', '1' );
+							$firstItem.prop( 'value', '1' );
 						}
 						$toggleLink = buildDefaultToggleLink();
 						$toggleLink.wrap( '<li class="mw-collapsible-toggle-li"></li>' ).parent().prependTo( $collapsible );
 					} else {
 						actionHandler = premadeToggleHandler;
-						$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
+						$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
+							.prop( 'tabIndex', 0 );
 					}
 
 				} else { // <div>, <p> etc.
@@ -374,14 +381,11 @@
 						$toggleLink = buildDefaultToggleLink().prependTo( $collapsible );
 					} else {
 						actionHandler = premadeToggleHandler;
-						$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
+						$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
+							.prop( 'tabIndex', 0 );
 					}
 				}
 			}
-
-			// Attributes for accessibility. This isn't necessary when the toggler is already
-			// an <a> or a <button> etc., but it doesn't hurt either, and it's consistent.
-			$toggleLink.prop( 'tabIndex', 0 );
 
 			// Initial state
 			if ( options.collapsed || $collapsible.hasClass( 'mw-collapsed' ) ) {
@@ -391,4 +395,10 @@
 			}
 		} );
 	};
+
+	/**
+	 * @class jQuery
+	 * @mixins jQuery.plugin.makeCollapsible
+	 */
+
 }( jQuery, mediaWiki ) );

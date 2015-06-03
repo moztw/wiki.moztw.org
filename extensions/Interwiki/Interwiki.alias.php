@@ -29,9 +29,19 @@ $specialPageAliases['as'] = array(
 	'Interwiki' => array( 'আন্তঃৱিকি' ),
 );
 
+/** Avaric (авар) */
+$specialPageAliases['av'] = array(
+	'Interwiki' => array( 'Интервики' ),
+);
+
 /** Bulgarian (български) */
 $specialPageAliases['bg'] = array(
 	'Interwiki' => array( 'Междууикита' ),
+);
+
+/** Western Balochi (بلوچی رخشانی) */
+$specialPageAliases['bgn'] = array(
+	'Interwiki' => array( 'مانجین_ویکی' ),
 );
 
 /** Breton (brezhoneg) */
@@ -169,6 +179,11 @@ $specialPageAliases['lad'] = array(
 	'Interwiki' => array( 'Interviki' ),
 );
 
+/** لوری (لوری) */
+$specialPageAliases['lrc'] = array(
+	'Interwiki' => array( 'مینجا_ویکی' ),
+);
+
 /** Macedonian (македонски) */
 $specialPageAliases['mk'] = array(
 	'Interwiki' => array( 'Меѓувики' ),
@@ -261,5 +276,5 @@ $specialPageAliases['zh-hans'] = array(
 
 /** Traditional Chinese (中文（繁體）‎) */
 $specialPageAliases['zh-hant'] = array(
-	'Interwiki' => array( '跨wiki', '跨維基' ),
+	'Interwiki' => array( '跨Wiki', '跨維基' ),
 );

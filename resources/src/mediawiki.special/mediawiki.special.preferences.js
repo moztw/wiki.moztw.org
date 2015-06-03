@@ -1,19 +1,22 @@
-/**
+/*!
  * JavaScript for Special:Preferences
  */
 jQuery( function ( $ ) {
 	var $preftoc, $preferences, $fieldsets, $legends,
 		hash, labelFunc,
 		$tzSelect, $tzTextbox, $localtimeHolder, servertime,
-		$checkBoxes;
+		$checkBoxes, allowCloseWindowFn;
 
 	labelFunc = function () {
 		return this.id.replace( /^mw-prefsection/g, 'preftab' );
 	};
 
 	$( '#prefsubmit' ).attr( 'id', 'prefcontrol' );
-	$preftoc = $( '<ul id="preftoc"></ul>' )
-		.attr( 'role', 'tablist' );
+	$preftoc = $( '<ul>' )
+		.attr( {
+			id: 'preftoc',
+			role: 'tablist'
+		} );
 	$preferences = $( '#preferences' )
 		.addClass( 'jsprefs' )
 		.before( $preftoc );
@@ -41,14 +44,15 @@ jQuery( function ( $ ) {
 			} else {
 				$( this ).css( 'height', 'auto' );
 			}
-	} ).insertBefore( $preftoc );
+		} ).insertBefore( $preftoc );
 
 	/**
 	 * It uses document.getElementById for security reasons (HTML injections in $()).
 	 *
+	 * @ignore
 	 * @param String name: the name of a tab without the prefix ("mw-prefsection-")
 	 * @param String mode: [optional] A hash will be set according to the current
-	 * open section. Set mode 'noHash' to surpress this.
+	 *  open section. Set mode 'noHash' to surpress this.
 	 */
 	function switchPrefTab( name, mode ) {
 		var $tab, scrollTop;
@@ -56,7 +60,7 @@ jQuery( function ( $ ) {
 		// therefore save and restore scrollTop to prevent jumping.
 		scrollTop = $( window ).scrollTop();
 		if ( mode !== 'noHash' ) {
-			window.location.hash = '#mw-prefsection-' + name;
+			location.hash = '#mw-prefsection-' + name;
 		}
 		$( window ).scrollTop( scrollTop );
 
@@ -126,7 +130,7 @@ jQuery( function ( $ ) {
 
 	// If we've reloaded the page or followed an open-in-new-window,
 	// make the selected tab visible.
-	hash = window.location.hash;
+	hash = location.hash;
 	if ( hash.match( /^#mw-prefsection-[\w\-]+/ ) ) {
 		switchPrefTab( hash.replace( '#mw-prefsection-', '' ) );
 	}
@@ -141,7 +145,7 @@ jQuery( function ( $ ) {
 		( document.documentMode === undefined || document.documentMode >= 8 )
 	) {
 		$( window ).on( 'hashchange', function () {
-			var hash = window.location.hash;
+			var hash = location.hash;
 			if ( hash.match( /^#mw-prefsection-[\w\-]+/ ) ) {
 				switchPrefTab( hash.replace( '#mw-prefsection-', '' ) );
 			} else if ( hash === '' ) {
@@ -159,10 +163,8 @@ jQuery( function ( $ ) {
 		} );
 	}
 
-	/**
-	* Timezone functions.
-	* Guesses Timezone from browser and updates fields onchange
-	*/
+	// Timezone functions.
+	// Guesses Timezone from browser and updates fields onchange.
 
 	$tzSelect = $( '#mw-input-wptimecorrection' );
 	$tzTextbox = $( '#mw-input-wptimecorrection-other' );
@@ -201,7 +203,7 @@ jQuery( function ( $ ) {
 		}
 	}
 
-	function updateTimezoneSelection () {
+	function updateTimezoneSelection() {
 		var minuteDiff, localTime,
 			type = $tzSelect.val();
 
@@ -224,12 +226,8 @@ jQuery( function ( $ ) {
 		localTime = servertime + minuteDiff;
 
 		// Bring time within the [0,1440) range.
-		while ( localTime < 0 ) {
-			localTime += 1440;
-		}
-		while ( localTime >= 1440 ) {
-			localTime -= 1440;
-		}
+		localTime = ( ( localTime % 1440 ) + 1440 ) % 1440;
+
 		$localtimeHolder.text( mediaWiki.language.convertNumber( minutesToHours( localTime ) ) );
 	}
 
@@ -264,4 +262,18 @@ jQuery( function ( $ ) {
 	$( '#mw-input-wpsearcheverything' ).change( function () {
 		$checkBoxes.prop( 'disabled', $( this ).prop( 'checked' ) );
 	} );
+
+	// Set up a message to notify users if they try to leave the page without
+	// saving.
+	$( '#mw-prefs-form' ).data( 'origdata', $( '#mw-prefs-form' ).serialize() );
+	allowCloseWindowFn = mediaWiki.confirmCloseWindow( {
+		test: function () {
+			return $( '#mw-prefs-form' ).serialize() !== $( '#mw-prefs-form' ).data( 'origdata' );
+		},
+
+		message: mediaWiki.msg( 'prefswarning-warning', mediaWiki.msg( 'saveprefs' ) ),
+		namespace: 'prefswarning'
+	} );
+	$( '#mw-prefs-form' ).submit( allowCloseWindowFn );
+	$( '#mw-prefs-restoreprefs' ).click( allowCloseWindowFn );
 } );

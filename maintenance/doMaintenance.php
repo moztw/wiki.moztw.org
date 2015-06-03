@@ -44,6 +44,7 @@ if ( !$maintClass || !class_exists( $maintClass ) ) {
 }
 
 // Get an object to start us off
+/** @var Maintenance $maintenance */
 $maintenance = new $maintClass();
 
 // Basic sanity checks and such
@@ -55,8 +56,8 @@ $self = $maintenance->getName();
 
 # Start the autoloader, so that extensions can derive classes from core files
 require_once "$IP/includes/AutoLoader.php";
-# Stub the profiler
-require_once "$IP/includes/profiler/Profiler.php";
+# Grab profiling functions
+require_once "$IP/includes/profiler/ProfilerFunctions.php";
 
 # Start the profiler
 $wgProfiler = array();
@@ -67,6 +68,7 @@ if ( file_exists( "$IP/StartProfiler.php" ) ) {
 // Some other requires
 require_once "$IP/includes/Defines.php";
 require_once "$IP/includes/DefaultSettings.php";
+require_once "$IP/includes/GlobalFunctions.php";
 
 # Load composer's autoloader if present
 if ( is_readable( "$IP/vendor/autoload.php" ) ) {
@@ -77,46 +79,39 @@ if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	# Use a callback function to configure MediaWiki
 	call_user_func( MW_CONFIG_CALLBACK );
 } else {
-	if ( file_exists( "$IP/../wmf-config/wikimedia-mode" ) ) {
-		// Load settings, using wikimedia-mode if needed
-		// @todo FIXME: Replace this hack with general farm-friendly code
-		# @todo FIXME: Wikimedia-specific stuff needs to go away to an ext
-		# Maybe a hook?
-		global $cluster;
-		$cluster = 'pmtpa';
-		require "$IP/../wmf-config/wgConf.php";
-	}
 	// Require the configuration (probably LocalSettings.php)
 	require $maintenance->loadSettings();
 }
 
 if ( $maintenance->getDbType() === Maintenance::DB_NONE ) {
-	if ( $wgLocalisationCacheConf['storeClass'] === false && ( $wgLocalisationCacheConf['store'] == 'db' || ( $wgLocalisationCacheConf['store'] == 'detect' && !$wgCacheDirectory ) ) ) {
+	if ( $wgLocalisationCacheConf['storeClass'] === false
+		&& ( $wgLocalisationCacheConf['store'] == 'db'
+			|| ( $wgLocalisationCacheConf['store'] == 'detect' && !$wgCacheDirectory ) )
+	) {
 		$wgLocalisationCacheConf['storeClass'] = 'LCStoreNull';
 	}
 }
+
 $maintenance->finalSetup();
 // Some last includes
 require_once "$IP/includes/Setup.php";
 
+// Initialize main config instance
+$maintenance->setConfig( ConfigFactory::getDefaultInstance()->makeConfig( 'main' ) );
+
 // Do the work
-try {
-	$maintenance->execute();
+$maintenance->execute();
 
-	// Potentially debug globals
-	$maintenance->globals();
+// Potentially debug globals
+$maintenance->globals();
 
-	// Perform deferred updates.
-	DeferredUpdates::doUpdates( 'commit' );
+// Perform deferred updates.
+DeferredUpdates::doUpdates( 'commit' );
 
-	// log profiling info
-	wfLogProfilingData();
+// log profiling info
+wfLogProfilingData();
 
-	// Commit and close up!
-	$factory = wfGetLBFactory();
-	$factory->commitMasterChanges();
-	$factory->shutdown();
-} catch ( MWException $mwe ) {
-	echo $mwe->getText();
-	exit( 1 );
-}
+// Commit and close up!
+$factory = wfGetLBFactory();
+$factory->commitMasterChanges();
+$factory->shutdown();

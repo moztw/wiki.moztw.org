@@ -6,7 +6,7 @@
  */
 ( function ( mw, $ ) {
 	// The name of the page to watch or unwatch
-	var title = mw.config.get( 'wgRelevantPageName', mw.config.get( 'wgPageName' ) );
+	var title = mw.config.get( 'wgRelevantPageName' );
 
 	/**
 	 * Update the link text, link href attribute and (if applicable)
@@ -17,7 +17,7 @@
 	 * @param {string} [state="idle"] 'idle' or 'loading'. Default is 'idle'
 	 */
 	function updateWatchLink( $link, action, state ) {
-		var accesskeyTip, msgKey, $li, otherAction;
+		var msgKey, $li, otherAction;
 
 		// A valid but empty jQuery object shouldn't throw a TypeError
 		if ( !$link.length ) {
@@ -32,7 +32,6 @@
 		// message keys 'watch', 'watching', 'unwatch' or 'unwatching'.
 		msgKey = state === 'loading' ? action + 'ing' : action;
 		otherAction = action === 'watch' ? 'unwatch' : 'watch';
-		accesskeyTip = $link.attr( 'title' ).match( mw.util.tooltipAccessKeyRegexp );
 		$li = $link.closest( 'li' );
 
 		// Trigger a 'watchpage' event for this List item.
@@ -45,9 +44,8 @@
 
 		$link
 			.text( mw.msg( msgKey ) )
-			.attr( 'title', mw.msg( 'tooltip-ca-' + action ) +
-				( accesskeyTip ? ' ' + accesskeyTip[0] : '' )
-			)
+			.attr( 'title', mw.msg( 'tooltip-ca-' + action ) )
+			.updateTooltipAccessKeys()
 			.attr( 'href', mw.util.wikiScript() + '?' + $.param( {
 					title: title,
 					action: action
@@ -59,13 +57,10 @@
 			$li.prop( 'id', 'ca-' + action );
 		}
 
-		// Special case for vector icon
-		if ( $li.hasClass( 'icon' ) ) {
-			if ( state === 'loading' ) {
-				$link.addClass( 'loading' );
-			} else {
-				$link.removeClass( 'loading' );
-			}
+		if ( state === 'loading' ) {
+			$link.addClass( 'loading' );
+		} else {
+			$link.removeClass( 'loading' );
 		}
 	}
 
@@ -134,6 +129,10 @@
 			e.stopPropagation();
 
 			$link = $( this );
+
+			if ( $link.hasClass( 'loading' ) ) {
+				return;
+			}
 
 			updateWatchLink( $link, action, 'loading' );
 

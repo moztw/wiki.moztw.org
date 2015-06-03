@@ -1,6 +1,6 @@
-/**
- * Adds additional styling to the extension title/version list
-**/
+/*!
+ * Styling for Special:Version
+ */
 .mw-version-ext-name {
 	font-weight: bold;
 }
@@ -11,4 +11,8 @@
 
 th.mw-version-ext-col-label {
 	font-size: 0.9em;
+}
+
+.mw-version-ext-vcs-version {
+	unicode-bidi: embed;
 }

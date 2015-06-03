@@ -61,7 +61,7 @@ class BitmapMetadataHandler {
 	private function doApp13( $app13 ) {
 		try {
 			$this->iptcType = JpegMetadataExtractor::doPSIR( $app13 );
-		} catch ( MWException $e ) {
+		} catch ( Exception $e ) {
 			// Error reading the iptc hash information.
 			// This probably means the App13 segment is something other than what we expect.
 			// However, still try to read it, and treat it as if the hash didn't exist.
@@ -97,7 +97,7 @@ class BitmapMetadataHandler {
 	/** Add misc metadata. Warning: atm if the metadata category
 	 * doesn't have a priority, it will be silently discarded.
 	 *
-	 * @param array $metaArray array of metadata values
+	 * @param array $metaArray Array of metadata values
 	 * @param string $type Type. defaults to other. if two things have the same type they're merged
 	 */
 	function addMetadata( $metaArray, $type = 'other' ) {
@@ -149,9 +149,9 @@ class BitmapMetadataHandler {
 
 	/** Main entry point for jpeg's.
 	 *
-	 * @param string $filename filename (with full path)
+	 * @param string $filename Filename (with full path)
 	 * @return array Metadata result array.
-	 * @throws MWException on invalid file.
+	 * @throws MWException On invalid file.
 	 */
 	static function Jpeg( $filename ) {
 		$showXMP = XMPReader::isSupported();
@@ -224,7 +224,7 @@ class BitmapMetadataHandler {
 	 * They don't really have native metadata, so just merges together
 	 * XMP and image comment.
 	 *
-	 * @param string $filename full path to file
+	 * @param string $filename Full path to file
 	 * @return array Metadata array
 	 */
 	public static function GIF( $filename ) {

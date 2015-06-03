@@ -29,9 +29,9 @@
  * forms to be used in the database, in urls, in wikitext, etc.
  *
  * @see https://www.mediawiki.org/wiki/Requests_for_comment/TitleValue
+ * @since 1.23
  */
 interface TitleFormatter {
-
 	/**
 	 * Returns the title formatted for display.
 	 * Per default, this includes the namespace but not the fragment.
@@ -49,9 +49,9 @@ interface TitleFormatter {
 	/**
 	 * Returns the title text formatted for display, without namespace of fragment.
 	 *
-	 * @note: Only minimal normalization is applied. Consider using TitleValue::getText() directly.
+	 * @note Only minimal normalization is applied. Consider using TitleValue::getText() directly.
 	 *
-	 * @param TitleValue $title the title to format
+	 * @param TitleValue $title The title to format
 	 *
 	 * @return string
 	 */
@@ -60,7 +60,7 @@ interface TitleFormatter {
 	/**
 	 * Returns the title formatted for display, including the namespace name.
 	 *
-	 * @param TitleValue $title the title to format
+	 * @param TitleValue $title The title to format
 	 *
 	 * @return string
 	 */
@@ -69,7 +69,7 @@ interface TitleFormatter {
 	/**
 	 * Returns the title formatted for display, with namespace and fragment.
 	 *
-	 * @param TitleValue $title the title to format
+	 * @param TitleValue $title The title to format
 	 *
 	 * @return string
 	 */
@@ -85,7 +85,7 @@ interface TitleFormatter {
 	 * @param string $text
 	 *
 	 * @throws InvalidArgumentException
-	 * @return String
+	 * @return string
 	 */
 	public function getNamespaceName( $namespace, $text );
 }
