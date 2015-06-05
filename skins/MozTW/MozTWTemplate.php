@@ -1,34 +1,12 @@
 <?php
 /**
- * Mozilla Taiwan Skin
+ * Mozilla Taiwan Skin for mediawiki 1.25+
  *
  * @todo document
  * @package MediaWiki
  * @subpackage Skins
  */
 
-if( !defined( 'MEDIAWIKI' ) )
-	die();
-
-/** */
-require_once('includes/SkinTemplate.php');
-
-/**
- * Inherit main code from MonoBook, set the CSS and template filter.
- * @todo document
- * @package MediaWiki
- * @subpackage Skins
- */
-class SkinMozTW extends SkinTemplate {
-	/** Using moztw. */
-	function initPage( &$out ) {
-		SkinTemplate::initPage( $out );
-		$this->skinname  = 'moztw';
-		$this->stylename = 'moztw';
-		$this->template  = 'MozTWTemplate';
-	}
-}
-	
 class MozTWTemplate extends QuickTemplate {
 	/**
 	 * Template filter callback for MonoBook skin.
@@ -53,7 +31,7 @@ class MozTWTemplate extends QuickTemplate {
     <!--[if IE]><script type="text/javascript" src="<?php $this->text('stylepath') ?>/common/IEFixes.js"></script>
     <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
     <?php if($this->data['jsvarurl'  ]) { ?><script type="text/javascript" src="<?php $this->text('jsvarurl'  ) ?>"></script><?php } ?>
-    <script type="text/javascript" src="<?php                                   $this->text('stylepath' ) ?>/common/wikibits.js"></script>
+    <script type="text/javascript" src="<?php                                $this->text('stylepath' ) ?>/common/wikibits.js"></script>
     <?php if($this->data['usercss'   ]) { ?><style type="text/css"><?php              $this->html('usercss'   ) ?></style><?php    } ?>
     <?php if($this->data['userjs'    ]) { ?><script type="text/javascript" src="<?php $this->text('userjs'    ) ?>"></script><?php } ?>
     <?php if($this->data['userjsprev']) { ?><script type="text/javascript"><?php      $this->html('userjsprev') ?></script><?php   } ?>
@@ -68,19 +46,19 @@ urchinTracker();
   <body <?php if($this->data['body_ondblclick']) { ?>ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
         <?php if($this->data['nsclass'        ]) { ?>class="secondLevel sectionWiki <?php      $this->text('nsclass')         ?>"<?php } ?>>
 <div id="header">
-<h1><a href="http://moztw.org/" title="Return to home page, moztw.org" accesskey="1">Mozilla Taiwan (MozTW)</a></h1>
+<h1><a href="http:s//moztw.org/" title="Return to home page, moztw.org" accesskey="1">Mozilla Taiwan (MozTW)</a></h1>
  <ul>
-  <li id="menu_aboutus"><a href="http://moztw.org/about" title="About this website">關於本站</a></li>
-  <li id="menu_contribute"><a title="了解我們正在做什麼，看看您能幫上什麼忙！" href="http://moztw.org/contribute">參與我們</a></li>
-  <li id="menu_planet"><a title="MozTW 社群成員閒聊區" href="http://planet.moztw.org/">摩茲工寮</a></li>
+  <li id="menu_aboutus"><a href="https://moztw.org/about" title="About this website">關於本站</a></li>
+  <li id="menu_contribute"><a title="了解我們正在做什麼，看看您能幫上什麼忙！" href="https://moztw.org/contribute">參與我們</a></li>
+  <li id="menu_planet"><a title="MozTW 社群成員閒聊區" href="http://planet.moztw.org/">摩茲星球</a></li>
   <li id="menu_wiki"><a href="http://wiki.moztw.org/" title="Mozilla Taiwan 共筆系統">共筆系統</a></li>
-  <li id="menu_forum"><a href="http://forum.moztw.org/" title="Mozilla 華語社群討論區">討論區</a></li>
-  <li id="menu_products"><a href="http://moztw.org/dl" title="Moztw.org 提供的中文化軟體一覽">下載</a></li>
+  <li id="menu_forum"><a href="https://forum.moztw.org/" title="Mozilla 華語社群討論區">討論區</a></li>
+  <li id="menu_products"><a href="https://moztw.org/dl" title="Moztw.org 提供的中文化軟體一覽">下載</a></li>
  </ul>
 </div>
 <div class="key-point" style="background:#FCF4C4;margin:1em 3em;padding:5px 30px; font-size: 1.5em;">
 <h2>舊文件</h2>
-<p>此處文件僅供參考，請自行考量時效性與適用程度，其他庫藏文件請參考<a href="http://moztw.org/docs/" title="更舊的文件">文件頁面</a>；<br>我們亟需您的協助，進行共筆系統搬移、及文件整理工作，詳情請查閱<a title="了解我們正在做什麼，看看您能幫上什麼忙！" href="http://moztw.org/contribute">參與我們</a>。</p>
+<p>此處文件僅供參考，請自行考量時效性與適用程度，其他庫藏文件請參考<a href="https://moztw.org/docs/" title="更舊的文件">文件頁面</a>；<br>我們亟需您的協助，進行共筆系統搬移、及文件整理工作，詳情請查閱<a title="了解我們正在做什麼，看看您能幫上什麼忙！" href="https://moztw.org/contribute">參與我們</a>。</p>
 </div>
   <div id="globalWrapper">
       <div id="column-content">

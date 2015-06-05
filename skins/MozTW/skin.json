@@ -1,0 +1,33 @@
+{
+	"name": "MozTW",
+	"author": [
+		"petercpg",
+	],
+	"url": "https://moztw.org",
+	"descriptionmsg": "MozTW Skin for mediawiki 1.25+",
+	"namemsg": "skinname-moztw",
+	"license-name": "GPL-2.0+",
+	"type": "skin",
+	"ValidSkinNames": {
+		"moztw": "MozTW"
+	},
+	"MessagesDirs": {
+	},
+	"ResourceModules": {
+		"skins.moztw.styles": {
+			"styles": {
+				"main.css": {
+					"media": "screen"
+				}
+			}
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteSkinPath": "MozTW"
+	},
+	"AutoloadClasses": {
+		"SkinMonoBook": "SkinMozTW.php",
+		"MonoBookTemplate": "MozTWTemplate.php"
+	}
+}
