@@ -24,14 +24,7 @@ class MozTWTemplate extends QuickTemplate {
     <?php $this->html('headlinks') ?>
     <title><?php $this->text('pagetitle') ?></title>
     <style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css"; /*]]>*/</style>
-    <link rel="stylesheet" type="text/css" media="print" href="<?php $this->text('stylepath') ?>/common/commonPrint.css" />
-    <!--[if lt IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE50Fixes.css";</style><![endif]-->
-    <!--[if IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE55Fixes.css";</style><![endif]-->
-    <!--[if IE 6]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE60Fixes.css";</style><![endif]-->
-    <!--[if IE]><script type="text/javascript" src="<?php $this->text('stylepath') ?>/common/IEFixes.js"></script>
-    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
     <?php if($this->data['jsvarurl'  ]) { ?><script type="text/javascript" src="<?php $this->text('jsvarurl'  ) ?>"></script><?php } ?>
-    <script type="text/javascript" src="<?php                                $this->text('stylepath' ) ?>/common/wikibits.js"></script>
     <?php if($this->data['usercss'   ]) { ?><style type="text/css"><?php              $this->html('usercss'   ) ?></style><?php    } ?>
     <?php if($this->data['userjs'    ]) { ?><script type="text/javascript" src="<?php $this->text('userjs'    ) ?>"></script><?php } ?>
     <?php if($this->data['userjsprev']) { ?><script type="text/javascript"><?php      $this->html('userjsprev') ?></script><?php   } ?>
@@ -44,8 +37,8 @@ class MozTWTemplate extends QuickTemplate {
  <ul>
   <li id="menu_aboutus"><a href="https://moztw.org/about" title="About this website">關於本站</a></li>
   <li id="menu_contribute"><a title="了解我們正在做什麼，看看您能幫上什麼忙！" href="https://moztw.org/contribute">參與我們</a></li>
-  <li id="menu_planet"><a title="MozTW 社群成員閒聊區" href="http://planet.moztw.org/">摩茲星球</a></li>
-  <li id="menu_wiki"><a href="http://wiki.moztw.org/" title="Mozilla Taiwan 共筆系統">共筆系統</a></li>
+  <li id="menu_planet"><a title="MozTW 社群成員閒聊區" href="https://planet.moztw.org/">摩茲星球</a></li>
+  <li id="menu_wiki"><a href="https://wiki.moztw.org/" title="Mozilla Taiwan 共筆系統">共筆系統</a></li>
   <li id="menu_forum"><a href="https://forum.moztw.org/" title="Mozilla 華語社群討論區">討論區</a></li>
   <li id="menu_products"><a href="https://moztw.org/dl" title="Moztw.org 提供的中文化軟體一覽">下載</a></li>
  </ul>
@@ -114,7 +107,7 @@ class MozTWTemplate extends QuickTemplate {
 	<div id="p-search" class="portlet">
 	  <h5><label for="searchInput"><?php $this->msg('search') ?></label></h5>
 	  <div class="pBody">
-	    <form name="searchform" action="http://wiki.moztw.org/index.php" id="searchform">
+	    <form name="searchform" action="https://wiki.moztw.org/index.php" id="searchform">
 	      <input id="searchInput" name="search" type="text"
 	        <?php if($this->haveMsg('accesskey-search')) {
 	          ?>accesskey="<?php $this->msg('accesskey-search') ?>"<?php }
