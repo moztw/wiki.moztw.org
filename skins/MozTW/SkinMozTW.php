@@ -25,9 +25,5 @@ class SkinMozTW extends SkinTemplate {
 			'mediawiki.skinning.content.externallinks',
 			'skins.moztw.styles'
 		) );
-
-		// TODO: Migrate all of these
-		$out->addStyle( $this->stylename . '/IE60Fixes.css', 'screen', 'IE 6' );
-		$out->addStyle( $this->stylename . '/IE70Fixes.css', 'screen', 'IE 7' );
 	}
 }
