@@ -244,8 +244,7 @@
 
 	caretSample = 'Some big text that we like to work with. Nothing fancy... you know what I mean?';
 
-/*
-	// @broken: Disabled per bug 34820
+	/* @broken: Disabled per bug 34820
 	caretTest({
 	description: 'getCaretPosition with original/empty selection - bug 31847 with IE 6/7/8',
 	text: caretSample,
