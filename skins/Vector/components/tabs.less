@@ -184,6 +184,8 @@ div.vectorMenu div.menu {
 	clear: both;
 	text-align: left;
 	display: none;
+	// overlap indicators (which has z-index 1, too)
+	z-index: 1;
 }
 
 /* Enable forcing showing of the menu for accessibility */
@@ -239,6 +241,25 @@ div.vectorMenu li.selected a,
 div.vectorMenu li.selected a:visited {
 	color: #333;
 	text-decoration: none;
+}
+
+// Expand vectorMenu as basic tabs in IE6
+// (IE6 doesn't support :hover on DIV)
+* html div.vectorMenu div.menu {
+	display: block;
+	position: static;
+	border: 0;
+}
+* html div#mw-head div.vectorMenu h3 {
+	display: none;
+}
+* html div.vectorMenu li {
+	float: left;
+	line-height: 1.125em;
+	border-right: 1px solid #a7d7f9;
+}
+* html div.vectorMenu li a {
+	padding-top: 1.25em;
 }
 
 @import 'watchstar.less';

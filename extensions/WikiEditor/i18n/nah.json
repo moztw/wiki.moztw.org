@@ -3,7 +3,8 @@
 		"authors": [
 			"Ricardo gs",
 			"Teòtlalili",
-			"Macofe"
+			"Macofe",
+			"Taresi"
 		]
 	},
 	"wikieditor": "Wel senka yankuik netzòwilìxtlâtli in tlenìk moyêyèktlàlia in wikitlâkuilòlmantli",
@@ -27,7 +28,6 @@
 	"wikieditor-toolbar-desc": "Ìtekitiâpal in tlayêyèktlàlilòkàtlaìxtlapalli ìwàn okảchi kuâkualli tlamantli tlatekitiliskàyòtl",
 	"wikieditor-toolbar-preference": "Motekitìltìs in okảchi kualli tekitiâpalli tlèn ìka tlayêyèktlàlilo",
 	"wikieditor-toolbar-dialogs-preference": "Motekitìltìs tlanônòtzaliskàyòtl tlèn ìnka tlatzòtzòwìltlàlilòs, tlatlapaltlàlilòs wàn oksẻki îtlàtlèn monẻkis motlàlìs",
-	"wikieditor-toolbar-hidesig": "Motlàtìs in machiòpàchitl ìwikpa ìtlaìxtlapalwàn in achkàuhtòkâyẻyàntli",
 	"wikieditor-toolbar-loading": "Motlamàmaltîtỉka....",
 	"wikieditor-toolbar-tool-bold": "Tlìltik",
 	"wikieditor-toolbar-tool-bold-example": "Tlìltik tlâkuilòlmantli",
@@ -126,16 +126,16 @@
 	"wikieditor-toolbar-help-content-xlink-description": "Calān tzonhuiliztli",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Ejemplo.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Tlànalòyàntli",
-	"wikieditor-toolbar-help-content-reference-syntax": "Tlaìxtlapallâkuilòlmantli.&lt;ref name=\"test\"&gt;[http://www.example.org Tzòwistlâkuilòlmantli], tlâxitìllâkuilòlmantli.&lt;/ref&gt;",
+	"wikieditor-toolbar-help-content-reference-syntax": "Tlaìxtlapallâkuilòlmantli.&lt;ref&gt;[http://www.example.org Tzòwistlâkuilòlmantli], tlâxitìllâkuilòlmantli.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Tlaìxtlapallâkuilòlmantli.<sup><a href='#'>[1]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-description": "Ìtlâtlatekitìltilis in yi yë tlànalòyàntli",
-	"wikieditor-toolbar-help-content-rereference-result": "Tlaìxtlapallâkuilòlmantli.<sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-rereference-result": "Tlaìxtlapallâkuilòlmantli.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Monèxtis tlànalòyàntli",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Tzòwistlâkuilòlmantli</a>, tlâxitìllâkuilòlmantli.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Netèìxmachìtìlmachiòtl wàn tlapảnolpòwálli",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "<a href='#' title='{{#special:mypage}}'>Tekitkàtòkâtli</a> (<a href='#' title='{{#special:mytalk}}'>nenônòtzalistli</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Tequihuihcātōcāitl</a> (<a href='#' title='$2:Username'>zānīlli</a>) 15:54, 10 Jun 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Netèìxmachìtìlmachiòtl",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Tekitkàtòkâtli</a> (<a href='#' title='{{#special:mytalk}}'>nenônòtzalistli</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Tequihuihcātōcāitl</a> (<a href='#' title='$2:Username'>zānīlli</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Tlâtlapouhki",
 	"wikieditor-toolbar-help-content-indent-syntax": "Sâsanỉman tlâkuilòlmantli<br />:Tlâtlapouhki tlakuilòlmantli<br />::Tlâtlapouhki tlâkuilòlmantli",
 	"wikieditor-toolbar-help-content-indent-result": "Sâsanỉman tlâkuilòlmantli<dl><dd>Tlâtlapouhki tlakuilòlmantli<dl><dd>Tlâtlapouhki tlâkuilòlmantli</dd></dl></dd></dl>"

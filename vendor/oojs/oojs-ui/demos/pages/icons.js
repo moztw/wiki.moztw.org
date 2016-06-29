@@ -9,7 +9,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'check',
 				'circle',
 				'close',
-				'code',
 				'collapse',
 				'comment',
 				'ellipsis',
@@ -19,14 +18,11 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'info',
 				'menu',
 				'next',
-				'picture',
+				'notice',
 				'previous',
-				'redo',
-				'remove',
 				'search',
 				'settings',
 				'tag',
-				'undo',
 				'window'
 			],
 			movement: [
@@ -42,8 +38,10 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 			],
 			content: [
 				'article',
+				'articles',
 				'articleCheck',
 				'articleSearch',
+				'articleRedirect',
 				'citeArticle',
 				'book',
 				'journal',
@@ -88,6 +86,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'flag',
 				'flagUndo',
 				'lock',
+				'ongoingConversation',
 				'star',
 				'trash',
 				'trashUndo',
@@ -100,7 +99,9 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'editUndo',
 				'link',
 				'linkExternal',
-				'linkSecure'
+				'linkSecure',
+				'redo',
+				'undo'
 			],
 			'editing-styling': [
 				'bigger',
@@ -111,7 +112,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'italic',
 				'strikethrough',
 				'underline',
-				'textLanguage',
 				'textDirLTR',
 				'textDirRTL',
 				'textStyle'
@@ -126,16 +126,19 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'alignCentre',
 				'alignLeft',
 				'alignRight',
+				'attachment',
+				'calendar',
+				'code',
 				'find',
-				'insert',
+				'language',
 				'layout',
+				'markup',
 				'newline',
 				'noWikiText',
 				'outline',
 				'puzzle',
 				'quotes',
 				'quotesAdd',
-				'redirect',
 				'searchCaseSensitive',
 				'searchRegularExpression',
 				'specialCharacter',
@@ -147,13 +150,14 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'tableCaption',
 				'tableMergeCells',
 				'templateAdd',
-				'translation',
 				'wikiText'
 			],
 			media: [
+				'fullScreen',
 				'image',
 				'imageAdd',
 				'imageLock',
+				'imageGallery',
 				'photoGallery',
 				'play',
 				'stop'
@@ -176,7 +180,15 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'stripeSummary',
 				'stripeToC',
 				'viewCompact',
-				'viewDetails',
+				'viewDetails'
+			],
+			accessibility: [
+				'bright',
+				'halfBright',
+				'notBright',
+				'moon',
+				'largerText',
+				'smallerText',
 				'visionSimulator'
 			],
 			wikimedia: [
@@ -187,6 +199,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 		},
 		indicators = [
 			'alert',
+			'clear',
 			'down',
 			'next',
 			'previous',
@@ -290,6 +303,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 			.append(
 				selector.$element,
 				indicatorsFieldset.$element,
-				iconsFieldsets.map( function ( item ) { return item.$element[0]; } )
+				iconsFieldsets.map( function ( item ) { return item.$element[ 0 ]; } )
 			) );
 };

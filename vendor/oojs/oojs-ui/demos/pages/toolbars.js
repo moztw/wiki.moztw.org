@@ -1,5 +1,6 @@
 OO.ui.Demo.static.pages.toolbars = function ( demo ) {
-	var i, toolGroups, saveButton, actionButton, actionButtonDisabled, PopupTool, ToolGroupTool,
+	var i, toolGroups, saveButton, deleteButton, actionButton, actionButtonDisabled, PopupTool, ToolGroupTool,
+		setDisabled = function () { this.setDisabled( true ); },
 		$demo = demo.$element,
 		$containers = $(),
 		toolFactories = [],
@@ -26,7 +27,7 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 
 	function createTool( toolbar, group, name, icon, title, init, onSelect, displayBothIconAndLabel ) {
 		var Tool = function () {
-			Tool.super.apply( this, arguments );
+			Tool.parent.apply( this, arguments );
 			this.toggled = false;
 			if ( init ) {
 				init.call( this );
@@ -64,7 +65,7 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 
 	function createDisabledToolGroup( parent, name ) {
 		var DisabledToolGroup = function () {
-			DisabledToolGroup.super.apply( this, arguments );
+			DisabledToolGroup.parent.apply( this, arguments );
 			this.setDisabled( true );
 		};
 
@@ -134,7 +135,7 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 			type: 'list',
 			indicator: 'down',
 			label: 'List',
-			icon: 'picture',
+			icon: 'image',
 			include: [ { group: 'listTools' } ],
 			allowCollapse: [ 'listTool1', 'listTool6' ]
 		},
@@ -142,14 +143,14 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 			type: 'disabledList',
 			indicator: 'down',
 			label: 'List',
-			icon: 'picture',
+			icon: 'image',
 			include: [ { group: 'disabledListTools' } ]
 		},
 		{
 			type: 'list',
 			indicator: 'down',
 			label: 'Auto-disabling list',
-			icon: 'picture',
+			icon: 'image',
 			include: [ { group: 'autoDisableListTools' } ]
 		},
 		{
@@ -162,13 +163,13 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 		{
 			type: 'menu',
 			indicator: 'down',
-			icon: 'picture',
+			icon: 'image',
 			include: [ { group: 'menuTools' } ]
 		},
 		{
 			type: 'disabledMenu',
 			indicator: 'down',
-			icon: 'picture',
+			icon: 'image',
 			include: [ { group: 'disabledMenuTools' } ]
 		}
 	] );
@@ -210,6 +211,10 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 			include: [ { group: 'cite' } ]
 		},
 		{
+			type: 'bar',
+			include: [ { group: 'citeDisabled' } ]
+		},
+		{
 			type: 'list',
 			indicator: 'down',
 			label: 'Insert',
@@ -218,13 +223,14 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 	] );
 
 	saveButton = new OO.ui.ButtonWidget( { label: 'Save', flags: [ 'progressive', 'primary' ] } );
+	deleteButton = new OO.ui.ButtonWidget( { label: 'Delete', flags: [ 'destructive' ] } );
 	actionButton = new OO.ui.ButtonWidget( { label: 'Action' } );
 	actionButtonDisabled = new OO.ui.ButtonWidget( { label: 'Disabled', disabled: true } );
 	toolbars[ 1 ].$actions
 		.append( actionButton.$element, actionButtonDisabled.$element );
 
 	toolbars[ 3 ].$actions
-		.append( toolbars[ 2 ].$element, saveButton.$element );
+		.append( toolbars[ 2 ].$element, deleteButton.$element, saveButton.$element );
 
 	for ( i = 0; i < toolbars.length; i++ ) {
 		toolbars[ i ].emit( 'updateState' );
@@ -232,24 +238,24 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 
 	toolGroups = {
 		barTools: [
-			[ 'barTool', 'picture', 'Basic tool in bar' ],
-			[ 'disabledBarTool', 'picture', 'Basic tool in bar disabled', function () { this.setDisabled( true ); } ]
+			[ 'barTool', 'image', 'Basic tool in bar' ],
+			[ 'disabledBarTool', 'image', 'Basic tool in bar disabled', setDisabled ]
 		],
 
 		disabledBarTools: [
-			[ 'barToolInDisabled', 'picture', 'Basic tool in disabled bar' ]
+			[ 'barToolInDisabled', 'image', 'Basic tool in disabled bar' ]
 		],
 
 		listTools: [
-			[ 'listTool', 'picture', 'First basic tool in list' ],
-			[ 'listTool1', 'picture', 'Basic tool in list' ],
-			[ 'listTool3', 'picture', 'Basic disabled tool in list', function () { this.setDisabled( true ); } ],
-			[ 'listTool6', 'picture', 'A final tool' ]
+			[ 'listTool', 'image', 'First basic tool in list' ],
+			[ 'listTool1', 'image', 'Basic tool in list' ],
+			[ 'listTool3', 'image', 'Basic disabled tool in list', setDisabled ],
+			[ 'listTool6', 'image', 'A final tool' ]
 		],
 
 		moreListTools: [
 			[ 'listTool2', 'code', 'Another basic tool' ],
-			[ 'listTool4', 'picture', 'More basic tools' ],
+			[ 'listTool4', 'image', 'More basic tools' ],
 			[ 'listTool5', 'ellipsis', 'And even more' ]
 		],
 
@@ -258,20 +264,21 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 		],
 
 		disabledListTools: [
-			[ 'listToolInDisabled', 'picture', 'Basic tool in disabled list' ]
+			[ 'listToolInDisabled', 'image', 'Basic tool in disabled list' ]
 		],
 
 		autoDisableListTools: [
-			[ 'autoDisableListTool', 'picture', 'Click to disable this tool', null, function () { this.setDisabled( true ); } ]
+			[ 'autoDisableListTool', 'image', 'Click to disable this tool', null, setDisabled ]
 		],
 
 		menuTools: [
-			[ 'menuTool', 'picture', 'Basic tool' ],
-			[ 'disabledMenuTool', 'picture', 'Basic tool disabled', function () { this.setDisabled( true ); } ]
+			[ 'menuTool', 'image', 'Basic tool' ],
+			[ 'iconlessMenuTool', null, 'Tool without an icon' ],
+			[ 'disabledMenuTool', 'image', 'Basic tool disabled', setDisabled ]
 		],
 
 		disabledMenuTools: [
-			[ 'menuToolInDisabled', 'picture', 'Basic tool' ]
+			[ 'menuToolInDisabled', 'image', 'Basic tool' ]
 		],
 
 		unusedStuff: [
@@ -290,6 +297,10 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 
 		cite: [
 			[ 'citeTool', 'citeArticle', 'Cite', null, null, true ]
+		],
+
+		citeDisabled: [
+			[ 'citeToolDisabled', 'citeArticle', 'Cite', setDisabled, null, true ]
 		]
 	};
 
@@ -306,6 +317,7 @@ OO.ui.Demo.static.pages.toolbars = function ( demo ) {
 	createToolGroup( 3, 'history' );
 	createToolGroup( 3, 'link' );
 	createToolGroup( 3, 'cite' );
+	createToolGroup( 3, 'citeDisabled' );
 	createToolGroup( 3, 'menuTools' );
 	createToolGroup( 3, 'listTools' );
 	createToolGroup( 3, 'moreListTools' );

@@ -14,27 +14,41 @@ else
 	tests = []
 	classes = php.select{|c| class_names.include? c[:name] }
 
+	untestable_classes = %w[DropdownInputWidget ComboBoxInputWidget RadioSelectInputWidget]
 	testable_classes = classes
 		.reject{|c| c[:abstract] } # can't test abstract classes
-		.reject{|c| !c[:parent] || c[:parent] == 'ElementMixin' || c[:parent] == 'Theme' } # can't test abstract
+		.reject{|c| !c[:parent] || c[:trait] || c[:parent] == 'Theme' } # can't test abstract
 		.reject{|c| %w[Element Widget Layout Theme].include? c[:name] } # no toplevel
-		.reject{|c| c[:name] == 'DropdownInputWidget' } # different PHP and JS implementations
+		.reject{|c| untestable_classes.include? c[:name] } # different PHP and JS implementations
+
+	make_class_instance_placeholder = lambda do |klass, config|
+		'_placeholder_' + {
+			class: klass,
+			config: config
+		}.to_json
+	end
+
+	make_htmlsnippet_placeholder = make_class_instance_placeholder.curry['HtmlSnippet']
 
 	# values to test for each type
 	expandos = {
 		'null' => [nil],
 		'number' => [0, -1, 300],
 		'boolean' => [true, false],
-		'string' => ['Foo bar', '<b>HTML?</b>'],
+		'string' => ['Foo bar', '<b>HTML?</b>', '', ' '],
+		'HtmlSnippet' => ['Foo bar', '<b>HTML?</b>', ''].map(&make_htmlsnippet_placeholder),
 	}
 
 	# values to test for names
 	sensible_values = {
 		'href' => ['http://example.com/'],
-		['TextInputWidget', 'type'] => %w[text password],
-		['ButtonInputWidget', 'type'] => %w[button input],
+		['TextInputWidget', 'type'] => %w[text number password foo],
+		['ButtonInputWidget', 'type'] => %w[button submit foo],
 		['FieldLayout', 'help'] => true, # different PHP and JS implementations
+		['ActionFieldLayout', 'help'] => true, # different PHP and JS implementations
 		['FieldsetLayout', 'help'] => true, # different PHP and JS implementations
+		['FieldLayout', 'errors'] => expandos['string'].map{|v| [v] }, # treat as string[]
+		['FieldLayout', 'notices'] => expandos['string'].map{|v| [v] }, # treat as string[]
 		'type' => %w[text button],
 		'method' => %w[GET POST],
 		'action' => [],
@@ -44,10 +58,10 @@ else
 		'name' => true,
 		'autofocus' => true, # usually makes no sense in JS
 		'tabIndex' => [-1, 0, 100],
-		'icon' => ['picture'],
+		'maxLength' => [100],
+		'icon' => ['image'],
 		'indicator' => ['down'],
-		'flags' => %w[constructive],
-		'label' => expandos['string'] + ['', ' '],
+		'flags' => %w[constructive primary],
 		# these are defined by Element and would bloat the tests
 		'classes' => true,
 		'id' => true,
@@ -74,10 +88,9 @@ else
 					values = expand_types_to_values.call(types)
 					{ config_option[:name] => values[0] }
 				}
-				vals = [ '_placeholder_' + {
-					class: t,
-					config: config.inject({}, :merge)
-				}.to_json ]
+				vals = [
+					make_class_instance_placeholder.call( t, config.inject({}, :merge) )
+				]
 			else
 				# We don't know how to test this. The empty value will result in no
 				# tests being generated for this combination of config values.
@@ -124,7 +137,7 @@ else
 					values.map{|v| config_option.dup.merge(value: v) } + [nil]
 				end
 			}
-			expanded.length > 0 ? expanded[0].product(*expanded[1..-1]) : []
+			expanded.empty? ? [] : expanded[0].product(*expanded[1..-1])
 		}.inject(:concat).map(&:compact).uniq
 
 		# really require the required ones
@@ -140,7 +153,9 @@ else
 		end
 	end
 
+	$stderr.puts "Generated #{tests.length} test cases."
 	tests = tests.group_by{|t| t[:class] }
 
+	$stderr.puts tests.map{|class_name, class_tests| "* #{class_name}: #{class_tests.length}" }
 	puts JSON.pretty_generate tests
 end

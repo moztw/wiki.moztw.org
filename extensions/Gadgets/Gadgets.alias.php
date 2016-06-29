@@ -12,6 +12,7 @@ $specialPageAliases = array();
 /** English (English) */
 $specialPageAliases['en'] = array(
 	'Gadgets' => array( 'Gadgets' ),
+	'GadgetUsage' => array( 'GadgetUsage' ),
 );
 
 /** Afrikaans (Afrikaans) */
@@ -24,7 +25,7 @@ $specialPageAliases['ar'] = array(
 	'Gadgets' => array( 'إضافات' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى) */
+/** Egyptian Arabic (مصرى) */
 $specialPageAliases['arz'] = array(
 	'Gadgets' => array( 'ادوات' ),
 );
@@ -69,7 +70,7 @@ $specialPageAliases['ce'] = array(
 	'Gadgets' => array( 'Гаджеташ' ),
 );
 
-/** Sorani Kurdish (کوردی) */
+/** Central Kurdish (کوردیی ناوەندی) */
 $specialPageAliases['ckb'] = array(
 	'Gadgets' => array( 'ئامرازەکان' ),
 );
@@ -129,7 +130,7 @@ $specialPageAliases['fi'] = array(
 	'Gadgets' => array( 'Pienoisohjelmat' ),
 );
 
-/** Franco-Provençal (arpetan) */
+/** Arpitan (arpetan) */
 $specialPageAliases['frp'] = array(
 	'Gadgets' => array( 'Outils' ),
 );
@@ -214,9 +215,9 @@ $specialPageAliases['lb'] = array(
 	'Gadgets' => array( 'Gadgeten' ),
 );
 
-/** لوری (لوری) */
+/** Northern Luri (لۊری شومالی) */
 $specialPageAliases['lrc'] = array(
-	'Gadgets' => array( 'گجتیا' ),
+	'Gadgets' => array( 'گأجئتیا' ),
 );
 
 /** Minangkabau (Baso Minangkabau) */

@@ -10,10 +10,7 @@
  */
 
 class SpecialGadgets extends SpecialPage {
-	/**
-	 * Constructor
-	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'Gadgets', '', true );
 	}
 
@@ -21,7 +18,7 @@ class SpecialGadgets extends SpecialPage {
 	 * Main execution function
 	 * @param $par array Parameters passed to the page
 	 */
-	function execute( $par ) {
+	public function execute( $par ) {
 		$parts = explode( '/', $par );
 
 		if ( count( $parts ) == 2 && $parts[0] == 'export' ) {
@@ -42,11 +39,12 @@ class SpecialGadgets extends SpecialPage {
 		$output->setPagetitle( $this->msg( 'gadgets-title' ) );
 		$output->addWikiMsg( 'gadgets-pagetext' );
 
-		$gadgets = Gadget::loadStructuredList();
+		$gadgets = GadgetRepo::singleton()->getStructuredList();
 		if ( !$gadgets ) {
 			return;
 		}
 
+		$output->disallowUserJs();
 		$lang = $this->getLanguage();
 		$langSuffix = "";
 		if ( $lang->getCode() != $wgContLang->getCode() ) {
@@ -65,7 +63,7 @@ class SpecialGadgets extends SpecialPage {
 				$lnkTarget = $t
 					? Linker::link( $t, $this->msg( $editInterfaceMessage )->escaped(), array(), array( 'action' => 'edit' ) )
 					: htmlspecialchars( $section );
-				$lnk =  "&#160; &#160; [$lnkTarget]";
+				$lnk = "&#160; &#160; [$lnkTarget]";
 
 				$ttext = $this->msg( "gadget-section-$section" )->parse();
 
@@ -116,7 +114,7 @@ class SpecialGadgets extends SpecialPage {
 
 				$lnk = array();
 				foreach ( $gadget->getScriptsAndStyles() as $codePage ) {
-					$t = Title::makeTitleSafe( NS_MEDIAWIKI, $codePage );
+					$t = Title::newFromText( $codePage );
 
 					if ( !$t ) {
 						continue;
@@ -125,6 +123,13 @@ class SpecialGadgets extends SpecialPage {
 					$lnk[] = Linker::link( $t, htmlspecialchars( $t->getText() ) );
 				}
 				$output->addHTML( $lang->commaList( $lnk ) );
+				if ( $gadget->getLegacyScripts() ) {
+					$output->addHTML( '<br />' . Html::rawElement(
+						'span',
+						array( 'class' => 'mw-gadget-legacy errorbox' ),
+						$this->msg( 'gadgets-legacy' )->parse()
+					) );
+				}
 
 				$rights = array();
 				foreach ( $gadget->getRequiredRights() as $right ) {
@@ -136,21 +141,25 @@ class SpecialGadgets extends SpecialPage {
 					);
 				}
 
-				$skins = array();
-				$validskins = Skin::getSkinNames();
-				foreach ( $gadget->getRequiredSkins() as $skinid ) {
-					if ( isset( $validskins[$skinid] ) ) {
-						$skins[] = $this->msg( "skinname-$skinid" )->plain();
-					} else {
-						$skins[] = $skinid;
+				$requiredSkins = $gadget->getRequiredSkins();
+				// $requiredSkins can be an array or true (if all skins are supported)
+				if ( is_array( $requiredSkins ) ) {
+					$skins = array();
+					$validskins = Skin::getSkinNames();
+					foreach ( $requiredSkins as $skinid ) {
+						if ( isset( $validskins[$skinid] ) ) {
+							$skins[] = $this->msg( "skinname-$skinid" )->plain();
+						} else {
+							$skins[] = $skinid;
+						}
 					}
-				}
-				if ( count( $skins ) ) {
-					$output->addHTML(
-						'<br />' .
-						$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
-							->numParams( count( $skins ) )->parse()
-					);
+					if ( count( $skins ) ) {
+						$output->addHTML(
+							'<br />' .
+							$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
+								->numParams( count( $skins ) )->parse()
+						);
+					}
 				}
 
 				if ( $gadget->isOnByDefault() ) {
@@ -174,23 +183,20 @@ class SpecialGadgets extends SpecialPage {
 		global $wgScript;
 
 		$output = $this->getOutput();
-		$gadgets = Gadget::loadList();
-		if ( !isset( $gadgets[$gadget] ) ) {
+		try {
+			$g = GadgetRepo::singleton()->getGadget( $gadget );
+		} catch ( InvalidArgumentException $e ) {
 			$output->showErrorPage( 'error', 'gadgets-not-found', array( $gadget ) );
 			return;
 		}
 
-		/**
-		 * @var $g Gadget
-		 */
-		$g = $gadgets[$gadget];
 		$this->setHeaders();
 		$output->setPagetitle( $this->msg( 'gadgets-export-title' ) );
 		$output->addWikiMsg( 'gadgets-export-text', $gadget, $g->getDefinition() );
 
 		$exportList = "MediaWiki:gadget-$gadget\n";
 		foreach ( $g->getScriptsAndStyles() as $page ) {
-			$exportList .= "MediaWiki:$page\n";
+			$exportList .= "$page\n";
 		}
 
 		$output->addHTML( Html::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) )

@@ -53,22 +53,6 @@ class WikiEditorHooks {
 				'ext.wikiEditor.dialogs',
 			),
 		),
-		'hidesig' => array(
-			'preferences' => array(
-				'wikieditor-toolbar-hidesig' => array(
-					'type' => 'toggle',
-					'label-message' => 'wikieditor-toolbar-hidesig',
-					'section' => 'editing/editor',
-				),
-			),
-			'requirements' => array(
-				'wikieditor-toolbar-hidesig' => true,
-				'usebetatoolbar' => true,
-			),
-			'modules' => array(
-				'ext.wikiEditor.toolbar.hideSig',
-			),
-		),
 
 		/* Labs Features */
 
@@ -105,45 +89,6 @@ class WikiEditorHooks {
 	);
 
 	/* Static Methods */
-
-	/**
-	 * T99257: Extension registration does not properly support 2d arrays so set it as a global for now
-	 */
-	public static function onRegistration() {
-		// Each module may be configured individually to be globally on/off or user preference based
-		$features = array(
-
-			/* Textarea / i-frame compatible (OK to deploy) */
-
-			'toolbar' => array( 'global' => false, 'user' => true ),
-			// Provides interactive tools
-			'dialogs' => array( 'global' => false, 'user' => true ),
-			// Hide signature button from main namespace
-			'hidesig' => array( 'global' => true, 'user' => false ),
-
-			/* Textarea / i-frame compatible, but still experimental and unstable (do not deploy!) */
-
-			// Adds a tab for previewing in-line
-			'preview' => array( 'global' => false, 'user' => true ),
-			// Adds a button and dialog for step-by-step publishing
-			'publish' => array( 'global' => false, 'user' => true ),
-		);
-
-		// Eww, do a 2d array merge so we don't wipe out settings
-		global $wgWikiEditorFeatures;
-		if ( $wgWikiEditorFeatures ) {
-			foreach ( $features as $name => $settings ) {
-				if ( isset( $wgWikiEditorFeatures[$name] ) ) {
-					$wgWikiEditorFeatures[$name] += $settings;
-				} else {
-					$wgWikiEditorFeatures[$name] = $settings;
-				}
-			}
-		} else {
-			$wgWikiEditorFeatures = $features;
-		}
-
-	}
 
 	/**
 	 * Checks if a certain option is enabled
@@ -193,6 +138,10 @@ class WikiEditorHooks {
 		if ( !class_exists( 'EventLogging' ) ) {
 			return false;
 		}
+		// Sample 6.25% (via hex digit)
+		if ( $data['editingSessionId'][0] > '0' ) {
+			return false;
+		}
 
 		$user = $article->getContext()->getUser();
 		$page = $article->getPage();
@@ -204,7 +153,6 @@ class WikiEditorHooks {
 			'editor' => 'wikitext',
 			'platform' => 'desktop', // FIXME
 			'integration' => 'page',
-			'page.length' => -1, // FIXME
 			'page.id' => $page->getId(),
 			'page.title' => $title->getPrefixedText(),
 			'page.ns' => $title->getNamespace(),
@@ -218,7 +166,7 @@ class WikiEditorHooks {
 			$data['user.class'] = 'IP';
 		}
 
-		return EventLogging::logEvent( 'Edit', 11448630, $data );
+		return EventLogging::logEvent( 'Edit', 13457736, $data );
 	}
 
 	/**
@@ -293,9 +241,10 @@ class WikiEditorHooks {
 
 		$req = $outputPage->getContext()->getRequest();
 		$editingStatsId = $req->getVal( 'editingStatsId' );
-		if ( !$editingStatsId ) {
+		if ( !$editingStatsId || !$req->wasPosted() ) {
 			$editingStatsId = self::getEditingStatsId();
 		}
+
 		$outputPage->addHTML(
 			Xml::element(
 				'input',
@@ -362,6 +311,7 @@ class WikiEditorHooks {
 	public static function resourceLoaderGetConfigVars( &$vars ) {
 		// expose magic words for use by the wikieditor toolbar
 		WikiEditorHooks::getMagicWords( $vars );
+
 		return true;
 	}
 
@@ -426,20 +376,6 @@ class WikiEditorHooks {
 		$vars['wgWikiEditorMagicWords'] = $magicWords;
 	}
 
-
-	/**
-	 * Adds WikiEditor JS to the output.
-	 *
-	 * This is attached to the MediaWiki 'BeforePageDisplay' hook.
-	 *
-	 * @param OutputPage $output
-	 * @param Skin $skin
-	 * @return boolean
-	 */
-	public static function onBeforePageDisplay( OutputPage &$output, Skin &$skin ) {
-		$output->addModules( array( 'ext.wikiEditor.init' ) );
-		return true;
-	}
 
 	/**
 	 * Gets a 32 character alphanumeric random string to be used for stats.
