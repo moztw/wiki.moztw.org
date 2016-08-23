@@ -46,6 +46,9 @@ use WebRequest;
  * @since 1.27
  */
 final class Session implements \Countable, \Iterator, \ArrayAccess {
+	/** @var null|string[] Encryption algorithm to use */
+	private static $encryptionAlgorithm = null;
+
 	/** @var SessionBackend Session backend */
 	private $backend;
 
@@ -401,6 +404,57 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Decide what type of encryption to use, based on system capabilities.
+	 * @return array
+	 */
+	private static function getEncryptionAlgorithm() {
+		global $wgSessionInsecureSecrets;
+
+		if ( self::$encryptionAlgorithm === null ) {
+			if ( function_exists( 'openssl_encrypt' ) ) {
+				$methods = openssl_get_cipher_methods();
+				if ( in_array( 'aes-256-ctr', $methods, true ) ) {
+					self::$encryptionAlgorithm = [ 'openssl', 'aes-256-ctr' ];
+					return self::$encryptionAlgorithm;
+				}
+				if ( in_array( 'aes-256-cbc', $methods, true ) ) {
+					self::$encryptionAlgorithm = [ 'openssl', 'aes-256-cbc' ];
+					return self::$encryptionAlgorithm;
+				}
+			}
+
+			if ( function_exists( 'mcrypt_encrypt' )
+				&& in_array( 'rijndael-128', mcrypt_list_algorithms(), true )
+			) {
+				$modes = mcrypt_list_modes();
+				if ( in_array( 'ctr', $modes, true ) ) {
+					self::$encryptionAlgorithm = [ 'mcrypt', 'rijndael-128', 'ctr' ];
+					return self::$encryptionAlgorithm;
+				}
+				if ( in_array( 'cbc', $modes, true ) ) {
+					self::$encryptionAlgorithm = [ 'mcrypt', 'rijndael-128', 'cbc' ];
+					return self::$encryptionAlgorithm;
+				}
+			}
+
+			if ( $wgSessionInsecureSecrets ) {
+				// @todo: import a pure-PHP library for AES instead of this
+				self::$encryptionAlgorithm = [ 'insecure' ];
+				return self::$encryptionAlgorithm;
+			}
+
+			throw new \BadMethodCallException(
+				'Encryption is not available. You really should install the PHP OpenSSL extension, ' .
+				'or failing that the mcrypt extension. But if you really can\'t and you\'re willing ' .
+				'to accept insecure storage of sensitive session data, set ' .
+				'$wgSessionInsecureSecrets = true in LocalSettings.php to make this exception go away.'
+			);
+		}
+
+		return self::$encryptionAlgorithm;
+	}
+
+	/**
 	 * Set a value in the session, encrypted
 	 *
 	 * This relies on the secrecy of $wgSecretKey (by default), or $wgSessionSecret.
@@ -409,8 +463,6 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $value
 	 */
 	public function setSecret( $key, $value ) {
-		global $wgSessionInsecureSecrets;
-
 		list( $encKey, $hmacKey ) = $this->getSecretKeys();
 		$serialized = serialize( $value );
 
@@ -420,27 +472,32 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 		// Encrypt
 		// @todo: import a pure-PHP library for AES instead of doing $wgSessionInsecureSecrets
 		$iv = \MWCryptRand::generate( 16, true );
-		if ( function_exists( 'openssl_encrypt' ) ) {
-			$ciphertext = openssl_encrypt( $serialized, 'aes-256-ctr', $encKey, OPENSSL_RAW_DATA, $iv );
+		$algorithm = self::getEncryptionAlgorithm();
+		switch ( $algorithm[0] ) {
+			case 'openssl':
+				$ciphertext = openssl_encrypt( $serialized, $algorithm[1], $encKey, OPENSSL_RAW_DATA, $iv );
 			if ( $ciphertext === false ) {
-				throw new UnexpectedValueException( 'Encryption failed: ' . openssl_error_string() );
+					throw new \UnexpectedValueException( 'Encryption failed: ' . openssl_error_string() );
 			}
-		} elseif ( function_exists( 'mcrypt_encrypt' ) ) {
-			$ciphertext = mcrypt_encrypt( 'rijndael-128', $encKey, $serialized, 'ctr', $iv );
+				break;
+			case 'mcrypt':
+				// PKCS7 padding
+				$blocksize = mcrypt_get_block_size( $algorithm[1], $algorithm[2] );
+				$pad = $blocksize - ( strlen( $serialized ) % $blocksize );
+				$serialized .= str_repeat( chr( $pad ), $pad );
+
+				$ciphertext = mcrypt_encrypt( $algorithm[1], $encKey, $serialized, $algorithm[2], $iv );
 			if ( $ciphertext === false ) {
-				throw new UnexpectedValueException( 'Encryption failed' );
+					throw new \UnexpectedValueException( 'Encryption failed' );
 			}
-		} elseif ( $wgSessionInsecureSecrets ) {
+				break;
+			case 'insecure':
 			$ex = new \Exception( 'No encryption is available, storing data as plain text' );
 			$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
 			$ciphertext = $serialized;
-		} else {
-			throw new \BadMethodCallException(
-				'Encryption is not available. You really should install the PHP OpenSSL extension, ' .
-				'or failing that the mcrypt extension. But if you really can\'t and you\'re willing ' .
-				'to accept insecure storage of sensitive session data, set ' .
-				'$wgSessionInsecureSecrets = true in LocalSettings.php to make this exception go away.'
-			);
+				break;
+			default:
+				throw new \LogicException( 'invalid algorithm' );
 		}
 
 		// Seal
@@ -459,8 +516,6 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @return mixed
 	 */
 	public function getSecret( $key, $default = null ) {
-		global $wgSessionInsecureSecrets;
-
 		// Fetch
 		$encrypted = $this->get( $key, null );
 		if ( $encrypted === null ) {
@@ -488,38 +543,39 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 		}
 
 		// Decrypt
-		// @todo: import a pure-PHP library for AES instead of doing $wgSessionInsecureSecrets
-		if ( function_exists( 'openssl_decrypt' ) ) {
-			$serialized = openssl_decrypt(
-				base64_decode( $ciphertext ), 'aes-256-ctr', $encKey, OPENSSL_RAW_DATA, base64_decode( $iv )
-			);
+		$algorithm = self::getEncryptionAlgorithm();
+		switch ( $algorithm[0] ) {
+			case 'openssl':
+				$serialized = openssl_decrypt( base64_decode( $ciphertext ), $algorithm[1], $encKey,
+					OPENSSL_RAW_DATA, base64_decode( $iv ) );
 			if ( $serialized === false ) {
 				$ex = new \Exception( 'Decyption failed: ' . openssl_error_string() );
 				$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
 				return $default;
 			}
-		} elseif ( function_exists( 'mcrypt_decrypt' ) ) {
-			$serialized = mcrypt_decrypt(
-				'rijndael-128', $encKey, base64_decode( $ciphertext ), 'ctr', base64_decode( $iv )
-			);
+				break;
+			case 'mcrypt':
+				$serialized = mcrypt_decrypt( $algorithm[1], $encKey, base64_decode( $ciphertext ),
+					$algorithm[2], base64_decode( $iv ) );
 			if ( $serialized === false ) {
 				$ex = new \Exception( 'Decyption failed' );
 				$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
 				return $default;
 			}
-		} elseif ( $wgSessionInsecureSecrets ) {
+
+				// Remove PKCS7 padding
+				$pad = ord( substr( $serialized, -1 ) );
+				$serialized = substr( $serialized, 0, -$pad );
+				break;
+			case 'insecure':
 			$ex = new \Exception(
 				'No encryption is available, retrieving data that was stored as plain text'
 			);
 			$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
 			$serialized = base64_decode( $ciphertext );
-		} else {
-			throw new \BadMethodCallException(
-				'Encryption is not available. You really should install the PHP OpenSSL extension, ' .
-				'or failing that the mcrypt extension. But if you really can\'t and you\'re willing ' .
-				'to accept insecure storage of sensitive session data, set ' .
-				'$wgSessionInsecureSecrets = true in LocalSettings.php to make this exception go away.'
-			);
+				break;
+			default:
+				throw new \LogicException( 'invalid algorithm' );
 		}
 
 		$value = unserialize( $serialized );

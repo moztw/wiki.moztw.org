@@ -1,2 +1,6 @@
 LocalSettings.php
 cache/*
+
+# Ignore Composer vendor files
+vendor/
+composer.lock
