@@ -632,6 +632,10 @@
 				obj[ key ] = val;
 			} : function ( obj, key, val, msg ) {
 				msg = 'Use of "' + key + '" is deprecated.' + ( msg ? ( ' ' + msg ) : '' );
+				// Support: Safari 5.0
+				// Throws "not supported on DOM Objects" for Node or Element objects (incl. document)
+				// Safari 4.0 doesn't have this method, and it was fixed in Safari 5.1.
+				try {
 				Object.defineProperty( obj, key, {
 					configurable: true,
 					enumerable: true,
@@ -646,7 +650,9 @@
 						val = newVal;
 					}
 				} );
-
+				} catch ( err ) {
+					obj[ key ] = val;
+				}
 			};
 
 			return log;
