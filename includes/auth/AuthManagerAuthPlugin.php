@@ -161,14 +161,14 @@ class AuthManagerAuthPlugin extends \AuthPlugin {
 	}
 
 	public function addUser( $user, $password, $email = '', $realname = '' ) {
-				throw new \BadMethodCallException(
+		throw new \BadMethodCallException(
 			'Creation of users via AuthPlugin is not supported with '
 			. 'AuthManager. Generally, user creation should be left to either '
 			. 'Special:CreateAccount, auto-creation when triggered by a '
 			. 'SessionProvider or PrimaryAuthenticationProvider, or '
 			. 'User::newSystemUser().'
-				);
-		}
+		);
+	}
 
 	public function strict() {
 		// There should be a PrimaryAuthenticationProvider that does this, if necessary

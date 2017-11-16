@@ -85,8 +85,8 @@ class CoreTagHooks {
 		global $wgRawHtml;
 		if ( $wgRawHtml ) {
 			if ( $parser->getOptions()->getAllowUnsafeRawHtml() ) {
-			return [ $content, 'markerType' => 'nowiki' ];
-		} else {
+				return [ $content, 'markerType' => 'nowiki' ];
+			} else {
 				// In a system message where raw html is
 				// not allowed (but it is allowed in other
 				// contexts).

@@ -79,7 +79,7 @@ class ImageMap {
 					list( $image, $options ) = $bits;
 				}
 				$imageTitle = Title::newFromText( $image );
-				if ( !$imageTitle || $imageTitle->getNamespace() != NS_IMAGE ) {
+				if ( !$imageTitle || !$imageTitle->inNamespace( NS_FILE ) ) {
 					return self::error( 'imagemap_no_image' );
 				}
 				if ( wfIsBadImage( $imageTitle->getDBkey(), $parser->mTitle ) ) {
@@ -351,7 +351,7 @@ class ImageMap {
 		// Output the result
 		// We use saveXML() not saveHTML() because then we get XHTML-compliant output.
 		// The disadvantage is that we have to strip out the DTD
-		$output = preg_replace( '/<\?xml[^?]*\?>/', '', $domDoc->saveXML() );
+		$output = preg_replace( '/<\?xml[^?]*\?>/', '', $domDoc->saveXML( null, LIBXML_NOEMPTYTAG ) );
 
 		// Register links
 		foreach ( $links as $title ) {

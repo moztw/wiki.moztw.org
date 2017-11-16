@@ -78,7 +78,7 @@ class APCBagOStuff extends BagOStuff {
 		return $this->getUnserialize(
 			apc_fetch( $key . self::KEY_SUFFIX )
 		);
-		}
+	}
 
 	protected function getUnserialize( $value ) {
 		if ( is_string( $value ) && !$this->nativeSerialize ) {

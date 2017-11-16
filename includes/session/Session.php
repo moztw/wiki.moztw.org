@@ -129,6 +129,11 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Make this session not be persisted across requests
+	 *
+	 * This will remove persistence information (e.g. delete cookies)
+	 * from the associated WebRequest(s), and delete session data in the
+	 * backend. The session data will still be available via get() until
+	 * the end of the request.
 	 */
 	public function unpersist() {
 		$this->backend->unpersist();
@@ -387,7 +392,7 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @return string[] Encryption key, HMAC key
 	 */
 	private function getSecretKeys() {
-		global $wgSessionSecret, $wgSecretKey;
+		global $wgSessionSecret, $wgSecretKey, $wgSessionPbkdf2Iterations;
 
 		$wikiSecret = $wgSessionSecret ?: $wgSecretKey;
 		$userSecret = $this->get( 'wsSessionSecret', null );
@@ -395,8 +400,13 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 			$userSecret = \MWCryptRand::generateHex( 32 );
 			$this->set( 'wsSessionSecret', $userSecret );
 		}
+		$iterations = $this->get( 'wsSessionPbkdf2Iterations', null );
+		if ( $iterations === null ) {
+			$iterations = $wgSessionPbkdf2Iterations;
+			$this->set( 'wsSessionPbkdf2Iterations', $iterations );
+		}
 
-		$keymats = hash_pbkdf2( 'sha256', $wikiSecret, $userSecret, 10001, 64, true );
+		$keymats = hash_pbkdf2( 'sha256', $wikiSecret, $userSecret, $iterations, 64, true );
 		return [
 			substr( $keymats, 0, 32 ),
 			substr( $keymats, 32, 32 ),
@@ -476,9 +486,9 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 		switch ( $algorithm[0] ) {
 			case 'openssl':
 				$ciphertext = openssl_encrypt( $serialized, $algorithm[1], $encKey, OPENSSL_RAW_DATA, $iv );
-			if ( $ciphertext === false ) {
+				if ( $ciphertext === false ) {
 					throw new \UnexpectedValueException( 'Encryption failed: ' . openssl_error_string() );
-			}
+				}
 				break;
 			case 'mcrypt':
 				// PKCS7 padding
@@ -487,14 +497,14 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 				$serialized .= str_repeat( chr( $pad ), $pad );
 
 				$ciphertext = mcrypt_encrypt( $algorithm[1], $encKey, $serialized, $algorithm[2], $iv );
-			if ( $ciphertext === false ) {
+				if ( $ciphertext === false ) {
 					throw new \UnexpectedValueException( 'Encryption failed' );
-			}
+				}
 				break;
 			case 'insecure':
-			$ex = new \Exception( 'No encryption is available, storing data as plain text' );
-			$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
-			$ciphertext = $serialized;
+				$ex = new \Exception( 'No encryption is available, storing data as plain text' );
+				$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
+				$ciphertext = $serialized;
 				break;
 			default:
 				throw new \LogicException( 'invalid algorithm' );
@@ -548,31 +558,31 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 			case 'openssl':
 				$serialized = openssl_decrypt( base64_decode( $ciphertext ), $algorithm[1], $encKey,
 					OPENSSL_RAW_DATA, base64_decode( $iv ) );
-			if ( $serialized === false ) {
-				$ex = new \Exception( 'Decyption failed: ' . openssl_error_string() );
-				$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
-				return $default;
-			}
+				if ( $serialized === false ) {
+					$ex = new \Exception( 'Decyption failed: ' . openssl_error_string() );
+					$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
+					return $default;
+				}
 				break;
 			case 'mcrypt':
 				$serialized = mcrypt_decrypt( $algorithm[1], $encKey, base64_decode( $ciphertext ),
 					$algorithm[2], base64_decode( $iv ) );
-			if ( $serialized === false ) {
-				$ex = new \Exception( 'Decyption failed' );
-				$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
-				return $default;
-			}
+				if ( $serialized === false ) {
+					$ex = new \Exception( 'Decyption failed' );
+					$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
+					return $default;
+				}
 
 				// Remove PKCS7 padding
 				$pad = ord( substr( $serialized, -1 ) );
 				$serialized = substr( $serialized, 0, -$pad );
 				break;
 			case 'insecure':
-			$ex = new \Exception(
-				'No encryption is available, retrieving data that was stored as plain text'
-			);
-			$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
-			$serialized = base64_decode( $ciphertext );
+				$ex = new \Exception(
+					'No encryption is available, retrieving data that was stored as plain text'
+				);
+				$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
+				$serialized = base64_decode( $ciphertext );
 				break;
 			default:
 				throw new \LogicException( 'invalid algorithm' );
@@ -590,7 +600,7 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * Calls to save() or clear() will not be delayed.
 	 *
-	 * @return \ScopedCallback When this goes out of scope, a save will be triggered
+	 * @return \Wikimedia\ScopedCallback When this goes out of scope, a save will be triggered
 	 */
 	public function delaySave() {
 		return $this->backend->delaySave();
@@ -598,6 +608,9 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Save the session
+	 *
+	 * This will update the backend data and might re-persist the session
+	 * if needed.
 	 */
 	public function save() {
 		$this->backend->save();
