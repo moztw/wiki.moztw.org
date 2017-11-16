@@ -1,0 +1,12 @@
+[submodule "extensions/DeleteBatch"]
+	path = extensions/DeleteBatch
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/DeleteBatch
+[submodule "extensions/SecurePoll"]
+	path = extensions/SecurePoll
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/SecurePoll
+[submodule "extensions/SiteMatrix"]
+	path = extensions/SiteMatrix
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/SiteMatrix
+[submodule "extensions/UnicodeConverter"]
+	path = extensions/UnicodeConverter
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/UnicodeConverter
