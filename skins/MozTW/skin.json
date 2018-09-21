@@ -4,7 +4,7 @@
   "url": "https://moztw.org",
   "descriptionmsg": "moztw-desc",
   "namemsg": "skinname-moztw",
-  "license-name": "GPL-2.0+",
+  "license-name": "GPL-2.0-or-later",
   "type": "skin",
   "ValidSkinNames": {
     "moztw": "MozTW"
