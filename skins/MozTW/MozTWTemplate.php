@@ -160,7 +160,7 @@ class MozTWTemplate extends QuickTemplate {
       <div class="visualClear"></div>
       <div id="footer">
     <?php if($this->data['poweredbyico']) { ?><div id="f-poweredbyico"><?php $this->html('poweredbyico') ?></div><?php } ?>
-	<?php if($this->data['copyrightico']) { ?><div id="f-copyrightico"><?php $this->html('copyrightico') ?></div><?php } ?>
+    <?php if($this->data['footericons']) { ?><div id="f-copyrightico"><img src="<?php echo($this->data['footericons']['copyright']['copyright']['src']); ?>" /></div><?php } ?>
 	<ul id="f-list">
 	  <?php if($this->data['lastmod'   ]) { ?><li id="f-lastmod"><?php    $this->html('lastmod')    ?></li><?php } ?>
 	  <?php if($this->data['viewcount' ]) { ?><li id="f-viewcount"><?php  $this->html('viewcount')  ?></li><?php } ?>
