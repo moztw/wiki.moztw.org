@@ -320,7 +320,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * Add an option such as LIMIT or USE INDEX. If an option was set
 	 * before, the old value will be overwritten
 	 * @param string $name Option name
-	 * @param string|string[] $value Option value
+	 * @param string|string[]|null $value Option value
 	 */
 	protected function addOption( $name, $value = null ) {
 		if ( is_null( $value ) ) {
@@ -402,8 +402,8 @@ abstract class ApiQueryBase extends ApiBase {
 	}
 
 	/**
-	 * @param string $query
-	 * @param string $protocol
+	 * @param string|null $query
+	 * @param string|null $protocol
 	 * @return null|string
 	 */
 	public function prepareUrlQuerySearchString( $query = null, $protocol = null ) {
@@ -436,28 +436,32 @@ abstract class ApiQueryBase extends ApiBase {
 	 * @return void
 	 */
 	public function showHiddenUsersAddBlockInfo( $showBlockInfo ) {
-		$this->addTables( 'ipblocks' );
-		$this->addJoinConds( [
-			'ipblocks' => [ 'LEFT JOIN', 'ipb_user=user_id' ],
-		] );
+		$db = $this->getDB();
 
-		$this->addFields( 'ipb_deleted' );
+		$tables = [ 'ipblocks' ];
+		$fields = [ 'ipb_deleted' ];
+		$joinConds = [
+			'blk' => [ 'LEFT JOIN', [
+				'ipb_user=user_id',
+				'ipb_expiry > ' . $db->addQuotes( $db->timestamp() ),
+			] ],
+		];
 
 		if ( $showBlockInfo ) {
-			$this->addFields( [
+			$actorQuery = ActorMigration::newMigration()->getJoin( 'ipb_by' );
+			$commentQuery = CommentStore::getStore()->getJoin( 'ipb_reason' );
+			$tables += $actorQuery['tables'] + $commentQuery['tables'];
+			$joinConds += $actorQuery['joins'] + $commentQuery['joins'];
+			$fields = array_merge( $fields, [
 				'ipb_id',
 				'ipb_expiry',
 				'ipb_timestamp'
-			] );
-			$actorQuery = ActorMigration::newMigration()->getJoin( 'ipb_by' );
-			$this->addTables( $actorQuery['tables'] );
-			$this->addFields( $actorQuery['fields'] );
-			$this->addJoinConds( $actorQuery['joins'] );
-			$commentQuery = CommentStore::getStore()->getJoin( 'ipb_reason' );
-			$this->addTables( $commentQuery['tables'] );
-			$this->addFields( $commentQuery['fields'] );
-			$this->addJoinConds( $commentQuery['joins'] );
+			], $actorQuery['fields'], $commentQuery['fields'] );
 		}
+
+		$this->addTables( [ 'blk' => $tables ] );
+		$this->addFields( $fields );
+		$this->addJoinConds( $joinConds );
 
 		// Don't show hidden names
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
@@ -503,7 +507,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * Same as addPageSubItems(), but one element of $data at a time
 	 * @param int $pageId Page ID
 	 * @param array $item Data array à la ApiResult
-	 * @param string $elemname XML element name. If null, getModuleName()
+	 * @param string|null $elemname XML element name. If null, getModuleName()
 	 *  is used
 	 * @return bool Whether the element fit in the result
 	 */

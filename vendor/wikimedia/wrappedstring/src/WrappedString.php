@@ -24,7 +24,7 @@
  * @file
  */
 
-namespace WrappedString;
+namespace Wikimedia;
 
 class WrappedString {
 	/** @var string */
@@ -38,8 +38,8 @@ class WrappedString {
 
 	/**
 	 * @param string $value
-	 * @param string $prefix
-	 * @param string $suffix
+	 * @param string|null $prefix
+	 * @param string|null $suffix
 	 */
 	public function __construct( $value, $prefix = null, $suffix = null ) {
 		$this->value = $value;
@@ -68,13 +68,26 @@ class WrappedString {
 	 *
 	 * NOTE: This is an internal method. Use join() or WrappedStringList instead.
 	 *
-	 * @param WrappedString[] $wraps
-	 * @return WrappedString[] Compacted list
+	 * @param array $wraps
+	 * @return string[] Compacted list to be treated as strings
+	 * (may contain WrappedString and WrappedStringList objects)
 	 */
 	public static function compact( array $wraps ) {
-		$consolidated = array();
-		$prev = current( $wraps );
-		while ( ( $wrap = next( $wraps ) ) !== false ) {
+		$consolidated = [];
+		if ( $wraps === [] ) {
+			// Return early so that we don't have to deal with $prev being
+			// set or not set, and avoid risk of adding $prev's initial null
+			// value to the list as extra value (T196496).
+			return $consolidated;
+		}
+		$first = true;
+		$prev = null;
+		foreach ( $wraps as $wrap ) {
+			if ( $first ) {
+				$first = false;
+				$prev = $wrap;
+				continue;
+			}
 			if ( $prev instanceof WrappedString
 				&& $wrap instanceof WrappedString
 				&& $prev->prefix !== null

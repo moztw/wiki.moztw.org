@@ -257,6 +257,8 @@ class RequestContext implements IContextSource, MutableContext {
 	 */
 	public function setUser( User $user ) {
 		$this->user = $user;
+		// Invalidate cached user interface language
+		$this->lang = null;
 	}
 
 	/**
@@ -325,8 +327,6 @@ class RequestContext implements IContextSource, MutableContext {
 		} elseif ( $this->lang === null ) {
 			$this->recursion = true;
 
-			global $wgContLang;
-
 			try {
 				$request = $this->getRequest();
 				$user = $this->getUser();
@@ -340,7 +340,7 @@ class RequestContext implements IContextSource, MutableContext {
 				Hooks::run( 'UserGetLanguageObject', [ $user, &$code, $this ] );
 
 				if ( $code === $this->getConfig()->get( 'LanguageCode' ) ) {
-					$this->lang = $wgContLang;
+					$this->lang = MediaWikiServices::getInstance()->getContentLanguage();
 				} else {
 					$obj = Language::factory( $code );
 					$this->lang = $obj;
@@ -423,7 +423,7 @@ class RequestContext implements IContextSource, MutableContext {
 	public function msg( $key ) {
 		$args = func_get_args();
 
-		return call_user_func_array( 'wfMessage', $args )->setContext( $this );
+		return wfMessage( ...$args )->setContext( $this );
 	}
 
 	/**

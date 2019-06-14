@@ -265,6 +265,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			 $this->getUser()->isLoggedIn()
 		) {
 			$this->successfulAction();
+			return;
 		}
 
 		// If logging in and not on HTTPS, either redirect to it or offer a link.
@@ -494,10 +495,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$wgUser = $user;
 		$context->setUser( $user );
 
-		$code = $this->getRequest()->getVal( 'uselang', $user->getOption( 'language' ) );
-		$userLang = Language::factory( $code );
-		$wgLang = $userLang;
-		$context->setLanguage( $userLang );
+		$wgLang = $context->getLanguage();
 	}
 
 	/**
@@ -610,7 +608,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			$benefitList = '';
 			for ( $benefitIdx = 1; $benefitIdx <= $benefitCount; $benefitIdx++ ) {
 				$headUnescaped = $this->msg( "createacct-benefit-head$benefitIdx" )->text();
-				$iconClass = $this->msg( "createacct-benefit-icon$benefitIdx" )->escaped();
+				$iconClass = $this->msg( "createacct-benefit-icon$benefitIdx" )->text();
 				$benefitList .= Html::rawElement( 'div', [ 'class' => "mw-number-text $iconClass" ],
 					Html::rawElement( 'h3', [],
 						$this->msg( "createacct-benefit-head$benefitIdx" )->escaped()
@@ -823,12 +821,12 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 
 		// Both Hooks::run are explicit here to make findHooks.php happy
 		if ( $this->isSignup() ) {
-			Hooks::run( 'UserCreateForm', [ &$template ] );
+			Hooks::run( 'UserCreateForm', [ &$template ], '1.27' );
 			if ( $oldTemplate !== $template ) {
 				wfDeprecated( "reference in UserCreateForm hook", '1.27' );
 			}
 		} else {
-			Hooks::run( 'UserLoginForm', [ &$template ] );
+			Hooks::run( 'UserLoginForm', [ &$template ], '1.27' );
 			if ( $oldTemplate !== $template ) {
 				wfDeprecated( "reference in UserLoginForm hook", '1.27' );
 			}
@@ -846,8 +844,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 
 		// keep the ordering from getCoreFieldDescriptors() where there is no explicit weight
 		foreach ( $coreFieldDescriptors as $fieldName => $coreField ) {
-			$requestField = isset( $formDescriptor[$fieldName] ) ?
-				$formDescriptor[$fieldName] : [];
+			$requestField = $formDescriptor[$fieldName] ?? [];
 
 			// remove everything that is not in the fieldinfo, is not marked as a supplemental field
 			// to something in the fieldinfo, is not B/C for the pre-AuthManager templates,
@@ -1063,7 +1060,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					// 'id' => 'mw-userlogin-help', // FIXME HTMLInfoField ignores this
 					'raw' => true,
 					'default' => Html::element( 'a', [
-						'href' => Skin::makeInternalOrExternalUrl( wfMessage( 'helplogin-url' )
+						'href' => Skin::makeInternalOrExternalUrl( $this->msg( 'helplogin-url' )
 							->inContentLanguage()
 							->text() ),
 					], $this->msg( 'userlogin-helplink2' )->text() ),
@@ -1127,7 +1124,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			if ( !$signupendMsg->isDisabled() ) {
 				$usingHTTPS = $this->getRequest()->getProtocol() === 'https';
 				$signupendText = ( $usingHTTPS && !$signupendHttpsMsg->isBlank() )
-					? $signupendHttpsMsg ->parse() : $signupendMsg->parse();
+					? $signupendHttpsMsg->parse() : $signupendMsg->parse();
 				$fieldDefinitions['signupend'] = [
 					'type' => 'info',
 					'raw' => true,
@@ -1492,7 +1489,7 @@ class LoginForm extends SpecialPage {
 	];
 
 	/**
-	 * @param WebRequest $request
+	 * @param WebRequest|null $request
 	 */
 	public function __construct( $request = null ) {
 		wfDeprecated( 'LoginForm', '1.27' );
