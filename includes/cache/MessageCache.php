@@ -99,6 +99,12 @@ class MessageCache {
 	protected $contLang;
 
 	/**
+	 * Track which languages have been loaded by load().
+	 * @var array
+	 */
+	private $loadedLanguages = [];
+
+	/**
 	 * Singleton instance
 	 *
 	 * @var MessageCache $instance
@@ -214,7 +220,7 @@ class MessageCache {
 	/**
 	 * Try to load the cache from APC.
 	 *
-	 * @param string $code Optional language code, see documenation of load().
+	 * @param string $code Optional language code, see documentation of load().
 	 * @return array|bool The cache array, or false if not in cache.
 	 */
 	protected function getLocalCache( $code ) {
@@ -261,7 +267,7 @@ class MessageCache {
 		}
 
 		# Don't do double loading...
-		if ( $this->cache->has( $code ) && $mode != self::FOR_UPDATE ) {
+		if ( isset( $this->loadedLanguages[$code] ) && $mode != self::FOR_UPDATE ) {
 			return true;
 		}
 
@@ -328,7 +334,7 @@ class MessageCache {
 					} elseif ( $hashVolatile ) {
 						# DB results are replica DB lag prone until the holdoff TTL passes.
 						# By then, updates should be reflected in loadFromDBWithLock().
-						# One thread renerates the cache while others use old values.
+						# One thread regenerates the cache while others use old values.
 						$where[] = 'global cache is expired/volatile';
 						$staleCache = $cache;
 					} else {
@@ -365,7 +371,7 @@ class MessageCache {
 					break;
 				} elseif ( $loadStatus === 'cantacquire' ) {
 					# Wait for the other thread to finish, then retry. Normally,
-					# the memcached get() will then yeild the other thread's result.
+					# the memcached get() will then yield the other thread's result.
 					$where[] = 'waited for other thread to complete';
 					$this->getReentrantScopedLock( $cacheKey );
 				} else {
@@ -382,6 +388,9 @@ class MessageCache {
 			wfDebugLog( 'MessageCacheError', __METHOD__ . ": Failed to load $code\n" );
 			# This used to throw an exception, but that led to nasty side effects like
 			# the whole wiki being instantly down if the memcached server died
+		} else {
+			# All good, just record the success
+			$this->loadedLanguages[$code] = true;
 		}
 
 		if ( !$this->cache->has( $code ) ) { // sanity
@@ -1281,6 +1290,7 @@ class MessageCache {
 			$this->wanCache->touchCheckKey( $this->getCheckKey( $code ) );
 		}
 		$this->cache->clear();
+		$this->loadedLanguages = [];
 	}
 
 	/**
